@@ -1,0 +1,83 @@
+{
+  "products": {
+    "spartan_fury_bot": {
+      "platforms": [
+        "MetaTrader 4",
+        "MetaTrader 5"
+      ],
+      "requirements": {
+        "minDeposit": 1000,
+        "leverage": "1:30 - 1:500",
+        "brokers": [
+          "IC Markets",
+          "Pepperstone",
+          "XM"
+        ]
+      },
+      "features": {
+        "autoTrading": true,
+        "signals": true,
+        "riskManagement": true,
+        "multiPair": true
+      }
+    },
+    "leonidas_scalper": {
+      "platforms": [
+        "MetaTrader 4",
+        "MetaTrader 5"
+      ],
+      "requirements": {
+        "minDeposit": 500,
+        "leverage": "1:100 - 1:500",
+        "brokers": [
+          "IC Markets",
+          "XM",
+          "Pepperstone",
+          "FXCM"
+        ]
+      },
+      "features": {
+        "autoTrading": true,
+        "signals": true,
+        "riskManagement": true,
+        "scalping": true,
+        "highSpeed": true
+      }
+    },
+    "thermopylae_defender": {
+      "platforms": [
+        "MetaTrader 5",
+        "cTrader"
+      ],
+      "requirements": {
+        "minDeposit": 2000,
+        "leverage": "1:100 - 1:500",
+        "brokers": [
+          "IC Markets",
+          "Pepperstone",
+          "RoboForex"
+        ]
+      },
+      "features": {
+        "autoTrading": true,
+        "signals": true,
+        "riskManagement": true,
+        "hedging": true,
+        "protection": true
+      }
+    },
+    "spartan_academy": {
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "course": true,
+      "features": {
+        "liveTraining": true,
+        "mentoring": true,
+        "certification": true,
+        "community": true
+      }
+    }
+  }
+}

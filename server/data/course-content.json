@@ -1,0 +1,284 @@
+{
+  "courses": {
+    "spartan_academy": {
+      "id": "spartan_academy",
+      "name": "SPARTAN CODEX ACADEMY",
+      "modules": [
+        {
+          "id": "module_1761354100388",
+          "title": "🧠 TRADING ALGORITMICO: LA NUOVA FRONTIERA DEI MERCATI FINANZIARI 🚀",
+          "description": "Scopri come la tecnologia e l’automazione stanno rivoluzionando i mercati finanziari. ⚡\nIn questa presentazione esploreremo i principi del trading algoritmico, dall’analisi dei dati alla costruzione di strategie automatizzate, mostrando come un approccio quantitativo possa migliorare precisione, efficienza e risultati.",
+          "order": 1,
+          "isTrialContent": true,
+          "duration": "15:17min",
+          "lessons": [
+            {
+              "id": "lesson_1761354870255",
+              "title": "🎯 Benvenuto nella Formazione di Trading Algoritmico",
+              "description": "In questa lezione scoprirai come è strutturato il percorso, quali moduli affronterai e come ogni fase ti guiderà passo dopo passo verso la creazione di strategie automatiche professionali 🤖📊.",
+              "duration": "15:17min",
+              "order": 1,
+              "isTrialContent": true,
+              "videoUrl": "/uploads/1761354750266-394012449.mp4"
+            }
+          ]
+        },
+        {
+          "id": "module_1",
+          "title": "💡 AVVIO AL TRADING ALGORITMICO",
+          "description": "🎯 Vuoi iniziare nel trading algoritmico ma non sai da dove partire?\nQuesto è il modulo perfetto per te! Ti accompagno passo dopo passo nel mondo del trading automatico, spiegandoti tutto in modo semplice e pratico! 💪\n📋 In questo modulo scoprirai:\n\n✅ Cos'è realmente il trading algoritmico (senza tecnicismi!)\n✅ Gli strumenti essenziali per iniziare\n✅ I primi passi pratici per partire\n✅ Errori comuni da evitare assolutamente\n\n🎯 Perfetto se:\n\nSei completamente nuovo al trading algoritmico\nVuoi capire se fa per te prima di investire\nCerchi una spiegazione chiara e senza fronzoli\nVuoi le basi solide per costruire il tuo percorso\n",
+          "order": 2,
+          "isTrialContent": true,
+          "duration": "2h 30min",
+          "lessons": [
+            {
+              "id": "lesson_1757516878179",
+              "title": "💻 PC Fisso vs Server Dedicato: Quale Scegliere? 🖥️",
+              "description": "Stai per iniziare con StrategyQuant ma non sai se usare il tuo PC di casa o prendere un server esterno?\nIn questo video ti spiego TUTTO quello che devi sapere per partire con il piede giusto! 💪\n📋 Cosa scoprirai:\n✅ PC Fisso: quando basta e quando diventa un limite\n✅ VPS/Server Dedicato: vantaggi, costi e quando ne vale la pena\n✅ La mia raccomandazione per iniziare senza sprecare soldi\n🎯 Perfetto se:\n\nSei nuovo nel trading algoritmico\nVuoi capire i requisiti tecnici di StrategyQuant\nNon vuoi fare errori costosi nella scelta dell'hardware\nCerchi consigli pratici e onesti",
+              "duration": "07:42min",
+              "vimeoId": "1073889359",
+              "order": 1,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1757681194784",
+              "title": "🚀 VDS per StrategyQuant: La Soluzione Perfetta Se Non Vuoi Usare il PC! ",
+              "description": "In questo video ti spiego perché una VDS potrebbe essere la scelta migliore se vuoi fare trading algoritmico senza i problemi del PC fisso! 💪\n📋 Cosa imparerai:\n✅ Perché NON conviene usare il PC di casa per StrategyQuant\n✅ Tutti i vantaggi del VPS: stabilità, velocità e sicurezza\n✅ Come scegliere il VPS giusto per le tue esigenze\n✅ Setup completo: dalla configurazione al primo avvio\n🎯 Perfetto se:\n\nVuoi trading automatico H24 senza pensieri\nNon vuoi rovinare il tuo PC personale\nCerchi stabilità di connessione garantita\nVuoi una soluzione professionale a costi contenuti",
+              "duration": "07:14min",
+              "vimeoId": "1072928698",
+              "order": 2,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758030292456",
+              "title": "🖥️ ACCEDERE CORRETTAMENTE NELLA VDS",
+              "description": "In questo video ti mostro come accedere in modo corretto e sicuro alla tua VDS per lavorare con StrategyQuant senza problemi. 👨‍💻\n✅ Cosa scoprirai:\n\nCome collegarti alla VDS tramite Remote Desktop passo dopo passo\n\nLe impostazioni da verificare per evitare errori di connessione\n\nConsigli pratici per mantenere la connessione stabile e protetta\n🎯 Perfetto se: È la tua prima volta con una VDS e vuoi assicurarti di configurarla nel modo giusto fin dal primo accesso",
+              "duration": "05:36min",
+              "vimeoId": "1072977097",
+              "order": 3,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758030571170",
+              "title": "⚙️ SCARICARE STRATEGYQUANT 136 SU VDS O PC",
+              "description": "In questo video ti spiego come scaricare e installare la versione 1.36 di StrategyQuant, quella che utilizzeremo sempre per la metodologia di questo corso. 🧠\n✅ Cosa scoprirai:\n\nDove scaricare la versione 1.36 di SQX\n\nPerché questa versione è la più stabile e performante per la mineria\n\nQuando (e se) conviene passare a versioni successive\n📌 Nota importante: al momento, la versione 1.36 rimane la scelta dei professionisti per ottenere i migliori risultati di ricerca. Se in futuro cambierà qualcosa, sarò il primo ad aggiornarti!\n\n📥 Scarica qui la versione di SQX 1.36:",
+              "duration": "08:21min",
+              "vimeoId": "1072987130",
+              "order": 4,
+              "isTrialContent": true,
+              "resources": [],
+              "downloadButton": {
+                "enabled": true,
+                "label": "SCARICA QUI",
+                "fileUrl": "/uploads/1761177055428-700457637.zip",
+                "fileName": "StrategyQuantV136.zip"
+              }
+            },
+            {
+              "id": "lesson_1758030955396",
+              "title": "🎟️ PRENDERE LICENZA FREE DI 4-5 SETTIMANE",
+              "description": "In questo video ti mostro come ottenere la licenza gratuita di StrategyQuant per 4-5 settimane in modo semplice e veloce. ⏱️\n✅ Cosa scoprirai:\n\nCome creare una mail gratuita in 5 minuti per registrarti a StrategyQuant\n\nIl link corretto per attivare la prova gratuita ufficiale\n\nConsigli pratici per evitare errori durante la registrazione\n\n📧 Crea la tua mail gratuita qui:\n👉 https://proton.me/mail\n\n🧠 Attiva la prova gratuita (4-5 settimane) qui:\n👉 https://lab.sq.academy/\n\n🎯 Perfetto se: vuoi iniziare subito con StrategyQuant senza costi e testare tutte le funzionalità della piattaforma.",
+              "duration": "06:36min",
+              "vimeoId": "1072990084",
+              "order": 5,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758031309932",
+              "title": "🧱 DISATTIVARE WINDOWS UPDATE ",
+              "description": "n questo video ti spiego come disattivare correttamente gli aggiornamenti automatici di Windows all’interno della tua VDS. 🚫💻\n✅ Cosa scoprirai:\n\nCome bloccare gli aggiornamenti di Windows per evitare riavvii o interruzioni durante la mineria\n\nQuali servizi e impostazioni disattivare in modo sicuro\n\nPerché questa procedura è fondamentale per mantenere stabilità e prestazioni costanti\n\n🎯 Perfetto se: vuoi assicurarti che la tua VDS resti sempre accesa e stabile mentre StrategyQuant lavora, senza fastidiosi aggiornamenti automatici.",
+              "duration": "05:07min",
+              "vimeoId": "1072992640",
+              "order": 6,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758031470755",
+              "title": "🔁 SINCRONIZZARE BUILDER, RETEST e OPTIMIZER",
+              "description": "In questo video scoprirai come sincronizzare in modo corretto Builder, Retest e Optimizer all’interno di StrategyQuant, per rendere il tuo flusso di lavoro più veloce e coerente. ⚙️\n✅ Cosa scoprirai:\n\nCome impostare la sincronizzazione automatica tra i tre moduli\n\nPerché è importante che i risultati del Builder vengano subito riletti da Retest e Optimizer\n\nCome evitare errori o dati non aggiornati durante la mineria\n🎯 Perfetto se: vuoi capire come far lavorare in armonia le varie sezioni di StrategyQuant e ottenere workflow più fluidi e precisi.",
+              "duration": "01:52min",
+              "vimeoId": "1072993958",
+              "order": 7,
+              "isTrialContent": true,
+              "resources": []
+            }
+          ]
+        },
+        {
+          "id": "module_2",
+          "title": "💾 DATA MANAGER E BUILDER GOLD: PRIMO AVVIO SU STRATEGYQUANT",
+          "description": "In questo modulo vedremo come avviare per la prima volta StrategyQuant e come configurare il Data Manager insieme al Builder Gold, fondamentali per la creazione di strategie professionali. 🚀\n✅ Cosa scoprirai:\n\n\n\nCome attivare e configurare il Builder Gold per ottenere risultati più precisi\n\nLe impostazioni ottimali per iniziare subito a creare strategie di qualità\n🎯 Perfetto se: stai muovendo i primi passi su StrategyQuant e vuoi impostare da subito un ambiente di lavoro stabile, veloce e pronto per la mineria.",
+          "order": 3,
+          "isTrialContent": true,
+          "duration": "13min",
+          "lessons": [
+            {
+              "id": "lesson_2_1",
+              "title": "📥 DOWNLOAD DEI DATI GOLD SU STRATEGYQUANT",
+              "description": "In questo video ti mostro come scaricare e configurare correttamente i Dati Gold all’interno di StrategyQuant, così da poter avviare la mineria con dati precisi e affidabili. ⚙️\n✅ Cosa scoprirai:\n\nDove trovare i Dati Gold ufficiali e come scaricarli\n\nCome importarli nel Data Manager di StrategyQuant\n\nLe impostazioni corrette per evitare errori o dati corrotti\n🎯 Perfetto se: vuoi assicurarti di utilizzare solo dati di qualità professionale, come fanno i trader esperti nella fase di costruzione delle strategie.",
+              "duration": "07:55min",
+              "vimeoId": "1072995150",
+              "order": 1,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_2_2",
+              "title": "📊 DATA GOLD: COMPILAZIONE E SETTAGGIO CORRETTI PER LA MINERIA",
+              "description": "In questo video vedrai come compilare in modo corretto i Dati Gold all’interno di StrategyQuant, così da garantire la massima precisione nella fase di mineria. ⚙️\n✅ Cosa scoprirai:\n\nCome configurare i parametri di compilazione dei Dati Gold\n\nGli errori più comuni da evitare durante la procedura\n\nCome assicurarti che i dati siano completi, coerenti e pronti all’uso\n🎯 Perfetto se: vuoi evitare problemi di caricamento o incongruenze nei dati prima di passare alla creazione delle strategie.",
+              "duration": "05:47min",
+              "vimeoId": "1072996626",
+              "order": 2,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_2_3",
+              "title": "📊 DATA MANAGER: RECAP E BEST PRACTICES",
+              "description": "In questo video facciamo un riepilogo completo su come usare il Data Manager e il Builder Gold in StrategyQuant. 🧠 ✅ Cosa scoprirai: le best practice per gestire i dati, evitare errori comuni e ottimizzare le tue strategie. 🎯 Perfetto se vuoi consolidare tutto ciò che hai imparato finora e lavorare con dati sempre precisi e affidabili.",
+              "duration": "01:52min",
+              "vimeoId": "1072997839",
+              "order": 3,
+              "isTrialContent": true,
+              "resources": []
+            }
+          ]
+        },
+        {
+          "id": "module_3",
+          "title": "🚀 DATA MANAGER E BUILDER GOLD: LANCIO STRATEGIE PROFESSIONALI",
+          "description": "In questo modulo scoprirai come avviare per la prima volta StrategyQuant e come configurare il Data Manager insieme al Builder Gold, fondamentali per la creazione di strategie professionali 🚀 seguirai come avviare e configurare il Builder Gold per ottenere risultati più precisi Le impostazioni ottimali per iniziare subito a creare strategie di qualità 🟢 Perfetto se: stai muovendo i primi passi su StrategyQuant e vuoi impostare da subito un ambiente di fotore stabile, veloce e pronto per la mineraria.",
+          "order": 4,
+          "isTrialContent": true,
+          "duration": "1h 15min",
+          "lessons": [
+            {
+              "id": "lesson_3_1",
+              "title": "🛠️ CARICAMENTO BUILDER GOLD SULLA STRATEGY",
+              "description": "In questo video imparerai come caricare il Builder Gold sulla tua strategy in StrategyQuant. 🟢 Cosa scoprirai: I step-by-step per configurare correttamente il Builder Gold Come evitare errori comuni durante l'importazione Le verifiche finali per assicurarti che tutto funzioni perfettamente. 🔧 Perfetto se: stai iniziando e vuoi evitare problemi di caricamento.\"",
+              "duration": "06:41min",
+              "vimeoId": "1073091296",
+              "order": 1,
+              "isTrialContent": true,
+              "resources": [],
+              "downloadButton": {
+                "enabled": true,
+                "label": "SCARICA QUI",
+                "fileUrl": null,
+                "fileName": null
+              }
+            },
+            {
+              "id": "lesson_1758032731837",
+              "title": "📊 SPIEGAZIONE \"PROGRESS\" BUILDER",
+              "description": "In questo video imparerai a comprendere e interpretare la sezione Progress del Builder Gold. 🟢 Cosa scoprirai: Cosa significano i dati visualizzati nel Progress Come monitorarli durante la costruzione Come usarli per migliorare le tue strategie. 🔧 Perfetto se: vuoi capire realmente cosa sta accadendo mentre il Builder costruisce la tua strategy.",
+              "duration": "05:39min",
+              "vimeoId": "1073094458",
+              "order": 2,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758032819607",
+              "title": "🏗️ WHAT TO BUILD: CONFIGURAZIONE SULLA STRATEGY",
+              "description": "In questo video imparerai a configurare correttamente la sezione What to Build del Builder Gold. 🟢 Cosa scoprirai: Come scegliere gli elementi da costruire Le migliori configurazioni per ottenere risultati precisi Come impostare What to Build in base ai tuoi obiettivi. 🔧 Perfetto se: vuoi costruire strategie esattamente come le immagini e controllare ogni dettaglio.",
+              "duration": "14:15min",
+              "vimeoId": "1073095511",
+              "order": 3,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758032912721",
+              "title": "⚙️ SPIEGAZIONE \"FULL SETTINGS - GENETIC OPTION\"",
+              "description": "In questo video scoprirai come utilizzare le Genetic Option all'interno dei Full Settings del Builder Gold per ottimizzare le tue strategie. 🟢 Cosa scoprirai: Cosa sono le Genetic Option e come funzionano Come configurarle correttamente per i tuoi obiettivi Come utilizzarle per migliorare la performance della tua strategy. 🧬 Perfetto se: vuoi sfruttare l'intelligenza genetica del Builder per creare strategie più efficaci e adattive.",
+              "duration": "12:14min",
+              "vimeoId": "1073096667",
+              "order": 4,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758033200193",
+              "title": "💹 FULL SETTINGS - TRADING OPTIONS: GUIDA COMPLETA",
+              "description": "In questo video scoprirai come configurare le Trading Options all'interno dei Full Settings del Builder Gold per personalizzare il comportamento della tua strategy. 🟢 Cosa scoprirai: Cosa sono le Trading Options e come influenzano la tua strategy Come configurarle in base al tuo stile di trading Come ottimizzarle per massimizzare i profitti e minimizzare i rischi. 📊 Perfetto se: vuoi controllare ogni aspetto del trading e adattare la strategy alle tue preferenze e obiettivi",
+              "duration": "04:03min",
+              "vimeoId": "1073127005",
+              "order": 5,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758033437237",
+              "title": "🧩 SPIEGAZIONE \"FULL SETTINGS - BUILDING BLOCKS\"",
+              "description": "In questo video imparerai a utilizzare i Building Blocks nei Full Settings del Builder Gold. 🟢 Cosa scoprirai: Come funzionano i Building Blocks Le combinazioni più efficaci per strategie vincenti Come assemblarli per creare la tua strategia personalizzata. 🧩 Perfetto se: vuoi dominare la costruzione delle strategie e creare soluzioni custom dal zero.",
+              "duration": "08:18min",
+              "vimeoId": "1073128210",
+              "order": 6,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758033516866",
+              "title": "💰 SPIEGAZIONE \"FULL SETTINGS - MONEY MANAGEMENT\"",
+              "description": "In questo video imparerai a configurare il Money Management nei Full Settings del Builder Gold. 🟢 Cosa scoprirai: Come gestire il rischio e le dimensioni delle posizioni Le impostazioni ottimali per proteggere il tuo capitale Come massimizzare i profitti mantenendo il controllo. 💹 Perfetto se: vuoi evitare errori costosi e costruire strategie che proteggono e fanno crescere il tuo denaro.",
+              "duration": "06:07min",
+              "vimeoId": "1073133691",
+              "order": 7,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758033573829",
+              "title": "🏆 FULL SETTING - RANKING E START: AVVIA LA TUA STRATEGY",
+              "description": "In questo video imparerai il sistema di Ranking del Builder Gold e come avviare la creazione della tua strategy. 🟢 Cosa scoprirai: Come funziona il Ranking e cosa significa Come interpretare i risultati Come lanciare correttamente il processo di costruzione. 🏆 Perfetto se: sei pronto a far partire il Builder e vuoi capire come seleziona le migliori strategie durante la creazione.",
+              "duration": "15:24min",
+              "vimeoId": "1073137303",
+              "order": 8,
+              "isTrialContent": true,
+              "resources": []
+            },
+            {
+              "id": "lesson_1758033713165",
+              "title": "🗂️ FULL SETTING - DATA: CONFIGURA I TUOI DATI",
+              "description": "In questo video imparerai a configurare correttamente la sezione Data nei Full Settings del Builder Gold. 🟢 Cosa scoprirai: Come importare e selezionare i dati giusti Le impostazioni ottimali per timeframe e periodo Come verificare che i dati siano precisi e completi. 📈 Perfetto se: vuoi assicurarti che le tue strategie siano costruite su dati di qualità e accurati.",
+              "duration": "04:03min",
+              "vimeoId": "1073127005",
+              "order": 9,
+              "isTrialContent": true,
+              "resources": []
+            }
+          ]
+        }
+      ],
+      "description": "Questa è una formazione per diventare trader Algoritmico Spartano in meno di 3 mesi!\nSenza avere alcuna conoscenza e competenza in programmazione MQL4 e MQL5."
+    }
+  },
+  "userProgress": {
+    "user_1757115708866_spartan_academy": {
+      "completedLessons": [
+        "lesson_1_1"
+      ],
+      "lastAccessed": "2025-09-09T00:32:56.916Z",
+      "lastLessonId": "lesson_1_1",
+      "lastModuleId": "module_1",
+      "progress": 17,
+      "totalTimeSpent": 0
+    },
+    "user_1758029930819_spartan_academy": {
+      "completedLessons": [
+        "lesson_1757516878179"
+      ],
+      "lastAccessed": "2025-09-24T02:00:35.469Z",
+      "lastLessonId": "lesson_1757516878179",
+      "lastModuleId": "module_1",
+      "progress": 5,
+      "totalTimeSpent": 0
+    }
+  }
+}

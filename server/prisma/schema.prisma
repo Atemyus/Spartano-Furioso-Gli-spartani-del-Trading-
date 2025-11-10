@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String    @id @default(uuid())
+  email                     String    @unique
+  password                  String
+  name                      String?
+  role                      String    @default("USER") // USER, ADMIN
+  isActive                  Boolean   @default(true)
+  status                    String    @default("pending") // pending, active, suspended
+  emailVerified             Boolean   @default(false)
+  verificationToken         String?
+  verificationTokenExpiry   DateTime?
+  resetPasswordToken        String?
+  resetPasswordExpiry       DateTime?
+  registrationIP            String?
+  deviceHash                String?
+  lastLogin                 DateTime?
+  createdAt                 DateTime  @default(now())
+  trials                    Trial[]
+  
+  @@index([email])
+  @@index([role])
+  @@index([verificationToken])
+  @@index([resetPasswordToken])
+}
+
+model Trial {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId     String
+  productName   String
+  startDate     DateTime
+  endDate       DateTime
+  status        String   @default("active") // active, expired, cancelled
+  trialDays     Int      @default(60)
+  activationIP  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([productId])
+}
+
+model Newsletter {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  status      String   @default("ACTIVE") // ACTIVE, UNSUBSCRIBED
+  source      String   @default("footer") // footer, popup, landing
+  subscribedAt DateTime @default(now())
+  unsubscribedAt DateTime?
+  
+  @@index([email])
+  @@index([status])
+}
+
+model NewsletterMessage {
+  id          String   @id @default(uuid())
+  subject     String
+  content     String   // HTML content
+  type        String   @default("promotional") // promotional, educational, announcement
+  status      String   @default("draft") // draft, scheduled, sent
+  scheduledFor DateTime?
+  sentAt      DateTime?
+  recipientCount Int   @default(0)
+  openCount   Int      @default(0)
+  clickCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([status])
+  @@index([scheduledFor])
+}
+

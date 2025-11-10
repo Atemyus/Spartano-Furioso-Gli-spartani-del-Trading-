@@ -1,0 +1,115 @@
+[
+  {
+    "id": "user_1757115708866",
+    "name": "Daniel Lillo",
+    "email": "daniel-lillo@outlook.com",
+    "password": "$2a$10$WLvboi72Ot2ax2CLFistwusq8xcCE38Do/e1DMx0DvcdqrfyDM9sG",
+    "role": "admin",
+    "status": "active",
+    "emailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "subscription": null,
+    "trials": [
+      {
+        "id": "trial_1757119089918",
+        "productId": "spartan_fury_bot",
+        "productName": "FURY OF SPARTA",
+        "startDate": "2025-09-06T00:38:09.918Z",
+        "endDate": "2025-11-05T00:38:09.918Z",
+        "status": "active"
+      },
+      {
+        "id": "trial_1757369464334",
+        "productId": "spartan_academy",
+        "startDate": "2025-09-08T22:11:04.334Z",
+        "endDate": "2025-09-15T22:11:04.334Z",
+        "status": "active",
+        "trialDays": 7,
+        "productName": "SPARTAN CODEX ACADEMY"
+      }
+    ],
+    "subscriptions": [],
+    "lastLogin": "2025-10-11T01:03:24.918Z",
+    "createdAt": "2025-09-05T23:41:48.866Z",
+    "updatedAt": "2025-10-20T18:41:43.603Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpiry": null
+  },
+  {
+    "id": "user_1758029930819",
+    "name": "Carlo Verdi",
+    "email": "superdanielillo01@gmail.com",
+    "password": "$2a$10$t.uz1CFo.a5qy0qYzJyUR./AyXviaB.3NK9r188hGwJS4ZcM6dJLm",
+    "role": "user",
+    "status": "active",
+    "emailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "subscription": null,
+    "trials": [
+      {
+        "productId": "spartan_academy",
+        "productName": "SPARTAN CODEX ACADEMY",
+        "startDate": "2025-09-16T13:39:38.409Z",
+        "endDate": "2025-09-27T13:39:38.409Z",
+        "active": true
+      }
+    ],
+    "subscriptions": [],
+    "lastLogin": "2025-09-28T02:13:41.117Z",
+    "createdAt": "2025-09-16T13:38:50.819Z",
+    "updatedAt": "2025-09-28T02:13:41.118Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpiry": null
+  },
+  {
+    "id": "user_1760404939496",
+    "name": "Vitantonio Lillo",
+    "email": "vitantoniolillo5@gmail.com",
+    "password": "$2a$10$1wwCy5LEQm/3jCMmDnMRQecUbO.HSydLAvoWNxMgHma62L2vkh6NC",
+    "role": "user",
+    "status": "active",
+    "emailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "subscription": null,
+    "trials": [
+      {
+        "id": "trial_1760405018138",
+        "productId": "spartan_academy",
+        "productName": "SPARTAN CODEX ACADEMY",
+        "startDate": "2025-10-14T01:23:38.138Z",
+        "endDate": "2025-10-25T01:23:38.138Z",
+        "status": "active",
+        "trialDays": 11,
+        "activationIP": "::1"
+      }
+    ],
+    "subscriptions": [],
+    "lastLogin": "2025-10-21T19:46:30.654Z",
+    "createdAt": "2025-10-14T01:22:19.496Z",
+    "updatedAt": "2025-10-21T19:54:39.881Z",
+    "resetPasswordToken": "87d91d758e0ad486e9fc49e0716d8d83a4bfe299b11e0aefe3d3e646511ba636",
+    "resetPasswordExpiry": "2025-10-21T20:54:39.881Z"
+  },
+  {
+    "id": "user_1762803389690",
+    "name": "Daniel Lillo",
+    "email": "spartanofuriosohelp@gmail.com",
+    "password": "$2a$10$DzcCzQoD1GvCb95tUHw3W.pmERMEu5lxGySkCkQDXHap2cyVsbp5y",
+    "role": "admin",
+    "status": "active",
+    "emailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "subscription": null,
+    "trials": [],
+    "subscriptions": [],
+    "lastLogin": null,
+    "createdAt": "2025-11-10T19:36:29.690Z",
+    "updatedAt": "2025-11-10T19:36:29.691Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpiry": null
+  }
+]

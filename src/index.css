@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Remove yellow/blue outline focus rings */
+*:focus {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+}
+
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus,
+div:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: currentColor !important;
+}
+
+/* Remove focus rings from navigation links */
+nav a:focus,
+nav button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any yellow or colored borders */
+*::selection {
+  background-color: rgba(218, 165, 32, 0.3);
+}
+
+/* Theme Variables */
+:root.dark {
+  --bg-primary: #000000;
+  --bg-secondary: #111111;
+  --bg-tertiary: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-tertiary: #a0a0a0;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --text-primary: #000000;
+  --text-secondary: #212529;
+  --text-tertiary: #6c757d;
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Apply theme colors */
+.dark body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.light body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Global section backgrounds for light mode */
+.light section {
+  background-color: #ffffff !important;
+}
+
+.light .bg-black {
+  background-color: #ffffff !important;
+}
+
+.light .bg-gray-900 {
+  background-color: #f8f9fa !important;
+}
+
+.light .bg-gray-800 {
+  background-color: #e9ecef !important;
+}
+
+.light .text-white {
+  color: #000000 !important;
+}
+
+.light .text-gray-400 {
+  color: #6c757d !important;
+}
+
+.light .text-gray-300 {
+  color: #495057 !important;
+}
+
+/* Preserve gradient texts */
+.light .bg-gradient-to-r {
+  background-clip: text !important;
+}
+
+/* Border colors for light mode */
+.light .border-gray-700 {
+  border-color: #dee2e6 !important;
+}
+
+.light .border-gray-800 {
+  border-color: #ced4da !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #DAA520, #8B0000);
+  border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #DAA520, #DC143C);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FFD700, #DC143C);
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FFD700, #FF6347);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeInSlide 0.5s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+/* Greek pattern background */
+.greek-pattern {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(218, 165, 32, 0.1) 10px,
+      rgba(218, 165, 32, 0.1) 20px
+    );
+}
+
+/* Glow effects */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+}
+
+/* Text selection */
+::selection {
+  background-color: #DAA520;
+  color: #000;
+}
+
+/* Focus styles */
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #DAA520;
+  outline-offset: 2px;
+}

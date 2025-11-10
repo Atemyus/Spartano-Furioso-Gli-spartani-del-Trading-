@@ -1,0 +1,133 @@
+[
+  {
+    "id": "spartan_fury_bot",
+    "name": "FURY OF SPARTA",
+    "description": "Il bot di trading più aggressivo e redditizio mai creato",
+    "price": 70.99,
+    "originalPrice": 125.99,
+    "currency": "eur",
+    "pricingPlans": {
+      "monthly": {
+        "price": 70.99,
+        "originalPrice": 125.99,
+        "interval": "mese",
+        "savings": "",
+        "enabled": true
+      },
+      "yearly": {
+        "price": 799.99,
+        "originalPrice": 1249.99,
+        "interval": "anno",
+        "savings": "2 mesi gratis",
+        "enabled": true
+      },
+      "lifetime": {
+        "price": 1499.99,
+        "originalPrice": 2499.99,
+        "interval": "lifetime",
+        "savings": "Risparmio 33%",
+        "enabled": true
+      }
+    },
+    "features": [
+      "🟢 Trading automatico 24/7",
+      "⚔️ Algoritmo proprietario \"Phalanx\"",
+      "🛡️ Gestione del rischio militare",
+      "📊 Dashboard analytics in tempo reale",
+      "🎯 Target profit personalizzabili",
+      "⚡ Esecuzione ultra-veloce"
+    ],
+    "requirements": [
+      "Capitale minimo: €1,000",
+      "VPS consigliato (incluso nel piano yearly)",
+      "Connessione internet stabile",
+      "Broker supportati: IC Markets, Pepperstone, XM"
+    ],
+    "platforms": [
+      "MetaTrader 4",
+      "MetaTrader 5",
+      "TradingView",
+      "cTrader"
+    ],
+    "metrics": {
+      "winRate": 60,
+      "avgProfit": 13.5
+    },
+    "version": "v2.0",
+    "fileSize": "1.48 MB",
+    "downloadUrl": "/downloads/fury-of-sparta-v2.0.zip",
+    "stripeProductId": null,
+    "stripePriceId": null,
+    "type": "subscription",
+    "interval": "month",
+    "trialDays": 60,
+    "active": true,
+    "popular": false,
+    "badge": "BEST SELLER",
+    "badgeColor": "red",
+    "category": "Bot Trading",
+    "image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&h=300&fit=crop",
+    "createdAt": "2025-09-05T23:08:56.656Z",
+    "updatedAt": "2025-10-23T03:03:00.199Z",
+    "stock": 0,
+    "comingSoon": false,
+    "launchDate": ""
+  },
+  {
+    "id": "spartan_academy",
+    "name": "SPARTAN CODEX ACADEMY",
+    "description": "Questa è una formazione per diventare trader Algoritmico Spartano in meno di 3 mesi!\nSenza avere alcuna conoscenza e competenza in programmazione MQL4 e MQL5.",
+    "price": 1500,
+    "originalPrice": 1997,
+    "currency": "eur",
+    "pricingPlans": {
+      "oneTime": {
+        "price": 1500,
+        "originalPrice": 1997,
+        "interval": "unico",
+        "savings": "",
+        "enabled": true
+      }
+    },
+    "features": [
+      "🎓 12 SETTIMANE DI FORMAZIONE",
+      "📹 139 LEZIONI + 24 ORE DI CONTENUTI VIDEO ",
+      "👨‍🏫 TEMPLATE PERFORMANTI PER CREAZIONE EXPERT ADVISOR (EA)",
+      "📚 ASSISTENZA TELEGRAM ",
+      "💬 COMMUNITY ESCLUSIVA A VITA PER TUTTI GLI STUDENTI",
+      "STRATEGIE PER CONTI REAL(LIVE)",
+      "STRATEGIE PER SUPERAMENTO E GESTIONE PROP FIRM",
+      "SCALATA AXI SELECT FINO A D 1 MILIONE + DARWINEX ZERO "
+    ],
+    "requirements": [
+      "Nessun requisito di capitale iniziale",
+      "Dedicare almeno 2 ore al giorno",
+      "Computer o tablet",
+      "Conoscenza base dell'inglese (materiale anche in italiano)"
+    ],
+    "platforms": [
+      "Piattaforma e-learning proprietaria",
+      "App mobile iOS/Android"
+    ],
+    "metrics": {
+      "winRate": 55.4,
+      "avgProfit": 5
+    },
+    "stripeProductId": null,
+    "stripePriceId": null,
+    "type": "one-time",
+    "interval": "month",
+    "trialDays": 11,
+    "active": true,
+    "popular": false,
+    "badge": "FORMAZIONE",
+    "badgeColor": "orange",
+    "category": "Formazione",
+    "image": "",
+    "createdAt": "2025-09-05T23:08:56.656Z",
+    "updatedAt": "2025-09-10T14:48:06.114Z",
+    "stock": 0,
+    "comingSoon": false,
+    "launchDate": ""
+  }
+]
