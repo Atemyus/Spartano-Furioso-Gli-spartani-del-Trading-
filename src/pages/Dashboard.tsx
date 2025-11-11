@@ -473,15 +473,19 @@ const Dashboard: React.FC = () => {
                   </div>
                 
                 <div className="flex gap-3">
-                  <Link 
-                    to={trial.productCategory === 'Formazione' 
-                      ? `/course/${trial.productId}/manage-trial` 
-                      : `/trial-activation/${trial.productId}`
-                    }
+                  <button
+                    onClick={() => {
+                      // Reindirizza direttamente alla pagina di gestione trial
+                      if (trial.productCategory === 'Formazione') {
+                        navigate(`/course/${trial.productId}/manage-trial`);
+                      } else {
+                        navigate(`/trial-activation/${trial.productId}`);
+                      }
+                    }}
                     className="flex-1 px-4 py-2 bg-green-600 rounded-lg font-bold text-white hover:bg-green-500 transition-colors text-center"
                   >
                     Gestisci Trial
-                  </Link>
+                  </button>
                   <Link
                     to={`/products?product=${trial.productId}`}
                     className="px-4 py-2 bg-yellow-600 rounded-lg font-bold text-white hover:bg-yellow-500 transition-colors"
@@ -796,15 +800,19 @@ const Dashboard: React.FC = () => {
 
                           {/* Actions */}
                           <div className="flex flex-col gap-2 min-w-[200px]">
-                            <Link 
-                              to={isCourse 
-                                ? `/course/${trial.productId}/manage-trial` 
-                                : `/trial-activation/${trial.productId}`
-                              }
+                            <button
+                              onClick={() => {
+                                // Reindirizza direttamente alla pagina di gestione trial
+                                if (isCourse) {
+                                  navigate(`/course/${trial.productId}/manage-trial`);
+                                } else {
+                                  navigate(`/trial-activation/${trial.productId}`);
+                                }
+                              }}
                               className="px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-500 transition-all text-center"
                             >
                               Gestisci Trial
-                            </Link>
+                            </button>
                             <Link
                               to={`/products?product=${trial.productId}`}
                               className="px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 transition-all text-center"
