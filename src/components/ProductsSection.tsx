@@ -116,8 +116,9 @@ const ProductsSection: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      // Aggiungo timestamp per evitare cache
-      const response = await fetch(`http://localhost:3001/api/products?t=${Date.now()}`, {
+      // Usa API_URL dalla configurazione
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache',
