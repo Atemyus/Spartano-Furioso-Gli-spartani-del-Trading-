@@ -44,6 +44,7 @@ interface Product {
   active: boolean;
   image?: string;
   category?: string;
+  displayCategory?: string; // Categoria mappata per display e filtering
   popular?: boolean;
   badge?: string | null;
   badgeColor?: string;

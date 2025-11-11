@@ -48,7 +48,7 @@ interface Product {
     days: number;
     features?: string[];
   };
-  status?: string;
+  status?: 'active' | 'coming-soon' | 'beta' | 'soldout';
 }
 
 interface ProductCardProps {

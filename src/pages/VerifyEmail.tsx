@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle, XCircle, Loader, Mail, RefreshCw } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Mail, RefreshCw } from 'lucide-react';
+import AnimatedPage from '../components/AnimatedPage';
+import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
 
 const VerifyEmail: React.FC = () => {
   const navigate = useNavigate();
@@ -8,6 +11,7 @@ const VerifyEmail: React.FC = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
+  const [isResending, setIsResending] = useState(false);
   
   const token = searchParams.get('token');
 
@@ -22,7 +26,7 @@ const VerifyEmail: React.FC = () => {
 
   const verifyEmail = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/verify-email', {
+      const response = await fetch(API_ENDPOINTS.verifyEmail, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -62,10 +66,10 @@ const VerifyEmail: React.FC = () => {
   const handleResendVerification = async () => {
     if (!email) return;
     
-    setStatus('loading');
+    setIsResending(true);
     
     try {
-      const response = await fetch('http://localhost:3001/api/auth/resend-verification', {
+      const response = await fetch(API_ENDPOINTS.resendVerification, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -79,12 +83,12 @@ const VerifyEmail: React.FC = () => {
         setStatus('success');
         setMessage('Email di verifica reinviata! Controlla la tua casella di posta.');
       } else {
-        setStatus('error');
         setMessage(data.error || 'Impossibile reinviare email di verifica');
       }
     } catch (error) {
-      setStatus('error');
       setMessage('Errore di connessione. Riprova più tardi.');
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -96,7 +100,7 @@ const VerifyEmail: React.FC = () => {
           <div className="flex justify-center mb-6">
             {status === 'loading' && (
               <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center animate-pulse">
-                <Loader className="w-10 h-10 text-blue-400 animate-spin" />
+                <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
               </div>
             )}
             {status === 'success' && (
@@ -169,11 +173,11 @@ const VerifyEmail: React.FC = () => {
 
               <button
                 onClick={handleResendVerification}
-                disabled={!email || status === 'loading'}
+                disabled={!email || isResending}
                 className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <RefreshCw className="w-5 h-5" />
-                <span>Reinvia Email di Verifica</span>
+                <RefreshCw className={`w-5 h-5 ${isResending ? 'animate-spin' : ''}`} />
+                <span>{isResending ? 'Invio in corso...' : 'Reinvia Email di Verifica'}</span>
               </button>
             </div>
           )}

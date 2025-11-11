@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Shield, Mail, Lock, Eye, EyeOff, Swords, Github, Chrome, AlertCircle } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ const Login: React.FC = () => {
     try {
       console.log('🔐 Tentativo di login con:', formData.email);
       
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch(API_ENDPOINTS.login, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

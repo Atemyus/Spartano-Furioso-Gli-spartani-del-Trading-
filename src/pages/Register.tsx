@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Shield, Mail, Lock, Eye, EyeOff, User, CheckCircle, AlertCircle } from 'lucide-react';
+import { Shield, Mail, Lock, User, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
-import { generateDeviceFingerprint } from '../utils/deviceFingerprint';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
+import { generateDeviceFingerprint } from '../utils/deviceFingerprint';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ const Register: React.FC = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const response = await fetch(API_ENDPOINTS.register, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
