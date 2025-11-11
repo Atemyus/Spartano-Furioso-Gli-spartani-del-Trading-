@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { CheckCircle, Loader2, XCircle, Home, Package, Shield } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CheckCircle, ArrowRight, Home } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 const Success: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState<string>('');
   const sessionId = searchParams.get('session_id');
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Success: React.FC = () => {
 
   const checkPaymentStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/stripe/verify-session/${sessionId}`);
+      const response = await fetch(API_ENDPOINTS.verifySession(sessionId));
       
       if (response.ok) {
         const data = await response.json();

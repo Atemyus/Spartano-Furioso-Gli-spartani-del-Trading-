@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
 import { 
   Shield, 
   Clock, 
@@ -67,7 +68,7 @@ const Trials: React.FC = () => {
   const fetchData = async () => {
     try {
       // Fetch prodotti disponibili per trial
-      const productsResponse = await fetch(`http://localhost:3001/api/products?t=${Date.now()}`, {
+      const productsResponse = await fetch(`${API_ENDPOINTS.products}?t=${Date.now()}`, {
         cache: 'no-cache'
       });
       
@@ -95,7 +96,7 @@ const Trials: React.FC = () => {
 
   const startTrial = async (productId: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/trials/start', {
+      const response = await fetch(API_ENDPOINTS.startTrialNew, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

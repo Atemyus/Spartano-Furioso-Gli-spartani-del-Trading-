@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import { 
   ArrowLeft, 
   PlayCircle, 
@@ -22,7 +23,6 @@ interface Product {
 
 const TutorialParameters: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +35,7 @@ const TutorialParameters: React.FC = () => {
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/products?t=${Date.now()}`);
+      const response = await fetch(`${API_ENDPOINTS.products}?t=${Date.now()}`, {});
       if (response.ok) {
         const products = await response.json();
         const foundProduct = products.find((p: Product) => p.id === productId);

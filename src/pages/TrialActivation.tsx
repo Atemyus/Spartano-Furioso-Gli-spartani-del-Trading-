@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
 import { 
   Shield, 
   Download, 
@@ -77,7 +78,7 @@ const TrialActivation: React.FC = () => {
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/products?t=${Date.now()}`);
+      const response = await fetch(`${API_ENDPOINTS.products}?t=${Date.now()}`, {});
       if (response.ok) {
         const products = await response.json();
         const foundProduct = products.find((p: Product) => p.id === productId);
@@ -101,7 +102,7 @@ const TrialActivation: React.FC = () => {
   const checkTrialStatus = async (productId: string, productData?: Product) => {
     try {
       // Check if trial exists using the correct endpoint
-      const response = await fetch(`http://localhost:3001/api/trials/check/${productId}`, {
+      const response = await fetch(API_ENDPOINTS.checkTrial(productId), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -143,7 +144,7 @@ const TrialActivation: React.FC = () => {
       if (!product) return;
       
       // Chiamata API per attivare il trial
-      const response = await fetch('http://localhost:3001/api/products/start-trial', {
+      const response = await fetch(API_ENDPOINTS.startTrial, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

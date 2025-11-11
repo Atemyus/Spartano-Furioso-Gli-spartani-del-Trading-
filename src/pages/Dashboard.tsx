@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS, API_URL } from '../config/api';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -120,7 +121,7 @@ const Dashboard: React.FC = () => {
     }
     
     try {
-      const response = await fetch('http://localhost:3001/api/auth/update-profile', {
+      const response = await fetch(API_ENDPOINTS.updateProfile, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -184,7 +185,7 @@ const Dashboard: React.FC = () => {
       for (const trial of courseTrials) {
         try {
           const response = await fetch(
-            `http://localhost:3001/api/courses/${trial.productId}/progress/${userData.id}`,
+            `${API_URL}/api/courses/${trial.productId}/progress/${userData.id}`,
             { headers: { 'Authorization': `Bearer ${token}` } }
           );
           
@@ -214,7 +215,7 @@ const Dashboard: React.FC = () => {
     
     try {
       // Carica i trial dell'utente
-      const trialsResponse = await fetch('http://localhost:3001/api/trials/user', {
+      const trialsResponse = await fetch(API_ENDPOINTS.userTrials, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -227,7 +228,7 @@ const Dashboard: React.FC = () => {
       }
       
       // Carica gli abbonamenti dell'utente
-      const subsResponse = await fetch('http://localhost:3001/api/trials/subscriptions', {
+      const subsResponse = await fetch(API_ENDPOINTS.subscriptions, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -239,7 +240,7 @@ const Dashboard: React.FC = () => {
       }
       
       // Carica il numero totale di prodotti disponibili
-      const productsResponse = await fetch('http://localhost:3001/api/products');
+      const productsResponse = await fetch(API_ENDPOINTS.products);
       if (productsResponse.ok) {
         const productsData = await productsResponse.json();
         setTotalProducts(productsData.length);

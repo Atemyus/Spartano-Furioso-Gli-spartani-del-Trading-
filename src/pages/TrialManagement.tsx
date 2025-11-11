@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { API_ENDPOINTS } from '../config/api';
 import { 
   Shield, 
   Download, 
@@ -108,7 +109,7 @@ const TrialManagement: React.FC = () => {
   const fetchData = async () => {
     try {
       // Fetch product data
-      const productResponse = await fetch(`http://localhost:3001/api/products?t=${Date.now()}`);
+      const productResponse = await fetch(`${API_ENDPOINTS.products}?t=${Date.now()}`, {});
       if (productResponse.ok) {
         const products = await productResponse.json();
         const foundProduct = products.find((p: Product) => p.id === productId);
@@ -123,7 +124,7 @@ const TrialManagement: React.FC = () => {
       }
 
       // Fetch trial data
-      const trialResponse = await fetch(`http://localhost:3001/api/trials/check/${productId}`, {
+      const trialResponse = await fetch(API_ENDPOINTS.checkTrial(productId!), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

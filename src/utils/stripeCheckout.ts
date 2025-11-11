@@ -1,3 +1,5 @@
+import { API_ENDPOINTS } from '../config/api';
+
 interface CheckoutParams {
   productId: string;
   productName: string;
@@ -28,7 +30,7 @@ export const initializeStripeCheckout = async (params: CheckoutParams) => {
     const token = localStorage.getItem('token');
     const userEmail = localStorage.getItem('userEmail') || customerEmail;
     
-    const response = await fetch('http://localhost:3001/api/stripe/create-checkout-session', {
+    const response = await fetch(API_ENDPOINTS.createCheckoutSession, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,3 +1,5 @@
+import { API_ENDPOINTS } from '../config/api';
+
 // Utility function to fix all products and make them active
 export const fixAllProducts = async () => {
   try {
@@ -10,7 +12,7 @@ export const fixAllProducts = async () => {
     }
 
     // Call the fix endpoint
-    const response = await fetch('http://localhost:3001/api/admin/products/fix-active', {
+    const response = await fetch(API_ENDPOINTS.adminProductsFix, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${adminToken}`,
@@ -38,7 +40,7 @@ export const fixAllProducts = async () => {
 export const emergencyFixProducts = async () => {
   try {
     // Get all products
-    const response = await fetch('http://localhost:3001/api/products');
+    const response = await fetch(API_ENDPOINTS.products);
     const products = await response.json();
     
     console.log('Current products status:');
@@ -77,7 +79,7 @@ export const restoreProductData = async () => {
     console.log('Restoring product data...');
     
     // Call the restore endpoint
-    const response = await fetch('http://localhost:3001/api/admin/products/restore-data', {
+    const response = await fetch(API_ENDPOINTS.adminProductsRestore, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${adminToken}`,
