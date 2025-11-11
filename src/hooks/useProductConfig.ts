@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 
 interface ProductConfig {
   platforms?: string[];
@@ -24,7 +24,7 @@ export const useProductConfig = (productId: string | undefined) => {
     const loadConfig = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3001/api/products/${productId}/config`);
+        const response = await fetch(`https://api.spartanofurioso.com/api/products/${productId}/config`);
         
         if (response.ok) {
           const data = await response.json();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, TrendingUp, Users, Mail, ArrowRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -15,7 +15,7 @@ const Community = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/newsletter/subscribe', {
+      const response = await fetch('https://api.spartanofurioso.com/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

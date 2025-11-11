@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 
 interface TrialStatus {
   hasTrial: boolean;
@@ -34,7 +34,7 @@ export const useTrialStatus = (productId: string): TrialStatus => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3001/api/products/trial-status/${productId}`, {
+        const response = await fetch(`https://api.spartanofurioso.com/api/products/trial-status/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

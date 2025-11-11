@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
@@ -52,7 +52,7 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/admin/stats', {
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/stats', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 
 const TestDataFetch: React.FC = () => {
   const [productData, setProductData] = useState<any>(null);
@@ -9,7 +9,7 @@ const TestDataFetch: React.FC = () => {
     const fetchTestData = async () => {
       try {
         // Test fetching product list
-        const response = await fetch('http://localhost:3001/api/products');
+        const response = await fetch('https://api.spartanofurioso.com/api/products');
         if (!response.ok) throw new Error('Failed to fetch');
         const products = await response.json();
         

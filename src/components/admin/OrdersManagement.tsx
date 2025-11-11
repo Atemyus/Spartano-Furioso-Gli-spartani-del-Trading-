@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   Package,
   TrendingUp,
@@ -71,7 +71,7 @@ export default function OrdersManagement() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/orders');
+      const response = await fetch('https://api.spartanofurioso.com/api/orders');
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -92,7 +92,7 @@ export default function OrdersManagement() {
     if (!selectedOrder) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/orders/${selectedOrder.id}/confirm`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/orders/${selectedOrder.id}/confirm`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ export default function OrdersManagement() {
     if (!confirm('Sei sicuro di voler annullare questo ordine?')) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/orders/${orderId}/cancel`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/orders/${orderId}/cancel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -143,7 +143,7 @@ export default function OrdersManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/orders/stats');
+      const response = await fetch('https://api.spartanofurioso.com/api/orders/stats');
       if (response.ok) {
         const data = await response.json();
         setStats(data);

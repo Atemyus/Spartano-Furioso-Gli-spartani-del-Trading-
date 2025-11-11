@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   CreditCard,
   TrendingUp,
@@ -69,7 +69,7 @@ export default function SubscriptionsManagement() {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/subscriptions');
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/subscriptions');
       if (response.ok) {
         const data = await response.json();
         setSubscriptions(data.subscriptions || []);
@@ -83,7 +83,7 @@ export default function SubscriptionsManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/subscriptions/stats');
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/subscriptions/stats');
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats || null);
@@ -106,7 +106,7 @@ export default function SubscriptionsManagement() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/subscriptions/${subscriptionId}/cancel`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/subscriptions/${subscriptionId}/cancel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -129,7 +129,7 @@ export default function SubscriptionsManagement() {
 
   const handlePauseSubscription = async (subscriptionId: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/subscriptions/${subscriptionId}/pause`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/subscriptions/${subscriptionId}/pause`, {
         method: 'POST'
       });
 
@@ -144,7 +144,7 @@ export default function SubscriptionsManagement() {
 
   const handleResumeSubscription = async (subscriptionId: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/subscriptions/${subscriptionId}/resume`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/subscriptions/${subscriptionId}/resume`, {
         method: 'POST'
       });
 

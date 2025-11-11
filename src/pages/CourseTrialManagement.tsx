@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import {
@@ -75,7 +75,7 @@ const CourseTrialManagement: React.FC = () => {
 
       // Get course modules from API
       try {
-        const courseContentResponse = await fetch(`http://localhost:3001/api/courses/${courseId}/content`);
+        const courseContentResponse = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
         if (courseContentResponse.ok) {
           const courseContent = await courseContentResponse.json();
           console.log('📖 Course content loaded:', courseContent);
@@ -96,7 +96,7 @@ const CourseTrialManagement: React.FC = () => {
       }
 
       // Check trial status
-      const response = await fetch(`http://localhost:3001/api/trials/check/${courseId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -128,7 +128,7 @@ const CourseTrialManagement: React.FC = () => {
     
     if (token && user.id) {
       try {
-        const response = await fetch(`http://localhost:3001/api/courses/${courseId}/progress/${user.id}`, {
+        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress/${user.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         

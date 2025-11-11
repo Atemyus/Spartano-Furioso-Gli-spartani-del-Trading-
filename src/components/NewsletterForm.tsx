@@ -29,7 +29,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
     setErrorMessage('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
       const response = await fetch(`${API_URL}/api/newsletter/subscribe`, {
         method: 'POST',
         headers: {

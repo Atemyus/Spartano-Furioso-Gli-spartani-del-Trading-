@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Search, 
@@ -53,7 +53,7 @@ const UsersManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:3001/api/admin/users', {
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -79,7 +79,7 @@ const UsersManagement: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const response = await fetch('https://api.spartanofurioso.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/admin/users/${selectedUser.id}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -151,7 +151,7 @@ const UsersManagement: React.FC = () => {
   const handleSuspendUser = async (userId: string) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

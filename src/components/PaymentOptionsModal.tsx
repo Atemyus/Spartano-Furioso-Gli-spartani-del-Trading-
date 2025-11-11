@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, CreditCard, Wallet, Bitcoin, Clock, CheckCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -41,7 +41,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       if (plan === 'monthly') interval = 'month';
       else if (plan === 'yearly') interval = 'year';
       
-      const response = await fetch('http://localhost:3001/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     try {
       const userEmail = localStorage.getItem('userEmail');
       
-      const response = await fetch('http://localhost:3001/api/payments/paypal/create-order', {
+      const response = await fetch('https://api.spartanofurioso.com/api/payments/paypal/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -126,7 +126,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     try {
       const userEmail = localStorage.getItem('userEmail');
       
-      const response = await fetch('http://localhost:3001/api/payments/crypto/create-charge', {
+      const response = await fetch('https://api.spartanofurioso.com/api/payments/crypto/create-charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

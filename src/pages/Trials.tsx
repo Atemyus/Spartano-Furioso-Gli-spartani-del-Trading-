@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { API_ENDPOINTS } from '../config/api';
@@ -80,7 +80,7 @@ const Trials: React.FC = () => {
       }
 
       // TODO: Fetch trial attivi dell'utente
-      // const trialsResponse = await fetch('http://localhost:3001/api/user/trials', {
+      // const trialsResponse = await fetch('https://api.spartanofurioso.com/api/user/trials', {
       //   headers: { 'Authorization': `Bearer ${token}` }
       // });
       // if (trialsResponse.ok) {

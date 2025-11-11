@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { 
@@ -107,7 +107,7 @@ const CourseTrialActivation: React.FC = () => {
     
     try {
       console.log('CourseTrialActivation: Fetching course with ID:', courseId);
-      const response = await fetch(`http://localhost:3001/api/products/${courseId}`);
+      const response = await fetch(`https://api.spartanofurioso.com/api/products/${courseId}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -123,7 +123,7 @@ const CourseTrialActivation: React.FC = () => {
         
         // Carica i moduli REALI dal database
         try {
-          const modulesResponse = await fetch(`http://localhost:3001/api/courses/${courseId}/content`);
+          const modulesResponse = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
           if (modulesResponse.ok) {
             const modulesData = await modulesResponse.json();
             console.log('CourseTrialActivation: Real modules loaded from database:', modulesData);
@@ -273,7 +273,7 @@ const CourseTrialActivation: React.FC = () => {
 
   const checkTrialStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/trials/check/${courseId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -308,7 +308,7 @@ const CourseTrialActivation: React.FC = () => {
     
     setActivating(true);
     try {
-      const response = await fetch('http://localhost:3001/api/trials/start', {
+      const response = await fetch('https://api.spartanofurioso.com/api/trials/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

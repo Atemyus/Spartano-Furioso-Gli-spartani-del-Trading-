@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, RefreshCw, Shield } from 'lucide-react';
 
@@ -29,7 +29,7 @@ const AuthDebug: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/verify-token', {
+      const response = await fetch('https://api.spartanofurioso.com/api/auth/verify-token', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

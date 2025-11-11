@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -96,7 +96,7 @@ const CourseViewer: React.FC = () => {
   const loadCourseContent = async () => {
     try {
       console.log('Loading course content for:', courseId);
-      const response = await fetch(`http://localhost:3001/api/courses/${courseId}/content`);
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
       console.log('Response status:', response.status);
       
       if (response.ok) {
@@ -156,7 +156,7 @@ const CourseViewer: React.FC = () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const response = await fetch(`http://localhost:3001/api/trials/check/${courseId}`, {
+        const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -174,7 +174,7 @@ const CourseViewer: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (token && user.id) {
       try {
-        const response = await fetch(`http://localhost:3001/api/courses/${courseId}/progress/${user.id}`, {
+        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress/${user.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -193,7 +193,7 @@ const CourseViewer: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (token && user.id) {
       try {
-        const response = await fetch(`http://localhost:3001/api/courses/${courseId}/progress`, {
+        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -545,7 +545,7 @@ const CourseViewer: React.FC = () => {
                       className="w-full h-full bg-black"
                       style={{ border: 0 }}
                     >
-                      <source src={`http://localhost:3001${(currentLesson as any).videoUrl}`} type="video/mp4" />
+                      <source src={`https://api.spartanofurioso.com${(currentLesson as any).videoUrl}`} type="video/mp4" />
                       Il tuo browser non supporta il tag video.
                     </video>
                   ) : currentLesson.vimeoId && currentLesson.vimeoId !== '123456789' ? (
@@ -626,7 +626,7 @@ const CourseViewer: React.FC = () => {
                     >
                       {currentLesson.downloadButton.fileUrl ? (
                         <a
-                          href={`http://localhost:3001/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`}
+                          href={`https://api.spartanofurioso.com/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`}
                           className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

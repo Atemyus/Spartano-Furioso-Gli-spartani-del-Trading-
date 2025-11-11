@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Shield } from 'lucide-react';
 
@@ -15,7 +15,7 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/admin/login', {
+      const response = await fetch('https://api.spartanofurioso.com/api/auth/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
@@ -133,7 +133,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
     // Prima controlla se ha già un trial attivo
     try {
-      const response = await fetch(`http://localhost:3001/api/products/trial-status/${product.id}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/products/trial-status/${product.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

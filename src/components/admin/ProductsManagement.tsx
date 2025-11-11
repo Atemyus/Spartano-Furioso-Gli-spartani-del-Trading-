@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Package,
   Plus,
@@ -146,7 +146,7 @@ const ProductsManagement: React.FC = () => {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:3001/api/admin/products', {
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/products', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -170,7 +170,7 @@ const ProductsManagement: React.FC = () => {
 
   const loadProductPlatforms = async (productId: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/products/${productId}/config`);
+      const response = await fetch(`https://api.spartanofurioso.com/api/products/${productId}/config`);
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.config.platforms) {
@@ -187,7 +187,7 @@ const ProductsManagement: React.FC = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/products/${selectedProduct.id}/platforms`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/products/${selectedProduct.id}/platforms`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +253,7 @@ const ProductsManagement: React.FC = () => {
         pricingPlans: Object.keys(enabledPlans).length > 0 ? enabledPlans : undefined
       };
 
-      const response = await fetch('http://localhost:3001/api/admin/products', {
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -318,7 +318,7 @@ const ProductsManagement: React.FC = () => {
       console.log('Dati da salvare (update):', productData);
       console.log('Piani abilitati:', enabledPlans);
 
-      const response = await fetch(`http://localhost:3001/api/admin/products/${selectedProduct.id}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${selectedProduct.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -342,7 +342,7 @@ const ProductsManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/admin/products/${productId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -365,7 +365,7 @@ const ProductsManagement: React.FC = () => {
   const handleToggleActive = async (productId: string, currentStatus: boolean) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:3001/api/admin/products/${productId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

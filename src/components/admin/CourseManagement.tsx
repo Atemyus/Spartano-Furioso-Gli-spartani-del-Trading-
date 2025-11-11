@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Plus,
   Edit3,
@@ -110,7 +110,7 @@ const CourseManagement: React.FC = () => {
     const token = localStorage.getItem('token');
     try {
       console.log('Loading all courses');
-      const response = await fetch('http://localhost:3001/api/courses/all', {
+      const response = await fetch('https://api.spartanofurioso.com/api/courses/all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -151,7 +151,7 @@ const CourseManagement: React.FC = () => {
   const loadCourseContent = async (courseId: string) => {
     try {
       console.log('Loading course:', courseId);
-      const response = await fetch(`http://localhost:3001/api/courses/${courseId}/content`);
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
       console.log('Response status:', response.status);
       
       if (response.ok) {
@@ -205,7 +205,7 @@ const CourseManagement: React.FC = () => {
           }))
       };
 
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module/${moduleId}/lesson`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module/${moduleId}/lesson`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -250,7 +250,7 @@ const CourseManagement: React.FC = () => {
         }))
       };
 
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module/${moduleId}/lesson/${lessonId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module/${moduleId}/lesson/${lessonId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -278,7 +278,7 @@ const CourseManagement: React.FC = () => {
     setSaving(true);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module/${moduleId}/lesson/${lessonId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module/${moduleId}/lesson/${lessonId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -304,7 +304,7 @@ const CourseManagement: React.FC = () => {
     setSaving(true);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/content`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/content`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -336,7 +336,7 @@ const CourseManagement: React.FC = () => {
     setSaving(true);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module/${moduleId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module/${moduleId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -366,7 +366,7 @@ const CourseManagement: React.FC = () => {
         insertBeforeOrder
       };
 
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -403,7 +403,7 @@ const CourseManagement: React.FC = () => {
     setSaving(true);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/courses/${selectedCourse}/module/${moduleId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${selectedCourse}/module/${moduleId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -892,7 +892,7 @@ const CourseManagement: React.FC = () => {
                                   
                                   try {
                                     const token = localStorage.getItem('token');
-                                    const response = await fetch('http://localhost:3001/api/upload', {
+                                    const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                       method: 'POST',
                                       headers: {
                                         'Authorization': `Bearer ${token}`
@@ -972,7 +972,7 @@ const CourseManagement: React.FC = () => {
                                       
                                       try {
                                         const token = localStorage.getItem('token');
-                                        const response = await fetch('http://localhost:3001/api/upload', {
+                                        const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                           method: 'POST',
                                           headers: {
                                             'Authorization': `Bearer ${token}`
@@ -1144,7 +1144,7 @@ const CourseManagement: React.FC = () => {
                                     try {
                                       console.log('📤 Uploading file:', file.name);
                                       
-                                      const response = await fetch('http://localhost:3001/api/upload', {
+                                      const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                         method: 'POST',
                                         body: formData
                                       });
@@ -1217,7 +1217,7 @@ const CourseManagement: React.FC = () => {
                                           
                                           try {
                                             const token = localStorage.getItem('token');
-                                            const response = await fetch('http://localhost:3001/api/upload', {
+                                            const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                               method: 'POST',
                                               headers: {
                                                 'Authorization': `Bearer ${token}`

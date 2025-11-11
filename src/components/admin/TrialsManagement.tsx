@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Clock, 
   Users, 
@@ -55,7 +55,7 @@ const TrialsManagement: React.FC = () => {
   const fetchData = async () => {
     try {
       // Fetch prodotti
-      const productsRes = await fetch('http://localhost:3001/api/products');
+      const productsRes = await fetch('https://api.spartanofurioso.com/api/products');
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData.filter((p: Product) => p.trialDays > 0));
@@ -71,7 +71,7 @@ const TrialsManagement: React.FC = () => {
       console.log('User token:', userToken ? 'Present' : 'Not found');
       
       if (token) {
-        const trialsRes = await fetch('http://localhost:3001/api/trials/admin/all', {
+        const trialsRes = await fetch('https://api.spartanofurioso.com/api/trials/admin/all', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -171,7 +171,7 @@ const TrialsManagement: React.FC = () => {
         return;
       }
       
-      const response = await fetch(`http://localhost:3001/api/trials/admin/${trialId}`, {
+      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

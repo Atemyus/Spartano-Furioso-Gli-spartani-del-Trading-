@@ -118,7 +118,7 @@ const ProductsSection: React.FC = () => {
   const fetchProducts = async () => {
     try {
       // Usa API_URL dalla configurazione
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
       const response = await fetch(`${apiUrl}/api/products?t=${Date.now()}`, {
         cache: 'no-cache',
         headers: {

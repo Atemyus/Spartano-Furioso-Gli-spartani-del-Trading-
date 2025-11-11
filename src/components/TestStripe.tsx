@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CreditCard, CheckCircle, XCircle } from 'lucide-react';
 
 const TestStripe = () => {
@@ -10,7 +10,7 @@ const TestStripe = () => {
     setResult(null);
     
     try {
-      const response = await fetch('http://localhost:3001/api/stripe/config');
+      const response = await fetch('https://api.spartanofurioso.com/api/stripe/config');
       const data = await response.json();
       
       if (data.publishableKey && data.publishableKey !== 'pk_test_your_stripe_publishable_key') {
@@ -39,7 +39,7 @@ const TestStripe = () => {
     setResult(null);
     
     try {
-      const response = await fetch('http://localhost:3001/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
