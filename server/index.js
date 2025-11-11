@@ -31,12 +31,6 @@ if (process.env.DATABASE_URL.startsWith('file:')) {
   console.warn('⚠️  Database type non riconosciuto');
 }
 
-// Auto-setup per Railway (MongoDB)
-import autoSetup from './scripts/autoSetup.js';
-if (process.env.DATABASE_URL?.startsWith('mongodb')) {
-  autoSetup().catch(err => console.error('Auto-setup error:', err));
-}
-
 // Routes imports
 import stripeRoutes from './routes/stripe.js';
 import stripeWebhookRoutes from './routes/stripe-webhook.js';
