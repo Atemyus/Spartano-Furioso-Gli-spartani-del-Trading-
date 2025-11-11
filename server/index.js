@@ -14,12 +14,21 @@ dotenv.config({ path: join(__dirname, '.env') });
 
 // Verifica DATABASE_URL all'avvio
 console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL);
-if (!process.env.DATABASE_URL || !process.env.DATABASE_URL.startsWith('file:')) {
-  console.error('❌ ERRORE: DATABASE_URL non configurato correttamente!');
-  console.error('   Valore attuale:', process.env.DATABASE_URL);
-  console.error('   Dovrebbe essere: "file:./dev.db"');
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERRORE: DATABASE_URL non configurato!');
   console.error('   File .env path:', join(__dirname, '.env'));
   process.exit(1);
+}
+
+// Verifica tipo di database
+if (process.env.DATABASE_URL.startsWith('file:')) {
+  console.log('✅ Database: SQLite');
+} else if (process.env.DATABASE_URL.startsWith('mongodb')) {
+  console.log('✅ Database: MongoDB');
+} else if (process.env.DATABASE_URL.startsWith('postgresql')) {
+  console.log('✅ Database: PostgreSQL');
+} else {
+  console.warn('⚠️  Database type non riconosciuto');
 }
 
 // Routes imports

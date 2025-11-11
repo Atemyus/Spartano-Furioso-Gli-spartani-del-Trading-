@@ -20,13 +20,18 @@ console.log('FRONTEND_URL:', process.env.FRONTEND_URL || '❌ NON TROVATA');
 if (!process.env.DATABASE_URL) {
   console.log('\n❌ ERRORE: DATABASE_URL non trovata!');
   console.log('📝 Assicurati che server/.env contenga:');
-  console.log('   DATABASE_URL="file:./dev.db"');
-} else if (!process.env.DATABASE_URL.startsWith('file:')) {
-  console.log('\n⚠️  WARNING: DATABASE_URL non inizia con "file:"');
-  console.log('   Valore attuale:', process.env.DATABASE_URL);
-  console.log('   Dovrebbe essere: "file:./dev.db"');
+  console.log('   DATABASE_URL="file:./dev.db" (SQLite)');
+  console.log('   oppure');
+  console.log('   DATABASE_URL="mongodb+srv://..." (MongoDB)');
+} else if (process.env.DATABASE_URL.startsWith('file:')) {
+  console.log('\n✅ Configurazione corretta! (SQLite)');
+} else if (process.env.DATABASE_URL.startsWith('mongodb')) {
+  console.log('\n✅ Configurazione corretta! (MongoDB)');
+} else if (process.env.DATABASE_URL.startsWith('postgresql')) {
+  console.log('\n✅ Configurazione corretta! (PostgreSQL)');
 } else {
-  console.log('\n✅ Configurazione corretta!');
+  console.log('\n⚠️  WARNING: DATABASE_URL formato non riconosciuto');
+  console.log('   Valore attuale:', process.env.DATABASE_URL);
 }
 
 console.log('\n');

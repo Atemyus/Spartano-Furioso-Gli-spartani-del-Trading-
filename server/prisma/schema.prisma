@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                        String    @id @default(uuid())
+  id                        String    @id @default(auto()) @map("_id") @db.ObjectId
   email                     String    @unique
   password                  String
   name                      String?
@@ -26,15 +26,15 @@ model User {
   createdAt                 DateTime  @default(now())
   trials                    Trial[]
   
-  @@index([email])
   @@index([role])
   @@index([verificationToken])
   @@index([resetPasswordToken])
+  @@map("users")
 }
 
 model Trial {
-  id            String   @id @default(uuid())
-  userId        String
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @db.ObjectId
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId     String
   productName   String
@@ -48,10 +48,11 @@ model Trial {
 
   @@index([userId, status])
   @@index([productId])
+  @@map("trials")
 }
 
 model Newsletter {
-  id          String   @id @default(uuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   email       String   @unique
   name        String?
   status      String   @default("ACTIVE") // ACTIVE, UNSUBSCRIBED
@@ -59,12 +60,12 @@ model Newsletter {
   subscribedAt DateTime @default(now())
   unsubscribedAt DateTime?
   
-  @@index([email])
   @@index([status])
+  @@map("newsletters")
 }
 
 model NewsletterMessage {
-  id          String   @id @default(uuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   subject     String
   content     String   // HTML content
   type        String   @default("promotional") // promotional, educational, announcement
@@ -79,5 +80,82 @@ model NewsletterMessage {
   
   @@index([status])
   @@index([scheduledFor])
+  @@map("newsletter_messages")
+}
+
+model Product {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId         String   @unique // spartan_fury_bot, etc.
+  name              String
+  description       String
+  price             Float
+  originalPrice     Float?
+  currency          String   @default("eur")
+  pricingPlans      Json     // { monthly: {...}, yearly: {...}, lifetime: {...} }
+  features          String[]
+  requirements      String[]
+  platforms         String[]
+  metrics           Json?    // { winRate: 87, avgProfit: 22.3, ... }
+  stripeProductId   String?
+  stripePriceId     String?
+  type              String   // subscription, one-time
+  interval          String?  // month, year
+  trialDays         Int      @default(60)
+  active            Boolean  @default(true)
+  popular           Boolean  @default(false)
+  badge             String?
+  badgeColor        String?
+  category          String
+  image             String?
+  comingSoon        Boolean  @default(false)
+  launchDate        String?
+  courseModules     Json?    // Per SPARTAN ACADEMY
+  totalModules      Int?
+  totalLessons      Int?
+  totalDuration     String?
+  trialModules      Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([category])
+  @@index([active])
+  @@map("products")
+}
+
+model Order {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  amount          Float
+  currency        String   @default("eur")
+  items           Json     // Array of items
+  status          String   @default("pending") // pending, completed, failed, cancelled
+  notes           String?
+  stripeSessionId String?
+  stripePaymentId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([stripeSessionId])
+  @@map("orders")
+}
+
+model Subscription {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String   @db.ObjectId
+  productId             String
+  status                String   @default("active") // active, cancelled, expired
+  stripeSubscriptionId  String?  @unique
+  stripeCustomerId      String?
+  startDate             DateTime
+  endDate               DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@map("subscriptions")
 }
 

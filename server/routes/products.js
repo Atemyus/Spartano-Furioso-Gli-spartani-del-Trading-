@@ -38,11 +38,54 @@ async function saveProductConfigs(data) {
   }
 }
 
+// Initialize products (public endpoint for Railway setup)
+router.post('/initialize', (req, res) => {
+  try {
+    const products = db.getAllProducts();
+    
+    if (products.length === 0) {
+      console.log('🔧 Initializing products...');
+      db.initializeProducts();
+      const newProducts = db.getAllProducts();
+      
+      return res.json({
+        success: true,
+        message: 'Products initialized successfully',
+        count: newProducts.length,
+        products: newProducts
+      });
+    } else {
+      return res.json({
+        success: true,
+        message: 'Products already initialized',
+        count: products.length,
+        products: products
+      });
+    }
+  } catch (error) {
+    console.error('Error initializing products:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to initialize products',
+      message: error.message 
+    });
+  }
+});
+
 // Get all active products (public endpoint)
 router.get('/', (req, res) => {
   try {
     // Get only active products for public view
     const activeProducts = db.getAllProducts(true);
+    
+    // Se non ci sono prodotti, inizializza automaticamente
+    if (activeProducts.length === 0) {
+      console.log('⚠️  No products found, initializing...');
+      db.initializeProducts();
+      const newProducts = db.getAllProducts(true);
+      return res.json(newProducts);
+    }
+    
     res.json(activeProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
