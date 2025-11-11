@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Shield, Loader2 } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       }
 
       // Verifica il token con il backend
-      const response = await fetch('http://localhost:3001/api/auth/verify-token', {
+      const response = await fetch(`${API_URL}/api/auth/verify-token`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
