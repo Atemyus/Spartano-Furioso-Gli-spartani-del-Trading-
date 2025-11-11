@@ -38,6 +38,43 @@ async function saveProductConfigs(data) {
   }
 }
 
+// Reload products from file (force reload)
+router.post('/reload', async (req, res) => {
+  try {
+    console.log('🔄 Force reloading products from file...');
+    
+    // Force reload from persistence file
+    const persistence = await import('../database/persistence.js');
+    const savedProducts = persistence.default.loadProducts();
+    
+    if (savedProducts && savedProducts.length > 0) {
+      // Update database in memory
+      db.products = savedProducts;
+      console.log(`✅ Reloaded ${savedProducts.length} products from file`);
+      
+      return res.json({
+        success: true,
+        message: 'Products reloaded from file successfully',
+        count: savedProducts.length,
+        products: savedProducts
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: 'No products found in file',
+        count: 0
+      });
+    }
+  } catch (error) {
+    console.error('Error reloading products:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to reload products',
+      message: error.message 
+    });
+  }
+});
+
 // Initialize products (public endpoint for Railway setup)
 router.post('/initialize', (req, res) => {
   try {
@@ -72,23 +109,62 @@ router.post('/initialize', (req, res) => {
   }
 });
 
-// Get all active products (public endpoint)
-router.get('/', (req, res) => {
+// Get all active products (public endpoint) - USA PRISMA/MONGODB
+router.get('/', async (req, res) => {
   try {
-    // Get only active products for public view
-    const activeProducts = db.getAllProducts(true);
+    console.log('📦 Fetching products from MongoDB...');
     
-    // Se non ci sono prodotti, inizializza automaticamente
-    if (activeProducts.length === 0) {
-      console.log('⚠️  No products found, initializing...');
-      db.initializeProducts();
-      const newProducts = db.getAllProducts(true);
-      return res.json(newProducts);
-    }
+    // Get only active products from MongoDB
+    const products = await prisma.product.findMany({
+      where: {
+        active: true
+      },
+      orderBy: [
+        { popular: 'desc' },
+        { createdAt: 'desc' }
+      ]
+    });
     
-    res.json(activeProducts);
+    console.log(`✅ Found ${products.length} active products in MongoDB`);
+    
+    // Transform MongoDB products to match frontend format
+    const transformedProducts = products.map(p => ({
+      id: p.productId,
+      name: p.name,
+      description: p.description,
+      price: p.price,
+      originalPrice: p.originalPrice,
+      currency: p.currency,
+      pricingPlans: p.pricingPlans,
+      features: p.features,
+      requirements: p.requirements,
+      platforms: p.platforms,
+      metrics: p.metrics,
+      stripeProductId: p.stripeProductId,
+      stripePriceId: p.stripePriceId,
+      type: p.type,
+      interval: p.interval,
+      trialDays: p.trialDays,
+      active: p.active,
+      popular: p.popular,
+      badge: p.badge,
+      badgeColor: p.badgeColor,
+      category: p.category,
+      image: p.image,
+      comingSoon: p.comingSoon,
+      launchDate: p.launchDate,
+      courseModules: p.courseModules,
+      totalModules: p.totalModules,
+      totalLessons: p.totalLessons,
+      totalDuration: p.totalDuration,
+      trialModules: p.trialModules,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
+    }));
+    
+    res.json(transformedProducts);
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('❌ Error fetching products from MongoDB:', error);
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
@@ -121,17 +197,58 @@ router.get('/:productId/config', async (req, res) => {
   }
 });
 
-// Get product by ID (public endpoint)
-router.get('/:id', (req, res) => {
+// Get product by ID (public endpoint) - USA PRISMA/MONGODB
+router.get('/:id', async (req, res) => {
   try {
-    const product = db.getProductById(req.params.id);
+    const product = await prisma.product.findUnique({
+      where: {
+        productId: req.params.id
+      }
+    });
+    
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
     if (!product.active) {
       return res.status(404).json({ error: 'Product not available' });
     }
-    res.json(product);
+    
+    // Transform to match frontend format
+    const transformedProduct = {
+      id: product.productId,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      currency: product.currency,
+      pricingPlans: product.pricingPlans,
+      features: product.features,
+      requirements: product.requirements,
+      platforms: product.platforms,
+      metrics: product.metrics,
+      stripeProductId: product.stripeProductId,
+      stripePriceId: product.stripePriceId,
+      type: product.type,
+      interval: product.interval,
+      trialDays: product.trialDays,
+      active: product.active,
+      popular: product.popular,
+      badge: product.badge,
+      badgeColor: product.badgeColor,
+      category: product.category,
+      image: product.image,
+      comingSoon: product.comingSoon,
+      launchDate: product.launchDate,
+      courseModules: product.courseModules,
+      totalModules: product.totalModules,
+      totalLessons: product.totalLessons,
+      totalDuration: product.totalDuration,
+      trialModules: product.trialModules,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt
+    };
+    
+    res.json(transformedProduct);
   } catch (error) {
     console.error('Error fetching product:', error);
     res.status(500).json({ error: 'Failed to fetch product' });
@@ -193,8 +310,10 @@ router.post('/start-trial', authenticateToken, async (req, res) => {
     const { productId, trialDays } = req.body;
     const userId = req.user?.id || req.userId;
     
-    // Get product from database
-    const product = db.getProductById(productId);
+    // Get product from MongoDB
+    const product = await prisma.product.findUnique({
+      where: { productId }
+    });
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }

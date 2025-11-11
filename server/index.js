@@ -110,7 +110,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const allowedOrigins = [
   'https://spartanofurioso.com',
   'https://www.spartanofurioso.com',
-  'https://spartano-furioso-gli-spartani-del-trading.vercel.app', // Aggiungi il tuo dominio Vercel qui
+  'https://spartano-furioso-gli-spartani-del-trading.vercel.app',
+  'https://spartano-furioso.vercel.app', // Dominio Vercel alternativo
   'http://localhost:5173',
   'http://localhost:5174',
   process.env.FRONTEND_URL
@@ -130,7 +131,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cache-Control', 'Pragma'],
+  exposedHeaders: ['Content-Length', 'Content-Type']
 }));
 
 // Webhook routes (must be before body parser for raw body)
@@ -257,11 +259,16 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
   console.log(`Stripe Webhook configured`);
   
-  // Initialize trial scheduler
-  initializeTrialScheduler();
+  // Initialize trial scheduler (async)
+  try {
+    await initializeTrialScheduler();
+  } catch (error) {
+    console.error('⚠️  Trial Scheduler non disponibile:', error.message);
+    console.log('ℹ️  Il server continuerà a funzionare senza Trial Scheduler');
+  }
 });

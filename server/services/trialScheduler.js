@@ -1,19 +1,48 @@
 import cron from 'node-cron';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+let prisma = null;
+let isConnected = false;
+
+// Inizializza Prisma con retry logic
+async function initializePrisma() {
+  if (prisma && isConnected) return prisma;
+  
+  try {
+    if (!prisma) {
+      prisma = new PrismaClient();
+    }
+    
+    // Test connessione
+    await prisma.$connect();
+    isConnected = true;
+    console.log('✅ [TRIAL SCHEDULER] Connesso al database');
+    return prisma;
+  } catch (error) {
+    console.error('❌ [TRIAL SCHEDULER] Errore connessione database:', error.message);
+    isConnected = false;
+    return null;
+  }
+}
 
 /**
  * Aggiorna automaticamente lo status dei trial scaduti
  */
 async function expireTrials() {
   try {
+    // Verifica connessione database
+    const db = await initializePrisma();
+    if (!db) {
+      console.log('⚠️  [CRON] Database non disponibile, salto controllo trial scaduti');
+      return;
+    }
+    
     console.log('🕒 [CRON] Controllo trial scaduti...');
     
     const now = new Date();
     
     // Trova tutti i trial con status 'active' ma con endDate nel passato
-    const expiredTrials = await prisma.trial.findMany({
+    const expiredTrials = await db.trial.findMany({
       where: {
         status: 'active',
         endDate: {
@@ -38,7 +67,7 @@ async function expireTrials() {
     console.log(`⚠️  [CRON] Trovati ${expiredTrials.length} trial scaduti da aggiornare`);
     
     // Aggiorna tutti i trial scaduti
-    const result = await prisma.trial.updateMany({
+    const result = await db.trial.updateMany({
       where: {
         status: 'active',
         endDate: {
@@ -67,12 +96,19 @@ async function expireTrials() {
  */
 async function sendExpiringReminders() {
   try {
+    // Verifica connessione database
+    const db = await initializePrisma();
+    if (!db) {
+      console.log('⚠️  [CRON] Database non disponibile, salto controllo promemoria');
+      return;
+    }
+    
     console.log('📧 [CRON] Controllo trial in scadenza per invio promemoria...');
     
     const now = new Date();
     
     // Trova trial che scadono tra 1, 3 o 7 giorni
-    const expiringTrials = await prisma.trial.findMany({
+    const expiringTrials = await db.trial.findMany({
       where: {
         status: 'active',
         endDate: {
@@ -117,7 +153,7 @@ async function sendExpiringReminders() {
 /**
  * Inizializza i job schedulati
  */
-export function initializeTrialScheduler() {
+export async function initializeTrialScheduler() {
   console.log('🚀 Inizializzazione Trial Scheduler...\n');
   
   // Job 1: Aggiorna trial scaduti ogni giorno alle 00:00
@@ -154,9 +190,11 @@ export function initializeTrialScheduler() {
   
   console.log('\n🎯 Trial Scheduler attivo!\n');
   
-  // Esegui immediatamente al primo avvio
-  console.log('🔄 Esecuzione iniziale dei job...\n');
-  expireTrials();
+  // Ritarda l'esecuzione iniziale di 5 secondi per dare tempo al database di connettersi
+  console.log('🔄 Esecuzione iniziale dei job tra 5 secondi...\n');
+  setTimeout(async () => {
+    await expireTrials();
+  }, 5000);
 }
 
 /**
