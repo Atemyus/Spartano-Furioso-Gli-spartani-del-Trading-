@@ -1,4 +1,4 @@
-simport { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import './utils/fixProducts'; // Import fix utilities
