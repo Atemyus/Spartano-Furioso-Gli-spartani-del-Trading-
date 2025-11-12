@@ -69,7 +69,7 @@ interface Product {
   trialDays?: number;
   stripeProductId?: string;
   stripePriceId?: string;
-  active: boolean;
+  status: 'active' | 'coming-soon' | 'beta' | 'soldout';
   image?: string;
   category?: string;
   stock?: number;
@@ -119,7 +119,7 @@ const ProductsManagement: React.FC = () => {
     interval: 'month' as 'day' | 'week' | 'month' | 'year',
     category: '',
     stock: 0,
-    active: true,
+    status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
     image: '',
     popular: false,
     badge: '',
@@ -368,20 +368,25 @@ const ProductsManagement: React.FC = () => {
     }
   };
 
-  const handleToggleActive = async (productId: string, currentStatus: boolean) => {
+  const handleToggleActive = async (productId: string, currentStatus: string) => {
     try {
       const token = localStorage.getItem('adminToken');
+      const newStatus = currentStatus === 'active' ? 'coming-soon' : 'active';
+      
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ active: !currentStatus })
+        body: JSON.stringify({ status: newStatus })
       });
 
       if (response.ok) {
         await fetchProducts();
+        console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
+      } else {
+        console.error('Errore nell\'aggiornamento del prodotto');
       }
     } catch (error) {
       console.error('Error toggling product status:', error);
@@ -399,7 +404,7 @@ const ProductsManagement: React.FC = () => {
       interval: 'month',
       category: '',
       stock: 0,
-      active: true,
+      status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
       image: '',
       popular: false,
       badge: '',
@@ -493,7 +498,7 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
-      active: product.active,
+      status: product.status,
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -582,7 +587,7 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
-      active: false, // Set as inactive by default
+      status: 'coming-soon' as 'active' | 'coming-soon' | 'beta' | 'soldout', // Set as inactive by default
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -605,8 +610,8 @@ const ProductsManagement: React.FC = () => {
                          product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || product.type === filterType;
     const matchesActive = filterActive === 'all' || 
-                         (filterActive === 'active' && product.active) ||
-                         (filterActive === 'inactive' && !product.active);
+                         (filterActive === 'active' && product.status === 'active') ||
+                         (filterActive === 'inactive' && product.status !== 'active');
     return matchesSearch && matchesType && matchesActive;
   }) : [];
 
@@ -717,11 +722,11 @@ const ProductsManagement: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
                   <button
-                    onClick={() => handleToggleActive(product.id, product.active)}
-                    className={`${product.active ? 'text-green-600' : 'text-gray-400'}`}
-                    title={product.active ? 'Disattiva' : 'Attiva'}
+                    onClick={() => handleToggleActive(product.id, product.status)}
+                    className={`${product.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}
+                    title={product.status === 'active' ? 'Disattiva' : 'Attiva'}
                   >
-                    {product.active ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
+                    {product.status === 'active' ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
@@ -753,7 +758,7 @@ const ProductsManagement: React.FC = () => {
                       {product.badge}
                     </span>
                   )}
-                  {!product.active && (
+                  {product.status !== 'active' && (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                       Inattivo
                     </span>
@@ -1248,8 +1253,8 @@ const ProductsManagement: React.FC = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.active}
-                  onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                  checked={formData.status === 'active'}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'active' : 'coming-soon' })}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm font-medium text-gray-700">Prodotto attivo</span>
@@ -1433,9 +1438,9 @@ const ProductsManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-500">Stato</label>
                 <p className="mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    selectedProduct.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedProduct.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {selectedProduct.active ? 'Attivo' : 'Inattivo'}
+                    {selectedProduct.status === 'active' ? 'Attivo' : 'Inattivo'}
                   </span>
                 </p>
               </div>
