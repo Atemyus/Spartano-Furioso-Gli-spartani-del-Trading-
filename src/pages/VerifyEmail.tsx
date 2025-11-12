@@ -15,6 +15,10 @@ const VerifyEmail: React.FC = () => {
   
   const token = searchParams.get('token');
 
+  // DEBUG: Log per verificare che la pagina venga caricata
+  console.log('🔍 VerifyEmail page loaded!');
+  console.log('🔍 Token:', token);
+
   useEffect(() => {
     if (token) {
       verifyEmail();
