@@ -107,10 +107,19 @@ const Register: React.FC = () => {
     
     try {
       console.log('🚀 Invio registrazione a:', API_ENDPOINTS.register);
+      console.log('📤 Dati inviati:', {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        hasPassword: !!formData.password,
+        hasFingerprint: !!deviceFingerprint
+      });
       
-      // Aggiungi timeout di 30 secondi
+      // Aumenta timeout a 60 secondi (il server potrebbe impiegare tempo per inviare email)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => {
+        console.error('⏱️ Timeout dopo 60 secondi');
+        controller.abort();
+      }, 60000);
       
       const response = await fetch(API_ENDPOINTS.register, {
         method: 'POST',
@@ -146,18 +155,24 @@ const Register: React.FC = () => {
         console.error('❌ Errore registrazione:', data);
         
         // Gestione specifica per email duplicata
-        if (data.error && (data.error.includes('email esiste già') || data.error.includes('already exists'))) {
+        const errorMessage = data.error || data.message || '';
+        if (errorMessage.toLowerCase().includes('email') && 
+            (errorMessage.toLowerCase().includes('esiste') || 
+             errorMessage.toLowerCase().includes('already exists') ||
+             errorMessage.toLowerCase().includes('duplicat'))) {
           setErrors({ ...errors, email: 'Questa email è già registrata. Prova ad accedere o usa un\'altra email.' });
           setServerError(null);
         } else {
-          setServerError(data.error || data.message || 'Errore durante la registrazione');
+          setServerError(errorMessage || 'Errore durante la registrazione');
         }
       }
     } catch (error: any) {
       console.error('💥 Registration error:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
       
       if (error.name === 'AbortError') {
-        setServerError('La richiesta ha impiegato troppo tempo. Verifica la tua connessione e riprova.');
+        setServerError('Il server sta impiegando troppo tempo a rispondere (oltre 60 secondi). L\'account potrebbe essere stato creato comunque. Prova ad accedere o contatta il supporto.');
       } else if (error.message?.includes('Failed to fetch')) {
         setServerError('Impossibile connettersi al server. Verifica la tua connessione internet.');
       } else {

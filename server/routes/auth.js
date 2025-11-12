@@ -127,14 +127,21 @@ router.post('/register', protectTrial, async (req, res) => {
     
     console.log('✅ Utente creato nel database:', user.email);
 
-    // Send verification email
+    // Send verification email ASYNCHRONOUSLY (non-blocking)
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-    const emailResult = await sendEmail(email, 'verification', {
+    
+    // Invia email in background senza aspettare
+    sendEmail(email, 'verification', {
       userName: name,
       verificationLink
+    }).then(() => {
+      console.log('📧 Email di verifica inviata a:', email);
+    }).catch(error => {
+      console.error('❌ Errore invio email:', error);
+      // Non bloccare la registrazione anche se l'email fallisce
     });
 
-    // In development, include verification link for easy testing
+    // Risponde IMMEDIATAMENTE senza aspettare l'email
     const response = {
       success: true,
       message: 'Registrazione completata! Controlla la tua email per verificare il tuo account.',
