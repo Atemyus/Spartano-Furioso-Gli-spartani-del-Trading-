@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { config } from '../config';
+import { Resend } from 'resend';
 
 interface EmailOptions {
   to: string;
@@ -9,16 +10,22 @@ interface EmailOptions {
 
 export class EmailService {
   private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend | null = null;
 
   constructor() {
-    console.log('🔧 EmailService - Configurazione SMTP:');
+    console.log('🔧 EmailService - Configurazione:');
+    console.log('  RESEND_API_KEY:', process.env.RESEND_API_KEY ? '***PRESENTE***' : 'MANCANTE');
     console.log('  SMTP_HOST:', config.smtp.host);
     console.log('  SMTP_PORT:', config.smtp.port);
     console.log('  SMTP_USER:', config.smtp.user);
     console.log('  SMTP_PASS:', config.smtp.pass ? '***PRESENTE***' : 'MANCANTE');
     console.log('  MAIL_FROM:', config.smtp.from);
     
-    if (config.smtp.host) {
+    // Prova Resend prima (più affidabile su Railway)
+    if (process.env.RESEND_API_KEY) {
+      console.log('✅ Usando Resend per le email...');
+      this.resend = new Resend(process.env.RESEND_API_KEY);
+    } else if (config.smtp.host) {
       console.log('✅ Creazione transporter SMTP...');
       this.transporter = nodemailer.createTransport({
         host: config.smtp.host,
@@ -28,26 +35,57 @@ export class EmailService {
           user: config.smtp.user,
           pass: config.smtp.pass,
         },
+        connectionTimeout: 60000, // 60 secondi
+        greetingTimeout: 30000,   // 30 secondi
+        socketTimeout: 60000,     // 60 secondi
       });
       console.log('✅ Transporter creato con successo!');
     } else {
-      console.log('❌ SMTP_HOST mancante - modalità dev attiva');
+      console.log('❌ Nessuna configurazione email trovata - modalità dev attiva');
     }
   }
 
   async sendEmail(options: EmailOptions): Promise<void> {
-    if (!this.transporter) {
-      console.log('📧 EMAIL (dev mode):', {
-        from: config.smtp.from,
-        ...options,
-      });
-      return;
+    // Prova Resend prima
+    if (this.resend) {
+      console.log('📧 Invio email con Resend...');
+      try {
+        await this.resend.emails.send({
+          from: config.smtp.from,
+          to: [options.to],
+          subject: options.subject,
+          html: options.html,
+        });
+        console.log('✅ Email inviata con Resend!');
+        return;
+      } catch (error: any) {
+        console.error('❌ Errore Resend:', error.message);
+        throw error;
+      }
     }
-
-    await this.transporter.sendMail({
+    
+    // Fallback su SMTP
+    if (this.transporter) {
+      console.log('📧 Invio email con SMTP...');
+      try {
+        await this.transporter.sendMail({
+          from: config.smtp.from,
+          ...options,
+        });
+        console.log('✅ Email inviata con SMTP!');
+        return;
+      } catch (error: any) {
+        console.error('❌ Errore SMTP:', error.message);
+        throw error;
+      }
+    }
+    
+    // Modalità dev
+    console.log('📧 EMAIL (dev mode):', {
       from: config.smtp.from,
       ...options,
     });
+    return;
   }
 
   async sendTrialActivation(email: string, name: string | null, endDate: Date): Promise<void> {
