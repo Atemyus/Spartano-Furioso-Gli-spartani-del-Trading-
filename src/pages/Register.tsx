@@ -106,6 +106,12 @@ const Register: React.FC = () => {
     setLoading(true);
     
     try {
+      console.log('🚀 Invio registrazione a:', API_ENDPOINTS.register);
+      
+      // Aggiungi timeout di 30 secondi
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      
       const response = await fetch(API_ENDPOINTS.register, {
         method: 'POST',
         headers: {
@@ -116,29 +122,47 @@ const Register: React.FC = () => {
           email: formData.email,
           password: formData.password,
           deviceFingerprint
-        })
+        }),
+        signal: controller.signal
       });
       
-      const data = await response.json();
+      clearTimeout(timeoutId);
       
-      if (response.ok && data.success) {
+      console.log('📥 Response status:', response.status);
+      const data = await response.json();
+      console.log('📦 Response data:', data);
+      
+      // Gestione più flessibile della risposta
+      if (response.ok) {
+        // Se la risposta è OK (200-299), considera la registrazione riuscita
         setRegistrationSuccess(true);
+        console.log('✅ Registrazione completata con successo!');
         // Dopo 5 secondi redirect al login
         setTimeout(() => {
           navigate('/login');
         }, 5000);
       } else {
+        // Gestione errori
+        console.error('❌ Errore registrazione:', data);
+        
         // Gestione specifica per email duplicata
-        if (data.error && data.error.includes('email esiste già')) {
+        if (data.error && (data.error.includes('email esiste già') || data.error.includes('already exists'))) {
           setErrors({ ...errors, email: 'Questa email è già registrata. Prova ad accedere o usa un\'altra email.' });
           setServerError(null);
         } else {
-          setServerError(data.error || 'Errore durante la registrazione');
+          setServerError(data.error || data.message || 'Errore durante la registrazione');
         }
       }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setServerError('Errore di connessione. Riprova più tardi.');
+    } catch (error: any) {
+      console.error('💥 Registration error:', error);
+      
+      if (error.name === 'AbortError') {
+        setServerError('La richiesta ha impiegato troppo tempo. Verifica la tua connessione e riprova.');
+      } else if (error.message?.includes('Failed to fetch')) {
+        setServerError('Impossibile connettersi al server. Verifica la tua connessione internet.');
+      } else {
+        setServerError('Errore di connessione. Riprova più tardi.');
+      }
     } finally {
       setLoading(false);
     }
