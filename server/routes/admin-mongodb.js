@@ -76,7 +76,7 @@ router.get('/stats', async (req, res) => {
       emailVerified: true
     });
     const newUsersThisMonth = await User.countDocuments({
-      createdAt: { gte: thirtyDaysAgo }
+      createdAt: { $gte: thirtyDaysAgo }
     });
     
     // Conta newsletter subscribers da MongoDB

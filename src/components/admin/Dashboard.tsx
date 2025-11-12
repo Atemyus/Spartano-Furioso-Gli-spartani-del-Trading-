@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
@@ -25,11 +25,18 @@ import AnalyticsDashboard from './AnalyticsDashboard';
 import NewsletterManagement from './NewsletterManagement';
 
 interface Stats {
-  totalUsers: number;
-  totalOrders: number;
-  totalRevenue: number;
-  activeSubscriptions: number;
-  recentOrders: any[];
+  users: {
+    total: number;
+    active: number;
+    newThisMonth: number;
+  };
+  newsletter: {
+    subscribers: number;
+  };
+  products: {
+    total: number;
+    active: number;
+  };
   recentUsers: any[];
 }
 
@@ -60,7 +67,7 @@ const AdminDashboard: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setStats(data);
+        setStats(data.stats);
       } else if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('adminToken');
         navigate('/admin/login');
@@ -77,13 +84,7 @@ const AdminDashboard: React.FC = () => {
     navigate('/admin/login');
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('it-IT', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount / 100);
-  };
-
+  
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
@@ -186,7 +187,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Utenti Totali</p>
-                      <p className="text-2xl font-bold text-gray-800">{stats.totalUsers}</p>
+                      <p className="text-2xl font-bold text-gray-800">{stats.users.total}</p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Users className="w-6 h-6 text-blue-600" />
@@ -197,11 +198,11 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Ordini Totali</p>
-                      <p className="text-2xl font-bold text-gray-800">{stats.totalOrders}</p>
+                      <p className="text-sm text-gray-600 mb-1">Utenti Attivi</p>
+                      <p className="text-2xl font-bold text-gray-800">{stats.users.active}</p>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                      <ShoppingBag className="w-6 h-6 text-green-600" />
+                      <TrendingUp className="w-6 h-6 text-green-600" />
                     </div>
                   </div>
                 </div>
@@ -209,10 +210,8 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Ricavi Totali</p>
-                      <p className="text-2xl font-bold text-gray-800">
-                        {formatCurrency(stats.totalRevenue)}
-                      </p>
+                      <p className="text-sm text-gray-600 mb-1">Nuovi Utenti (30gg)</p>
+                      <p className="text-2xl font-bold text-gray-800">{stats.users.newThisMonth}</p>
                     </div>
                     <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-yellow-600" />
@@ -223,11 +222,11 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Abbonamenti Attivi</p>
-                      <p className="text-2xl font-bold text-gray-800">{stats.activeSubscriptions}</p>
+                      <p className="text-sm text-gray-600 mb-1">Newsletter Subscribers</p>
+                      <p className="text-2xl font-bold text-gray-800">{stats.newsletter.subscribers}</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <CreditCard className="w-6 h-6 text-purple-600" />
+                      <Mail className="w-6 h-6 text-purple-600" />
                     </div>
                   </div>
                 </div>
@@ -235,36 +234,26 @@ const AdminDashboard: React.FC = () => {
 
               {/* Recent Activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Orders */}
+                {/* Products Summary */}
                 <div className="bg-white rounded-lg shadow">
                   <div className="p-6 border-b">
-                    <h3 className="text-lg font-semibold text-gray-800">Ordini Recenti</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">Prodotti</h3>
                   </div>
                   <div className="p-6">
-                    {stats.recentOrders.length > 0 ? (
-                      <div className="space-y-4">
-                        {stats.recentOrders.map((order) => (
-                          <div key={order.id} className="flex items-center justify-between py-3 border-b last:border-0">
-                            <div>
-                              <p className="font-medium text-gray-800">#{order.id}</p>
-                              <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-medium text-gray-800">{formatCurrency(order.amount)}</p>
-                              <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-                                order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-gray-100 text-gray-800'
-                              }`}>
-                                {order.status}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Prodotti Totali</span>
+                        <span className="font-semibold text-gray-800">{stats.products.total}</span>
                       </div>
-                    ) : (
-                      <p className="text-gray-500 text-center">Nessun ordine recente</p>
-                    )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Prodotti Attivi</span>
+                        <span className="font-semibold text-green-600">{stats.products.active}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Newsletter Subscribers</span>
+                        <span className="font-semibold text-blue-600">{stats.newsletter.subscribers}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -274,10 +263,10 @@ const AdminDashboard: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-800">Utenti Recenti</h3>
                   </div>
                   <div className="p-6">
-                    {stats.recentUsers.length > 0 ? (
+                    {stats.recentUsers && stats.recentUsers.length > 0 ? (
                       <div className="space-y-4">
                         {stats.recentUsers.map((user) => (
-                          <div key={user.id} className="flex items-center justify-between py-3 border-b last:border-0">
+                          <div key={user._id || user.id} className="flex items-center justify-between py-3 border-b last:border-0">
                             <div className="flex items-center space-x-3">
                               <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                                 <span className="text-sm font-medium text-gray-600">
