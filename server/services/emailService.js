@@ -10,16 +10,16 @@ const createTransporter = async () => {
   let transporter;
   
   // Se sono configurate le credenziali email, usale (production)
-  if (process.env.EMAIL_HOST && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    console.log('📧 Usando servizio email configurato:', process.env.EMAIL_HOST);
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    console.log('📧 Usando servizio email configurato:', process.env.SMTP_HOST);
     
     transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: process.env.EMAIL_SECURE === 'true', // true per 465, false per altre porte
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true', // true per 465, false per altre porte
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       },
       // Opzioni aggiuntive per migliorare la compatibilità
       tls: {
@@ -660,7 +660,7 @@ export const sendEmail = async (to, emailType, data) => {
     }
     
     const mailOptions = {
-      from: `"Trading Falange" <${process.env.EMAIL_FROM || 'noreply@tradingfalange.com'}>`,
+      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
       to,
       subject: emailTemplate.subject,
       html: emailTemplate.html,
@@ -732,7 +732,7 @@ export const sendOrderConfirmation = async ({
         : '<p style="color: #10b981; font-weight: bold;">Il tuo ordine è stato confermato!</p>';
 
     const mailOptions = {
-      from: `"Trading Falange" <${process.env.EMAIL_FROM || 'ordini@tradingfalange.com'}>` ,
+      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'ordini@spartanofurioso.com'}>` ,
       to: customerEmail,
       subject: isCancelled ? `Ordine Annullato ${orderNumber}` : `Conferma Ordine ${orderNumber}`,
       html: `
@@ -828,7 +828,7 @@ export const sendVimeoAccessInstructions = async ({
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: `"Trading Falange" <${process.env.EMAIL_FROM || 'support@tradingfalange.com'}>` ,
+      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'support@spartanofurioso.com'}>` ,
       to: customerEmail,
       subject: `Accesso ai contenuti: ${productName}`,
       html: `
