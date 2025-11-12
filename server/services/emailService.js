@@ -9,6 +9,17 @@ dotenv.config();
 const createTransporter = async () => {
   let transporter;
   
+  // DEBUG: Stampa TUTTE le variabili d'ambiente email
+  console.log('🔧 DEBUG VARIABILI D\'AMBIENTE:');
+  console.log('  SMTP_HOST:', process.env.SMTP_HOST || 'MANCANTE');
+  console.log('  SMTP_PORT:', process.env.SMTP_PORT || 'MANCANTE');
+  console.log('  SMTP_USER:', process.env.SMTP_USER || 'MANCANTE');
+  console.log('  SMTP_PASS:', process.env.SMTP_PASS ? '***PRESENTE***' : 'MANCANTE');
+  console.log('  MAIL_FROM:', process.env.MAIL_FROM || 'MANCANTE');
+  console.log('  EMAIL_HOST:', process.env.EMAIL_HOST || 'MANCANTE');
+  console.log('  EMAIL_USER:', process.env.EMAIL_USER || 'MANCANTE');
+  console.log('  EMAIL_PASS:', process.env.EMAIL_PASS ? '***PRESENTE***' : 'MANCANTE');
+  
   // Se sono configurate le credenziali email, usale (production)
   if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     console.log('📧 Usando servizio email configurato:', process.env.SMTP_HOST);
