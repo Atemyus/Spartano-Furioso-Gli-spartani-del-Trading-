@@ -41,7 +41,7 @@ const createTransporter = async () => {
     console.log('📧 Usando Ethereal Email per test (modalità development)');
     const testAccount = await nodemailer.createTestAccount();
     
-    transporter = nodemailer.createTransporter({
+    transporter = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,
       secure: false,
