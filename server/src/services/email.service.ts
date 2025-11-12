@@ -46,20 +46,28 @@ export class EmailService {
   }
 
   async sendEmail(options: EmailOptions): Promise<void> {
+    console.log('🚀 sendEmail chiamato con:', options.to);
+    console.log('🔍 this.resend esiste?', !!this.resend);
+    console.log('🔍 this.transporter esiste?', !!this.transporter);
+    
     // Prova Resend prima
     if (this.resend) {
       console.log('📧 Invio email con Resend...');
+      console.log('📧 From:', config.smtp.from);
+      console.log('📧 To:', options.to);
+      console.log('📧 Subject:', options.subject);
       try {
-        await this.resend.emails.send({
+        const result = await this.resend.emails.send({
           from: config.smtp.from,
           to: [options.to],
           subject: options.subject,
           html: options.html,
         });
-        console.log('✅ Email inviata con Resend!');
+        console.log('✅ Email inviata con Resend!', result);
         return;
       } catch (error: any) {
         console.error('❌ Errore Resend:', error.message);
+        console.error('❌ Dettagli errore:', error);
         throw error;
       }
     }

@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { Resend } from 'resend';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const createTransporter = async () => {
   
   // DEBUG: Stampa TUTTE le variabili d'ambiente email
   console.log('🔧 DEBUG VARIABILI D\'AMBIENTE:');
+  console.log('  RESEND_API_KEY:', process.env.RESEND_API_KEY ? '***PRESENTE***' : 'MANCANTE');
   console.log('  SMTP_HOST:', process.env.SMTP_HOST || 'MANCANTE');
   console.log('  SMTP_PORT:', process.env.SMTP_PORT || 'MANCANTE');
   console.log('  SMTP_USER:', process.env.SMTP_USER || 'MANCANTE');
@@ -19,6 +21,13 @@ const createTransporter = async () => {
   console.log('  EMAIL_HOST:', process.env.EMAIL_HOST || 'MANCANTE');
   console.log('  EMAIL_USER:', process.env.EMAIL_USER || 'MANCANTE');
   console.log('  EMAIL_PASS:', process.env.EMAIL_PASS ? '***PRESENTE***' : 'MANCANTE');
+  
+  // Prova Resend prima (più affidabile su Railway)
+  if (process.env.RESEND_API_KEY) {
+    console.log('✅ Usando Resend per le email...');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    return { resend, isResend: true };
+  }
   
   // Se sono configurate le credenziali email, usale (production)
   if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
@@ -649,8 +658,46 @@ const formatCurrency = (amount, currency) => {
 // Funzione principale per inviare email
 export const sendEmail = async (to, emailType, data) => {
   try {
-    const transporter = await createTransporter();
+    const transportResult = await createTransporter();
     
+    // Se è Resend, usa l'API Resend
+    if (transportResult.isResend) {
+      console.log('📧 Invio email con Resend...');
+      
+      let emailTemplate;
+      switch (emailType) {
+        case 'verification':
+          emailTemplate = getVerificationEmailTemplate(data.userName, data.verificationLink);
+          break;
+        case 'welcome':
+          emailTemplate = getWelcomeEmailTemplate(data.userName);
+          break;
+        case 'passwordReset':
+          emailTemplate = getPasswordResetTemplate(data.userName, data.resetLink);
+          break;
+        case 'passwordChanged':
+          emailTemplate = getPasswordChangedTemplate(data.userName);
+          break;
+        default:
+          throw new Error('Tipo di email non valido');
+      }
+      
+      const result = await transportResult.resend.emails.send({
+        from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
+        to: [to],
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+      });
+      
+      console.log('\n✅ EMAIL INVIATA CON SUCCESSO (Resend)!');
+      console.log('📨 Destinatario:', to);
+      console.log('📝 Oggetto:', emailTemplate.subject);
+      console.log('🆔 Message ID:', result.id);
+      
+      return { success: true, messageId: result.id };
+    }
+    
+    // Altrimenti usa il transporter SMTP tradizionale
     let emailTemplate;
     
     switch (emailType) {
@@ -678,7 +725,7 @@ export const sendEmail = async (to, emailType, data) => {
       text: emailTemplate.text
     };
     
-    const info = await transporter.sendMail(mailOptions);
+    const info = await transportResult.sendMail(mailOptions);
     
     console.log('\n✅ EMAIL INVIATA CON SUCCESSO!');
     console.log('📨 Destinatario:', to);
