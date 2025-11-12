@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Package,
   Plus,
@@ -153,7 +153,13 @@ const ProductsManagement: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setProducts(data);
+        console.log('Products API response:', data); // Debug log
+        if (data.success && data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+        } else {
+          console.error('Invalid products data format:', data);
+          setProducts([]);
+        }
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -594,15 +600,15 @@ const ProductsManagement: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts = Array.isArray(products) ? products.filter(product => {
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || product.type === filterType;
     const matchesActive = filterActive === 'all' || 
                          (filterActive === 'active' && product.active) ||
                          (filterActive === 'inactive' && !product.active);
     return matchesSearch && matchesType && matchesActive;
-  });
+  }) : [];
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('it-IT', {

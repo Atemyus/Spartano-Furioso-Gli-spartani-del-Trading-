@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Search, 
@@ -60,7 +60,13 @@ const UsersManagement: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        console.log('Users API response:', data); // Debug log
+        if (data.success && data.users && Array.isArray(data.users)) {
+          setUsers(data.users);
+        } else {
+          console.error('Invalid users data format:', data);
+          setUsers([]);
+        }
       }
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -196,12 +202,12 @@ const UsersManagement: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredUsers = Array.isArray(users) ? users.filter(user => {
+    const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === 'all' || user.status === filterStatus;
     return matchesSearch && matchesFilter;
-  });
+  }) : [];
 
   const exportUsers = () => {
     const csv = [
