@@ -40,20 +40,28 @@ router.post('/register', validateRegistration, async (req: Request, res: Respons
 
     // Send verification email
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-    await emailService.sendEmail({
-      to: user.email,
-      subject: 'Benvenuto in Spartano Furioso - Verifica la tua email',
-      html: `
-        <h1>Benvenuto ${firstName}!</h1>
-        <p>Grazie per esserti registrato a Spartano Furioso.</p>
-        <p>Per completare la registrazione, verifica la tua email cliccando sul link sottostante:</p>
-        <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 8px;">Verifica Email</a>
-        <p>Il link scadrà tra 24 ore.</p>
-        <p>Se non hai richiesto questa registrazione, ignora questa email.</p>
-        <br>
-        <p>Forza e Onore,<br>Il Team Spartano Furioso</p>
-      `
-    });
+    try {
+      console.log('📧 Tentativo invio email a:', user.email);
+      await emailService.sendEmail({
+        to: user.email,
+        subject: 'Benvenuto in Spartano Furioso - Verifica la tua email',
+        html: `
+          <h1>Benvenuto ${firstName}!</h1>
+          <p>Grazie per esserti registrato a Spartano Furioso.</p>
+          <p>Per completare la registrazione, verifica la tua email cliccando sul link sottostante:</p>
+          <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #dc2626; color: white; text-decoration: none; border-radius: 8px;">Verifica Email</a>
+          <p>Il link scadrà tra 24 ore.</p>
+          <p>Se non hai richiesto questa registrazione, ignora questa email.</p>
+          <br>
+          <p>Forza e Onore,<br>Il Team Spartano Furioso</p>
+        `
+      });
+      console.log('✅ Email inviata con successo!');
+    } catch (emailError: any) {
+      console.error('❌ Errore invio email:', emailError.message);
+      console.log('⚠️ Utente registrato ma email non inviata - continuo...');
+      // NON bloccare la registrazione se l'email fallisce
+    }
 
     // Generate tokens
     const tokens = generateTokens(user);
