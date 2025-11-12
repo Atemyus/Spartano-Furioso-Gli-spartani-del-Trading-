@@ -15,8 +15,8 @@ import {
   BookOpen,
   Mail
 } from 'lucide-react';
-import UsersManagement from './UsersManagement';
-import ProductsManagement from './ProductsManagement';
+import UsersManagement from './UsersManagement-simple';
+import ProductsManagement from './ProductsManagement-simple';
 import TrialsManagement from './TrialsManagement';
 import CourseManagement from './CourseManagement';
 import OrdersManagement from './OrdersManagement';
