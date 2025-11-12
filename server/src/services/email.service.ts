@@ -11,7 +11,15 @@ export class EmailService {
   private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
+    console.log('🔧 EmailService - Configurazione SMTP:');
+    console.log('  SMTP_HOST:', config.smtp.host);
+    console.log('  SMTP_PORT:', config.smtp.port);
+    console.log('  SMTP_USER:', config.smtp.user);
+    console.log('  SMTP_PASS:', config.smtp.pass ? '***PRESENTE***' : 'MANCANTE');
+    console.log('  MAIL_FROM:', config.smtp.from);
+    
     if (config.smtp.host) {
+      console.log('✅ Creazione transporter SMTP...');
       this.transporter = nodemailer.createTransport({
         host: config.smtp.host,
         port: config.smtp.port || 587,
@@ -21,6 +29,9 @@ export class EmailService {
           pass: config.smtp.pass,
         },
       });
+      console.log('✅ Transporter creato con successo!');
+    } else {
+      console.log('❌ SMTP_HOST mancante - modalità dev attiva');
     }
   }
 
