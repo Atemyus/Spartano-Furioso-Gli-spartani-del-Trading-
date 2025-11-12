@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
+import mongoose from 'mongoose';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import multer from 'multer';
@@ -35,7 +36,7 @@ if (process.env.DATABASE_URL.startsWith('file:')) {
 import stripeRoutes from './routes/stripe.js';
 import stripeWebhookRoutes from './routes/stripe-webhook.js';
 import paypalWebhookRoutes from './routes/paypal-webhook.js';
-import adminRoutes from './routes/admin.js';
+import adminRoutes from './routes/admin-mongodb.js';
 import authRoutes from './routes/auth.js';
 import productsRoutes from './routes/products.js';
 import trialsRoutes from './routes/trials.js';
@@ -258,11 +259,27 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Initialize MongoDB connection
+async function initializeMongoDB() {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('mongodb')) {
+    try {
+      await mongoose.connect(process.env.DATABASE_URL);
+      console.log('✅ MongoDB connected for admin routes');
+    } catch (error) {
+      console.error('❌ MongoDB connection error:', error);
+      console.log('⚠️  Admin routes will not work properly');
+    }
+  }
+}
+
 // Start server
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
   console.log(`Stripe Webhook configured`);
+  
+  // Initialize MongoDB for admin routes
+  await initializeMongoDB();
   
   // Initialize trial scheduler (async)
   try {

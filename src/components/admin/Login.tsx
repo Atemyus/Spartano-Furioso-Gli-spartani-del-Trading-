@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, AlertCircle, Shield } from 'lucide-react';
 
@@ -77,9 +77,15 @@ const AdminLogin: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-text"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-text text-gray-900 placeholder-gray-500 bg-white"
                   placeholder="admin@spartanofurioso.com"
-                  style={{ pointerEvents: 'auto' }}
+                  style={{ 
+                    pointerEvents: 'auto',
+                    color: '#111827',
+                    backgroundColor: '#ffffff',
+                    WebkitTextFillColor: '#111827',
+                    opacity: 1
+                  }}
                 />
               </div>
             </div>
@@ -99,9 +105,15 @@ const AdminLogin: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-text"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-text text-gray-900 placeholder-gray-500 bg-white"
                   placeholder="••••••••"
-                  style={{ pointerEvents: 'auto' }}
+                  style={{ 
+                    pointerEvents: 'auto',
+                    color: '#111827',
+                    backgroundColor: '#ffffff',
+                    WebkitTextFillColor: '#111827',
+                    opacity: 1
+                  }}
                 />
               </div>
             </div>

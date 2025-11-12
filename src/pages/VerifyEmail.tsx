@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, XCircle, Loader2, Mail, RefreshCw } from 'lucide-react';
-import AnimatedPage from '../components/AnimatedPage';
-import { useTheme } from '../contexts/ThemeContext';
 import { API_ENDPOINTS } from '../config/api';
 
 const VerifyEmail: React.FC = () => {
