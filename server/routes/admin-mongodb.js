@@ -408,29 +408,29 @@ router.get('/newsletter', async (req, res) => {
   }
 });
 
-// MIGRATION ROUTE: Aggiorna tutti i prodotti senza campo active
+// MIGRATION ROUTE: Aggiorna tutti i prodotti a active=true
 router.post('/products/migrate-active', async (req, res) => {
   try {
     console.log('🔄 Starting migration: setting active=true for all products...');
 
+    // Prima contiamo quanti prodotti ci sono
+    const totalProducts = await prisma.product.count();
+    console.log(`📊 Total products in database: ${totalProducts}`);
+
+    // Aggiorna TUTTI i prodotti settando active=true
     const result = await prisma.product.updateMany({
-      where: {
-        OR: [
-          { active: null },
-          { active: false }
-        ]
-      },
       data: {
         active: true
       }
     });
 
-    console.log(`✅ Migration completed: ${result.count} products updated`);
+    console.log(`✅ Migration completed: ${result.count} products updated to active=true`);
 
     res.json({
       success: true,
       message: `Migration completata: ${result.count} prodotti aggiornati con active=true`,
-      count: result.count
+      count: result.count,
+      total: totalProducts
     });
   } catch (error) {
     console.error('❌ Migration error:', error);
