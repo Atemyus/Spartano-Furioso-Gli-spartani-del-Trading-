@@ -230,7 +230,78 @@ router.get('/products', async (req, res) => {
   }
 });
 
-// Get product by ID
+// DEBUG ROUTE: Verifica stato campo active dei prodotti (DEVE STARE PRIMA DI /:id)
+router.get('/products/debug-active', async (req, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      select: {
+        productId: true,
+        name: true,
+        active: true
+      }
+    });
+
+    const stats = {
+      total: products.length,
+      active: products.filter(p => p.active === true).length,
+      inactive: products.filter(p => p.active === false).length,
+      undefined: products.filter(p => p.active === undefined || p.active === null).length
+    };
+
+    console.log('📊 Products active status:', stats);
+
+    res.json({
+      success: true,
+      stats,
+      products: products.map(p => ({
+        id: p.productId,
+        name: p.name,
+        active: p.active
+      }))
+    });
+  } catch (error) {
+    console.error('❌ Debug error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// MIGRATION ROUTE: Aggiorna tutti i prodotti a active=true (DEVE STARE PRIMA DI /:id)
+router.post('/products/migrate-active', async (req, res) => {
+  try {
+    console.log('🔄 Starting migration: setting active=true for all products...');
+
+    // Prima contiamo quanti prodotti ci sono
+    const totalProducts = await prisma.product.count();
+    console.log(`📊 Total products in database: ${totalProducts}`);
+
+    // Aggiorna TUTTI i prodotti settando active=true
+    const result = await prisma.product.updateMany({
+      data: {
+        active: true
+      }
+    });
+
+    console.log(`✅ Migration completed: ${result.count} products updated to active=true`);
+
+    res.json({
+      success: true,
+      message: `Migration completata: ${result.count} prodotti aggiornati con active=true`,
+      count: result.count,
+      total: totalProducts
+    });
+  } catch (error) {
+    console.error('❌ Migration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get product by ID (ROUTE PARAMETRICA - DEVE STARE DOPO LE ROUTE SPECIFICHE)
 router.get('/products/:id', async (req, res) => {
   try {
     const product = await prisma.product.findUnique({
@@ -401,77 +472,6 @@ router.get('/newsletter', async (req, res) => {
     });
   } catch (error) {
     console.error('Admin newsletter error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// DEBUG ROUTE: Verifica stato campo active dei prodotti
-router.get('/products/debug-active', async (req, res) => {
-  try {
-    const products = await prisma.product.findMany({
-      select: {
-        productId: true,
-        name: true,
-        active: true
-      }
-    });
-
-    const stats = {
-      total: products.length,
-      active: products.filter(p => p.active === true).length,
-      inactive: products.filter(p => p.active === false).length,
-      undefined: products.filter(p => p.active === undefined || p.active === null).length
-    };
-
-    console.log('📊 Products active status:', stats);
-
-    res.json({
-      success: true,
-      stats,
-      products: products.map(p => ({
-        id: p.productId,
-        name: p.name,
-        active: p.active
-      }))
-    });
-  } catch (error) {
-    console.error('❌ Debug error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// MIGRATION ROUTE: Aggiorna tutti i prodotti a active=true
-router.post('/products/migrate-active', async (req, res) => {
-  try {
-    console.log('🔄 Starting migration: setting active=true for all products...');
-
-    // Prima contiamo quanti prodotti ci sono
-    const totalProducts = await prisma.product.count();
-    console.log(`📊 Total products in database: ${totalProducts}`);
-
-    // Aggiorna TUTTI i prodotti settando active=true
-    const result = await prisma.product.updateMany({
-      data: {
-        active: true
-      }
-    });
-
-    console.log(`✅ Migration completed: ${result.count} products updated to active=true`);
-
-    res.json({
-      success: true,
-      message: `Migration completata: ${result.count} prodotti aggiornati con active=true`,
-      count: result.count,
-      total: totalProducts
-    });
-  } catch (error) {
-    console.error('❌ Migration error:', error);
     res.status(500).json({
       success: false,
       error: error.message
