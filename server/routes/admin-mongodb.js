@@ -58,9 +58,9 @@ router.get('/stats', async (req, res) => {
       .limit(5)
       .select('id name email createdAt role status');
     
-    // Statistiche prodotti da MongoDB
-    const totalProducts = await Product.countDocuments();
-    const activeProducts = await Product.countDocuments({ status: 'active' });
+    // Statistiche prodotti da Prisma
+    const totalProducts = await prisma.product.count();
+    const activeProducts = await prisma.product.count({ where: { active: true } });
     
     res.json({
       success: true,
@@ -207,9 +207,15 @@ router.get('/products', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
+    // Trasforma i prodotti per il frontend: usa productId come id
+    const transformedProducts = products.map(p => ({
+      ...p,
+      id: p.productId  // Il frontend si aspetta 'id', ma usiamo 'productId'
+    }));
+
     res.json({
       success: true,
-      products
+      products: transformedProducts
     });
   } catch (error) {
     console.error('Admin products error:', error);
@@ -234,9 +240,15 @@ router.get('/products/:id', async (req, res) => {
       });
     }
 
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId
+    };
+
     res.json({
       success: true,
-      product
+      product: transformedProduct
     });
   } catch (error) {
     console.error('Admin get product error:', error);
@@ -281,9 +293,15 @@ router.post('/products', async (req, res) => {
       }
     });
 
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId
+    };
+
     res.json({
       success: true,
-      product,
+      product: transformedProduct,
       message: 'Prodotto creato con successo'
     });
   } catch (error) {
@@ -326,9 +344,15 @@ router.put('/products/:id', async (req, res) => {
 
     console.log('✅ Prodotto aggiornato con successo:', product.productId);
 
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId
+    };
+
     res.json({
       success: true,
-      product,
+      product: transformedProduct,
       message: 'Prodotto aggiornato con successo - MODIFICA APPLICATA SU PRISMA/MONGODB!'
     });
   } catch (error) {
