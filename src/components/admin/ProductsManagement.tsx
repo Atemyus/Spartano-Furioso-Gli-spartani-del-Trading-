@@ -75,6 +75,7 @@ interface Product {
   trialDays?: number;
   stripeProductId?: string;
   stripePriceId?: string;
+  active: boolean; // Campo principale per attivo/inattivo
   status: 'active' | 'coming-soon' | 'beta' | 'soldout';
   image?: string;
   category?: string;
@@ -98,6 +99,7 @@ interface FormData {
   interval: 'day' | 'week' | 'month' | 'year';
   category: string;
   stock: number;
+  active: boolean; // Campo principale per attivo/inattivo
   status: 'active' | 'coming-soon' | 'beta' | 'soldout';
   image: string;
   popular: boolean;
@@ -159,11 +161,8 @@ const ProductsManagement: React.FC = () => {
     interval: 'month',
     category: '',
     stock: 0,
-<<<<<<< HEAD
-    status: 'active',
-=======
+    active: true, // Prodotto attivo di default
     status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     image: '',
     popular: false,
     badge: '',
@@ -325,20 +324,12 @@ const ProductsManagement: React.FC = () => {
         resetForm();
         alert('✅ Prodotto creato con successo!');
       } else {
-<<<<<<< HEAD
-        alert('❌ Errore durante la creazione del prodotto');
-      }
-    } catch (error) {
-      console.error('Error creating product:', error);
-      alert('❌ Errore durante la creazione del prodotto');
-=======
         const errorData = await response.json();
         alert(`❌ Errore: ${errorData.error || 'Impossibile creare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error creating product:', error);
       alert('❌ Errore di connessione. Riprova più tardi.');
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     }
   };
 
@@ -367,20 +358,12 @@ const ProductsManagement: React.FC = () => {
         resetForm();
         alert('✅ Prodotto aggiornato con successo!');
       } else {
-<<<<<<< HEAD
-        alert('❌ Errore durante l\'aggiornamento del prodotto');
-      }
-    } catch (error) {
-      console.error('Error updating product:', error);
-      alert('❌ Errore durante l\'aggiornamento del prodotto');
-=======
         const errorData = await response.json();
         alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error updating product:', error);
       alert('❌ Errore di connessione. Riprova più tardi.');
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     }
   };
 
@@ -409,36 +392,30 @@ const ProductsManagement: React.FC = () => {
     }
   };
 
-  const handleToggleActive = async (productId: string, currentStatus: string) => {
+  const handleToggleActive = async (productId: string, currentActive: boolean) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const newStatus = currentStatus === 'active' ? 'coming-soon' : 'active';
-      
+      const newActive = !currentActive;
+
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ active: newActive })
       });
 
       if (response.ok) {
         await fetchProducts();
-<<<<<<< HEAD
-        console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
-      } else {
-        console.error('Errore nell\'aggiornamento del prodotto');
-=======
         // Mostra notifica di successo
-        const action = newStatus === 'active' ? 'attivato' : 'disattivato';
+        const action = newActive ? 'attivato' : 'disattivato';
         alert(`✅ Prodotto ${action} con successo!`);
-        console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
+        console.log(`Prodotto ${productId} aggiornato: active ${currentActive} -> ${newActive}`);
       } else {
         const errorData = await response.json();
         alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
         console.error('Errore nell\'aggiornamento del prodotto:', errorData);
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
       }
     } catch (error) {
       console.error('Error toggling product status:', error);
@@ -448,39 +425,7 @@ const ProductsManagement: React.FC = () => {
 
   // ============= UTILITY FUNCTIONS =============
   const resetForm = () => {
-<<<<<<< HEAD
     setFormData(initialFormData);
-=======
-    setFormData({
-      name: '',
-      description: '',
-      price: 0,
-      originalPrice: 0,
-      currency: 'eur',
-      type: 'subscription',
-      interval: 'month',
-      category: '',
-      stock: 0,
-      status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
-      image: '',
-      popular: false,
-      badge: '',
-      badgeColor: 'blue',
-      trialDays: 0,
-      comingSoon: false,
-      launchDate: '',
-      metrics: {
-        winRate: 0,
-        avgProfit: 0
-      },
-      pricingPlans: {
-        monthly: { price: 0, originalPrice: 0, interval: 'mese', enabled: false },
-        yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
-        lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
-        oneTime: { price: 0, originalPrice: 0, interval: 'unico', enabled: false }
-      }
-    });
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     setFeatures(['']);
     setSelectedProduct(null);
   };
@@ -561,6 +506,7 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
+      active: product.active,
       status: product.status,
       image: product.image || '',
       popular: product.popular || false,
@@ -590,58 +536,8 @@ const ProductsManagement: React.FC = () => {
   };
 
   const duplicateProduct = (product: Product) => {
-<<<<<<< HEAD
     const pricingPlans = convertProductToPricingPlans(product);
-=======
-    // Prepara i piani di prezzo per la duplicazione
-    let pricingPlans = {
-      monthly: { price: 0, originalPrice: 0, interval: 'mese', savings: '', enabled: false },
-      yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
-      lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
-      oneTime: { price: 0, originalPrice: 0, interval: 'unico', savings: '', enabled: false }
-    };
-    
-    // Copia i piani esistenti se presenti
-    if (product.pricingPlans) {
-      if (product.pricingPlans.monthly) {
-        pricingPlans.monthly = {
-          price: product.pricingPlans.monthly.price || 0,
-          originalPrice: product.pricingPlans.monthly.originalPrice ?? 0,
-          interval: product.pricingPlans.monthly.interval || 'mese',
-          savings: product.pricingPlans.monthly.savings || '',
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.yearly) {
-        pricingPlans.yearly = {
-          price: product.pricingPlans.yearly.price || 0,
-          originalPrice: product.pricingPlans.yearly.originalPrice ?? 0,
-          interval: product.pricingPlans.yearly.interval || 'anno',
-          savings: product.pricingPlans.yearly.savings || '2 mesi gratis',
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.lifetime) {
-        pricingPlans.lifetime = {
-          price: product.pricingPlans.lifetime.price || 0,
-          originalPrice: product.pricingPlans.lifetime.originalPrice ?? 0,
-          interval: product.pricingPlans.lifetime.interval || 'lifetime',
-          savings: product.pricingPlans.lifetime.savings || 'Paga una volta, accesso per sempre',
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.oneTime) {
-        pricingPlans.oneTime = {
-          price: product.pricingPlans.oneTime.price || 0,
-          originalPrice: product.pricingPlans.oneTime.originalPrice ?? 0,
-          interval: product.pricingPlans.oneTime.interval || 'unico',
-          savings: product.pricingPlans.oneTime.savings || '',
-          enabled: true
-        };
-      }
-    }
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
-    
+
     setFormData({
       name: `${product.name} (Copia)`,
       description: product.description,
@@ -652,11 +548,8 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
-<<<<<<< HEAD
-      status: 'coming-soon',
-=======
-      status: 'coming-soon' as 'active' | 'coming-soon' | 'beta' | 'soldout', // Set as inactive by default
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
+      active: false, // Prodotto duplicato inattivo di default
+      status: 'coming-soon' as 'active' | 'coming-soon' | 'beta' | 'soldout',
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -694,9 +587,9 @@ const ProductsManagement: React.FC = () => {
     const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || product.type === filterType;
-    const matchesActive = filterActive === 'all' || 
-                         (filterActive === 'active' && product.status === 'active') ||
-                         (filterActive === 'inactive' && product.status !== 'active');
+    const matchesActive = filterActive === 'all' ||
+                         (filterActive === 'active' && product.active === true) ||
+                         (filterActive === 'inactive' && product.active === false);
     return matchesSearch && matchesType && matchesActive;
   }) : [];
 
@@ -810,11 +703,11 @@ const ProductsManagement: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
                   <button
-                    onClick={() => handleToggleActive(product.id, product.status)}
-                    className={`${product.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}
-                    title={product.status === 'active' ? 'Disattiva' : 'Attiva'}
+                    onClick={() => handleToggleActive(product.id, product.active)}
+                    className={`${product.active ? 'text-green-600' : 'text-gray-400'}`}
+                    title={product.active ? 'Disattiva' : 'Attiva'}
                   >
-                    {product.status === 'active' ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
+                    {product.active ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
@@ -846,7 +739,7 @@ const ProductsManagement: React.FC = () => {
                       {product.badge}
                     </span>
                   )}
-                  {product.status !== 'active' && (
+                  {!product.active && (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                       Inattivo
                     </span>
@@ -1340,8 +1233,8 @@ const ProductsManagement: React.FC = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.status === 'active'}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'active' : 'coming-soon' })}
+                  checked={formData.active}
+                  onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm font-medium text-gray-700">Prodotto attivo</span>
@@ -1525,39 +1418,24 @@ const ProductsManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-500">Stato</label>
                 <p className="mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    selectedProduct.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedProduct.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {selectedProduct.status === 'active' ? 'Attivo' : 'Inattivo'}
+                    {selectedProduct.active ? 'Attivo' : 'Inattivo'}
                   </span>
                 </p>
               </div>
 
-<<<<<<< HEAD
-              {selectedProduct.metrics && (
-                selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 ||
-                selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0
-              ) && (
-                <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 && (
-=======
               {selectedProduct.metrics && (selectedProduct.metrics?.winRate || selectedProduct.metrics?.avgProfit) && (
                 <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
                   <div className="grid grid-cols-2 gap-4">
                     {selectedProduct.metrics?.winRate && selectedProduct.metrics.winRate > 0 && (
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
                       <div>
                         <span className="text-xs text-gray-500">Win Rate</span>
                         <p className="text-2xl font-bold text-green-600">{selectedProduct.metrics.winRate}%</p>
                       </div>
                     )}
-<<<<<<< HEAD
-                    {selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0 && (
-=======
                     {selectedProduct.metrics?.avgProfit && selectedProduct.metrics.avgProfit > 0 && (
->>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
                       <div>
                         <span className="text-xs text-gray-500">Avg Profit</span>
                         <p className="text-2xl font-bold text-blue-600">+{selectedProduct.metrics.avgProfit}%</p>
