@@ -272,9 +272,14 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         setIsCreateModalOpen(false);
         resetForm();
+        alert('✅ Prodotto creato con successo!');
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile creare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error creating product:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
@@ -337,9 +342,14 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         setIsEditModalOpen(false);
         resetForm();
+        alert('✅ Prodotto aggiornato con successo!');
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error updating product:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
@@ -360,11 +370,12 @@ const ProductsManagement: React.FC = () => {
         // Mostra notifica di successo
         alert('✅ Prodotto eliminato con successo!');
       } else {
-        alert('❌ Errore durante l\'eliminazione del prodotto');
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile eliminare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('❌ Errore durante l\'eliminazione del prodotto');
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
@@ -384,12 +395,18 @@ const ProductsManagement: React.FC = () => {
 
       if (response.ok) {
         await fetchProducts();
+        // Mostra notifica di successo
+        const action = newStatus === 'active' ? 'attivato' : 'disattivato';
+        alert(`✅ Prodotto ${action} con successo!`);
         console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
       } else {
-        console.error('Errore nell\'aggiornamento del prodotto');
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
+        console.error('Errore nell\'aggiornamento del prodotto:', errorData);
       }
     } catch (error) {
       console.error('Error toggling product status:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
@@ -447,7 +464,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.monthly) {
         pricingPlans.monthly = {
           price: product.pricingPlans.monthly.price || 0,
-          originalPrice: product.pricingPlans.monthly.originalPrice || 0,
+          originalPrice: product.pricingPlans.monthly.originalPrice ?? 0,
           interval: product.pricingPlans.monthly.interval || 'mese',
           savings: product.pricingPlans.monthly.savings || '',
           enabled: true
@@ -458,7 +475,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.yearly) {
         pricingPlans.yearly = {
           price: product.pricingPlans.yearly.price || 0,
-          originalPrice: product.pricingPlans.yearly.originalPrice || 0,
+          originalPrice: product.pricingPlans.yearly.originalPrice ?? 0,
           interval: product.pricingPlans.yearly.interval || 'anno',
           savings: product.pricingPlans.yearly.savings || '2 mesi gratis',
           enabled: true
@@ -469,7 +486,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.lifetime) {
         pricingPlans.lifetime = {
           price: product.pricingPlans.lifetime.price || 0,
-          originalPrice: product.pricingPlans.lifetime.originalPrice || 0,
+          originalPrice: product.pricingPlans.lifetime.originalPrice ?? 0,
           interval: product.pricingPlans.lifetime.interval || 'lifetime',
           savings: product.pricingPlans.lifetime.savings || 'Paga una volta, accesso per sempre',
           enabled: true
@@ -480,7 +497,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.oneTime) {
         pricingPlans.oneTime = {
           price: product.pricingPlans.oneTime.price || 0,
-          originalPrice: product.pricingPlans.oneTime.originalPrice || 0,
+          originalPrice: product.pricingPlans.oneTime.originalPrice ?? 0,
           interval: product.pricingPlans.oneTime.interval || 'unico',
           savings: product.pricingPlans.oneTime.savings || '',
           enabled: true
@@ -553,25 +570,37 @@ const ProductsManagement: React.FC = () => {
     if (product.pricingPlans) {
       if (product.pricingPlans.monthly) {
         pricingPlans.monthly = {
-          ...product.pricingPlans.monthly,
+          price: product.pricingPlans.monthly.price || 0,
+          originalPrice: product.pricingPlans.monthly.originalPrice ?? 0,
+          interval: product.pricingPlans.monthly.interval || 'mese',
+          savings: product.pricingPlans.monthly.savings || '',
           enabled: true
         };
       }
       if (product.pricingPlans.yearly) {
         pricingPlans.yearly = {
-          ...product.pricingPlans.yearly,
+          price: product.pricingPlans.yearly.price || 0,
+          originalPrice: product.pricingPlans.yearly.originalPrice ?? 0,
+          interval: product.pricingPlans.yearly.interval || 'anno',
+          savings: product.pricingPlans.yearly.savings || '2 mesi gratis',
           enabled: true
         };
       }
       if (product.pricingPlans.lifetime) {
         pricingPlans.lifetime = {
-          ...product.pricingPlans.lifetime,
+          price: product.pricingPlans.lifetime.price || 0,
+          originalPrice: product.pricingPlans.lifetime.originalPrice ?? 0,
+          interval: product.pricingPlans.lifetime.interval || 'lifetime',
+          savings: product.pricingPlans.lifetime.savings || 'Paga una volta, accesso per sempre',
           enabled: true
         };
       }
       if (product.pricingPlans.oneTime) {
         pricingPlans.oneTime = {
-          ...product.pricingPlans.oneTime,
+          price: product.pricingPlans.oneTime.price || 0,
+          originalPrice: product.pricingPlans.oneTime.originalPrice ?? 0,
+          interval: product.pricingPlans.oneTime.interval || 'unico',
+          savings: product.pricingPlans.oneTime.savings || '',
           enabled: true
         };
       }
@@ -1445,17 +1474,17 @@ const ProductsManagement: React.FC = () => {
                 </p>
               </div>
 
-              {selectedProduct.metrics && (selectedProduct.metrics.winRate || selectedProduct.metrics.avgProfit) && (
+              {selectedProduct.metrics && (selectedProduct.metrics?.winRate || selectedProduct.metrics?.avgProfit) && (
                 <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
                   <div className="grid grid-cols-2 gap-4">
-                    {selectedProduct.metrics.winRate > 0 && (
+                    {selectedProduct.metrics?.winRate && selectedProduct.metrics.winRate > 0 && (
                       <div>
                         <span className="text-xs text-gray-500">Win Rate</span>
                         <p className="text-2xl font-bold text-green-600">{selectedProduct.metrics.winRate}%</p>
                       </div>
                     )}
-                    {selectedProduct.metrics.avgProfit > 0 && (
+                    {selectedProduct.metrics?.avgProfit && selectedProduct.metrics.avgProfit > 0 && (
                       <div>
                         <span className="text-xs text-gray-500">Avg Profit</span>
                         <p className="text-2xl font-bold text-blue-600">+{selectedProduct.metrics.avgProfit}%</p>

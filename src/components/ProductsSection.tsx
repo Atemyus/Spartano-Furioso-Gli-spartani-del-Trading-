@@ -188,8 +188,11 @@ const ProductsSection: React.FC = () => {
   ];
 
   const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(p => p.displayCategory === selectedCategory || mapCategory(p.category) === selectedCategory);
+    ? products.filter(p => p.status === 'active' || p.status === 'beta')
+    : products.filter(p => 
+        (p.displayCategory === selectedCategory || mapCategory(p.category) === selectedCategory) && 
+        (p.status === 'active' || p.status === 'beta')
+      );
 
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
