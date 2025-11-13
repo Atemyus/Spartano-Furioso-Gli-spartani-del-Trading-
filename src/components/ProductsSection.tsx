@@ -89,9 +89,9 @@ const ProductsSection: React.FC = () => {
     const handleFocus = () => {
       fetchProducts();
     };
-    
-    // Ricarica i prodotti ogni 5 secondi per sincronizzazione con admin
-    const interval = setInterval(fetchProducts, 5000);
+
+    // Ricarica i prodotti ogni 2 secondi per sincronizzazione rapida con admin
+    const interval = setInterval(fetchProducts, 2000);
     
     window.addEventListener('focus', handleFocus);
     
