@@ -298,12 +298,28 @@ router.post('/products', async (req, res) => {
 // Update product
 router.put('/products/:id', async (req, res) => {
   try {
-    const { id, ...updateData } = req.body;
+    const { id, status, stock, ...updateData } = req.body;
+
+    // Filtra solo i campi validi dello schema Prisma (rimuove status, stock e altri campi non validi)
+    const validFields = [
+      'name', 'description', 'price', 'originalPrice', 'currency', 'category', 'image',
+      'type', 'interval', 'features', 'requirements', 'platforms', 'pricingPlans',
+      'metrics', 'courseModules', 'active', 'popular', 'comingSoon', 'stripeProductId',
+      'stripePriceId', 'badge', 'badgeColor', 'trialDays', 'totalModules', 'totalLessons',
+      'trialModules', 'launchDate', 'totalDuration'
+    ];
+
+    const validData = {};
+    for (const field of validFields) {
+      if (updateData[field] !== undefined) {
+        validData[field] = updateData[field];
+      }
+    }
 
     const product = await prisma.product.update({
       where: { productId: req.params.id },
       data: {
-        ...updateData,
+        ...validData,
         updatedAt: new Date()
       }
     });
