@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Package,
   Plus,
   Edit2,
   Trash2,
@@ -13,22 +12,29 @@ import {
   ToggleRight,
   Eye,
   Copy,
-  Upload,
   X,
   Monitor,
-  Settings,
   CheckCircle,
   Save,
   RefreshCw
 } from 'lucide-react';
 import Modal from './Modal';
 
+// ============= INTERFACES =============
 interface PricingPlan {
   price: number;
   originalPrice?: number;
   interval: string;
   savings?: string;
   stripePriceId?: string;
+}
+
+interface FormPricingPlan {
+  price: number;
+  originalPrice: number;
+  interval: string;
+  savings: string;
+  enabled: boolean;
 }
 
 interface Product {
@@ -69,7 +75,7 @@ interface Product {
   trialDays?: number;
   stripeProductId?: string;
   stripePriceId?: string;
-  active: boolean;
+  status: 'active' | 'coming-soon' | 'beta' | 'soldout';
   image?: string;
   category?: string;
   stock?: number;
@@ -82,7 +88,39 @@ interface Product {
   updatedAt: string;
 }
 
+interface FormData {
+  name: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  currency: string;
+  type: 'one-time' | 'subscription';
+  interval: 'day' | 'week' | 'month' | 'year';
+  category: string;
+  stock: number;
+  status: 'active' | 'coming-soon' | 'beta' | 'soldout';
+  image: string;
+  popular: boolean;
+  badge: string;
+  badgeColor: string;
+  trialDays: number;
+  comingSoon: boolean;
+  launchDate: string;
+  metrics: {
+    winRate: number;
+    avgProfit: number;
+  };
+  pricingPlans: {
+    monthly: FormPricingPlan;
+    yearly: FormPricingPlan;
+    lifetime: FormPricingPlan;
+    oneTime: FormPricingPlan;
+  };
+}
+
+// ============= COMPONENT =============
 const ProductsManagement: React.FC = () => {
+  // ============= STATE =============
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -96,6 +134,7 @@ const ProductsManagement: React.FC = () => {
   const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
   const [platforms, setPlatforms] = useState<string[]>([]);
+  
   const [availablePlatforms] = useState([
     'MetaTrader 4',
     'MetaTrader 5',
@@ -109,17 +148,18 @@ const ProductsManagement: React.FC = () => {
     'Web',
     'Mobile App'
   ]);
-  const [formData, setFormData] = useState({
+
+  const initialFormData: FormData = {
     name: '',
     description: '',
     price: 0,
     originalPrice: 0,
     currency: 'eur',
-    type: 'subscription' as 'one-time' | 'subscription',
-    interval: 'month' as 'day' | 'week' | 'month' | 'year',
+    type: 'subscription',
+    interval: 'month',
     category: '',
     stock: 0,
-    active: true,
+    status: 'active',
     image: '',
     popular: false,
     badge: '',
@@ -132,17 +172,21 @@ const ProductsManagement: React.FC = () => {
       avgProfit: 0
     },
     pricingPlans: {
-      monthly: { price: 0, originalPrice: 0, interval: 'mese', enabled: false },
+      monthly: { price: 0, originalPrice: 0, interval: 'mese', savings: '', enabled: false },
       yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
       lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
-      oneTime: { price: 0, originalPrice: 0, interval: 'unico', enabled: false }
+      oneTime: { price: 0, originalPrice: 0, interval: 'unico', savings: '', enabled: false }
     }
-  });
+  };
 
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+
+  // ============= EFFECTS =============
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // ============= API FUNCTIONS =============
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('adminToken');
@@ -153,7 +197,7 @@ const ProductsManagement: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Products API response:', data); // Debug log
+        console.log('Products API response:', data);
         if (data.success && data.products && Array.isArray(data.products)) {
           setProducts(data.products);
         } else {
@@ -218,46 +262,49 @@ const ProductsManagement: React.FC = () => {
     setIsPlatformModalOpen(true);
   };
 
+  const prepareProductData = (data: FormData) => {
+    // Filtra solo i piani abilitati
+    const enabledPlans: any = {};
+    if (data.pricingPlans.monthly.enabled) enabledPlans.monthly = data.pricingPlans.monthly;
+    if (data.pricingPlans.yearly.enabled) enabledPlans.yearly = data.pricingPlans.yearly;
+    if (data.pricingPlans.lifetime.enabled) enabledPlans.lifetime = data.pricingPlans.lifetime;
+    if (data.pricingPlans.oneTime.enabled) enabledPlans.oneTime = data.pricingPlans.oneTime;
+    
+    // Determina il prezzo principale e il prezzo originale dai piani attivi
+    let mainPrice = data.price;
+    let mainOriginalPrice = data.originalPrice;
+    
+    if (Object.keys(enabledPlans).length > 0) {
+      // Priorità: mensile > oneTime > yearly > lifetime
+      if (enabledPlans.monthly?.price > 0) {
+        mainPrice = enabledPlans.monthly.price;
+        mainOriginalPrice = enabledPlans.monthly.originalPrice || 0;
+      } else if (enabledPlans.oneTime?.price > 0) {
+        mainPrice = enabledPlans.oneTime.price;
+        mainOriginalPrice = enabledPlans.oneTime.originalPrice || 0;
+      } else if (enabledPlans.yearly?.price > 0) {
+        mainPrice = enabledPlans.yearly.price;
+        mainOriginalPrice = enabledPlans.yearly.originalPrice || 0;
+      } else if (enabledPlans.lifetime?.price > 0) {
+        mainPrice = enabledPlans.lifetime.price;
+        mainOriginalPrice = enabledPlans.lifetime.originalPrice || 0;
+      }
+    }
+    
+    return {
+      ...data,
+      price: mainPrice,
+      originalPrice: mainOriginalPrice,
+      features: features.filter(f => f.trim() !== ''),
+      pricingPlans: Object.keys(enabledPlans).length > 0 ? enabledPlans : undefined
+    };
+  };
+
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      
-      // Filtra solo i piani abilitati
-      const enabledPlans: any = {};
-      if (formData.pricingPlans.monthly.enabled) enabledPlans.monthly = formData.pricingPlans.monthly;
-      if (formData.pricingPlans.yearly.enabled) enabledPlans.yearly = formData.pricingPlans.yearly;
-      if (formData.pricingPlans.lifetime.enabled) enabledPlans.lifetime = formData.pricingPlans.lifetime;
-      if (formData.pricingPlans.oneTime.enabled) enabledPlans.oneTime = formData.pricingPlans.oneTime;
-      
-      // Determina il prezzo principale e il prezzo originale dai piani attivi
-      let mainPrice = formData.price;
-      let mainOriginalPrice = formData.originalPrice;
-      
-      if (Object.keys(enabledPlans).length > 0) {
-        // Priorità: mensile > oneTime > altri
-        if (enabledPlans.monthly?.price > 0) {
-          mainPrice = enabledPlans.monthly.price;
-          mainOriginalPrice = enabledPlans.monthly.originalPrice || 0;
-        } else if (enabledPlans.oneTime?.price > 0) {
-          mainPrice = enabledPlans.oneTime.price;
-          mainOriginalPrice = enabledPlans.oneTime.originalPrice || 0;
-        } else if (enabledPlans.yearly?.price > 0) {
-          mainPrice = enabledPlans.yearly.price;
-          mainOriginalPrice = enabledPlans.yearly.originalPrice || 0;
-        } else if (enabledPlans.lifetime?.price > 0) {
-          mainPrice = enabledPlans.lifetime.price;
-          mainOriginalPrice = enabledPlans.lifetime.originalPrice || 0;
-        }
-      }
-      
-      const productData = {
-        ...formData,
-        price: mainPrice, // Aggiorna il prezzo principale
-        originalPrice: mainOriginalPrice, // Aggiorna anche il prezzo originale
-        features: features.filter(f => f.trim() !== ''),
-        pricingPlans: Object.keys(enabledPlans).length > 0 ? enabledPlans : undefined
-      };
+      const productData = prepareProductData(formData);
 
       const response = await fetch('https://api.spartanofurioso.com/api/admin/products', {
         method: 'POST',
@@ -272,9 +319,13 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         setIsCreateModalOpen(false);
         resetForm();
+        alert('✅ Prodotto creato con successo!');
+      } else {
+        alert('❌ Errore durante la creazione del prodotto');
       }
     } catch (error) {
       console.error('Error creating product:', error);
+      alert('❌ Errore durante la creazione del prodotto');
     }
   };
 
@@ -284,45 +335,9 @@ const ProductsManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      
-      // Filtra solo i piani abilitati
-      const enabledPlans: any = {};
-      if (formData.pricingPlans.monthly.enabled) enabledPlans.monthly = formData.pricingPlans.monthly;
-      if (formData.pricingPlans.yearly.enabled) enabledPlans.yearly = formData.pricingPlans.yearly;
-      if (formData.pricingPlans.lifetime.enabled) enabledPlans.lifetime = formData.pricingPlans.lifetime;
-      if (formData.pricingPlans.oneTime.enabled) enabledPlans.oneTime = formData.pricingPlans.oneTime;
-      
-      // Determina il prezzo principale e il prezzo originale dai piani attivi
-      let mainPrice = formData.price;
-      let mainOriginalPrice = formData.originalPrice;
-      
-      if (Object.keys(enabledPlans).length > 0) {
-        // Priorità: mensile > oneTime > altri
-        if (enabledPlans.monthly?.price > 0) {
-          mainPrice = enabledPlans.monthly.price;
-          mainOriginalPrice = enabledPlans.monthly.originalPrice || 0;
-        } else if (enabledPlans.oneTime?.price > 0) {
-          mainPrice = enabledPlans.oneTime.price;
-          mainOriginalPrice = enabledPlans.oneTime.originalPrice || 0;
-        } else if (enabledPlans.yearly?.price > 0) {
-          mainPrice = enabledPlans.yearly.price;
-          mainOriginalPrice = enabledPlans.yearly.originalPrice || 0;
-        } else if (enabledPlans.lifetime?.price > 0) {
-          mainPrice = enabledPlans.lifetime.price;
-          mainOriginalPrice = enabledPlans.lifetime.originalPrice || 0;
-        }
-      }
-      
-      const productData = {
-        ...formData,
-        price: mainPrice, // Aggiorna il prezzo principale
-        originalPrice: mainOriginalPrice, // Aggiorna anche il prezzo originale
-        features: features.filter(f => f.trim() !== ''),
-        pricingPlans: Object.keys(enabledPlans).length > 0 ? enabledPlans : undefined
-      };
+      const productData = prepareProductData(formData);
       
       console.log('Dati da salvare (update):', productData);
-      console.log('Piani abilitati:', enabledPlans);
 
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${selectedProduct.id}`, {
         method: 'PUT',
@@ -337,9 +352,13 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         setIsEditModalOpen(false);
         resetForm();
+        alert('✅ Prodotto aggiornato con successo!');
+      } else {
+        alert('❌ Errore durante l\'aggiornamento del prodotto');
       }
     } catch (error) {
       console.error('Error updating product:', error);
+      alert('❌ Errore durante l\'aggiornamento del prodotto');
     }
   };
 
@@ -357,7 +376,6 @@ const ProductsManagement: React.FC = () => {
 
       if (response.ok) {
         await fetchProducts();
-        // Mostra notifica di successo
         alert('✅ Prodotto eliminato con successo!');
       } else {
         alert('❌ Errore durante l\'eliminazione del prodotto');
@@ -368,77 +386,52 @@ const ProductsManagement: React.FC = () => {
     }
   };
 
-  const handleToggleActive = async (productId: string, currentStatus: boolean) => {
+  const handleToggleActive = async (productId: string, currentStatus: string) => {
     try {
       const token = localStorage.getItem('adminToken');
+      const newStatus = currentStatus === 'active' ? 'coming-soon' : 'active';
+      
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ active: !currentStatus })
+        body: JSON.stringify({ status: newStatus })
       });
 
       if (response.ok) {
         await fetchProducts();
+        console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
+      } else {
+        console.error('Errore nell\'aggiornamento del prodotto');
       }
     } catch (error) {
       console.error('Error toggling product status:', error);
     }
   };
 
+  // ============= UTILITY FUNCTIONS =============
   const resetForm = () => {
-    setFormData({
-      name: '',
-      description: '',
-      price: 0,
-      originalPrice: 0,
-      currency: 'eur',
-      type: 'subscription',
-      interval: 'month',
-      category: '',
-      stock: 0,
-      active: true,
-      image: '',
-      popular: false,
-      badge: '',
-      badgeColor: 'blue',
-      trialDays: 0,
-      comingSoon: false,
-      launchDate: '',
-      metrics: {
-        winRate: 0,
-        avgProfit: 0
-      },
-      pricingPlans: {
-        monthly: { price: 0, originalPrice: 0, interval: 'mese', enabled: false },
-        yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
-        lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
-        oneTime: { price: 0, originalPrice: 0, interval: 'unico', enabled: false }
-      }
-    });
+    setFormData(initialFormData);
     setFeatures(['']);
     setSelectedProduct(null);
   };
 
-  const openEditModal = (product: Product) => {
-    console.log('Prodotto da modificare:', product);
-    console.log('Piani esistenti:', product.pricingPlans);
-    
-    setSelectedProduct(product);
-    
-    // Inizializza i piani con valori di default
-    let pricingPlans = {
+  const convertProductToPricingPlans = (product: Product): {
+    monthly: FormPricingPlan;
+    yearly: FormPricingPlan;
+    lifetime: FormPricingPlan;
+    oneTime: FormPricingPlan;
+  } => {
+    const pricingPlans = {
       monthly: { price: 0, originalPrice: 0, interval: 'mese', savings: '', enabled: false },
       yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
       lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
       oneTime: { price: 0, originalPrice: 0, interval: 'unico', savings: '', enabled: false }
     };
     
-    // Se il prodotto ha piani esistenti, utilizzali
     if (product.pricingPlans) {
-      // Piano mensile
       if (product.pricingPlans.monthly) {
         pricingPlans.monthly = {
           price: product.pricingPlans.monthly.price || 0,
@@ -449,7 +442,6 @@ const ProductsManagement: React.FC = () => {
         };
       }
       
-      // Piano annuale
       if (product.pricingPlans.yearly) {
         pricingPlans.yearly = {
           price: product.pricingPlans.yearly.price || 0,
@@ -460,7 +452,6 @@ const ProductsManagement: React.FC = () => {
         };
       }
       
-      // Piano lifetime
       if (product.pricingPlans.lifetime) {
         pricingPlans.lifetime = {
           price: product.pricingPlans.lifetime.price || 0,
@@ -471,7 +462,6 @@ const ProductsManagement: React.FC = () => {
         };
       }
       
-      // Piano one-time
       if (product.pricingPlans.oneTime) {
         pricingPlans.oneTime = {
           price: product.pricingPlans.oneTime.price || 0,
@@ -483,7 +473,18 @@ const ProductsManagement: React.FC = () => {
       }
     }
     
-    const formDataToSet = {
+    return pricingPlans;
+  };
+
+  const openEditModal = (product: Product) => {
+    console.log('Prodotto da modificare:', product);
+    console.log('Piani esistenti:', product.pricingPlans);
+    
+    setSelectedProduct(product);
+    
+    const pricingPlans = convertProductToPricingPlans(product);
+    
+    const formDataToSet: FormData = {
       name: product.name,
       description: product.description,
       price: product.price,
@@ -493,7 +494,7 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
-      active: product.active,
+      status: product.status,
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -521,56 +522,8 @@ const ProductsManagement: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
-  const addFeature = () => {
-    setFeatures([...features, '']);
-  };
-
-  const removeFeature = (index: number) => {
-    setFeatures(features.filter((_, i) => i !== index));
-  };
-
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...features];
-    newFeatures[index] = value;
-    setFeatures(newFeatures);
-  };
-
   const duplicateProduct = (product: Product) => {
-    // Prepara i piani di prezzo per la duplicazione
-    let pricingPlans = {
-      monthly: { price: 0, originalPrice: 0, interval: 'mese', savings: '', enabled: false },
-      yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
-      lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
-      oneTime: { price: 0, originalPrice: 0, interval: 'unico', savings: '', enabled: false }
-    };
-    
-    // Copia i piani esistenti se presenti
-    if (product.pricingPlans) {
-      if (product.pricingPlans.monthly) {
-        pricingPlans.monthly = {
-          ...product.pricingPlans.monthly,
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.yearly) {
-        pricingPlans.yearly = {
-          ...product.pricingPlans.yearly,
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.lifetime) {
-        pricingPlans.lifetime = {
-          ...product.pricingPlans.lifetime,
-          enabled: true
-        };
-      }
-      if (product.pricingPlans.oneTime) {
-        pricingPlans.oneTime = {
-          ...product.pricingPlans.oneTime,
-          enabled: true
-        };
-      }
-    }
+    const pricingPlans = convertProductToPricingPlans(product);
     
     setFormData({
       name: `${product.name} (Copia)`,
@@ -582,7 +535,7 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
-      active: false, // Set as inactive by default
+      status: 'coming-soon',
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -600,16 +553,33 @@ const ProductsManagement: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
+  // ============= FEATURE MANAGEMENT =============
+  const addFeature = () => {
+    setFeatures([...features, '']);
+  };
+
+  const removeFeature = (index: number) => {
+    setFeatures(features.filter((_, i) => i !== index));
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = value;
+    setFeatures(newFeatures);
+  };
+
+  // ============= FILTERING =============
   const filteredProducts = Array.isArray(products) ? products.filter(product => {
     const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || product.type === filterType;
     const matchesActive = filterActive === 'all' || 
-                         (filterActive === 'active' && product.active) ||
-                         (filterActive === 'inactive' && !product.active);
+                         (filterActive === 'active' && product.status === 'active') ||
+                         (filterActive === 'inactive' && product.status !== 'active');
     return matchesSearch && matchesType && matchesActive;
   }) : [];
 
+  // ============= UTILITY =============
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('it-IT', {
       style: 'currency',
@@ -617,6 +587,7 @@ const ProductsManagement: React.FC = () => {
     }).format(price);
   };
 
+  // ============= LOADING STATE =============
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -625,6 +596,7 @@ const ProductsManagement: React.FC = () => {
     );
   }
 
+  // ============= RENDER =============
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -717,11 +689,11 @@ const ProductsManagement: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
                   <button
-                    onClick={() => handleToggleActive(product.id, product.active)}
-                    className={`${product.active ? 'text-green-600' : 'text-gray-400'}`}
-                    title={product.active ? 'Disattiva' : 'Attiva'}
+                    onClick={() => handleToggleActive(product.id, product.status)}
+                    className={`${product.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}
+                    title={product.status === 'active' ? 'Disattiva' : 'Attiva'}
                   >
-                    {product.active ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
+                    {product.status === 'active' ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
@@ -753,7 +725,7 @@ const ProductsManagement: React.FC = () => {
                       {product.badge}
                     </span>
                   )}
-                  {!product.active && (
+                  {product.status !== 'active' && (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                       Inattivo
                     </span>
@@ -915,7 +887,7 @@ const ProductsManagement: React.FC = () => {
                               ...formData,
                               pricingPlans: {
                                 ...formData.pricingPlans,
-                                monthly: { ...formData.pricingPlans.monthly, price: parseFloat(e.target.value) }
+                                monthly: { ...formData.pricingPlans.monthly, price: parseFloat(e.target.value) || 0 }
                               }
                             })}
                             className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -931,7 +903,7 @@ const ProductsManagement: React.FC = () => {
                               ...formData,
                               pricingPlans: {
                                 ...formData.pricingPlans,
-                                monthly: { ...formData.pricingPlans.monthly, originalPrice: parseFloat(e.target.value) }
+                                monthly: { ...formData.pricingPlans.monthly, originalPrice: parseFloat(e.target.value) || 0 }
                               }
                             })}
                             className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -974,7 +946,7 @@ const ProductsManagement: React.FC = () => {
                                 ...formData,
                                 pricingPlans: {
                                   ...formData.pricingPlans,
-                                  yearly: { ...formData.pricingPlans.yearly, price: parseFloat(e.target.value) }
+                                  yearly: { ...formData.pricingPlans.yearly, price: parseFloat(e.target.value) || 0 }
                                 }
                               })}
                               className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -990,7 +962,7 @@ const ProductsManagement: React.FC = () => {
                                 ...formData,
                                 pricingPlans: {
                                   ...formData.pricingPlans,
-                                  yearly: { ...formData.pricingPlans.yearly, originalPrice: parseFloat(e.target.value) }
+                                  yearly: { ...formData.pricingPlans.yearly, originalPrice: parseFloat(e.target.value) || 0 }
                                 }
                               })}
                               className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -1050,7 +1022,7 @@ const ProductsManagement: React.FC = () => {
                                 ...formData,
                                 pricingPlans: {
                                   ...formData.pricingPlans,
-                                  lifetime: { ...formData.pricingPlans.lifetime, price: parseFloat(e.target.value) }
+                                  lifetime: { ...formData.pricingPlans.lifetime, price: parseFloat(e.target.value) || 0 }
                                 }
                               })}
                               className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -1066,7 +1038,7 @@ const ProductsManagement: React.FC = () => {
                                 ...formData,
                                 pricingPlans: {
                                   ...formData.pricingPlans,
-                                  lifetime: { ...formData.pricingPlans.lifetime, originalPrice: parseFloat(e.target.value) }
+                                  lifetime: { ...formData.pricingPlans.lifetime, originalPrice: parseFloat(e.target.value) || 0 }
                                 }
                               })}
                               className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -1110,7 +1082,7 @@ const ProductsManagement: React.FC = () => {
                           ...formData,
                           pricingPlans: {
                             ...formData.pricingPlans,
-                            oneTime: { ...formData.pricingPlans.oneTime, price: parseFloat(e.target.value), enabled: true }
+                            oneTime: { ...formData.pricingPlans.oneTime, price: parseFloat(e.target.value) || 0, enabled: true }
                           }
                         })}
                         className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -1126,7 +1098,7 @@ const ProductsManagement: React.FC = () => {
                           ...formData,
                           pricingPlans: {
                             ...formData.pricingPlans,
-                            oneTime: { ...formData.pricingPlans.oneTime, originalPrice: parseFloat(e.target.value) }
+                            oneTime: { ...formData.pricingPlans.oneTime, originalPrice: parseFloat(e.target.value) || 0 }
                           }
                         })}
                         className="w-full px-2 py-1 text-sm border rounded text-gray-900 bg-white"
@@ -1159,14 +1131,13 @@ const ProductsManagement: React.FC = () => {
               </label>
               <select
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'one-time' | 'subscription' })}
                 className="w-full px-3 py-2 border rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="one-time">Pagamento singolo</option>
                 <option value="subscription">Abbonamento</option>
               </select>
             </div>
-
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1189,7 +1160,7 @@ const ProductsManagement: React.FC = () => {
                 <input
                   type="number"
                   value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })}
                   className="w-full px-3 py-2 border rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   min="0"
                 />
@@ -1248,8 +1219,8 @@ const ProductsManagement: React.FC = () => {
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={formData.active}
-                  onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
+                  checked={formData.status === 'active'}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'active' : 'coming-soon' })}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm font-medium text-gray-700">Prodotto attivo</span>
@@ -1304,7 +1275,7 @@ const ProductsManagement: React.FC = () => {
               <input
                 type="number"
                 value={formData.trialDays}
-                onChange={(e) => setFormData({ ...formData, trialDays: parseInt(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, trialDays: parseInt(e.target.value) || 0 })}
                 className="w-full px-3 py-2 border rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 min="0"
                 placeholder="Es: 60 giorni"
@@ -1324,7 +1295,7 @@ const ProductsManagement: React.FC = () => {
                     value={formData.metrics.winRate}
                     onChange={(e) => setFormData({ 
                       ...formData, 
-                      metrics: { ...formData.metrics, winRate: parseFloat(e.target.value) } 
+                      metrics: { ...formData.metrics, winRate: parseFloat(e.target.value) || 0 } 
                     })}
                     className="w-full px-3 py-2 border rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     min="0"
@@ -1344,7 +1315,7 @@ const ProductsManagement: React.FC = () => {
                     value={formData.metrics.avgProfit}
                     onChange={(e) => setFormData({ 
                       ...formData, 
-                      metrics: { ...formData.metrics, avgProfit: parseFloat(e.target.value) } 
+                      metrics: { ...formData.metrics, avgProfit: parseFloat(e.target.value) || 0 } 
                     })}
                     className="w-full px-3 py-2 border rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Es: 22.3"
@@ -1433,24 +1404,27 @@ const ProductsManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-500">Stato</label>
                 <p className="mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    selectedProduct.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedProduct.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {selectedProduct.active ? 'Attivo' : 'Inattivo'}
+                    {selectedProduct.status === 'active' ? 'Attivo' : 'Inattivo'}
                   </span>
                 </p>
               </div>
 
-              {selectedProduct.metrics && (selectedProduct.metrics.winRate || selectedProduct.metrics.avgProfit) && (
+              {selectedProduct.metrics && (
+                selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 ||
+                selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0
+              ) && (
                 <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
                   <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
                   <div className="grid grid-cols-2 gap-4">
-                    {selectedProduct.metrics.winRate > 0 && (
+                    {selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 && (
                       <div>
                         <span className="text-xs text-gray-500">Win Rate</span>
                         <p className="text-2xl font-bold text-green-600">{selectedProduct.metrics.winRate}%</p>
                       </div>
                     )}
-                    {selectedProduct.metrics.avgProfit > 0 && (
+                    {selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0 && (
                       <div>
                         <span className="text-xs text-gray-500">Avg Profit</span>
                         <p className="text-2xl font-bold text-blue-600">+{selectedProduct.metrics.avgProfit}%</p>
