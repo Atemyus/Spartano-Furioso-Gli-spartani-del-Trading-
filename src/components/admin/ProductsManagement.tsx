@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Package,
   Plus,
   Edit2,
   Trash2,
@@ -13,10 +12,8 @@ import {
   ToggleRight,
   Eye,
   Copy,
-  Upload,
   X,
   Monitor,
-  Settings,
   CheckCircle,
   Save,
   RefreshCw
