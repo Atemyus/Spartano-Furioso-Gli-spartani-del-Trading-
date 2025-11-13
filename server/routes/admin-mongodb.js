@@ -408,6 +408,44 @@ router.get('/newsletter', async (req, res) => {
   }
 });
 
+// DEBUG ROUTE: Verifica stato campo active dei prodotti
+router.get('/products/debug-active', async (req, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      select: {
+        productId: true,
+        name: true,
+        active: true
+      }
+    });
+
+    const stats = {
+      total: products.length,
+      active: products.filter(p => p.active === true).length,
+      inactive: products.filter(p => p.active === false).length,
+      undefined: products.filter(p => p.active === undefined || p.active === null).length
+    };
+
+    console.log('📊 Products active status:', stats);
+
+    res.json({
+      success: true,
+      stats,
+      products: products.map(p => ({
+        id: p.productId,
+        name: p.name,
+        active: p.active
+      }))
+    });
+  } catch (error) {
+    console.error('❌ Debug error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // MIGRATION ROUTE: Aggiorna tutti i prodotti a active=true
 router.post('/products/migrate-active', async (req, res) => {
   try {
