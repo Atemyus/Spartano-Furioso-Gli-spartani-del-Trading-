@@ -1,45 +1,13 @@
 import express from 'express';
 import { authenticateAdmin } from '../middleware/auth.js';
 import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Protect all admin routes
 router.use(authenticateAdmin);
-
-// MongoDB Product Schema
-const productSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  category: { type: String, required: true },
-  shortDescription: { type: String, required: true },
-  description: { type: String, required: true },
-  price: {
-    monthly: Number,
-    yearly: Number,
-    lifetime: Number
-  },
-  features: [String],
-  performance: {
-    winRate: String,
-    avgProfit: String,
-    drawdown: String,
-    trades: String
-  },
-  trial: {
-    available: Boolean,
-    days: Number,
-    features: [String]
-  },
-  status: { type: String, default: 'active' },
-  badge: String,
-  platforms: [String],
-  requirements: [String],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-const Product = mongoose.model('Product', productSchema);
 
 // User Schema (semplificato per admin)
 const userSchema = new mongoose.Schema({
@@ -235,18 +203,19 @@ router.delete('/users/:id', async (req, res) => {
 // Get all products
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.find({})
-      .sort({ createdAt: -1 });
-    
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+
     res.json({
       success: true,
       products
     });
   } catch (error) {
     console.error('Admin products error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -254,24 +223,26 @@ router.get('/products', async (req, res) => {
 // Get product by ID
 router.get('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findOne({ id: req.params.id });
-    
+    const product = await prisma.product.findUnique({
+      where: { productId: req.params.id }
+    });
+
     if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
+      return res.status(404).json({
+        success: false,
+        error: 'Prodotto non trovato'
       });
     }
-    
+
     res.json({
       success: true,
       product
     });
   } catch (error) {
     console.error('Admin get product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -279,15 +250,37 @@ router.get('/products/:id', async (req, res) => {
 // Create product
 router.post('/products', async (req, res) => {
   try {
-    const productData = {
-      ...req.body,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    const product = new Product(productData);
-    await product.save();
-    
+    const { id, ...productData } = req.body;
+
+    const product = await prisma.product.create({
+      data: {
+        productId: id || productData.name?.toLowerCase().replace(/\s+/g, '_'),
+        name: productData.name,
+        description: productData.description,
+        price: productData.price || 0,
+        originalPrice: productData.originalPrice || null,
+        currency: productData.currency || 'eur',
+        pricingPlans: productData.pricingPlans || {},
+        features: productData.features || [],
+        requirements: productData.requirements || [],
+        platforms: productData.platforms || [],
+        metrics: productData.metrics || {},
+        stripeProductId: productData.stripeProductId || null,
+        stripePriceId: productData.stripePriceId || null,
+        type: productData.type || 'subscription',
+        interval: productData.interval || null,
+        trialDays: productData.trialDays || 60,
+        active: productData.active !== undefined ? productData.active : true,
+        popular: productData.popular || false,
+        badge: productData.badge || null,
+        badgeColor: productData.badgeColor || null,
+        category: productData.category || '',
+        image: productData.image || null,
+        comingSoon: productData.comingSoon || false,
+        launchDate: productData.launchDate || null
+      }
+    });
+
     res.json({
       success: true,
       product,
@@ -295,9 +288,9 @@ router.post('/products', async (req, res) => {
     });
   } catch (error) {
     console.error('Admin create product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -305,34 +298,28 @@ router.post('/products', async (req, res) => {
 // Update product
 router.put('/products/:id', async (req, res) => {
   try {
-    const updateData = {
-      ...req.body,
-      updatedAt: new Date()
-    };
-    
-    const product = await Product.findOneAndUpdate(
-      { id: req.params.id },
-      updateData,
-      { new: true }
-    );
-    
-    if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
-      });
-    }
-    
+    const { id, ...updateData } = req.body;
+
+    const product = await prisma.product.update({
+      where: { productId: req.params.id },
+      data: {
+        ...updateData,
+        updatedAt: new Date()
+      }
+    });
+
+    console.log('✅ Prodotto aggiornato con successo:', product.productId);
+
     res.json({
       success: true,
       product,
-      message: 'Prodotto aggiornato con successo - MODIFICA APPLICATA SU MONGODB!'
+      message: 'Prodotto aggiornato con successo - MODIFICA APPLICATA SU PRISMA/MONGODB!'
     });
   } catch (error) {
     console.error('Admin update product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -340,24 +327,19 @@ router.put('/products/:id', async (req, res) => {
 // Delete product
 router.delete('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({ id: req.params.id });
-    
-    if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
-      });
-    }
-    
+    const product = await prisma.product.delete({
+      where: { productId: req.params.id }
+    });
+
     res.json({
       success: true,
       message: 'Prodotto eliminato con successo'
     });
   } catch (error) {
     console.error('Admin delete product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });

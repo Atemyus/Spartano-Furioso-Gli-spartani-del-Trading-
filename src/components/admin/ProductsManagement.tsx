@@ -340,8 +340,14 @@ const ProductsManagement: React.FC = () => {
     try {
       const token = localStorage.getItem('adminToken');
       const productData = prepareProductData(formData);
-      
-      console.log('Dati da salvare (update):', productData);
+
+      // Aggiungi il productId al payload
+      const updatePayload = {
+        ...productData,
+        id: selectedProduct.id  // Mantieni il productId originale
+      };
+
+      console.log('Dati da salvare (update):', updatePayload);
 
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${selectedProduct.id}`, {
         method: 'PUT',
@@ -349,7 +355,7 @@ const ProductsManagement: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(productData)
+        body: JSON.stringify(updatePayload)
       });
 
       if (response.ok) {
