@@ -254,7 +254,7 @@ router.get('/products', async (req, res) => {
 // Get product by ID
 router.get('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ id: req.params.id });
     
     if (!product) {
       return res.status(404).json({ 
@@ -310,8 +310,8 @@ router.put('/products/:id', async (req, res) => {
       updatedAt: new Date()
     };
     
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
+    const product = await Product.findOneAndUpdate(
+      { id: req.params.id },
       updateData,
       { new: true }
     );
@@ -340,7 +340,7 @@ router.put('/products/:id', async (req, res) => {
 // Delete product
 router.delete('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findOneAndDelete({ id: req.params.id });
     
     if (!product) {
       return res.status(404).json({ 

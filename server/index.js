@@ -11,13 +11,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables - FORZA IL PATH CORRETTO
-dotenv.config({ path: join(__dirname, '.env') });
+dotenv.config({ path: join(__dirname, '..', '.env') });
 
 // Verifica DATABASE_URL all'avvio
 console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL);
 if (!process.env.DATABASE_URL) {
   console.error('❌ ERRORE: DATABASE_URL non configurato!');
-  console.error('   File .env path:', join(__dirname, '.env'));
+  console.error('   File .env path:', join(__dirname, '..', '.env'));
   process.exit(1);
 }
 

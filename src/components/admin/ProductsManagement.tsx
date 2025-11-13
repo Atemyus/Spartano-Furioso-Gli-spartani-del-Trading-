@@ -159,7 +159,11 @@ const ProductsManagement: React.FC = () => {
     interval: 'month',
     category: '',
     stock: 0,
+<<<<<<< HEAD
     status: 'active',
+=======
+    status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     image: '',
     popular: false,
     badge: '',
@@ -321,11 +325,20 @@ const ProductsManagement: React.FC = () => {
         resetForm();
         alert('✅ Prodotto creato con successo!');
       } else {
+<<<<<<< HEAD
         alert('❌ Errore durante la creazione del prodotto');
       }
     } catch (error) {
       console.error('Error creating product:', error);
       alert('❌ Errore durante la creazione del prodotto');
+=======
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile creare il prodotto'}`);
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     }
   };
 
@@ -354,11 +367,20 @@ const ProductsManagement: React.FC = () => {
         resetForm();
         alert('✅ Prodotto aggiornato con successo!');
       } else {
+<<<<<<< HEAD
         alert('❌ Errore durante l\'aggiornamento del prodotto');
       }
     } catch (error) {
       console.error('Error updating product:', error);
       alert('❌ Errore durante l\'aggiornamento del prodotto');
+=======
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     }
   };
 
@@ -378,11 +400,12 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         alert('✅ Prodotto eliminato con successo!');
       } else {
-        alert('❌ Errore durante l\'eliminazione del prodotto');
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile eliminare il prodotto'}`);
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('❌ Errore durante l\'eliminazione del prodotto');
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
@@ -402,18 +425,62 @@ const ProductsManagement: React.FC = () => {
 
       if (response.ok) {
         await fetchProducts();
+<<<<<<< HEAD
         console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
       } else {
         console.error('Errore nell\'aggiornamento del prodotto');
+=======
+        // Mostra notifica di successo
+        const action = newStatus === 'active' ? 'attivato' : 'disattivato';
+        alert(`✅ Prodotto ${action} con successo!`);
+        console.log(`Prodotto ${productId} aggiornato: ${currentStatus} -> ${newStatus}`);
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile aggiornare il prodotto'}`);
+        console.error('Errore nell\'aggiornamento del prodotto:', errorData);
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
       }
     } catch (error) {
       console.error('Error toggling product status:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
     }
   };
 
   // ============= UTILITY FUNCTIONS =============
   const resetForm = () => {
+<<<<<<< HEAD
     setFormData(initialFormData);
+=======
+    setFormData({
+      name: '',
+      description: '',
+      price: 0,
+      originalPrice: 0,
+      currency: 'eur',
+      type: 'subscription',
+      interval: 'month',
+      category: '',
+      stock: 0,
+      status: 'active' as 'active' | 'coming-soon' | 'beta' | 'soldout',
+      image: '',
+      popular: false,
+      badge: '',
+      badgeColor: 'blue',
+      trialDays: 0,
+      comingSoon: false,
+      launchDate: '',
+      metrics: {
+        winRate: 0,
+        avgProfit: 0
+      },
+      pricingPlans: {
+        monthly: { price: 0, originalPrice: 0, interval: 'mese', enabled: false },
+        yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
+        lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
+        oneTime: { price: 0, originalPrice: 0, interval: 'unico', enabled: false }
+      }
+    });
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     setFeatures(['']);
     setSelectedProduct(null);
   };
@@ -435,7 +502,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.monthly) {
         pricingPlans.monthly = {
           price: product.pricingPlans.monthly.price || 0,
-          originalPrice: product.pricingPlans.monthly.originalPrice || 0,
+          originalPrice: product.pricingPlans.monthly.originalPrice ?? 0,
           interval: product.pricingPlans.monthly.interval || 'mese',
           savings: product.pricingPlans.monthly.savings || '',
           enabled: true
@@ -445,7 +512,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.yearly) {
         pricingPlans.yearly = {
           price: product.pricingPlans.yearly.price || 0,
-          originalPrice: product.pricingPlans.yearly.originalPrice || 0,
+          originalPrice: product.pricingPlans.yearly.originalPrice ?? 0,
           interval: product.pricingPlans.yearly.interval || 'anno',
           savings: product.pricingPlans.yearly.savings || '2 mesi gratis',
           enabled: true
@@ -455,7 +522,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.lifetime) {
         pricingPlans.lifetime = {
           price: product.pricingPlans.lifetime.price || 0,
-          originalPrice: product.pricingPlans.lifetime.originalPrice || 0,
+          originalPrice: product.pricingPlans.lifetime.originalPrice ?? 0,
           interval: product.pricingPlans.lifetime.interval || 'lifetime',
           savings: product.pricingPlans.lifetime.savings || 'Paga una volta, accesso per sempre',
           enabled: true
@@ -465,7 +532,7 @@ const ProductsManagement: React.FC = () => {
       if (product.pricingPlans.oneTime) {
         pricingPlans.oneTime = {
           price: product.pricingPlans.oneTime.price || 0,
-          originalPrice: product.pricingPlans.oneTime.originalPrice || 0,
+          originalPrice: product.pricingPlans.oneTime.originalPrice ?? 0,
           interval: product.pricingPlans.oneTime.interval || 'unico',
           savings: product.pricingPlans.oneTime.savings || '',
           enabled: true
@@ -523,7 +590,57 @@ const ProductsManagement: React.FC = () => {
   };
 
   const duplicateProduct = (product: Product) => {
+<<<<<<< HEAD
     const pricingPlans = convertProductToPricingPlans(product);
+=======
+    // Prepara i piani di prezzo per la duplicazione
+    let pricingPlans = {
+      monthly: { price: 0, originalPrice: 0, interval: 'mese', savings: '', enabled: false },
+      yearly: { price: 0, originalPrice: 0, interval: 'anno', savings: '2 mesi gratis', enabled: false },
+      lifetime: { price: 0, originalPrice: 0, interval: 'lifetime', savings: 'Paga una volta, accesso per sempre', enabled: false },
+      oneTime: { price: 0, originalPrice: 0, interval: 'unico', savings: '', enabled: false }
+    };
+    
+    // Copia i piani esistenti se presenti
+    if (product.pricingPlans) {
+      if (product.pricingPlans.monthly) {
+        pricingPlans.monthly = {
+          price: product.pricingPlans.monthly.price || 0,
+          originalPrice: product.pricingPlans.monthly.originalPrice ?? 0,
+          interval: product.pricingPlans.monthly.interval || 'mese',
+          savings: product.pricingPlans.monthly.savings || '',
+          enabled: true
+        };
+      }
+      if (product.pricingPlans.yearly) {
+        pricingPlans.yearly = {
+          price: product.pricingPlans.yearly.price || 0,
+          originalPrice: product.pricingPlans.yearly.originalPrice ?? 0,
+          interval: product.pricingPlans.yearly.interval || 'anno',
+          savings: product.pricingPlans.yearly.savings || '2 mesi gratis',
+          enabled: true
+        };
+      }
+      if (product.pricingPlans.lifetime) {
+        pricingPlans.lifetime = {
+          price: product.pricingPlans.lifetime.price || 0,
+          originalPrice: product.pricingPlans.lifetime.originalPrice ?? 0,
+          interval: product.pricingPlans.lifetime.interval || 'lifetime',
+          savings: product.pricingPlans.lifetime.savings || 'Paga una volta, accesso per sempre',
+          enabled: true
+        };
+      }
+      if (product.pricingPlans.oneTime) {
+        pricingPlans.oneTime = {
+          price: product.pricingPlans.oneTime.price || 0,
+          originalPrice: product.pricingPlans.oneTime.originalPrice ?? 0,
+          interval: product.pricingPlans.oneTime.interval || 'unico',
+          savings: product.pricingPlans.oneTime.savings || '',
+          enabled: true
+        };
+      }
+    }
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
     
     setFormData({
       name: `${product.name} (Copia)`,
@@ -535,7 +652,11 @@ const ProductsManagement: React.FC = () => {
       interval: product.interval || 'month',
       category: product.category || '',
       stock: product.stock || 0,
+<<<<<<< HEAD
       status: 'coming-soon',
+=======
+      status: 'coming-soon' as 'active' | 'coming-soon' | 'beta' | 'soldout', // Set as inactive by default
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
       image: product.image || '',
       popular: product.popular || false,
       badge: product.badge || '',
@@ -1411,6 +1532,7 @@ const ProductsManagement: React.FC = () => {
                 </p>
               </div>
 
+<<<<<<< HEAD
               {selectedProduct.metrics && (
                 selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 ||
                 selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0
@@ -1419,12 +1541,23 @@ const ProductsManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
                   <div className="grid grid-cols-2 gap-4">
                     {selectedProduct.metrics.winRate !== undefined && selectedProduct.metrics.winRate > 0 && (
+=======
+              {selectedProduct.metrics && (selectedProduct.metrics?.winRate || selectedProduct.metrics?.avgProfit) && (
+                <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">📊 Metriche Performance</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedProduct.metrics?.winRate && selectedProduct.metrics.winRate > 0 && (
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
                       <div>
                         <span className="text-xs text-gray-500">Win Rate</span>
                         <p className="text-2xl font-bold text-green-600">{selectedProduct.metrics.winRate}%</p>
                       </div>
                     )}
+<<<<<<< HEAD
                     {selectedProduct.metrics.avgProfit !== undefined && selectedProduct.metrics.avgProfit > 0 && (
+=======
+                    {selectedProduct.metrics?.avgProfit && selectedProduct.metrics.avgProfit > 0 && (
+>>>>>>> 56a355ec786cba3a5322c079ab726ef61b18d4dc
                       <div>
                         <span className="text-xs text-gray-500">Avg Profit</span>
                         <p className="text-2xl font-bold text-blue-600">+{selectedProduct.metrics.avgProfit}%</p>
