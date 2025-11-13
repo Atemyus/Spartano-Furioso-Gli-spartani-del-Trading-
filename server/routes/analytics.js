@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../database/index.js';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 
 const router = express.Router();
 
