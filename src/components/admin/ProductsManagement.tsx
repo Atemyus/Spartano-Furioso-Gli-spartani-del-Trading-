@@ -138,6 +138,7 @@ const ProductsManagement: React.FC = () => {
   const [features, setFeatures] = useState<string[]>(['']);
   const [platforms, setPlatforms] = useState<string[]>([]);
   const [togglingProducts, setTogglingProducts] = useState<Set<string>>(new Set());
+  const [isActivatingAll, setIsActivatingAll] = useState(false);
   
   const [availablePlatforms] = useState([
     'MetaTrader 4',
@@ -447,6 +448,41 @@ const ProductsManagement: React.FC = () => {
     }
   };
 
+  const handleActivateAll = async () => {
+    if (!confirm('Vuoi attivare TUTTI i prodotti?\n\nQuesto renderà tutti i prodotti VISIBILI nell\'arsenale spartano con toggle VERDE.\n\nPotrai poi disattivarli singolarmente cliccando sul toggle.')) {
+      return;
+    }
+
+    setIsActivatingAll(true);
+
+    try {
+      const token = localStorage.getItem('adminToken');
+
+      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/migrate-active`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        await fetchProducts();
+        alert(`✅ ${data.message}\n\nTutti i prodotti sono ora ATTIVI (toggle VERDE)!\n\nPuoi disattivarli singolarmente cliccando sul toggle.`);
+        console.log(`✅ Attivati ${data.count} prodotti`);
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Errore: ${errorData.error || 'Impossibile attivare i prodotti'}`);
+        console.error('Errore nell\'attivazione prodotti:', errorData);
+      }
+    } catch (error) {
+      console.error('Error activating all products:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
+    } finally {
+      setIsActivatingAll(false);
+    }
+  };
+
   // ============= UTILITY FUNCTIONS =============
   const resetForm = () => {
     setFormData(initialFormData);
@@ -651,6 +687,15 @@ const ProductsManagement: React.FC = () => {
           >
             <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
             <span>Aggiorna</span>
+          </button>
+          <button
+            onClick={handleActivateAll}
+            disabled={isActivatingAll}
+            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Attiva tutti i prodotti (toggle verde)"
+          >
+            <CheckCircle className={`w-5 h-5 ${isActivatingAll ? 'animate-pulse' : ''}`} />
+            <span>Attiva Tutti</span>
           </button>
           <button
             onClick={() => setIsCreateModalOpen(true)}
