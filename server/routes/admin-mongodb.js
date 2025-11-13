@@ -210,8 +210,12 @@ router.get('/products', async (req, res) => {
     // Trasforma i prodotti per il frontend: usa productId come id
     const transformedProducts = products.map(p => ({
       ...p,
-      id: p.productId  // Il frontend si aspetta 'id', ma usiamo 'productId'
+      id: p.productId,  // Il frontend si aspetta 'id', ma usiamo 'productId'
+      active: p.active ?? true  // Default active: true se il campo non esiste
     }));
+
+    console.log('📦 Admin products fetched:', transformedProducts.length, 'products');
+    console.log('🔍 First product active status:', transformedProducts[0]?.active);
 
     res.json({
       success: true,
@@ -243,7 +247,8 @@ router.get('/products/:id', async (req, res) => {
     // Trasforma per il frontend
     const transformedProduct = {
       ...product,
-      id: product.productId
+      id: product.productId,
+      active: product.active ?? true  // Default active: true
     };
 
     res.json({
@@ -389,16 +394,49 @@ router.get('/newsletter', async (req, res) => {
   try {
     const subscribers = await Newsletter.find({})
       .sort({ createdAt: -1 });
-    
+
     res.json({
       success: true,
       subscribers
     });
   } catch (error) {
     console.error('Admin newsletter error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// MIGRATION ROUTE: Aggiorna tutti i prodotti senza campo active
+router.post('/products/migrate-active', async (req, res) => {
+  try {
+    console.log('🔄 Starting migration: setting active=true for all products...');
+
+    const result = await prisma.product.updateMany({
+      where: {
+        OR: [
+          { active: null },
+          { active: false }
+        ]
+      },
+      data: {
+        active: true
+      }
+    });
+
+    console.log(`✅ Migration completed: ${result.count} products updated`);
+
+    res.json({
+      success: true,
+      message: `Migration completata: ${result.count} prodotti aggiornati con active=true`,
+      count: result.count
+    });
+  } catch (error) {
+    console.error('❌ Migration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
