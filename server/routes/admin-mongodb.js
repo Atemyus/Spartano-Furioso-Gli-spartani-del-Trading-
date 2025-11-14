@@ -207,6 +207,40 @@ router.get('/products', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
+    // AUTO-MIGRATION: Attiva automaticamente prodotti con active=false
+    const inactiveProducts = products.filter(p => p.active === false);
+    if (inactiveProducts.length > 0) {
+      console.log(`🔄 Auto-migration: Attivando ${inactiveProducts.length} prodotti inattivi...`);
+
+      await prisma.product.updateMany({
+        where: {
+          active: false
+        },
+        data: {
+          active: true
+        }
+      });
+
+      console.log(`✅ Auto-migration completata: ${inactiveProducts.length} prodotti ora attivi`);
+
+      // Ricarica i prodotti dopo la migration
+      const updatedProducts = await prisma.product.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
+
+      // Trasforma i prodotti per il frontend
+      const transformedProducts = updatedProducts.map(p => ({
+        ...p,
+        id: p.productId,
+        active: true  // Tutti i prodotti sono ora attivi
+      }));
+
+      return res.json({
+        success: true,
+        products: transformedProducts
+      });
+    }
+
     // Trasforma i prodotti per il frontend: usa productId come id
     const transformedProducts = products.map(p => ({
       ...p,
