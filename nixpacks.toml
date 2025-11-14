@@ -1,0 +1,17 @@
+[variables]
+NODE_ENV = "production"
+
+[phases.setup]
+nixPkgs = ['nodejs_18']
+
+[phases.install]
+cmds = [
+  'cd server && npm ci',
+  'cd server && npx prisma generate'
+]
+
+[phases.build]
+cmds = ['echo "Backend build complete"']
+
+[start]
+cmd = 'cd server && node index.js'
