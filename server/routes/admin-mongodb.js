@@ -1,45 +1,13 @@
 import express from 'express';
 import { authenticateAdmin } from '../middleware/auth.js';
 import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Protect all admin routes
 router.use(authenticateAdmin);
-
-// MongoDB Product Schema
-const productSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  category: { type: String, required: true },
-  shortDescription: { type: String, required: true },
-  description: { type: String, required: true },
-  price: {
-    monthly: Number,
-    yearly: Number,
-    lifetime: Number
-  },
-  features: [String],
-  performance: {
-    winRate: String,
-    avgProfit: String,
-    drawdown: String,
-    trades: String
-  },
-  trial: {
-    available: Boolean,
-    days: Number,
-    features: [String]
-  },
-  status: { type: String, default: 'active' },
-  badge: String,
-  platforms: [String],
-  requirements: [String],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-const Product = mongoose.model('Product', productSchema);
 
 // User Schema (semplificato per admin)
 const userSchema = new mongoose.Schema({
@@ -90,9 +58,9 @@ router.get('/stats', async (req, res) => {
       .limit(5)
       .select('id name email createdAt role status');
     
-    // Statistiche prodotti da MongoDB
-    const totalProducts = await Product.countDocuments();
-    const activeProducts = await Product.countDocuments({ status: 'active' });
+    // Statistiche prodotti da Prisma
+    const totalProducts = await prisma.product.count();
+    const activeProducts = await prisma.product.count({ where: { active: true } });
     
     res.json({
       success: true,
@@ -235,43 +203,178 @@ router.delete('/users/:id', async (req, res) => {
 // Get all products
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.find({})
-      .sort({ createdAt: -1 });
-    
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+
+    // AUTO-MIGRATION AGGRESSIVA: Attiva TUTTI i prodotti che non hanno active=true
+    const needsMigration = products.some(p => p.active !== true);
+
+    if (needsMigration) {
+      console.log(`🔄 Auto-migration: Attivando TUTTI i prodotti nel database...`);
+
+      try {
+        // Setta active=true per TUTTI i prodotti (senza condizione where)
+        const result = await prisma.product.updateMany({
+          data: {
+            active: true
+          }
+        });
+
+        console.log(`✅ Auto-migration completata: ${result.count} prodotti aggiornati a active=true`);
+
+        // Ricarica i prodotti dopo la migration
+        const updatedProducts = await prisma.product.findMany({
+          orderBy: { createdAt: 'desc' }
+        });
+
+        // Trasforma i prodotti per il frontend
+        const transformedProducts = updatedProducts.map(p => ({
+          ...p,
+          id: p.productId,
+          active: true  // Tutti i prodotti sono ora attivi
+        }));
+
+        console.log('📦 Prodotti dopo migration:', transformedProducts.length);
+
+        return res.json({
+          success: true,
+          products: transformedProducts
+        });
+      } catch (migrationError) {
+        console.error('❌ Errore durante auto-migration:', migrationError);
+        // Continua comunque con i prodotti esistenti
+      }
+    }
+
+    // Trasforma i prodotti per il frontend: usa productId come id
+    const transformedProducts = products.map(p => ({
+      ...p,
+      id: p.productId,
+      active: p.active === true  // Forza boolean
+    }));
+
+    console.log('📦 Admin products fetched:', transformedProducts.length, 'products');
+    console.log('🔍 First product:', {
+      id: transformedProducts[0]?.id,
+      name: transformedProducts[0]?.name,
+      active: transformedProducts[0]?.active
+    });
+
     res.json({
       success: true,
-      products
+      products: transformedProducts
     });
   } catch (error) {
     console.error('Admin products error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
 
-// Get product by ID
-router.get('/products/:id', async (req, res) => {
+// DEBUG ROUTE: Verifica stato campo active dei prodotti (DEVE STARE PRIMA DI /:id)
+router.get('/products/debug-active', async (req, res) => {
   try {
-    const product = await Product.findOne({ id: req.params.id });
-    
-    if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
-      });
-    }
-    
+    const products = await prisma.product.findMany({
+      select: {
+        productId: true,
+        name: true,
+        active: true
+      }
+    });
+
+    const stats = {
+      total: products.length,
+      active: products.filter(p => p.active === true).length,
+      inactive: products.filter(p => p.active === false).length,
+      undefined: products.filter(p => p.active === undefined || p.active === null).length
+    };
+
+    console.log('📊 Products active status:', stats);
+
     res.json({
       success: true,
-      product
+      stats,
+      products: products.map(p => ({
+        id: p.productId,
+        name: p.name,
+        active: p.active
+      }))
+    });
+  } catch (error) {
+    console.error('❌ Debug error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// MIGRATION ROUTE: Aggiorna tutti i prodotti a active=true (DEVE STARE PRIMA DI /:id)
+router.post('/products/migrate-active', async (req, res) => {
+  try {
+    console.log('🔄 Starting migration: setting active=true for all products...');
+
+    // Prima contiamo quanti prodotti ci sono
+    const totalProducts = await prisma.product.count();
+    console.log(`📊 Total products in database: ${totalProducts}`);
+
+    // Aggiorna TUTTI i prodotti settando active=true
+    const result = await prisma.product.updateMany({
+      data: {
+        active: true
+      }
+    });
+
+    console.log(`✅ Migration completed: ${result.count} products updated to active=true`);
+
+    res.json({
+      success: true,
+      message: `Migration completata: ${result.count} prodotti aggiornati con active=true`,
+      count: result.count,
+      total: totalProducts
+    });
+  } catch (error) {
+    console.error('❌ Migration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get product by ID (ROUTE PARAMETRICA - DEVE STARE DOPO LE ROUTE SPECIFICHE)
+router.get('/products/:id', async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { productId: req.params.id }
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Prodotto non trovato'
+      });
+    }
+
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId,
+      active: product.active ?? true  // Default active: true
+    };
+
+    res.json({
+      success: true,
+      product: transformedProduct
     });
   } catch (error) {
     console.error('Admin get product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -279,25 +382,53 @@ router.get('/products/:id', async (req, res) => {
 // Create product
 router.post('/products', async (req, res) => {
   try {
-    const productData = {
-      ...req.body,
-      createdAt: new Date(),
-      updatedAt: new Date()
+    const { id, ...productData } = req.body;
+
+    const product = await prisma.product.create({
+      data: {
+        productId: id || productData.name?.toLowerCase().replace(/\s+/g, '_'),
+        name: productData.name,
+        description: productData.description,
+        price: productData.price || 0,
+        originalPrice: productData.originalPrice || null,
+        currency: productData.currency || 'eur',
+        pricingPlans: productData.pricingPlans || {},
+        features: productData.features || [],
+        requirements: productData.requirements || [],
+        platforms: productData.platforms || [],
+        metrics: productData.metrics || {},
+        stripeProductId: productData.stripeProductId || null,
+        stripePriceId: productData.stripePriceId || null,
+        type: productData.type || 'subscription',
+        interval: productData.interval || null,
+        trialDays: productData.trialDays || 60,
+        active: productData.active !== undefined ? productData.active : true,
+        popular: productData.popular || false,
+        badge: productData.badge || null,
+        badgeColor: productData.badgeColor || null,
+        category: productData.category || '',
+        image: productData.image || null,
+        comingSoon: productData.comingSoon || false,
+        launchDate: productData.launchDate || null
+      }
+    });
+
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId
     };
-    
-    const product = new Product(productData);
-    await product.save();
-    
+
     res.json({
       success: true,
-      product,
+      product: transformedProduct,
       message: 'Prodotto creato con successo'
     });
   } catch (error) {
     console.error('Admin create product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -305,34 +436,71 @@ router.post('/products', async (req, res) => {
 // Update product
 router.put('/products/:id', async (req, res) => {
   try {
-    const updateData = {
-      ...req.body,
-      updatedAt: new Date()
-    };
-    
-    const product = await Product.findOneAndUpdate(
-      { id: req.params.id },
-      updateData,
-      { new: true }
-    );
-    
-    if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
-      });
+    console.log(`📥 RAW REQUEST BODY:`, JSON.stringify(req.body, null, 2));
+
+    const { id, status, stock, ...updateData } = req.body;
+
+    console.log(`🔄 UPDATE product ${req.params.id}:`, {
+      rawBody: req.body,
+      destructured_updateData: updateData,
+      active: updateData.active,
+      hasActive: 'active' in updateData
+    });
+
+    // Filtra solo i campi validi dello schema Prisma (rimuove status, stock e altri campi non validi)
+    const validFields = [
+      'name', 'description', 'price', 'originalPrice', 'currency', 'category', 'image',
+      'type', 'interval', 'features', 'requirements', 'platforms', 'pricingPlans',
+      'metrics', 'courseModules', 'active', 'popular', 'comingSoon', 'stripeProductId',
+      'stripePriceId', 'badge', 'badgeColor', 'trialDays', 'totalModules', 'totalLessons',
+      'trialModules', 'launchDate', 'totalDuration'
+    ];
+
+    const validData = {};
+    for (const field of validFields) {
+      if (updateData[field] !== undefined) {
+        validData[field] = updateData[field];
+      }
     }
-    
+
+    console.log('📝 Dati validi da aggiornare:', validData);
+
+    const product = await prisma.product.update({
+      where: { productId: req.params.id },
+      data: {
+        ...validData,
+        updatedAt: new Date()
+      }
+    });
+
+    console.log('✅ Prodotto aggiornato:', {
+      productId: product.productId,
+      active: product.active,
+      type: typeof product.active
+    });
+
+    // Trasforma per il frontend
+    const transformedProduct = {
+      ...product,
+      id: product.productId,
+      active: product.active === true  // Forza boolean
+    };
+
+    console.log('📤 Risposta inviata al frontend:', {
+      id: transformedProduct.id,
+      active: transformedProduct.active
+    });
+
     res.json({
       success: true,
-      product,
-      message: 'Prodotto aggiornato con successo - MODIFICA APPLICATA SU MONGODB!'
+      product: transformedProduct,
+      message: 'Prodotto aggiornato con successo - MODIFICA APPLICATA SU PRISMA/MONGODB!'
     });
   } catch (error) {
     console.error('Admin update product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -340,24 +508,19 @@ router.put('/products/:id', async (req, res) => {
 // Delete product
 router.delete('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({ id: req.params.id });
-    
-    if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Prodotto non trovato' 
-      });
-    }
-    
+    const product = await prisma.product.delete({
+      where: { productId: req.params.id }
+    });
+
     res.json({
       success: true,
       message: 'Prodotto eliminato con successo'
     });
   } catch (error) {
     console.error('Admin delete product error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
@@ -367,16 +530,16 @@ router.get('/newsletter', async (req, res) => {
   try {
     const subscribers = await Newsletter.find({})
       .sort({ createdAt: -1 });
-    
+
     res.json({
       success: true,
       subscribers
     });
   } catch (error) {
     console.error('Admin newsletter error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });

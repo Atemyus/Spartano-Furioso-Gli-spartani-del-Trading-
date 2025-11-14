@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix Toggle Prodotti - Spartano Furioso</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: #ffd93d;
+    }
+
+    p {
+      line-height: 1.6;
+      margin-bottom: 15px;
+      color: #cccccc;
+    }
+
+    .status-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #ffd93d;
+    }
+
+    .product-list {
+      list-style: none;
+      margin: 15px 0;
+    }
+
+    .product-item {
+      padding: 10px;
+      margin: 5px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-active {
+      background: #4ade80;
+      color: #1a1a1a;
+    }
+
+    .badge-inactive {
+      background: #6b7280;
+      color: #ffffff;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+      color: #1a1a1a;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin: 10px 5px;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .log {
+      background: #000000;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .log-entry {
+      margin: 5px 0;
+    }
+
+    .log-success { color: #4ade80; }
+    .log-error { color: #ff6b6b; }
+    .log-info { color: #60a5fa; }
+    .log-warning { color: #fbbf24; }
+
+    .api-url {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      margin: 10px 0;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.3);
+      color: #ffffff;
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #ffd93d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛠️ Fix Toggle Prodotti</h1>
+    <p>Strumento per risolvere il problema dei toggle grigi nel pannello admin</p>
+
+    <div class="status-box">
+      <h2>📡 Configurazione API</h2>
+      <label for="apiUrl">URL API Backend:</label>
+      <input
+        type="text"
+        id="apiUrl"
+        value="https://api.spartanofurioso.com"
+        placeholder="https://api.spartanofurioso.com"
+      >
+      <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">
+        Se usi localhost: http://localhost:3000
+      </p>
+    </div>
+
+    <div class="button-group">
+      <button onclick="checkStatus()">1️⃣ Verifica Stato Prodotti</button>
+      <button onclick="migrateProducts()">2️⃣ Attiva Tutti i Prodotti</button>
+    </div>
+
+    <div class="status-box" id="resultsBox" style="display: none;">
+      <h2>📊 Risultati</h2>
+      <div id="results"></div>
+    </div>
+
+    <div class="log" id="log" style="display: none;"></div>
+  </div>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const resultsEl = document.getElementById('results');
+    const resultsBox = document.getElementById('resultsBox');
+
+    function log(message, type = 'info') {
+      logEl.style.display = 'block';
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      const timestamp = new Date().toLocaleTimeString();
+      entry.textContent = `[${timestamp}] ${message}`;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function getApiUrl() {
+      return document.getElementById('apiUrl').value.trim().replace(/\/$/, '');
+    }
+
+    async function checkStatus() {
+      try {
+        log('🔍 Verificando stato prodotti...', 'info');
+
+        const apiUrl = getApiUrl();
+        const response = await fetch(`${apiUrl}/api/admin/products/debug-active`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        log(`✅ Ricevuti dati: ${data.stats.total} prodotti totali`, 'success');
+
+        // Mostra statistiche
+        resultsBox.style.display = 'block';
+        resultsEl.innerHTML = `
+          <h3 style="color: #ffd93d; margin-bottom: 15px;">Statistiche</h3>
+          <p><strong>Totale prodotti:</strong> ${data.stats.total}</p>
+          <p><strong>✅ Attivi (verde):</strong> ${data.stats.active}</p>
+          <p><strong>⚠️ Inattivi (grigio):</strong> ${data.stats.inactive}</p>
+          <p><strong>❌ Non definito:</strong> ${data.stats.undefined}</p>
+
+          <h3 style="color: #ffd93d; margin: 20px 0 15px;">Prodotti</h3>
+          <ul class="product-list">
+            ${data.products.map(p => `
+              <li class="product-item">
+                <span>${p.name}</span>
+                <span class="badge ${p.active ? 'badge-active' : 'badge-inactive'}">
+                  ${p.active ? '✅ VERDE' : '⚠️ GRIGIO'}
+                </span>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+
+        log(`Attivi: ${data.stats.active}, Inattivi: ${data.stats.inactive}`, 'info');
+
+        if (data.stats.inactive > 0 || data.stats.undefined > 0) {
+          log('⚠️ Ci sono prodotti inattivi. Usa "Attiva Tutti i Prodotti" per risolvere.', 'warning');
+        } else {
+          log('🎉 Tutti i prodotti sono già attivi!', 'success');
+        }
+
+      } catch (error) {
+        log(`❌ Errore: ${error.message}`, 'error');
+        log('Verifica che l\'URL API sia corretto e che il server sia in esecuzione.', 'warning');
+      }
+    }
+
+    async function migrateProducts() {
+      if (!confirm('Vuoi attivare TUTTI i prodotti?\n\nQuesto renderà tutti i prodotti visibili nell\'arsenale spartano con toggle VERDE.\n\nPotrai poi disattivarli manualmente dal pannello admin.')) {
+        return;
+      }
+
+      try {
+        log('🔄 Attivando tutti i prodotti...', 'info');
+
+        const apiUrl = getApiUrl();
+        const response = await fetch(`${apiUrl}/api/admin/products/migrate-active`, {
+          method: 'POST'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        log(`✅ ${data.message}`, 'success');
+        log(`📊 Prodotti aggiornati: ${data.count}/${data.total}`, 'success');
+
+        // Mostra risultati
+        resultsBox.style.display = 'block';
+        resultsEl.innerHTML = `
+          <h3 style="color: #4ade80; margin-bottom: 15px;">✅ Migrazione Completata!</h3>
+          <p><strong>Prodotti aggiornati:</strong> ${data.count}</p>
+          <p><strong>Totale prodotti:</strong> ${data.total}</p>
+          <p style="margin-top: 20px; padding: 15px; background: rgba(74, 222, 128, 0.1); border-radius: 8px; border-left: 4px solid #4ade80;">
+            🎉 <strong>Tutti i prodotti sono ora ATTIVI!</strong><br><br>
+            Vai nel pannello admin e vedrai tutti i toggle VERDI.<br>
+            Ora puoi cliccare su un toggle per disattivare (grigio) un prodotto.
+          </p>
+        `;
+
+        log('🎉 Operazione completata! Ricarica il pannello admin.', 'success');
+
+      } catch (error) {
+        log(`❌ Errore: ${error.message}`, 'error');
+        log('Verifica che l\'URL API sia corretto e che il server sia in esecuzione.', 'warning');
+      }
+    }
+  </script>
+</body>
+</html>

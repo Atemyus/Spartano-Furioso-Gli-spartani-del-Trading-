@@ -14,9 +14,9 @@ import {
   Copy,
   X,
   Monitor,
-  CheckCircle,
   Save,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import Modal from './Modal';
 
@@ -136,6 +136,7 @@ const ProductsManagement: React.FC = () => {
   const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
   const [platforms, setPlatforms] = useState<string[]>([]);
+  const [togglingProducts, setTogglingProducts] = useState<Set<string>>(new Set());
   
   const [availablePlatforms] = useState([
     'MetaTrader 4',
@@ -188,6 +189,34 @@ const ProductsManagement: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  // Migrazione automatica quando i prodotti sono caricati
+  useEffect(() => {
+    const migrateIfNeeded = async () => {
+      const migrated = localStorage.getItem('products_migrated');
+      if (!migrated && products.length > 0) {
+        const inactiveProducts = products.filter(p => p.active === false);
+        if (inactiveProducts.length > 0) {
+          console.log(`Attivando ${inactiveProducts.length} prodotti...`);
+          try {
+            const token = localStorage.getItem('adminToken');
+            await fetch('https://api.spartanofurioso.com/api/admin/products/migrate-active', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            localStorage.setItem('products_migrated', 'true');
+            await fetchProducts();
+          } catch (e) {
+            console.error('Errore:', e);
+          }
+        } else {
+          localStorage.setItem('products_migrated', 'true');
+        }
+      }
+    };
+
+    migrateIfNeeded();
+  }, [products]);
 
   // ============= API FUNCTIONS =============
   const fetchProducts = async () => {
@@ -340,8 +369,14 @@ const ProductsManagement: React.FC = () => {
     try {
       const token = localStorage.getItem('adminToken');
       const productData = prepareProductData(formData);
-      
-      console.log('Dati da salvare (update):', productData);
+
+      // Aggiungi il productId al payload
+      const updatePayload = {
+        ...productData,
+        id: selectedProduct.id  // Mantieni il productId originale
+      };
+
+      console.log('Dati da salvare (update):', updatePayload);
 
       const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${selectedProduct.id}`, {
         method: 'PUT',
@@ -349,7 +384,7 @@ const ProductsManagement: React.FC = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(productData)
+        body: JSON.stringify(updatePayload)
       });
 
       if (response.ok) {
@@ -393,7 +428,15 @@ const ProductsManagement: React.FC = () => {
   };
 
   const handleToggleActive = async (productId: string, currentActive: boolean) => {
+    // Previeni doppi click
+    if (togglingProducts.has(productId)) {
+      return;
+    }
+
     try {
+      // Aggiungi al set dei prodotti in aggiornamento
+      setTogglingProducts(prev => new Set(prev).add(productId));
+
       const token = localStorage.getItem('adminToken');
       const newActive = !currentActive;
 
@@ -410,7 +453,8 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         // Mostra notifica di successo
         const action = newActive ? 'attivato' : 'disattivato';
-        alert(`✅ Prodotto ${action} con successo!`);
+        const visibility = newActive ? 'VISIBILE nell\'arsenale spartano' : 'NASCOSTO dall\'arsenale spartano';
+        alert(`✅ Prodotto ${action} con successo!\n\n${visibility}`);
         console.log(`Prodotto ${productId} aggiornato: active ${currentActive} -> ${newActive}`);
       } else {
         const errorData = await response.json();
@@ -420,6 +464,13 @@ const ProductsManagement: React.FC = () => {
     } catch (error) {
       console.error('Error toggling product status:', error);
       alert('❌ Errore di connessione. Riprova più tardi.');
+    } finally {
+      // Rimuovi dal set dei prodotti in aggiornamento
+      setTogglingProducts(prev => {
+        const next = new Set(prev);
+        next.delete(productId);
+        return next;
+      });
     }
   };
 
@@ -704,10 +755,31 @@ const ProductsManagement: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
                   <button
                     onClick={() => handleToggleActive(product.id, product.active)}
-                    className={`${product.active ? 'text-green-600' : 'text-gray-400'}`}
-                    title={product.active ? 'Disattiva' : 'Attiva'}
+                    disabled={togglingProducts.has(product.id)}
+                    className={`
+                      transition-all duration-200
+                      ${togglingProducts.has(product.id)
+                        ? 'text-blue-500 opacity-50 cursor-not-allowed'
+                        : product.active
+                          ? 'text-green-600 hover:text-green-700'
+                          : 'text-gray-400 hover:text-gray-600'
+                      }
+                    `}
+                    title={
+                      togglingProducts.has(product.id)
+                        ? 'Aggiornamento in corso...'
+                        : product.active
+                          ? 'Disattiva (nasconde dall\'arsenale)'
+                          : 'Attiva (mostra nell\'arsenale)'
+                    }
                   >
-                    {product.active ? <ToggleRight className="w-6 h-6" /> : <ToggleLeft className="w-6 h-6" />}
+                    {togglingProducts.has(product.id) ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : product.active ? (
+                      <ToggleRight className="w-6 h-6" />
+                    ) : (
+                      <ToggleLeft className="w-6 h-6" />
+                    )}
                   </button>
                 </div>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
