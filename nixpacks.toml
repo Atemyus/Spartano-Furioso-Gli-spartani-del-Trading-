@@ -6,8 +6,10 @@ nixPkgs = ['nodejs_18']
 
 [phases.install]
 cmds = [
+  'mv package.json package.json.vercel',
   'cd server && npm install',
-  'cd server && npx prisma generate'
+  'cd server && npx prisma generate',
+  'mv package.json.vercel package.json'
 ]
 
 [phases.build]
