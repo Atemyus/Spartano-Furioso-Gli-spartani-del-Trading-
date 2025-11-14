@@ -6,7 +6,7 @@ nixPkgs = ['nodejs_18']
 
 [phases.install]
 cmds = [
-  'npm install --prefix server',
+  'cd server && npm install',
   'cd server && npx prisma generate'
 ]
 
