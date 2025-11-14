@@ -190,6 +190,34 @@ const ProductsManagement: React.FC = () => {
     fetchProducts();
   }, []);
 
+  // Migrazione automatica quando i prodotti sono caricati
+  useEffect(() => {
+    const migrateIfNeeded = async () => {
+      const migrated = localStorage.getItem('products_migrated');
+      if (!migrated && products.length > 0) {
+        const inactiveProducts = products.filter(p => p.active === false);
+        if (inactiveProducts.length > 0) {
+          console.log(`Attivando ${inactiveProducts.length} prodotti...`);
+          try {
+            const token = localStorage.getItem('adminToken');
+            await fetch('https://api.spartanofurioso.com/api/admin/products/migrate-active', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            localStorage.setItem('products_migrated', 'true');
+            await fetchProducts();
+          } catch (e) {
+            console.error('Errore:', e);
+          }
+        } else {
+          localStorage.setItem('products_migrated', 'true');
+        }
+      }
+    };
+
+    migrateIfNeeded();
+  }, [products]);
+
   // ============= API FUNCTIONS =============
   const fetchProducts = async () => {
     try {
@@ -204,31 +232,6 @@ const ProductsManagement: React.FC = () => {
         console.log('Products API response:', data);
         if (data.success && data.products && Array.isArray(data.products)) {
           setProducts(data.products);
-
-          // Migrazione automatica: attiva prodotti inattivi al primo caricamento
-          const inactiveCount = data.products.filter((p: Product) => !p.active).length;
-          if (inactiveCount > 0 && loading) {
-            console.log(`🔄 Auto-migrazione: attivando ${inactiveCount} prodotti inattivi...`);
-            try {
-              await fetch('https://api.spartanofurioso.com/api/admin/products/migrate-active', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              // Ricarica dopo la migrazione
-              const reloadResponse = await fetch('https://api.spartanofurioso.com/api/admin/products', {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              if (reloadResponse.ok) {
-                const reloadData = await reloadResponse.json();
-                if (reloadData.success && reloadData.products) {
-                  setProducts(reloadData.products);
-                  console.log('✅ Auto-migrazione completata, prodotti attivi');
-                }
-              }
-            } catch (migrationError) {
-              console.error('Errore auto-migrazione:', migrationError);
-            }
-          }
         } else {
           console.error('Invalid products data format:', data);
           setProducts([]);
