@@ -207,49 +207,59 @@ router.get('/products', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    // AUTO-MIGRATION: Attiva automaticamente prodotti con active=false
-    const inactiveProducts = products.filter(p => p.active === false);
-    if (inactiveProducts.length > 0) {
-      console.log(`🔄 Auto-migration: Attivando ${inactiveProducts.length} prodotti inattivi...`);
+    // AUTO-MIGRATION AGGRESSIVA: Attiva TUTTI i prodotti che non hanno active=true
+    const needsMigration = products.some(p => p.active !== true);
 
-      await prisma.product.updateMany({
-        where: {
-          active: false
-        },
-        data: {
-          active: true
-        }
-      });
+    if (needsMigration) {
+      console.log(`🔄 Auto-migration: Attivando TUTTI i prodotti nel database...`);
 
-      console.log(`✅ Auto-migration completata: ${inactiveProducts.length} prodotti ora attivi`);
+      try {
+        // Setta active=true per TUTTI i prodotti (senza condizione where)
+        const result = await prisma.product.updateMany({
+          data: {
+            active: true
+          }
+        });
 
-      // Ricarica i prodotti dopo la migration
-      const updatedProducts = await prisma.product.findMany({
-        orderBy: { createdAt: 'desc' }
-      });
+        console.log(`✅ Auto-migration completata: ${result.count} prodotti aggiornati a active=true`);
 
-      // Trasforma i prodotti per il frontend
-      const transformedProducts = updatedProducts.map(p => ({
-        ...p,
-        id: p.productId,
-        active: true  // Tutti i prodotti sono ora attivi
-      }));
+        // Ricarica i prodotti dopo la migration
+        const updatedProducts = await prisma.product.findMany({
+          orderBy: { createdAt: 'desc' }
+        });
 
-      return res.json({
-        success: true,
-        products: transformedProducts
-      });
+        // Trasforma i prodotti per il frontend
+        const transformedProducts = updatedProducts.map(p => ({
+          ...p,
+          id: p.productId,
+          active: true  // Tutti i prodotti sono ora attivi
+        }));
+
+        console.log('📦 Prodotti dopo migration:', transformedProducts.length);
+
+        return res.json({
+          success: true,
+          products: transformedProducts
+        });
+      } catch (migrationError) {
+        console.error('❌ Errore durante auto-migration:', migrationError);
+        // Continua comunque con i prodotti esistenti
+      }
     }
 
     // Trasforma i prodotti per il frontend: usa productId come id
     const transformedProducts = products.map(p => ({
       ...p,
-      id: p.productId,  // Il frontend si aspetta 'id', ma usiamo 'productId'
-      active: p.active ?? true  // Default active: true se il campo non esiste
+      id: p.productId,
+      active: p.active === true  // Forza boolean
     }));
 
     console.log('📦 Admin products fetched:', transformedProducts.length, 'products');
-    console.log('🔍 First product active status:', transformedProducts[0]?.active);
+    console.log('🔍 First product:', {
+      id: transformedProducts[0]?.id,
+      name: transformedProducts[0]?.name,
+      active: transformedProducts[0]?.active
+    });
 
     res.json({
       success: true,
@@ -428,6 +438,11 @@ router.put('/products/:id', async (req, res) => {
   try {
     const { id, status, stock, ...updateData } = req.body;
 
+    console.log(`🔄 UPDATE product ${req.params.id}:`, {
+      active: updateData.active,
+      hasActive: 'active' in updateData
+    });
+
     // Filtra solo i campi validi dello schema Prisma (rimuove status, stock e altri campi non validi)
     const validFields = [
       'name', 'description', 'price', 'originalPrice', 'currency', 'category', 'image',
@@ -444,6 +459,8 @@ router.put('/products/:id', async (req, res) => {
       }
     }
 
+    console.log('📝 Dati validi da aggiornare:', validData);
+
     const product = await prisma.product.update({
       where: { productId: req.params.id },
       data: {
@@ -452,13 +469,23 @@ router.put('/products/:id', async (req, res) => {
       }
     });
 
-    console.log('✅ Prodotto aggiornato con successo:', product.productId);
+    console.log('✅ Prodotto aggiornato:', {
+      productId: product.productId,
+      active: product.active,
+      type: typeof product.active
+    });
 
     // Trasforma per il frontend
     const transformedProduct = {
       ...product,
-      id: product.productId
+      id: product.productId,
+      active: product.active === true  // Forza boolean
     };
+
+    console.log('📤 Risposta inviata al frontend:', {
+      id: transformedProduct.id,
+      active: transformedProduct.active
+    });
 
     res.json({
       success: true,
