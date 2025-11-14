@@ -436,9 +436,13 @@ router.post('/products', async (req, res) => {
 // Update product
 router.put('/products/:id', async (req, res) => {
   try {
+    console.log(`📥 RAW REQUEST BODY:`, JSON.stringify(req.body, null, 2));
+
     const { id, status, stock, ...updateData } = req.body;
 
     console.log(`🔄 UPDATE product ${req.params.id}:`, {
+      rawBody: req.body,
+      destructured_updateData: updateData,
       active: updateData.active,
       hasActive: 'active' in updateData
     });
