@@ -14,4 +14,4 @@ cmds = [
 cmds = ['echo "Backend build complete"']
 
 [start]
-cmd = 'node server/index.js'
+cmd = 'cd server && node index.js'
