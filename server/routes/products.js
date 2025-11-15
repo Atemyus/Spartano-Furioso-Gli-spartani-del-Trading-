@@ -460,5 +460,84 @@ router.put('/:productId/config', async (req, res) => {
   }
 });
 
+// Download product file (requires authentication and active trial/subscription)
+router.get('/:productId/download', authenticateToken, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user?.id || req.userId;
+
+    console.log(`📥 Download request for product ${productId} by user ${userId}`);
+
+    // Get user with trials and subscriptions
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        trials: true,
+        subscriptions: true
+      }
+    });
+
+    if (!user) {
+      console.log('❌ User not found:', userId);
+      return res.status(404).json({ error: 'Utente non trovato' });
+    }
+
+    // Check if user has an active trial for this product
+    const trial = user.trials.find(t => t.productId === productId);
+    const hasTrial = trial && new Date() < new Date(trial.endDate);
+
+    // Check if user has an active subscription for this product
+    const subscription = user.subscriptions.find(s => s.productId === productId);
+    const hasSubscription = subscription && subscription.status === 'active';
+
+    if (!hasTrial && !hasSubscription) {
+      console.log('❌ User has no access to product:', productId);
+      return res.status(403).json({
+        error: 'Non hai accesso a questo prodotto. Attiva un trial o acquista un abbonamento.'
+      });
+    }
+
+    // Get product to find the download filename
+    const product = await prisma.product.findUnique({
+      where: { productId: productId }
+    });
+
+    if (!product) {
+      console.log('❌ Product not found:', productId);
+      return res.status(404).json({ error: 'Prodotto non trovato' });
+    }
+
+    // Construct file path - assume files are named with product name
+    // Example: "Fury of Sparta" -> "fury-of-sparta-v2.0.zip"
+    const fileName = product.downloadFile || `${productId.toLowerCase().replace(/[^a-z0-9]/g, '-')}.zip`;
+    const filePath = path.join(__dirname, '../../public/downloads', fileName);
+
+    console.log('📂 Attempting to serve file:', filePath);
+
+    // Check if file exists
+    try {
+      await fs.access(filePath);
+    } catch (error) {
+      console.log('❌ File not found:', filePath);
+      return res.status(404).json({
+        error: 'File non trovato. Contatta il supporto.'
+      });
+    }
+
+    // Set headers for download
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+    console.log('✅ Serving file:', fileName);
+
+    // Send file
+    res.sendFile(filePath);
+
+  } catch (error) {
+    console.error('❌ Error downloading product:', error);
+    res.status(500).json({ error: 'Errore durante il download' });
+  }
+});
+
 
 export default router;
