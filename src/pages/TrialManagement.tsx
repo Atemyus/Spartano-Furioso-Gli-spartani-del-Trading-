@@ -150,17 +150,57 @@ const TrialManagement: React.FC = () => {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!product) return;
-    
+
     setDownloadStarted(true);
-    
-    // TODO: Implementare download reale
-    if (product.downloadUrl) {
-      window.open(product.downloadUrl, '_blank');
-    } else {
-      // Download simulato
-      alert(`Download di ${product.name} iniziato!\n\nFile: ${product.name}.zip\nDimensione: ${product.fileSize || '45 MB'}`);
+
+    try {
+      const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+
+      console.log('📥 Inizio download per prodotto:', product.id);
+
+      // Chiamata all'endpoint di download
+      const response = await fetch(`${apiUrl}/api/products/${product.id}/download`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Errore durante il download');
+      }
+
+      // Get the filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `${product.name}.zip`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Create blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log('✅ Download completato:', filename);
+      alert(`✅ Download di ${product.name} completato con successo!\n\nFile: ${filename}`);
+    } catch (error) {
+      console.error('❌ Errore download:', error);
+      alert(error instanceof Error ? error.message : 'Errore durante il download. Riprova più tardi.');
+      setDownloadStarted(false);
     }
   };
 

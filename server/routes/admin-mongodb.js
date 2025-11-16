@@ -236,7 +236,8 @@ router.get('/products/debug-active', async (req, res) => {
       select: {
         productId: true,
         name: true,
-        active: true
+        active: true,
+        category: true
       }
     });
 
@@ -253,9 +254,11 @@ router.get('/products/debug-active', async (req, res) => {
       success: true,
       stats,
       products: products.map(p => ({
-        id: p.productId,
+        productId: p.productId,
         name: p.name,
-        active: p.active
+        category: p.category,
+        active: p.active,
+        expectedDownloadFile: `${p.productId.toLowerCase().replace(/[^a-z0-9]/g, '-')}.zip`
       }))
     });
   } catch (error) {
