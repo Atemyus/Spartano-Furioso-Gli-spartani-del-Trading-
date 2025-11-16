@@ -19,6 +19,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   // Carica credenziali salvate all'avvio
   useEffect(() => {
@@ -147,6 +148,40 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      alert('Inserisci la tua email prima di richiedere il reinvio');
+      return;
+    }
+
+    setResendingEmail(true);
+
+    try {
+      const response = await fetch(API_ENDPOINTS.resendVerification, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: formData.email })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        alert('✅ Email di verifica reinviata! Controlla la tua casella di posta.');
+        setServerError(null);
+        setNeedsVerification(false);
+      } else {
+        alert(`❌ ${data.error || 'Impossibile reinviare l\'email di verifica'}`);
+      }
+    } catch (error) {
+      console.error('Error resending verification:', error);
+      alert('❌ Errore di connessione. Riprova più tardi.');
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
   return (
     <AnimatedPage>
       <div className={`min-h-screen flex items-center justify-center px-4 py-12 ${
@@ -211,12 +246,14 @@ const Login: React.FC = () => {
                 <div className="flex-1">
                   <p className="text-red-400 text-sm font-medium">{serverError}</p>
                   {needsVerification && (
-                    <Link 
-                      to="/register" 
-                      className="text-yellow-500 hover:text-yellow-400 text-sm underline mt-2 inline-block"
+                    <button
+                      type="button"
+                      onClick={handleResendVerification}
+                      disabled={resendingEmail}
+                      className="text-yellow-500 hover:text-yellow-400 text-sm underline mt-2 inline-block disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Reinvia email di verifica
-                    </Link>
+                      {resendingEmail ? 'Invio in corso...' : 'Reinvia email di verifica'}
+                    </button>
                   )}
                 </div>
               </div>
