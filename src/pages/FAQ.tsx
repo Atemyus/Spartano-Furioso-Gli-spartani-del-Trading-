@@ -13,7 +13,7 @@ const FAQ = () => {
       icon: Shield,
       questions: [
         {
-          q: "Come posso iniziare con Spartano Furioso?",
+          q: "Come posso iniziare con Nexora Lab?",
           a: "Iniziare è semplice! 1) Registrati gratuitamente sul sito. 2) Verifica la tua email. 3) Completa il tuo profilo. 4) Scegli un piano o attiva una prova gratuita. 5) Accedi alla dashboard e inizia il tuo percorso spartano. Il nostro team di supporto è disponibile 24/7 per guidarti nei primi passi."
         },
         {
@@ -123,10 +123,10 @@ const FAQ = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-600 to-yellow-600 rounded-2xl mb-6 animate-pulse">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl mb-6 animate-pulse">
             <HelpCircle className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
             FAQ GUERRIERI
           </h1>
           <p className={`text-xl max-w-3xl mx-auto ${
@@ -148,8 +148,8 @@ const FAQ = () => {
               placeholder="Cerca una domanda... (es. pagamento, rimborso, corso)"
               className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                 theme === 'light'
-                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-yellow-600'
-                  : 'bg-gray-900 border-red-800/30 text-white placeholder-gray-500 focus:border-yellow-500'
+                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-cyan-600'
+                  : 'bg-gray-900 border-blue-800/30 text-white placeholder-gray-500 focus:border-cyan-500'
               }`}
             />
           </div>
@@ -172,10 +172,10 @@ const FAQ = () => {
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center transition-all duration-300 ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-md'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-md'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
-              <div className="text-2xl font-black text-yellow-500">{stat.value}</div>
+              <div className="text-2xl font-black text-cyan-500">{stat.value}</div>
               <div className={`text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-400'
               }`}>{stat.label}</div>
@@ -195,11 +195,11 @@ const FAQ = () => {
                 className={`border rounded-xl overflow-hidden transition-all duration-300 ${
                   theme === 'light'
                     ? isOpen
-                      ? 'bg-white border-2 border-yellow-600 shadow-lg'
+                      ? 'bg-white border-2 border-cyan-600 shadow-lg'
                       : 'bg-white border-2 border-gray-200 hover:border-gray-300'
                     : isOpen
-                      ? 'bg-gradient-to-b from-gray-900 to-black border-yellow-500 shadow-lg shadow-yellow-500/20'
-                      : 'bg-gradient-to-b from-gray-900 to-black border-red-800/30 hover:border-red-700/50'
+                      ? 'bg-gradient-to-b from-gray-900 to-black border-cyan-500 shadow-lg shadow-cyan-500/20'
+                      : 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-blue-700/50'
                 }`}
                 style={{
                   animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
@@ -210,32 +210,32 @@ const FAQ = () => {
                   className="w-full p-6 text-left flex items-start gap-4 group"
                 >
                   <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                    isOpen ? 'bg-gradient-to-br from-red-600 to-yellow-600' : 'bg-gray-800 group-hover:bg-gray-700'
+                    isOpen ? 'bg-gradient-to-br from-blue-600 to-cyan-600' : 'bg-gray-800 group-hover:bg-gray-700'
                   }`}>
-                    <Icon className={`w-5 h-5 transition-colors ${isOpen ? 'text-white' : 'text-gray-400 group-hover:text-yellow-500'}`} />
+                    <Icon className={`w-5 h-5 transition-colors ${isOpen ? 'text-white' : 'text-gray-400 group-hover:text-cyan-500'}`} />
                   </div>
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className={`text-xs font-bold px-2 py-1 rounded ${
-                        isOpen ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-800 text-gray-500'
+                        isOpen ? 'bg-cyan-500/20 text-cyan-500' : 'bg-gray-800 text-gray-500'
                       }`}>
                         {item.category}
                       </span>
                     </div>
                     <h3 className={`text-lg font-bold transition-colors ${
                       isOpen
-                        ? 'text-yellow-500'
+                        ? 'text-cyan-500'
                         : theme === 'light'
-                          ? 'text-gray-800 group-hover:text-yellow-600'
-                          : 'text-white group-hover:text-yellow-500'
+                          ? 'text-gray-800 group-hover:text-cyan-600'
+                          : 'text-white group-hover:text-cyan-500'
                     }`}>
                       {item.q}
                     </h3>
                   </div>
                   
                   <ChevronDown 
-                    className={`flex-shrink-0 w-6 h-6 text-yellow-500 transition-transform duration-300 ${
+                    className={`flex-shrink-0 w-6 h-6 text-cyan-500 transition-transform duration-300 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                   />
@@ -273,18 +273,18 @@ const FAQ = () => {
             <p className={`mb-6 ${
               theme === 'light' ? 'text-gray-600' : 'text-gray-400'
             }`}>Prova con parole chiave diverse o contatta il supporto</p>
-            <button className={`px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-bold hover:scale-105 transition-transform border-2 ${theme === 'light' ? 'border-red-900 shadow-lg' : 'border-transparent'}`}>
+            <button className={`px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold hover:scale-105 transition-transform border-2 ${theme === 'light' ? 'border-blue-900 shadow-lg' : 'border-transparent'}`}>
               Contatta il Supporto
             </button>
           </div>
         )}
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center max-w-4xl mx-auto">
+        <div className="mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-4">Non hai trovato la risposta?</h2>
           <p className="text-gray-100 mb-6">Il nostro team di supporto è pronto ad aiutarti 24/7</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className={`px-8 py-4 bg-black text-yellow-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
+            <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
               Apri Live Chat
             </button>
             <button className={`px-8 py-4 bg-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border-2 ${theme === 'light' ? 'border-white/30' : 'border-transparent'}`}>

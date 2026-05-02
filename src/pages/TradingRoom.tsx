@@ -11,7 +11,7 @@ const TradingRoom = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
             TRADING ROOM
           </h1>
           <p className={`text-xl max-w-3xl mx-auto ${
@@ -32,10 +32,10 @@ const TradingRoom = () => {
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center border transition-all duration-300 ${
               theme === 'dark'
-                ? 'bg-gradient-to-b from-gray-900 to-black border-red-800/30'
-                : 'bg-white border-red-200 shadow-md'
+                ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30'
+                : 'bg-white border-blue-200 shadow-md'
             }`}>
-              <stat.icon className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+              <stat.icon className="w-8 h-8 text-cyan-500 mx-auto mb-2" />
               <div className={`text-2xl font-black ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>{stat.value}</div>
@@ -50,10 +50,10 @@ const TradingRoom = () => {
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className={`rounded-lg p-8 border hover:scale-105 transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-gradient-to-b from-gray-900 to-black border-red-800/30 hover:border-yellow-500/50'
-              : 'bg-white border-red-200 hover:border-yellow-400 shadow-md hover:shadow-xl'
+              ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
+              : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <Users className="w-12 h-12 text-yellow-500 mb-4" />
+            <Users className="w-12 h-12 text-cyan-500 mb-4" />
             <h3 className={`text-2xl font-bold mb-3 ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>Community Elite</h3>
@@ -73,10 +73,10 @@ const TradingRoom = () => {
           </div>
           <div className={`rounded-lg p-8 border hover:scale-105 transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-gradient-to-b from-gray-900 to-black border-red-800/30 hover:border-yellow-500/50'
-              : 'bg-white border-red-200 hover:border-yellow-400 shadow-md hover:shadow-xl'
+              ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
+              : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <Headphones className="w-12 h-12 text-yellow-500 mb-4" />
+            <Headphones className="w-12 h-12 text-cyan-500 mb-4" />
             <h3 className={`text-2xl font-bold mb-3 ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>Sessioni Live</h3>
@@ -96,10 +96,10 @@ const TradingRoom = () => {
           </div>
           <div className={`rounded-lg p-8 border hover:scale-105 transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-gradient-to-b from-gray-900 to-black border-red-800/30 hover:border-yellow-500/50'
-              : 'bg-white border-red-200 hover:border-yellow-400 shadow-md hover:shadow-xl'
+              ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
+              : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <BarChart2 className="w-12 h-12 text-yellow-500 mb-4" />
+            <BarChart2 className="w-12 h-12 text-cyan-500 mb-4" />
             <h3 className={`text-2xl font-bold mb-3 ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>Analisi Pro</h3>
@@ -122,8 +122,8 @@ const TradingRoom = () => {
         {/* Additional Features */}
         <div className={`rounded-2xl p-8 border mb-12 ${
           theme === 'dark'
-            ? 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border-red-800/30'
-            : 'bg-gradient-to-r from-red-50 via-white to-red-50 border-red-200 shadow-lg'
+            ? 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border-blue-800/30'
+            : 'bg-gradient-to-r from-blue-50 via-white to-blue-50 border-blue-200 shadow-lg'
         }`}>
           <h2 className={`text-3xl font-black mb-6 text-center ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -136,7 +136,7 @@ const TradingRoom = () => {
               { icon: Shield, title: 'Risk Management', desc: 'Tools e calcolatori per gestire il rischio' }
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4">
-                <item.icon className="w-8 h-8 text-yellow-500 flex-shrink-0" />
+                <item.icon className="w-8 h-8 text-cyan-500 flex-shrink-0" />
                 <div>
                   <h4 className={`text-lg font-bold mb-1 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -151,10 +151,10 @@ const TradingRoom = () => {
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
           <h2 className="text-3xl font-black text-white mb-4">Entra nella Trading Room</h2>
           <p className="text-gray-100 mb-6">Inizia a fare trading con il supporto di una community di guerrieri</p>
-          <button className="px-8 py-4 bg-black border-2 border-yellow-500 text-yellow-500 rounded-xl font-bold text-lg hover:bg-gray-900 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105">
+          <button className="px-8 py-4 bg-black border-2 border-cyan-500 text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 hover:border-cyan-400 transition-all duration-300 transform hover:scale-105">
             ACCEDI ALLA ROOM
           </button>
         </div>

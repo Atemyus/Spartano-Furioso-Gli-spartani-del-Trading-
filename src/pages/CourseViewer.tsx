@@ -377,7 +377,7 @@ const CourseViewer: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-800 rounded-full h-2">
                   <div 
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -453,7 +453,7 @@ const CourseViewer: React.FC = () => {
             {/* Trial Notice */}
             {isTrialUser && (
               <div className="p-4 border-t border-gray-800">
-                <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-lg p-3">
+                <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-lg p-3">
                   <p className="text-sm text-white mb-2">🔒 Contenuto Trial Limitato</p>
                   <button
                     onClick={() => navigate(`/course/${courseId}`)}
@@ -570,7 +570,7 @@ const CourseViewer: React.FC = () => {
                           ID Vimeo: {currentLesson.vimeoId || 'Non configurato'}
                         </p>
                         {currentLesson.vimeoId === '123456789' && (
-                          <p className="text-xs text-yellow-400 mt-2">
+                          <p className="text-xs text-cyan-400 mt-2">
                             Questo è un ID di esempio. Aggiorna dal pannello admin.
                           </p>
                         )}
@@ -627,7 +627,7 @@ const CourseViewer: React.FC = () => {
                       {currentLesson.downloadButton.fileUrl ? (
                         <a
                           href={`https://api.spartanofurioso.com/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`}
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-sky-500 hover:from-cyan-600 hover:to-sky-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -701,7 +701,7 @@ const CourseViewer: React.FC = () => {
                           transition={{ duration: 1, delay: i * 0.1 }}
                           className="absolute"
                         >
-                          <Sparkles className="w-6 h-6 text-yellow-400" />
+                          <Sparkles className="w-6 h-6 text-cyan-400" />
                         </motion.div>
                       ))}
                     </motion.div>
@@ -716,7 +716,7 @@ const CourseViewer: React.FC = () => {
                   className={`flex-1 px-6 py-3 rounded-lg font-bold text-white transition-all duration-300 flex items-center justify-center gap-2 ${
                     completedLessons.has(currentLesson.id)
                       ? 'bg-gray-700 border-2 border-gray-600 cursor-not-allowed opacity-50'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 hover:from-purple-500 hover:to-pink-500 hover:border-purple-300'
+                      : 'bg-gradient-to-r from-purple-600 to-indigo-600 border-2 border-purple-400 hover:from-purple-500 hover:to-indigo-500 hover:border-purple-300'
                   }`}
                 >
                   <CheckCircle className="w-5 h-5" />
@@ -744,7 +744,7 @@ const CourseViewer: React.FC = () => {
               <div className="mt-8 grid md:grid-cols-3 gap-4">
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
                   <div className="flex items-center gap-3 mb-2">
-                    <Award className="w-5 h-5 text-yellow-500" />
+                    <Award className="w-5 h-5 text-cyan-500" />
                     <h3 className="font-bold text-white">Certificato</h3>
                   </div>
                   <p className="text-sm text-gray-400">Completa il corso per ottenere il certificato</p>

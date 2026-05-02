@@ -197,9 +197,9 @@ export default function OrdersManagement() {
       case 'confirmed':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'cancelled':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-blue-500" />;
       case 'pending':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-cyan-500" />;
       default:
         return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
@@ -210,9 +210,9 @@ export default function OrdersManagement() {
       case 'confirmed':
         return 'bg-green-100 text-green-800';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-blue-100 text-blue-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-cyan-100 text-cyan-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -292,7 +292,7 @@ export default function OrdersManagement() {
                 <p className="text-sm text-gray-600">Pagamenti Falliti</p>
                 <p className="text-2xl font-bold">{stats.failedPayments}</p>
               </div>
-              <XCircle className="h-8 w-8 text-red-600" />
+              <XCircle className="h-8 w-8 text-blue-600" />
             </div>
           </div>
         </div>
@@ -329,7 +329,7 @@ export default function OrdersManagement() {
           onClick={() => setFilter('pending')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'pending'
-              ? 'bg-yellow-600 text-white'
+              ? 'bg-cyan-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -349,7 +349,7 @@ export default function OrdersManagement() {
           onClick={() => setFilter('cancelled')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'cancelled'
-              ? 'bg-red-600 text-white'
+              ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -456,7 +456,7 @@ export default function OrdersManagement() {
                                 💰 PayPal
                               </span>
                             ) : order.paymentProvider === 'crypto-nowpayments' || order.paymentProvider === 'crypto' ? (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sky-100 text-sky-800">
                                 ₿ Crypto
                                 {order.metadata?.payCurrency && (
                                   <span className="ml-1 text-[10px]">
@@ -501,10 +501,10 @@ export default function OrdersManagement() {
 
       {/* Error messages */}
       {filteredOrders.some(o => o.error) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h4 className="font-semibold text-red-800 mb-2">Errori nei pagamenti:</h4>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-800 mb-2">Errori nei pagamenti:</h4>
           {filteredOrders.filter(o => o.error).map(order => (
-            <div key={order.id} className="text-sm text-red-600 mb-1">
+            <div key={order.id} className="text-sm text-blue-600 mb-1">
               {new Date(order.createdAt).toLocaleString('it-IT')}: {order.error}
             </div>
           ))}

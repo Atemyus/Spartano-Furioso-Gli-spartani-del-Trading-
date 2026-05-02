@@ -241,7 +241,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       ></div>
 
       {/* Modal */}
-      <div className={`relative w-full max-w-6xl max-h-[90vh] border-2 border-red-800 rounded-3xl overflow-hidden ${
+      <div className={`relative w-full max-w-6xl max-h-[90vh] border-2 border-blue-800 rounded-3xl overflow-hidden ${
         theme === 'dark'
           ? 'bg-gradient-to-b from-gray-900 to-black'
           : 'bg-gradient-to-b from-white to-gray-50'
@@ -249,10 +249,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className={`absolute top-6 right-6 z-10 w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-red-900/50 hover:border-red-600 transition-all duration-300 ${
+          className={`absolute top-6 right-6 z-10 w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-blue-900/50 hover:border-blue-600 transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-black/50 border-red-800/50'
-              : 'bg-white border-red-200'
+              ? 'bg-black/50 border-blue-800/50'
+              : 'bg-white border-blue-200'
           }`}
         >
           <X className={`w-5 h-5 ${
@@ -266,7 +266,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
           {(error || success) && (
             <div className={`p-4 m-4 rounded-lg border ${
               error 
-                ? 'bg-red-900/20 border-red-600 text-red-400' 
+                ? 'bg-blue-900/20 border-blue-600 text-blue-400' 
                 : 'bg-green-900/20 border-green-600 text-green-400'
             }`}>
               <div className="flex items-center gap-3">
@@ -288,11 +288,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
           {/* Header */}
           <div className={`relative p-8 border-b ${
             theme === 'dark'
-              ? 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 border-red-800/30'
-              : 'bg-gradient-to-r from-red-50/80 via-white/80 to-red-50/80 border-red-200'
+              ? 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 border-blue-800/30'
+              : 'bg-gradient-to-r from-blue-50/80 via-white/80 to-blue-50/80 border-blue-200'
           }`}>
             <div className="flex items-start gap-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-red-600 rounded-2xl flex items-center justify-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
                 <Shield className="w-10 h-10 text-white" />
               </div>
               <div className="flex-1">
@@ -301,7 +301,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>{product.name}</h2>
                   {product.badge && (
-                    <span className="px-3 py-1 bg-gradient-to-r from-red-600 to-orange-600 text-white text-sm font-bold rounded-full">
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-sky-600 text-white text-sm font-bold rounded-full">
                       {product.badge}
                     </span>
                   )}
@@ -320,7 +320,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       }`}>Win Rate: {product.performance.winRate}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Award className="w-5 h-5 text-yellow-400" />
+                      <Award className="w-5 h-5 text-cyan-400" />
                       <span className={`font-bold ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>Avg Profit: {product.performance.avgProfit}</span>
@@ -345,15 +345,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <Zap className="w-6 h-6 text-yellow-500" />
+                  <Zap className="w-6 h-6 text-cyan-500" />
                   CARATTERISTICHE PRINCIPALI
                 </h3>
                 <div className="space-y-3">
                   {product.features.map((feature, index) => (
-                    <div key={index} className={`flex items-start gap-3 p-3 border rounded-lg hover:border-yellow-500/30 transition-colors ${
+                    <div key={index} className={`flex items-start gap-3 p-3 border rounded-lg hover:border-cyan-500/30 transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/30 border-red-900/20'
-                        : 'bg-white border-red-200'
+                        ? 'bg-black/30 border-blue-900/20'
+                        : 'bg-white border-blue-200'
                     }`}>
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                       <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{feature}</span>
@@ -368,7 +368,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <h3 className={`text-xl font-black mb-4 flex items-center gap-2 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    <AlertCircle className="w-5 h-5 text-red-500" />
+                    <AlertCircle className="w-5 h-5 text-blue-500" />
                     REQUISITI
                   </h3>
                   <div className="space-y-2">
@@ -376,7 +376,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <div key={index} className={`flex items-center gap-3 ${
                         theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                       }`}>
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span>{req}</span>
                       </div>
                     ))}
@@ -455,17 +455,17 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <DollarSign className="w-6 h-6 text-yellow-500" />
+                  <DollarSign className="w-6 h-6 text-cyan-500" />
                   {product.category === 'Formazione' ? 'OPZIONI DI ACQUISTO' : 'PIANI DI ABBONAMENTO'}
                 </h3>
                 
                 <div className="space-y-4">
                   {/* Monthly Plan - Hide for Formazione */}
                   {product.category !== 'Formazione' && (product.pricingPlans?.monthly || (typeof product.price === 'object' && product.price.monthly)) && (
-                    <div className={`border rounded-xl p-5 hover:border-yellow-500/50 transition-colors ${
+                    <div className={`border rounded-xl p-5 hover:border-cyan-500/50 transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/30 border-red-900/30'
-                        : 'bg-white border-red-200'
+                        ? 'bg-black/30 border-blue-900/30'
+                        : 'bg-white border-blue-200'
                     }`}>
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -493,7 +493,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('monthly')}
                         disabled={loadingPurchase === 'monthly'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border border-red-800/50 rounded-lg font-bold text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border border-blue-800/50 rounded-lg font-bold text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'monthly' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -510,12 +510,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {product.category !== 'Formazione' && (product.pricingPlans?.yearly || (typeof product.price === 'object' && product.price.yearly)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-yellow-950/20 to-orange-950/20 border-yellow-500/50'
-                        : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-cyan-950/20 to-sky-950/20 border-cyan-500/50'
+                        : 'bg-gradient-to-br from-cyan-50 to-sky-50 border-cyan-400 shadow-lg'
                     }`}>
                       {product.pricingPlans?.yearly?.savings && (
                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-black rounded-full">
+                          <span className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-sky-500 text-black text-xs font-black rounded-full">
                             {product.pricingPlans.yearly.savings}
                           </span>
                         </div>
@@ -525,7 +525,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           <h4 className={`text-lg font-bold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>ANNUALE</h4>
-                          <p className="text-sm text-yellow-400 font-semibold">Più popolare - Miglior valore</p>
+                          <p className="text-sm text-cyan-400 font-semibold">Più popolare - Miglior valore</p>
                         </div>
                         <div className="text-right">
                           <div className={`text-2xl font-black ${
@@ -544,7 +544,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('yearly')}
                         disabled={loadingPurchase === 'yearly'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'yearly' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -561,12 +561,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {product.category !== 'Formazione' && (product.pricingPlans?.lifetime || (typeof product.price === 'object' && product.price.lifetime)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-red-950/30 to-purple-950/30 border-red-500/50'
-                        : 'bg-gradient-to-br from-red-50 to-purple-50 border-red-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-blue-950/30 to-purple-950/30 border-blue-500/50'
+                        : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-400 shadow-lg'
                     }`}>
                       {product.pricingPlans?.lifetime?.savings && (
                         <div className="absolute -top-3 right-4">
-                          <span className="px-3 py-1 bg-gradient-to-r from-red-600 to-purple-600 text-white text-xs font-black rounded-full">
+                          <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-black rounded-full">
                             {product.pricingPlans.lifetime.savings}
                           </span>
                         </div>
@@ -576,7 +576,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           <h4 className={`text-lg font-bold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>LIFETIME</h4>
-                          <p className="text-sm text-red-400 font-semibold">Accesso a vita - Nessun rinnovo</p>
+                          <p className="text-sm text-blue-400 font-semibold">Accesso a vita - Nessun rinnovo</p>
                         </div>
                         <div className="text-right">
                           <div className={`text-2xl font-black ${
@@ -595,7 +595,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('lifetime')}
                         disabled={loadingPurchase === 'lifetime'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-purple-600 border-2 border-red-400 rounded-lg font-bold text-white hover:from-red-500 hover:to-purple-500 hover:border-red-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 border-2 border-blue-400 rounded-lg font-bold text-white hover:from-blue-500 hover:to-purple-500 hover:border-blue-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'lifetime' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -615,8 +615,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {(product.category === 'Formazione' || (product.type === 'one-time' && product.pricingPlans?.oneTime)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-purple-950/30 to-pink-950/30 border-purple-500/50'
-                        : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-purple-950/30 to-indigo-950/30 border-purple-500/50'
+                        : 'bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-400 shadow-lg'
                     }`}>
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -642,7 +642,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('lifetime')}
                         disabled={loadingPurchase === 'lifetime'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 rounded-lg font-bold text-white hover:from-purple-500 hover:to-pink-500 hover:border-purple-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 border-2 border-purple-400 rounded-lg font-bold text-white hover:from-purple-500 hover:to-indigo-500 hover:border-purple-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'lifetime' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -663,7 +663,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                (config?.platforms || product.platforms) && 
                ((config?.platforms && config.platforms.length > 0) || 
                 (product.platforms && product.platforms.length > 0)) && (
-                <div className="bg-gradient-to-r from-purple-950/20 via-pink-950/20 to-purple-950/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+                <div className="bg-gradient-to-r from-purple-950/20 via-indigo-950/20 to-purple-950/20 border border-purple-500/30 rounded-xl p-6 mb-6">
                   <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Monitor className="w-5 h-5 text-purple-400" />
                     PIATTAFORME SUPPORTATE

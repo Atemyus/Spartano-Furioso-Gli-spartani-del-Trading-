@@ -268,41 +268,41 @@ const Dashboard: React.FC = () => {
       }`}>
         {/* Epic Background Effects */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
         {/* Epic Header */}
         <div className={`relative z-10 backdrop-blur-md border-b-2 transition-colors ${
-          theme === 'dark' ? 'bg-black/50 border-red-900/30' : 'bg-white border-red-200'
+          theme === 'dark' ? 'bg-black/50 border-blue-900/30' : 'bg-white border-blue-200'
         }`}>
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3 group">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-red-500/30 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-blue-500/30 rounded-full blur-xl animate-pulse"></div>
                   <img 
                     src="/logo.png" 
                     alt="Spartano Logo" 
-                    className="relative w-16 h-16 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)] group-hover:scale-110 transition-transform"
+                    className="relative w-16 h-16 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] group-hover:scale-110 transition-transform"
                   />
-                  <Flame className="absolute -top-1 -right-1 w-6 h-6 text-orange-500 animate-fire" />
+                  <Flame className="absolute -top-1 -right-1 w-6 h-6 text-sky-500 animate-fire" />
                 </div>
                 <h1 className="text-3xl font-black">
-                  <span className="bg-gradient-to-r from-red-600 via-red-500 to-yellow-500 bg-clip-text text-transparent">SPARTANO</span>
+                  <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">NEXORA</span>
                   <span className={`ml-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>DASHBOARD</span>
                 </h1>
               </Link>
               
               <div className="flex items-center gap-4">
                 <button className={`p-3 rounded-lg transition-all duration-300 hover:scale-110 ${
-                  theme === 'dark' ? 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-500/10' : 'text-gray-600 hover:text-yellow-600 hover:bg-yellow-100'
+                  theme === 'dark' ? 'text-gray-400 hover:text-cyan-500 hover:bg-cyan-500/10' : 'text-gray-600 hover:text-cyan-600 hover:bg-cyan-100'
                 }`}>
                   <Bell className="w-6 h-6" />
                 </button>
                 <button 
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-900 via-red-700 to-red-900 border-2 border-red-600 rounded-lg text-white hover:scale-105 hover:shadow-lg hover:shadow-red-500/50 transition-all duration-300 font-bold"
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 border-2 border-blue-600 rounded-lg text-white hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 font-bold"
                 >
                   <LogOut className="w-5 h-5" />
                   <span>LOGOUT</span>
@@ -314,7 +314,7 @@ const Dashboard: React.FC = () => {
 
         {/* Navigation Tabs */}
         <div className={`relative z-10 border-b ${
-          theme === 'dark' ? 'border-red-900/30 bg-black/30' : 'border-red-200 bg-white/50'
+          theme === 'dark' ? 'border-blue-900/30 bg-black/30' : 'border-blue-200 bg-white/50'
         } backdrop-blur-sm`}>
           <div className="container mx-auto px-4">
             <div className="flex gap-2 overflow-x-auto">
@@ -329,7 +329,7 @@ const Dashboard: React.FC = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 font-bold transition-all duration-300 border-b-4 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-yellow-500 text-yellow-500'
+                      ? 'border-cyan-500 text-cyan-500'
                       : theme === 'dark'
                         ? 'border-transparent text-gray-400 hover:text-white hover:border-gray-700'
                         : 'border-transparent text-gray-600 hover:text-black hover:border-gray-300'
@@ -350,22 +350,22 @@ const Dashboard: React.FC = () => {
         {/* Epic Welcome Section */}
         <div className="mb-10 relative">
           <div className={`p-8 rounded-2xl backdrop-blur-sm border-2 ${
-            theme === 'dark' ? 'bg-gradient-to-r from-red-900/20 to-yellow-900/20 border-yellow-500/30' : 'bg-white border-yellow-400/50 shadow-sm'
+            theme === 'dark' ? 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border-cyan-500/30' : 'bg-white border-cyan-400/50 shadow-sm'
           }`}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className={`text-4xl font-black mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                  <span className="bg-gradient-to-r from-yellow-500 via-red-500 to-yellow-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                  <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                     Benvenuto, {user.firstName}!
                   </span>
                 </h2>
                 <p className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                  <Shield className="w-5 h-5 text-yellow-500" />
+                  <Shield className="w-5 h-5 text-cyan-500" />
                   Spartano dal {user.joinDate}
                 </p>
               </div>
               <div className="hidden md:flex items-center gap-2">
-                <Trophy className="w-16 h-16 text-yellow-500 animate-bounce-slow" />
+                <Trophy className="w-16 h-16 text-cyan-500 animate-bounce-slow" />
               </div>
             </div>
           </div>
@@ -374,10 +374,10 @@ const Dashboard: React.FC = () => {
         {/* Epic Stats Grid with 3D Effects */}
         <div className="grid md:grid-cols-4 gap-6 mb-10">
           {[
-            { icon: Package, value: totalProducts, label: 'Prodotti Disponibili', color: 'from-yellow-600 to-orange-600', iconColor: 'text-yellow-500', glow: 'shadow-yellow-500/50' },
+            { icon: Package, value: totalProducts, label: 'Prodotti Disponibili', color: 'from-cyan-600 to-sky-600', iconColor: 'text-cyan-500', glow: 'shadow-cyan-500/50' },
             { icon: Clock, value: trials.filter(t => t.status === 'active').length, label: 'Trial Attivi', color: 'from-blue-600 to-cyan-600', iconColor: 'text-blue-500', glow: 'shadow-blue-500/50' },
             { icon: CreditCard, value: subscriptions.length, label: 'Abbonamenti', color: 'from-green-600 to-emerald-600', iconColor: 'text-green-500', glow: 'shadow-green-500/50' },
-            { icon: TrendingUp, value: '+24%', label: 'Performance Mese', color: 'from-purple-600 to-pink-600', iconColor: 'text-purple-500', glow: 'shadow-purple-500/50' }
+            { icon: TrendingUp, value: '+24%', label: 'Performance Mese', color: 'from-purple-600 to-indigo-600', iconColor: 'text-purple-500', glow: 'shadow-purple-500/50' }
           ].map((stat, index) => (
             <div 
               key={index}
@@ -389,8 +389,8 @@ const Dashboard: React.FC = () => {
               {/* Card */}
               <div className={`relative overflow-hidden rounded-2xl p-6 border-2 transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 ${
                 theme === 'dark' 
-                  ? 'bg-gray-900/70 backdrop-blur-sm border-gray-700 hover:border-yellow-500' 
-                  : 'bg-white border-gray-200 hover:border-yellow-400 shadow-md'
+                  ? 'bg-gray-900/70 backdrop-blur-sm border-gray-700 hover:border-cyan-500' 
+                  : 'bg-white border-gray-200 hover:border-cyan-400 shadow-md'
               } ${stat.glow} hover:shadow-2xl`}>
                 {/* Top shine */}
                 <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
@@ -399,7 +399,7 @@ const Dashboard: React.FC = () => {
                   <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color} transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                     <stat.icon className="w-8 h-8 text-white drop-shadow-lg" />
                   </div>
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'} group-hover:text-yellow-500 transition-colors`}>
+                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'} group-hover:text-cyan-500 transition-colors`}>
                     {stat.value}
                   </span>
                 </div>
@@ -417,7 +417,7 @@ const Dashboard: React.FC = () => {
           <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
             theme === 'dark' ? 'text-white' : 'text-black'
           }`}>
-            <Clock className="w-6 h-6 text-yellow-500" />
+            <Clock className="w-6 h-6 text-cyan-500" />
             PROVE GRATUITE ATTIVE
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
@@ -428,8 +428,8 @@ const Dashboard: React.FC = () => {
               return (
                 <div key={trial.id} className={`border rounded-xl p-6 ${
                   theme === 'dark'
-                    ? 'bg-gray-900/50 border-yellow-500/30'
-                    : 'bg-white border-yellow-400/50 shadow-md'
+                    ? 'bg-gray-900/50 border-cyan-500/30'
+                    : 'bg-white border-cyan-400/50 shadow-md'
                 }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
@@ -451,13 +451,13 @@ const Dashboard: React.FC = () => {
                             <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
                               Progresso Corso
                             </span>
-                            <span className="text-yellow-500 font-bold">{courseProgress}%</span>
+                            <span className="text-cyan-500 font-bold">{courseProgress}%</span>
                           </div>
                           <div className={`w-full rounded-full h-2 ${
                             theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
                           }`}>
                             <div 
-                              className="bg-gradient-to-r from-yellow-600 to-orange-600 h-2 rounded-full transition-all duration-500"
+                              className="bg-gradient-to-r from-cyan-600 to-sky-600 h-2 rounded-full transition-all duration-500"
                               style={{ width: `${courseProgress}%` }}
                             />
                           </div>
@@ -465,7 +465,7 @@ const Dashboard: React.FC = () => {
                       )}
                     </div>
                     <div className="text-right ml-4">
-                      <div className="text-2xl font-black text-yellow-500">{trial.daysRemaining}</div>
+                      <div className="text-2xl font-black text-cyan-500">{trial.daysRemaining}</div>
                       <div className={`text-xs ${
                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                       }`}>giorni rimanenti</div>
@@ -488,7 +488,7 @@ const Dashboard: React.FC = () => {
                   </button>
                   <Link
                     to={`/products?product=${trial.productId}`}
-                    className="px-4 py-2 bg-yellow-600 rounded-lg font-bold text-white hover:bg-yellow-500 transition-colors"
+                    className="px-4 py-2 bg-cyan-600 rounded-lg font-bold text-white hover:bg-cyan-500 transition-colors"
                   >
                     Abbonati
                   </Link>
@@ -507,7 +507,7 @@ const Dashboard: React.FC = () => {
                 <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
                   Nessuna prova gratuita attiva
                 </p>
-                <Link to="/products" className="inline-block mt-4 px-6 py-2 bg-yellow-600 rounded-lg text-white hover:bg-yellow-500 transition-colors">
+                <Link to="/products" className="inline-block mt-4 px-6 py-2 bg-cyan-600 rounded-lg text-white hover:bg-cyan-500 transition-colors">
                   Scopri i nostri prodotti
                 </Link>
               </div>
@@ -538,7 +538,7 @@ const Dashboard: React.FC = () => {
                     <div className={`flex items-center gap-4 text-sm ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                     }`}>
-                      <span>Piano: <span className="text-yellow-500 font-bold">{sub.plan || 'Mensile'}</span></span>
+                      <span>Piano: <span className="text-cyan-500 font-bold">{sub.plan || 'Mensile'}</span></span>
                       <span>Stato: <span className="text-green-400 font-bold">Attivo</span></span>
                     </div>
                     {sub.nextBilling && (
@@ -576,26 +576,26 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Special Banner for Trials */}
-        <div className="mb-8 bg-gradient-to-r from-yellow-950/50 via-red-950/50 to-yellow-950/50 border-2 border-yellow-500/50 rounded-2xl p-6 backdrop-blur-sm">
+        <div className="mb-8 bg-gradient-to-r from-cyan-950/50 via-blue-950/50 to-cyan-950/50 border-2 border-cyan-500/50 rounded-2xl p-6 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-red-600 rounded-xl flex items-center justify-center animate-pulse">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center animate-pulse">
                 <Gift className="w-8 h-8 text-white" />
               </div>
               <div>
                 <h3 className="text-2xl font-black text-white flex items-center gap-2">
                   60 GIORNI DI PROVA GRATUITA
-                  <Rocket className="w-5 h-5 text-yellow-500 animate-pulse" />
+                  <Rocket className="w-5 h-5 text-cyan-500 animate-pulse" />
                 </h3>
                 <p className="text-gray-300">
                   Prova qualsiasi bot o servizio. 
-                  <span className="text-yellow-500 font-bold"> Nessuna carta di credito richiesta!</span>
+                  <span className="text-cyan-500 font-bold"> Nessuna carta di credito richiesta!</span>
                 </p>
               </div>
             </div>
             <Link 
               to="/trials"
-              className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all transform hover:scale-105 flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all transform hover:scale-105 flex items-center gap-2"
             >
               <Rocket className="w-5 h-5" />
               SCOPRI LE PROVE GRATUITE
@@ -607,18 +607,18 @@ const Dashboard: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-6">
           <Link 
             to="/products"
-            className="bg-gradient-to-r from-red-900/30 to-red-800/30 border border-red-800 rounded-xl p-6 hover:from-red-900/50 hover:to-red-800/50 transition-all group"
+            className="bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-800 rounded-xl p-6 hover:from-blue-900/50 hover:to-blue-800/50 transition-all group"
           >
-            <Package className="w-8 h-8 text-red-500 mb-4 group-hover:scale-110 transition-transform" />
+            <Package className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-bold text-white mb-2">Esplora Prodotti</h4>
             <p className="text-gray-400 text-sm">Scopri nuovi bot e servizi</p>
           </Link>
 
           <Link 
             to="/trials"
-            className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/30 border border-yellow-800 rounded-xl p-6 hover:from-yellow-900/50 hover:to-yellow-800/50 transition-all group"
+            className="bg-gradient-to-r from-cyan-900/30 to-cyan-800/30 border border-cyan-800 rounded-xl p-6 hover:from-cyan-900/50 hover:to-cyan-800/50 transition-all group"
           >
-            <Gift className="w-8 h-8 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
+            <Gift className="w-8 h-8 text-cyan-500 mb-4 group-hover:scale-110 transition-transform" />
             <h4 className="text-lg font-bold text-white mb-2">Prove Gratuite</h4>
             <p className="text-gray-400 text-sm">60 giorni gratis</p>
           </Link>
@@ -679,8 +679,8 @@ const Dashboard: React.FC = () => {
 
               <div className={`rounded-xl p-6 border-2 ${
                 theme === 'dark'
-                  ? 'bg-gray-900/50 border-yellow-500/30'
-                  : 'bg-white border-yellow-400/50 shadow-md'
+                  ? 'bg-gray-900/50 border-cyan-500/30'
+                  : 'bg-white border-cyan-400/50 shadow-md'
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <CheckCircle className="w-8 h-8 text-green-500" />
@@ -695,11 +695,11 @@ const Dashboard: React.FC = () => {
 
               <div className={`rounded-xl p-6 border-2 ${
                 theme === 'dark'
-                  ? 'bg-gray-900/50 border-red-500/30'
-                  : 'bg-white border-red-400/50 shadow-md'
+                  ? 'bg-gray-900/50 border-blue-500/30'
+                  : 'bg-white border-blue-400/50 shadow-md'
               }`}>
                 <div className="flex items-center justify-between mb-2">
-                  <AlertCircle className="w-8 h-8 text-red-500" />
+                  <AlertCircle className="w-8 h-8 text-blue-500" />
                   <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                     {trials.filter(t => t.status === 'expired').length}
                   </span>
@@ -787,11 +787,11 @@ const Dashboard: React.FC = () => {
                             {/* Time remaining */}
                             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
                               isExpiringSoon 
-                                ? 'bg-red-900/20 border border-red-500/50' 
+                                ? 'bg-blue-900/20 border border-blue-500/50' 
                                 : 'bg-blue-900/20 border border-blue-500/50'
                             }`}>
-                              <Clock className={`w-4 h-4 ${isExpiringSoon ? 'text-red-400' : 'text-blue-400'}`} />
-                              <span className={`text-sm font-bold ${isExpiringSoon ? 'text-red-400' : 'text-blue-400'}`}>
+                              <Clock className={`w-4 h-4 ${isExpiringSoon ? 'text-blue-400' : 'text-blue-400'}`} />
+                              <span className={`text-sm font-bold ${isExpiringSoon ? 'text-blue-400' : 'text-blue-400'}`}>
                                 {daysLeft} giorni rimanenti
                                 {isExpiringSoon && ' - In scadenza!'}
                               </span>
@@ -815,7 +815,7 @@ const Dashboard: React.FC = () => {
                             </button>
                             <Link
                               to={`/products?product=${trial.productId}`}
-                              className="px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 transition-all text-center"
+                              className="px-4 py-3 bg-gradient-to-r from-cyan-600 to-sky-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 transition-all text-center"
                             >
                               Abbonati Ora
                             </Link>
@@ -879,7 +879,7 @@ const Dashboard: React.FC = () => {
                         </div>
                         <Link
                           to={`/products?product=${trial.productId}`}
-                          className="px-4 py-2 bg-yellow-600 rounded-lg text-white hover:bg-yellow-500 transition-colors text-sm font-bold"
+                          className="px-4 py-2 bg-cyan-600 rounded-lg text-white hover:bg-cyan-500 transition-colors text-sm font-bold"
                         >
                           Abbonati
                         </Link>
@@ -927,11 +927,11 @@ const Dashboard: React.FC = () => {
 
               <div className={`rounded-xl p-6 border-2 ${
                 theme === 'dark'
-                  ? 'bg-gray-900/50 border-yellow-500/30'
-                  : 'bg-white border-yellow-400/50 shadow-md'
+                  ? 'bg-gray-900/50 border-cyan-500/30'
+                  : 'bg-white border-cyan-400/50 shadow-md'
               }`}>
                 <div className="flex items-center justify-between mb-2">
-                  <TrendingUp className="w-8 h-8 text-yellow-500" />
+                  <TrendingUp className="w-8 h-8 text-cyan-500" />
                   <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                     {totalProducts}
                   </span>
@@ -983,9 +983,9 @@ const Dashboard: React.FC = () => {
                                 <CheckCircle className="w-4 h-4 text-green-400" />
                                 <span className="text-sm font-bold text-green-400">Attivo</span>
                               </span>
-                              <span className="flex items-center gap-2 px-3 py-1 bg-yellow-900/30 border border-yellow-500/50 rounded-full">
-                                <Star className="w-4 h-4 text-yellow-400" />
-                                <span className="text-sm font-bold text-yellow-400">{sub.plan || 'Piano Mensile'}</span>
+                              <span className="flex items-center gap-2 px-3 py-1 bg-cyan-900/30 border border-cyan-500/50 rounded-full">
+                                <Star className="w-4 h-4 text-cyan-400" />
+                                <span className="text-sm font-bold text-cyan-400">{sub.plan || 'Piano Mensile'}</span>
                               </span>
                             </div>
 
@@ -1048,7 +1048,7 @@ const Dashboard: React.FC = () => {
                           Modifica Piano
                         </button>
                         <button
-                          className="px-6 py-3 bg-red-900/20 border border-red-500/50 rounded-lg font-bold text-red-400 hover:bg-red-900/30 transition-all text-center"
+                          className="px-6 py-3 bg-blue-900/20 border border-blue-500/50 rounded-lg font-bold text-blue-400 hover:bg-blue-900/30 transition-all text-center"
                         >
                           Annulla
                         </button>
@@ -1092,16 +1092,16 @@ const Dashboard: React.FC = () => {
             )}
 
             {/* Upgrade Banner */}
-            <div className="mt-8 bg-gradient-to-r from-purple-950/50 via-pink-950/50 to-purple-950/50 border-2 border-purple-500/50 rounded-2xl p-8 backdrop-blur-sm">
+            <div className="mt-8 bg-gradient-to-r from-purple-950/50 via-indigo-950/50 to-purple-950/50 border-2 border-purple-500/50 rounded-2xl p-8 backdrop-blur-sm">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center animate-pulse">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center animate-pulse">
                     <Star className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-1">
                       DIVENTA MEMBRO VIP
-                      <Zap className="w-5 h-5 text-yellow-500 animate-pulse" />
+                      <Zap className="w-5 h-5 text-cyan-500 animate-pulse" />
                     </h3>
                     <p className="text-gray-300">
                       Accesso illimitato a tutti i prodotti con un unico abbonamento.
@@ -1111,7 +1111,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <Link 
                   to="/products"
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-bold text-white hover:from-purple-500 hover:to-pink-500 transition-all transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg font-bold text-white hover:from-purple-500 hover:to-indigo-500 transition-all transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
                 >
                   <Rocket className="w-5 h-5" />
                   SCOPRI DI PIÙ
@@ -1128,7 +1128,7 @@ const Dashboard: React.FC = () => {
               <h2 className={`text-3xl font-black mb-2 flex items-center gap-3 ${
                 theme === 'dark' ? 'text-white' : 'text-black'
               }`}>
-                <Settings className="w-8 h-8 text-yellow-500" />
+                <Settings className="w-8 h-8 text-cyan-500" />
                 IMPOSTAZIONI ACCOUNT
               </h2>
               <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
@@ -1146,22 +1146,22 @@ const Dashboard: React.FC = () => {
 
             {/* Error Message */}
             {settingsError && (
-              <div className="mb-6 p-4 bg-red-900/20 border border-red-600/50 rounded-lg flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-                <p className="text-red-400 font-medium">{settingsError}</p>
+              <div className="mb-6 p-4 bg-blue-900/20 border border-blue-600/50 rounded-lg flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-500" />
+                <p className="text-blue-400 font-medium">{settingsError}</p>
               </div>
             )}
 
             {/* Profile Settings */}
             <div className={`rounded-2xl p-8 mb-6 border-2 ${
               theme === 'dark'
-                ? 'bg-gray-900/50 border-yellow-500/30'
-                : 'bg-white border-yellow-400/50 shadow-md'
+                ? 'bg-gray-900/50 border-cyan-500/30'
+                : 'bg-white border-cyan-400/50 shadow-md'
             }`}>
               <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${
                 theme === 'dark' ? 'text-white' : 'text-black'
               }`}>
-                <User className="w-6 h-6 text-yellow-500" />
+                <User className="w-6 h-6 text-cyan-500" />
                 Informazioni Profilo
               </h3>
 
@@ -1179,8 +1179,8 @@ const Dashboard: React.FC = () => {
                     onChange={handleSettingsChange}
                     className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                        : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                        ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                        : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                     }`}
                   />
                 </div>
@@ -1198,8 +1198,8 @@ const Dashboard: React.FC = () => {
                     onChange={handleSettingsChange}
                     className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                        : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                        ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                        : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                     }`}
                   />
                 </div>
@@ -1221,8 +1221,8 @@ const Dashboard: React.FC = () => {
                       onChange={handleSettingsChange}
                       className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
                         theme === 'dark'
-                          ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       }`}
                     />
                   </div>
@@ -1233,13 +1233,13 @@ const Dashboard: React.FC = () => {
             {/* Password Change */}
             <div className={`rounded-2xl p-8 mb-6 border-2 ${
               theme === 'dark'
-                ? 'bg-gray-900/50 border-red-500/30'
-                : 'bg-white border-red-400/50 shadow-md'
+                ? 'bg-gray-900/50 border-blue-500/30'
+                : 'bg-white border-blue-400/50 shadow-md'
             }`}>
               <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${
                 theme === 'dark' ? 'text-white' : 'text-black'
               }`}>
-                <Lock className="w-6 h-6 text-red-500" />
+                <Lock className="w-6 h-6 text-blue-500" />
                 Cambia Password
               </h3>
 
@@ -1261,8 +1261,8 @@ const Dashboard: React.FC = () => {
                       onChange={handleSettingsChange}
                       className={`w-full px-4 py-3 pl-12 pr-12 border-2 rounded-lg focus:outline-none transition-colors ${
                         theme === 'dark'
-                          ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       }`}
                       placeholder="••••••••"
                     />
@@ -1270,7 +1270,7 @@ const Dashboard: React.FC = () => {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${
-                        theme === 'dark' ? 'text-gray-500 hover:text-yellow-500' : 'text-gray-400 hover:text-yellow-600'
+                        theme === 'dark' ? 'text-gray-500 hover:text-cyan-500' : 'text-gray-400 hover:text-cyan-600'
                       }`}
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -1295,8 +1295,8 @@ const Dashboard: React.FC = () => {
                       onChange={handleSettingsChange}
                       className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
                         theme === 'dark'
-                          ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       }`}
                       placeholder="••••••••"
                     />
@@ -1320,8 +1320,8 @@ const Dashboard: React.FC = () => {
                       onChange={handleSettingsChange}
                       className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
                         theme === 'dark'
-                          ? 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
+                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
+                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       }`}
                       placeholder="••••••••"
                     />
@@ -1334,7 +1334,7 @@ const Dashboard: React.FC = () => {
             <div className="flex gap-4">
               <button
                 onClick={handleSaveSettings}
-                className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-yellow-700 transition-all transform hover:scale-105"
+                className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-600 to-cyan-800 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-cyan-700 transition-all transform hover:scale-105"
               >
                 <Save className="w-5 h-5" />
                 SALVA MODIFICHE
@@ -1354,10 +1354,10 @@ const Dashboard: React.FC = () => {
             {/* Danger Zone */}
             <div className={`rounded-2xl p-8 mt-8 border-2 ${
               theme === 'dark'
-                ? 'bg-red-900/10 border-red-500/50'
-                : 'bg-red-50 border-red-300'
+                ? 'bg-blue-900/10 border-blue-500/50'
+                : 'bg-blue-50 border-blue-300'
             }`}>
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-red-500">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-500">
                 <AlertCircle className="w-6 h-6" />
                 Zona Pericolosa
               </h3>
@@ -1365,7 +1365,7 @@ const Dashboard: React.FC = () => {
                 Una volta eliminato l'account, non c'è modo di tornare indietro. Sii sicuro.
               </p>
               <button
-                className="flex items-center gap-2 px-6 py-3 bg-red-600 rounded-lg font-bold text-white hover:bg-red-500 transition-all"
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 rounded-lg font-bold text-white hover:bg-blue-500 transition-all"
               >
                 <Trash2 className="w-5 h-5" />
                 ELIMINA ACCOUNT

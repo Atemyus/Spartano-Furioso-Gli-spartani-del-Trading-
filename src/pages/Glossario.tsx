@@ -20,7 +20,7 @@ const Glossario = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
             GLOSSARIO TRADING
           </h1>
           <p className={`text-xl max-w-3xl mx-auto ${
@@ -41,8 +41,8 @@ const Glossario = () => {
               placeholder="Cerca un termine (es. stop loss, leverage, pip...)" 
               className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl focus:outline-none transition-all ${
                 theme === 'light'
-                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-yellow-600'
-                  : 'bg-gray-900 border-red-800/30 text-white placeholder-gray-500 focus:border-yellow-500'
+                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-cyan-600'
+                  : 'bg-gray-900 border-blue-800/30 text-white placeholder-gray-500 focus:border-cyan-500'
               }`}
             />
           </div>
@@ -59,9 +59,9 @@ const Glossario = () => {
             <div key={i} className={`rounded-lg p-4 text-center ${
               theme === 'light'
                 ? 'bg-white border-2 border-gray-200 shadow-md'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
             }`}>
-              <div className="text-2xl font-black text-yellow-500">{stat.value}</div>
+              <div className="text-2xl font-black text-cyan-500">{stat.value}</div>
               <div className={`text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-400'
               }`}>{stat.label}</div>
@@ -74,20 +74,20 @@ const Glossario = () => {
           {terms.map((item, i) => (
             <div key={i} className={`rounded-xl p-6 transition-all duration-300 ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-lg'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-red-600 to-yellow-600 rounded-lg flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h3 className="text-2xl font-bold text-yellow-500">{item.term}</h3>
+                    <h3 className="text-2xl font-bold text-cyan-500">{item.term}</h3>
                     <span className={`px-2 py-1 rounded text-xs ${
                       theme === 'light'
                         ? 'bg-gray-100 border border-gray-300 text-gray-700'
-                        : 'bg-red-900/30 border border-red-700/50 text-gray-300'
+                        : 'bg-blue-900/30 border border-blue-700/50 text-gray-300'
                     }`}>
                       {item.category}
                     </span>
@@ -102,11 +102,11 @@ const Glossario = () => {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center">
+        <div className="mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
           <Book className="w-12 h-12 text-white mx-auto mb-4" />
           <h2 className="text-3xl font-black text-white mb-4">Scarica il Glossario Completo</h2>
           <p className="text-gray-100 mb-6">PDF con oltre 200 termini, esempi pratici e illustrazioni</p>
-          <button className={`px-8 py-4 bg-black text-yellow-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
+          <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
             SCARICA GRATIS
           </button>
         </div>

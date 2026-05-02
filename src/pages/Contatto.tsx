@@ -9,7 +9,7 @@ const Contatto = () => {
       theme === 'light' ? 'bg-gradient-to-b from-white via-gray-50 to-white' : 'bg-black'
     }`}>
       <div className="container mx-auto px-4 py-16">
-        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
           CONTATTO DIRETTO
         </h1>
         <div className="grid md:grid-cols-2 gap-12">
@@ -21,22 +21,22 @@ const Contatto = () => {
               <input type="text" placeholder="Nome" className={`w-full p-3 border rounded-lg ${
                 theme === 'light'
                   ? 'bg-white border-gray-300 text-gray-800'
-                  : 'bg-gray-900 border-red-800/30 text-white'
+                  : 'bg-gray-900 border-blue-800/30 text-white'
               }`} />
               <input type="email" placeholder="Email" className={`w-full p-3 border rounded-lg ${
                 theme === 'light'
                   ? 'bg-white border-gray-300 text-gray-800'
-                  : 'bg-gray-900 border-red-800/30 text-white'
+                  : 'bg-gray-900 border-blue-800/30 text-white'
               }`} />
               <textarea placeholder="Messaggio" rows={5} className={`w-full p-3 border rounded-lg ${
                 theme === 'light'
                   ? 'bg-white border-gray-300 text-gray-800'
-                  : 'bg-gray-900 border-red-800/30 text-white'
+                  : 'bg-gray-900 border-blue-800/30 text-white'
               }`}></textarea>
               <button className={`px-6 py-3 text-white rounded-lg flex items-center gap-2 hover:scale-105 transition-all border-2 ${
                 theme === 'light'
-                  ? 'bg-yellow-500 hover:bg-yellow-600 border-yellow-700 shadow-md'
-                  : 'bg-red-600 hover:bg-red-700 border-transparent'
+                  ? 'bg-cyan-500 hover:bg-cyan-600 border-cyan-700 shadow-md'
+                  : 'bg-blue-600 hover:bg-blue-700 border-transparent'
               }`}>
                 Invia <Send className="w-4 h-4" />
               </button>
@@ -47,15 +47,15 @@ const Contatto = () => {
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>Informazioni di contatto</h2>
             <div className="flex items-center gap-4">
-              <Mail className="w-6 h-6 text-yellow-500" />
+              <Mail className="w-6 h-6 text-cyan-500" />
               <span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>info@spartanofurioso.com</span>
             </div>
             <div className="flex items-center gap-4">
-              <Phone className="w-6 h-6 text-yellow-500" />
+              <Phone className="w-6 h-6 text-cyan-500" />
               <span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>+39 XXX XXX XXXX</span>
             </div>
             <div className="flex items-center gap-4">
-              <MapPin className="w-6 h-6 text-yellow-500" />
+              <MapPin className="w-6 h-6 text-cyan-500" />
               <span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>Italia</span>
             </div>
           </div>

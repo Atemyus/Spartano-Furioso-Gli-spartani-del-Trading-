@@ -59,7 +59,7 @@ const TutorialInstallation: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Prodotto non trovato</h2>
           <Link to="/dashboard" className="text-purple-500 hover:text-purple-400">
             Torna alla Dashboard
@@ -207,7 +207,7 @@ const TutorialInstallation: React.FC = () => {
                   <p className="text-gray-400 mb-3">
                     Nel Navigator, trascina l'EA sul grafico desiderato e inserisci il codice licenza
                   </p>
-                  <div className="bg-yellow-900/20 border border-yellow-700/30 rounded p-3 text-sm text-yellow-400">
+                  <div className="bg-cyan-900/20 border border-cyan-700/30 rounded p-3 text-sm text-cyan-400">
                     ⚠️ <strong>Importante:</strong> Assicurati di abilitare "Consenti trading automatico" nelle impostazioni
                   </div>
                 </div>
@@ -216,9 +216,9 @@ const TutorialInstallation: React.FC = () => {
           </div>
 
           {/* Troubleshooting */}
-          <div className="bg-red-900/20 border border-red-800 rounded-xl p-6 mb-8">
+          <div className="bg-blue-900/20 border border-blue-800 rounded-xl p-6 mb-8">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <AlertCircle className="w-6 h-6 text-red-500" />
+              <AlertCircle className="w-6 h-6 text-blue-500" />
               Problemi Comuni
             </h3>
             

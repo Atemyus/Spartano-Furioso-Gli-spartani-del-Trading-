@@ -434,7 +434,7 @@ const CourseManagement: React.FC = () => {
   if (!hasCourses) {
     return (
       <div className="p-8 text-center">
-        <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+        <AlertCircle className="w-12 h-12 text-cyan-500 mx-auto mb-4" />
         <p className="text-gray-400 mb-4">Nessun corso di formazione trovato</p>
         <p className="text-sm text-gray-500">Crea un prodotto con categoria "Formazione" per vederlo qui</p>
         <button
@@ -450,7 +450,7 @@ const CourseManagement: React.FC = () => {
   if (!course) {
     return (
       <div className="p-8 text-center">
-        <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+        <AlertCircle className="w-12 h-12 text-cyan-500 mx-auto mb-4" />
         <p className="text-gray-400">Seleziona un corso</p>
       </div>
     );
@@ -766,7 +766,7 @@ const CourseManagement: React.FC = () => {
                     e.stopPropagation();
                     handleDeleteModule(module.id);
                   }}
-                  className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors"
+                  className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
                   title="Elimina modulo"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -1010,7 +1010,7 @@ const CourseManagement: React.FC = () => {
                                 onClick={() => {
                                   setNewLessonFiles(newLessonFiles.filter((_, i) => i !== index));
                                 }}
-                                className="p-1 text-red-400 hover:text-red-300"
+                                className="p-1 text-blue-400 hover:text-blue-300"
                               >
                                 <X className="w-3 h-3" />
                               </button>
@@ -1122,8 +1122,8 @@ const CourseManagement: React.FC = () => {
                           
                           {/* Special Download Button for Specific Lessons */}
                           {(lesson.id === 'lesson_1758030571170' || lesson.id === 'lesson_3_1') && (
-                            <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
-                              <label className="block text-sm font-bold text-yellow-400 mb-2 flex items-center gap-2">
+                            <div className="mt-4 p-3 bg-cyan-900/20 border border-cyan-700/50 rounded-lg">
+                              <label className="block text-sm font-bold text-cyan-400 mb-2 flex items-center gap-2">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                                 </svg>
@@ -1184,7 +1184,7 @@ const CourseManagement: React.FC = () => {
                                     }
                                   }
                                 }}
-                                className="w-full text-sm text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer"
+                                className="w-full text-sm text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-cyan-500 file:text-black hover:file:bg-cyan-400 cursor-pointer"
                                 accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.7z"
                               />
                               {(lesson as any).downloadButton?.fileUrl && (
@@ -1252,7 +1252,7 @@ const CourseManagement: React.FC = () => {
                                     onClick={() => {
                                       setEditLessonFiles(editLessonFiles.filter((_, i) => i !== index));
                                     }}
-                                    className="p-1 text-red-400 hover:text-red-300"
+                                    className="p-1 text-blue-400 hover:text-blue-300"
                                   >
                                     <X className="w-3 h-3" />
                                   </button>
@@ -1325,7 +1325,7 @@ const CourseManagement: React.FC = () => {
                                     Trial
                                   </span>
                                 ) : (
-                                  <span className="text-yellow-400 flex items-center gap-1">
+                                  <span className="text-cyan-400 flex items-center gap-1">
                                     <EyeOff className="w-3 h-3" />
                                     Premium
                                   </span>
@@ -1340,7 +1340,7 @@ const CourseManagement: React.FC = () => {
                               className={`p-2 rounded-lg transition-colors ${
                                 lesson.isTrialContent 
                                   ? 'bg-green-900/30 text-green-400 hover:bg-green-900/50' 
-                                  : 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-900/50'
+                                  : 'bg-cyan-900/30 text-cyan-400 hover:bg-cyan-900/50'
                               }`}
                               title={lesson.isTrialContent ? 'Rimuovi dal trial' : 'Aggiungi al trial'}
                             >
@@ -1357,7 +1357,7 @@ const CourseManagement: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteLesson(module.id, lesson.id)}
-                              className="p-2 bg-red-900/30 text-red-400 rounded-lg hover:bg-red-900/50"
+                              className="p-2 bg-blue-900/30 text-blue-400 rounded-lg hover:bg-blue-900/50"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

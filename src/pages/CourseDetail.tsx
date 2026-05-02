@@ -182,7 +182,7 @@ const CourseDetail: React.FC = () => {
     return (
       <AnimatedPage>
         <div className="min-h-screen bg-black flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       </AnimatedPage>
     );
@@ -225,12 +225,12 @@ const CourseDetail: React.FC = () => {
                   FORMAZIONE
                 </span>
                 {userAccess === 'trial' && (
-                  <span className="px-3 py-1 bg-yellow-600 text-white text-sm font-bold rounded animate-pulse">
+                  <span className="px-3 py-1 bg-cyan-600 text-white text-sm font-bold rounded animate-pulse">
                     TRIAL ATTIVO - {trialDaysLeft} giorni rimanenti
                   </span>
                 )}
                 {userAccess === 'expired' && (
-                  <span className="px-3 py-1 bg-red-600 text-white text-sm font-bold rounded">
+                  <span className="px-3 py-1 bg-blue-600 text-white text-sm font-bold rounded">
                     TRIAL SCADUTO
                   </span>
                 )}
@@ -251,13 +251,13 @@ const CourseDetail: React.FC = () => {
               {/* Metrics */}
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-yellow-500" />
+                  <Users className="w-5 h-5 text-cyan-500" />
                   <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
                     {course.metrics?.students ? course.metrics.students.toLocaleString() : '93'} studenti
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-500" />
+                  <Star className="w-5 h-5 text-cyan-500" />
                   <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>{course.metrics?.avgRating || 4.8}/5.0</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ const CourseDetail: React.FC = () => {
                   <>
                     <button 
                       onClick={handleStartTrial}
-                      className="px-8 py-4 bg-gradient-to-r from-yellow-600 to-red-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 hover:border-yellow-300 transition-all transform hover:scale-105 flex items-center gap-2"
+                      className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 hover:border-cyan-300 transition-all transform hover:scale-105 flex items-center gap-2"
                     >
                       <Gift className="w-5 h-5" />
                       PROVA GRATIS {course.trialDays || 7} GIORNI
@@ -306,7 +306,7 @@ const CourseDetail: React.FC = () => {
                 {userAccess === 'expired' && (
                   <button 
                     onClick={handlePurchase}
-                    className="px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all transform hover:scale-105"
+                    className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all transform hover:scale-105"
                   >
                     ACQUISTA CORSO COMPLETO - €{course.price}
                   </button>
@@ -400,8 +400,8 @@ const CourseDetail: React.FC = () => {
               
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border-yellow-600/30'
-                  : 'bg-white border-yellow-300 shadow-md'
+                  ? 'bg-gradient-to-br from-cyan-900/30 to-cyan-800/20 border-cyan-600/30'
+                  : 'bg-white border-cyan-300 shadow-md'
               }`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className="text-3xl">⚡</div>
@@ -421,8 +421,8 @@ const CourseDetail: React.FC = () => {
               
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-red-900/30 to-red-800/20 border-red-600/30'
-                  : 'bg-white border-red-300 shadow-md'
+                  ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/20 border-blue-600/30'
+                  : 'bg-white border-blue-300 shadow-md'
               }`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className="text-3xl">💻</div>
@@ -442,8 +442,8 @@ const CourseDetail: React.FC = () => {
               
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-pink-900/30 to-pink-800/20 border-pink-600/30'
-                  : 'bg-white border-pink-300 shadow-md'
+                  ? 'bg-gradient-to-br from-indigo-900/30 to-indigo-800/20 border-indigo-600/30'
+                  : 'bg-white border-indigo-300 shadow-md'
               }`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className="text-3xl">🤝</div>
@@ -465,11 +465,11 @@ const CourseDetail: React.FC = () => {
             {/* Disclaimer Box */}
             <div className={`border-2 rounded-xl p-8 ${
               theme === 'dark'
-                ? 'bg-gradient-to-r from-red-950/50 via-orange-950/50 to-red-950/50 border-red-600/50'
-                : 'bg-white border-red-400 shadow-lg'
+                ? 'bg-gradient-to-r from-blue-950/50 via-sky-950/50 to-blue-950/50 border-blue-600/50'
+                : 'bg-white border-blue-400 shadow-lg'
             }`}>
               <div className="flex items-start gap-4">
-                <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0 mt-1" />
+                <AlertCircle className="w-8 h-8 text-blue-500 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className={`text-xl font-bold mb-3 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -480,13 +480,13 @@ const CourseDetail: React.FC = () => {
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                   }`}>
                     <p>
-                      <strong className="text-red-400">Rischio di investimento:</strong> Il trading di strumenti finanziari comporta un alto livello di rischio e può risultare nella perdita di tutto il capitale investito. Non è adatto a tutti gli investitori.
+                      <strong className="text-blue-400">Rischio di investimento:</strong> Il trading di strumenti finanziari comporta un alto livello di rischio e può risultare nella perdita di tutto il capitale investito. Non è adatto a tutti gli investitori.
                     </p>
                     <p>
-                      <strong className="text-orange-400">Nessuna garanzia di profitto:</strong> I risultati passati non sono indicativi di risultati futuri. Le strategie e tecniche insegnate in questo corso non garantiscono profitti.
+                      <strong className="text-sky-400">Nessuna garanzia di profitto:</strong> I risultati passati non sono indicativi di risultati futuri. Le strategie e tecniche insegnate in questo corso non garantiscono profitti.
                     </p>
                     <p>
-                      <strong className="text-yellow-400">Scopo educativo:</strong> Questo corso ha esclusivamente scopo formativo e informativo. Non costituisce consulenza finanziaria, di investimento o di trading.
+                      <strong className="text-cyan-400">Scopo educativo:</strong> Questo corso ha esclusivamente scopo formativo e informativo. Non costituisce consulenza finanziaria, di investimento o di trading.
                     </p>
                     <p className="text-sm text-gray-400 pt-2 border-t border-gray-700">
                       Prima di fare trading, consulta un consulente finanziario qualificato. Investi solo quello che puoi permetterti di perdere. 
@@ -511,11 +511,11 @@ const CourseDetail: React.FC = () => {
               {userAccess === 'none' && (
                 <div className={`border-2 rounded-xl p-6 mb-8 ${
                   theme === 'dark'
-                    ? 'bg-gradient-to-r from-yellow-900/30 to-red-900/30 border-yellow-600/50'
-                    : 'bg-white border-yellow-400 shadow-lg'
+                    ? 'bg-gradient-to-r from-cyan-900/30 to-blue-900/30 border-cyan-600/50'
+                    : 'bg-white border-cyan-400 shadow-lg'
                 }`}>
                   <div className="flex items-start gap-4">
-                    <Gift className="w-8 h-8 text-yellow-500 flex-shrink-0" />
+                    <Gift className="w-8 h-8 text-cyan-500 flex-shrink-0" />
                     <div>
                       <h3 className={`text-xl font-bold mb-2 ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -544,11 +544,11 @@ const CourseDetail: React.FC = () => {
               {userAccess === 'expired' && (
                 <div className={`border-2 rounded-xl p-6 mb-8 ${
                   theme === 'dark'
-                    ? 'bg-gradient-to-r from-red-900/30 to-orange-900/30 border-red-600/50'
-                    : 'bg-white border-red-400 shadow-lg'
+                    ? 'bg-gradient-to-r from-blue-900/30 to-sky-900/30 border-blue-600/50'
+                    : 'bg-white border-blue-400 shadow-lg'
                 }`}>
                   <div className="flex items-start gap-4">
-                    <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+                    <AlertCircle className="w-8 h-8 text-blue-500 flex-shrink-0" />
                     <div>
                       <h3 className={`text-xl font-bold mb-2 ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -660,7 +660,7 @@ const CourseDetail: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                   <div className="w-24 h-2 bg-gray-800 rounded-full overflow-hidden">
                                     <div 
-                                      className="h-full bg-gradient-to-r from-yellow-500 to-green-500"
+                                      className="h-full bg-gradient-to-r from-cyan-500 to-green-500"
                                       style={{ width: `${progress}%` }}
                                     ></div>
                                   </div>
@@ -720,8 +720,8 @@ const CourseDetail: React.FC = () => {
               {/* Course Stats */}
               <div className={`border-2 rounded-xl p-6 mb-6 ${
                 theme === 'dark'
-                  ? 'bg-gray-900/50 border-red-900/30'
-                  : 'bg-white border-red-300 shadow-md'
+                  ? 'bg-gray-900/50 border-blue-900/30'
+                  : 'bg-white border-blue-300 shadow-md'
               }`}>
                 <h3 className={`text-xl font-bold mb-4 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -765,7 +765,7 @@ const CourseDetail: React.FC = () => {
                             key={i} 
                             className={`w-4 h-4 ${
                               i < Math.floor(rating) 
-                                ? 'text-yellow-500 fill-current' 
+                                ? 'text-cyan-500 fill-current' 
                                 : 'text-gray-600'
                             }`} 
                           />
@@ -788,7 +788,7 @@ const CourseDetail: React.FC = () => {
                   : 'bg-white border-purple-400 shadow-lg'
               }`}>
                 <div className="flex items-center gap-3 mb-4">
-                  <Award className="w-8 h-8 text-yellow-500" />
+                  <Award className="w-8 h-8 text-cyan-500" />
                   <h3 className={`text-xl font-bold ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
@@ -799,7 +799,7 @@ const CourseDetail: React.FC = () => {
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Completa il corso e ottieni la prestigiosa certificazione 
-                  <span className="text-yellow-500 font-bold"> Spartan Trader</span>!
+                  <span className="text-cyan-500 font-bold"> Spartan Trader</span>!
                 </p>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li className="flex items-start gap-2">
@@ -820,8 +820,8 @@ const CourseDetail: React.FC = () => {
               {/* Pricing Section */}
               <div id="pricing-section" className={`border-2 rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-yellow-900/30 to-orange-900/30 border-yellow-600/50'
-                  : 'bg-white border-yellow-400 shadow-lg'
+                  ? 'bg-gradient-to-br from-cyan-900/30 to-sky-900/30 border-cyan-600/50'
+                  : 'bg-white border-cyan-400 shadow-lg'
               }`}>
                 {/* Special Trial Price for trial users */}
                 {userAccess === 'trial' && (
@@ -842,7 +842,7 @@ const CourseDetail: React.FC = () => {
                       <div className="text-gray-400 line-through text-lg">
                         €{course.originalPrice || 1997}
                       </div>
-                      <div className="text-4xl font-black text-yellow-500 mb-2">
+                      <div className="text-4xl font-black text-cyan-500 mb-2">
                         €1500
                       </div>
                       <p className="text-sm text-green-400 font-semibold">Prezzo Speciale Trial - Risparmia €497!</p>
@@ -854,7 +854,7 @@ const CourseDetail: React.FC = () => {
                           €{course.originalPrice}
                         </div>
                       )}
-                      <div className="text-4xl font-black text-yellow-500 mb-2">
+                      <div className="text-4xl font-black text-cyan-500 mb-2">
                         €{course.price}
                       </div>
                       <p className="text-sm text-gray-400">Pagamento unico - Accesso a vita</p>
@@ -863,7 +863,7 @@ const CourseDetail: React.FC = () => {
                 </div>
                 <button
                   onClick={handlePurchase}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all transform hover:scale-105 mb-4"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all transform hover:scale-105 mb-4"
                 >
                   ACQUISTA ORA
                 </button>

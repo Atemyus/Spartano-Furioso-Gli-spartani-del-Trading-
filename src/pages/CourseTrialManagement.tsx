@@ -189,7 +189,7 @@ const CourseTrialManagement: React.FC = () => {
           theme === 'dark' ? 'bg-gradient-to-b from-black via-purple-950/20 to-black' : 'bg-white'
         }`}>
           <div className="container mx-auto px-4 py-16 text-center">
-            <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <AlertTriangle className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
             <h1 className={`text-3xl font-black mb-4 ${
               theme === 'dark' ? 'text-white' : 'text-black'
             }`}>Trial Non Trovato</h1>
@@ -213,22 +213,22 @@ const CourseTrialManagement: React.FC = () => {
     return (
       <AnimatedPage>
         <div className={`min-h-screen transition-colors duration-500 ${
-          theme === 'dark' ? 'bg-gradient-to-b from-black via-red-950/20 to-black' : 'bg-white'
+          theme === 'dark' ? 'bg-gradient-to-b from-black via-blue-950/20 to-black' : 'bg-white'
         }`}>
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-red-900/20 border-2 border-red-500 rounded-2xl p-8 mb-8">
-                <AlertTriangle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse" />
+              <div className="bg-blue-900/20 border-2 border-blue-500 rounded-2xl p-8 mb-8">
+                <AlertTriangle className="w-20 h-20 text-blue-500 mx-auto mb-6 animate-pulse" />
                 <h1 className={`text-4xl font-black mb-4 ${
                   theme === 'dark' ? 'text-white' : 'text-black'
                 }`}>
                   TRIAL SCADUTO
                 </h1>
                 <p className="text-xl text-gray-300 mb-8">
-                  Il tuo periodo di prova per <span className="text-yellow-500 font-bold">{course.name}</span> è terminato.
+                  Il tuo periodo di prova per <span className="text-cyan-500 font-bold">{course.name}</span> è terminato.
                 </p>
                 
-                <div className="bg-black/50 border border-red-900/30 rounded-xl p-6 mb-8">
+                <div className="bg-black/50 border border-blue-900/30 rounded-xl p-6 mb-8">
                   <div className="grid grid-cols-2 gap-4 text-left">
                     <div>
                       <span className="text-gray-400 text-sm">Iniziato il</span>
@@ -238,7 +238,7 @@ const CourseTrialManagement: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-gray-400 text-sm">Terminato il</span>
-                      <p className="text-red-400 font-bold">
+                      <p className="text-blue-400 font-bold">
                         {new Date(trial.endDate).toLocaleDateString('it-IT')}
                       </p>
                     </div>
@@ -248,7 +248,7 @@ const CourseTrialManagement: React.FC = () => {
                 <div className="space-y-4">
                   <button
                     onClick={() => navigate(`/course/${courseId}`)}
-                    className="w-full px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                    className="w-full px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
                   >
                     <Rocket className="w-6 h-6" />
                     ACQUISTA IL CORSO COMPLETO
@@ -353,7 +353,7 @@ const CourseTrialManagement: React.FC = () => {
                     theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
                   }`}>
                     <div 
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-purple-600 to-indigo-600 h-3 rounded-full transition-all duration-500"
                       style={{ width: `${progressPercentage}%` }}
                     />
                   </div>
@@ -403,7 +403,7 @@ const CourseTrialManagement: React.FC = () => {
               <div className="flex flex-col justify-center space-y-4">
                 <button 
                   onClick={handleContinueCourse}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 rounded-xl font-bold text-white hover:from-purple-500 hover:to-pink-500 hover:border-purple-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 border-2 border-purple-400 rounded-xl font-bold text-white hover:from-purple-500 hover:to-indigo-500 hover:border-purple-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
                 >
                   <PlayCircle className="w-6 h-6" />
                   {courseProgress && courseProgress.progress > 0 ? 'RIPRENDI CORSO' : 'INIZIA CORSO'}
@@ -411,7 +411,7 @@ const CourseTrialManagement: React.FC = () => {
 
                 <button 
                   onClick={handleUpgradeNow}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
                 >
                   <Rocket className="w-6 h-6" />
                   PASSA AL CORSO COMPLETO
@@ -438,7 +438,7 @@ const CourseTrialManagement: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-xl font-bold text-white">{index + 1}</span>
                     </div>
                     <div className="flex-1">
@@ -486,27 +486,27 @@ const CourseTrialManagement: React.FC = () => {
           </div>
 
           {/* Upgrade Benefits */}
-          <div className="bg-gradient-to-r from-yellow-950/50 via-orange-950/50 to-yellow-950/50 border-2 border-yellow-500/50 rounded-2xl p-8">
+          <div className="bg-gradient-to-r from-cyan-950/50 via-sky-950/50 to-cyan-950/50 border-2 border-cyan-500/50 rounded-2xl p-8">
             <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-yellow-500" />
+              <Trophy className="w-6 h-6 text-cyan-500" />
               SBLOCCA IL CORSO COMPLETO
             </h3>
             
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
+                <div className="text-3xl font-black text-cyan-500 mb-2">
                   22
                 </div>
                 <div className="text-gray-400">Moduli Totali</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
+                <div className="text-3xl font-black text-cyan-500 mb-2">
                   139
                 </div>
                 <div className="text-gray-400">Video Lezioni</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
+                <div className="text-3xl font-black text-cyan-500 mb-2">
                   {course.totalDuration || '300+'}
                 </div>
                 <div className="text-gray-400">Ore di Contenuto</div>
@@ -539,14 +539,14 @@ const CourseTrialManagement: React.FC = () => {
                   {course.price?.originalPrice && (
                     <span className="text-gray-500 line-through">€{course.price.originalPrice}</span>
                   )}
-                  <span className="text-3xl font-black text-yellow-500">
+                  <span className="text-3xl font-black text-cyan-500">
                     €{course.price?.oneTime || course.price?.monthly || 1500}
                   </span>
                 </div>
               </div>
               <button 
                 onClick={handleUpgradeNow}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 flex items-center gap-2"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all duration-300 flex items-center gap-2"
               >
                 OTTIENI ACCESSO COMPLETO
                 <ChevronRight className="w-5 h-5" />
@@ -618,7 +618,7 @@ const CourseTrialManagement: React.FC = () => {
                 <div className="text-sm text-gray-400">Studenti</div>
               </div>
               <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
+                <Star className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-white">
                   {course.metrics?.avgRating || 4.9}/5
                 </div>
@@ -632,7 +632,7 @@ const CourseTrialManagement: React.FC = () => {
                 <div className="text-sm text-gray-400">Successo</div>
               </div>
               <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <Trophy className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                <Trophy className="w-6 h-6 text-sky-400 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-white">
                   {course.metrics?.completionRate || 94}%
                 </div>

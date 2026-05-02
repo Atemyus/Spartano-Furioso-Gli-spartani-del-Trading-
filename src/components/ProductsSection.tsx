@@ -180,10 +180,10 @@ const ProductsSection: React.FC = () => {
   };
 
   const categories = [
-    { id: 'all', name: 'TUTTI', icon: Crown, color: 'from-yellow-600 to-red-600' },
-    { id: 'bot', name: 'BOT TRADING', icon: Shield, color: 'from-red-600 to-red-800' },
+    { id: 'all', name: 'TUTTI', icon: Crown, color: 'from-cyan-600 to-blue-600' },
+    { id: 'bot', name: 'BOT TRADING', icon: Shield, color: 'from-blue-600 to-blue-800' },
     { id: 'indicator', name: 'INDICATORI', icon: TrendingUp, color: 'from-blue-600 to-purple-600' },
-    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-purple-600 to-pink-600' },
+    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-purple-600 to-indigo-600' },
     { id: 'service', name: 'SERVIZI', icon: Zap, color: 'from-green-600 to-emerald-600' }
   ];
 
@@ -220,10 +220,10 @@ const ProductsSection: React.FC = () => {
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'dark' ? 'bg-red-900/10' : 'bg-red-100/30'
+          theme === 'dark' ? 'bg-blue-900/10' : 'bg-blue-100/30'
         }`}></div>
         <div className={`absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'dark' ? 'bg-yellow-900/10' : 'bg-yellow-100/30'
+          theme === 'dark' ? 'bg-cyan-900/10' : 'bg-cyan-100/30'
         }`}></div>
         <div className={`absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] ${
           theme === 'dark' ? 'opacity-5' : 'opacity-10'
@@ -234,21 +234,21 @@ const ProductsSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-3 mb-6">
-            <Swords className="w-8 h-8 text-red-600" />
+            <Swords className="w-8 h-8 text-blue-600" />
             <h2 className="text-5xl md:text-6xl font-black">
-              <span className="bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
                 ARSENALE
               </span>
-              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>SPARTANO</span>
+              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>NEXORA</span>
             </h2>
-            <Swords className="w-8 h-8 text-red-600 scale-x-[-1]" />
+            <Swords className="w-8 h-8 text-blue-600 scale-x-[-1]" />
           </div>
           <p className={`text-xl max-w-3xl mx-auto font-medium ${
             theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
           }`}>
             Scegli le tue armi per dominare i mercati. Ogni strumento è forgiato con la 
-            <span className="text-yellow-500"> disciplina spartana</span> e testato in 
-            <span className="text-red-500"> battaglia reale</span>.
+            <span className="text-cyan-500"> disciplina spartana</span> e testato in 
+            <span className="text-blue-500"> battaglia reale</span>.
           </p>
           {/* Debug: mostra numero prodotti e ultimo aggiornamento */}
           <p className={`text-sm mt-2 ${
@@ -270,10 +270,10 @@ const ProductsSection: React.FC = () => {
                 className={`
                   group relative px-6 py-3 rounded-xl font-bold transition-all duration-300
                   ${selectedCategory === category.id 
-                    ? `bg-gradient-to-r ${category.color} text-white scale-105 shadow-lg shadow-red-500/20` 
+                    ? `bg-gradient-to-r ${category.color} text-white scale-105 shadow-lg shadow-blue-500/20` 
                     : theme === 'dark'
-                      ? 'bg-gray-900/50 border border-red-900/30 text-gray-400 hover:border-yellow-500/50 hover:text-white'
-                      : 'bg-white border border-red-200 text-gray-600 hover:border-yellow-500 hover:text-gray-900'
+                      ? 'bg-gray-900/50 border border-blue-900/30 text-gray-400 hover:border-cyan-500/50 hover:text-white'
+                      : 'bg-white border border-blue-200 text-gray-600 hover:border-cyan-500 hover:text-gray-900'
                   }
                 `}
               >
@@ -289,7 +289,7 @@ const ProductsSection: React.FC = () => {
                   )}
                 </span>
                 {selectedCategory === category.id && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-red-500/20 rounded-xl animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-xl animate-pulse"></div>
                 )}
               </button>
             );
@@ -297,14 +297,14 @@ const ProductsSection: React.FC = () => {
         </div>
 
         {/* Special Offer Banner */}
-        <div className={`mb-12 border-2 border-yellow-500/50 rounded-2xl p-6 backdrop-blur-sm ${
+        <div className={`mb-12 border-2 border-cyan-500/50 rounded-2xl p-6 backdrop-blur-sm ${
           theme === 'dark'
-            ? 'bg-gradient-to-r from-red-950/50 via-yellow-950/50 to-red-950/50'
-            : 'bg-gradient-to-r from-red-50/80 via-yellow-50/80 to-red-50/80'
+            ? 'bg-gradient-to-r from-blue-950/50 via-cyan-950/50 to-blue-950/50'
+            : 'bg-gradient-to-r from-blue-50/80 via-cyan-50/80 to-blue-50/80'
         }`}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-red-600 rounded-xl flex items-center justify-center animate-pulse">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center animate-pulse">
                 <Target className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -312,11 +312,11 @@ const ProductsSection: React.FC = () => {
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   PROVA GRATUITA DISPONIBILE
-                  <Flame className="w-5 h-5 text-yellow-500 animate-pulse" />
+                  <Flame className="w-5 h-5 text-cyan-500 animate-pulse" />
                 </h3>
                 <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                   Testa qualsiasi bot o servizio senza rischi. 
-                  <span className="text-yellow-500 font-bold"> Garanzia soddisfatti o rimborsati!</span>
+                  <span className="text-cyan-500 font-bold"> Garanzia soddisfatti o rimborsati!</span>
                 </p>
               </div>
             </div>
@@ -343,8 +343,8 @@ const ProductsSection: React.FC = () => {
           <div className="text-center py-16">
             <div className={`w-24 h-24 border-2 rounded-full flex items-center justify-center mx-auto mb-6 ${
               theme === 'dark'
-                ? 'bg-gray-900/50 border-red-900/30'
-                : 'bg-gray-100 border-red-200'
+                ? 'bg-gray-900/50 border-blue-900/30'
+                : 'bg-gray-100 border-blue-200'
             }`}>
               <Filter className={`w-12 h-12 ${
                 theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
@@ -398,7 +398,7 @@ const ProductsSection: React.FC = () => {
             </p>
             <button 
               onClick={() => window.open('https://t.me/your_telegram_bot', '_blank')}
-              className="group px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-xl font-bold text-white text-lg hover:from-red-500 hover:to-red-700 hover:scale-105 transition-all duration-300 flex items-center gap-3">
+              className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl font-bold text-white text-lg hover:from-blue-500 hover:to-blue-700 hover:scale-105 transition-all duration-300 flex items-center gap-3">
               <Shield className="w-6 h-6 group-hover:rotate-12 transition-transform" />
               PARLA CON UN GUERRIERO
               <Shield className="w-6 h-6 group-hover:-rotate-12 transition-transform" />

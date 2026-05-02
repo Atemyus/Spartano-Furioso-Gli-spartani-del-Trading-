@@ -9,13 +9,13 @@ const Privacy = () => {
       theme === 'dark' ? 'bg-black' : 'bg-white'
     }`}>
       <div className="container mx-auto px-4 py-16 max-w-4xl">
-        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
           PRIVACY POLICY
         </h1>
         <div className={`border rounded-lg p-8 ${
           theme === 'dark'
-            ? 'bg-gradient-to-b from-gray-900 to-black border-red-800/30'
-            : 'bg-gradient-to-b from-white to-gray-50 border-red-200'
+            ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30'
+            : 'bg-gradient-to-b from-white to-gray-50 border-blue-200'
         }`}>
           <div className={`space-y-6 ${
             theme === 'dark' ? 'text-gray-300' : 'text-gray-600'

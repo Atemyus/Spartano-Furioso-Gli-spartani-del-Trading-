@@ -140,19 +140,19 @@ const Testimonials = () => {
   return (
     <section id="veterani" className={`py-20 transition-colors duration-500 ${
       theme === 'dark'
-        ? 'bg-gradient-to-b from-black to-red-950/20'
-        : 'bg-gradient-to-b from-white to-red-50/40'
+        ? 'bg-gradient-to-b from-black to-blue-950/20'
+        : 'bg-gradient-to-b from-white to-blue-50/40'
     }`}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600/20 to-red-600/20 px-4 py-2 rounded-full border border-yellow-600/30 mb-6">
-            <Quote className="w-4 h-4 text-yellow-500" />
-            <span className="text-yellow-400 text-sm font-medium">STORIE DI GLORIA</span>
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 px-4 py-2 rounded-full border border-cyan-600/30 mb-6">
+            <Quote className="w-4 h-4 text-cyan-500" />
+            <span className="text-cyan-400 text-sm font-medium">STORIE DI GLORIA</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>I </span>
-            <span className="bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">VETERANI</span>
+            <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">VETERANI</span>
             <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}> PARLANO</span>
           </h2>
           <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
@@ -169,8 +169,8 @@ const Testimonials = () => {
             onClick={prevSlide}
             className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-3 rounded-full border-2 transition-all duration-300 hover:scale-110 ${
               theme === 'dark'
-                ? 'bg-black/80 border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/20'
-                : 'bg-white/80 border-yellow-600/50 text-yellow-600 hover:bg-yellow-50'
+                ? 'bg-black/80 border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/20'
+                : 'bg-white/80 border-cyan-600/50 text-cyan-600 hover:bg-cyan-50'
             }`}
             aria-label="Testimonianza precedente"
           >
@@ -181,8 +181,8 @@ const Testimonials = () => {
             onClick={nextSlide}
             className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-3 rounded-full border-2 transition-all duration-300 hover:scale-110 ${
               theme === 'dark'
-                ? 'bg-black/80 border-yellow-500/50 text-yellow-500 hover:bg-yellow-500/20'
-                : 'bg-white/80 border-yellow-600/50 text-yellow-600 hover:bg-yellow-50'
+                ? 'bg-black/80 border-cyan-500/50 text-cyan-500 hover:bg-cyan-500/20'
+                : 'bg-white/80 border-cyan-600/50 text-cyan-600 hover:bg-cyan-50'
             }`}
             aria-label="Testimonianza successiva"
           >
@@ -200,7 +200,7 @@ const Testimonials = () => {
               {visibleTestimonials.map((testimonial, index) => (
               <div 
                 key={index} 
-                className={`border border-yellow-600/30 rounded-xl p-8 hover:border-yellow-500/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-600/20 ${
+                className={`border border-cyan-600/30 rounded-xl p-8 hover:border-cyan-500/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-600/20 ${
                 theme === 'dark'
                   ? 'bg-gradient-to-br from-gray-900 to-black'
                   : 'bg-gradient-to-br from-white to-gray-50'
@@ -211,20 +211,20 @@ const Testimonials = () => {
                 <img 
                   src={testimonial.image} 
                   alt={testimonial.name}
-                  className="w-16 h-16 rounded-full border-2 border-yellow-500"
+                  className="w-16 h-16 rounded-full border-2 border-cyan-500"
                 />
                 <div>
                   <h3 className={`text-lg font-bold ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>{testimonial.name}</h3>
-                  <p className="text-yellow-400 text-sm">{testimonial.role}</p>
+                  <p className="text-cyan-400 text-sm">{testimonial.role}</p>
                 </div>
               </div>
 
               {/* Stars */}
               <div className="flex space-x-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, starIndex) => (
-                  <Star key={starIndex} className="w-5 h-5 text-yellow-500 fill-current" />
+                  <Star key={starIndex} className="w-5 h-5 text-cyan-500 fill-current" />
                 ))}
               </div>
 
@@ -234,7 +234,7 @@ const Testimonials = () => {
                   <img 
                     src={testimonial.certificate} 
                     alt={`Certificato ${testimonial.name}`}
-                    className="w-full rounded-lg border border-yellow-500/30 shadow-lg"
+                    className="w-full rounded-lg border border-cyan-500/30 shadow-lg"
                   />
                 </div>
               )}
@@ -247,7 +247,7 @@ const Testimonials = () => {
                       key={certIndex}
                       src={cert} 
                       alt={`Certificato ${testimonial.name} ${certIndex + 1}`}
-                      className="w-full rounded-lg border border-yellow-500/30 shadow-lg"
+                      className="w-full rounded-lg border border-cyan-500/30 shadow-lg"
                     />
                   ))}
                 </div>
@@ -278,7 +278,7 @@ const Testimonials = () => {
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? 'bg-yellow-500 w-8'
+                    ? 'bg-cyan-500 w-8'
                     : theme === 'dark'
                     ? 'bg-gray-600 hover:bg-gray-500'
                     : 'bg-gray-300 hover:bg-gray-400'
@@ -299,7 +299,7 @@ const Testimonials = () => {
               { number: "24/7", label: "Operatività Continua" }
             ].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-yellow-500 mb-2">{stat.number}</div>
+                <div className="text-3xl md:text-4xl font-bold text-cyan-500 mb-2">{stat.number}</div>
                 <div className={`text-sm ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                 }`}>{stat.label}</div>

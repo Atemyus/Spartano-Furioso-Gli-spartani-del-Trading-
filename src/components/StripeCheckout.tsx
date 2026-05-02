@@ -110,8 +110,8 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({ product, onSuccess, onC
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-600">{error}</p>
         </div>
       )}
 

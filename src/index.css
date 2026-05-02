@@ -35,9 +35,9 @@ nav button:focus {
   box-shadow: none !important;
 }
 
-/* Remove any yellow or colored borders */
+/* Remove any colored borders */
 *::selection {
-  background-color: rgba(218, 165, 32, 0.3);
+  background-color: rgba(56, 189, 248, 0.3);
 }
 
 /* Theme Variables */
@@ -129,21 +129,21 @@ nav button:focus {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #DAA520, #8B0000);
+  background: linear-gradient(180deg, #38bdf8, #1e3a8a);
   border-radius: 4px;
 }
 
 .light ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #DAA520, #DC143C);
+  background: linear-gradient(180deg, #38bdf8, #2563eb);
   border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #FFD700, #DC143C);
+  background: linear-gradient(180deg, #7dd3fc, #2563eb);
 }
 
 .light ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #FFD700, #FF6347);
+  background: linear-gradient(180deg, #7dd3fc, #0ea5e9);
 }
 
 /* Smooth Scrolling */
@@ -206,37 +206,45 @@ html {
   animation: slideInLeft 0.6s ease-out;
 }
 
-/* Greek pattern background */
+/* Lab pattern background */
 .greek-pattern {
-  background-image: 
+  background-image:
     repeating-linear-gradient(
       45deg,
       transparent,
       transparent 10px,
-      rgba(218, 165, 32, 0.1) 10px,
-      rgba(218, 165, 32, 0.1) 20px
+      rgba(56, 189, 248, 0.1) 10px,
+      rgba(56, 189, 248, 0.1) 20px
     );
 }
 
 /* Glow effects */
 .glow-gold {
-  box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
 }
 
 .glow-red {
-  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(30, 58, 138, 0.4);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+}
+
+.glow-silver {
+  box-shadow: 0 0 20px rgba(203, 213, 225, 0.3);
 }
 
 /* Text selection */
 ::selection {
-  background-color: #DAA520;
-  color: #000;
+  background-color: #38bdf8;
+  color: #0b1e3f;
 }
 
 /* Focus styles */
 button:focus,
 input:focus,
 a:focus {
-  outline: 2px solid #DAA520;
+  outline: 2px solid #38bdf8;
   outline-offset: 2px;
 }

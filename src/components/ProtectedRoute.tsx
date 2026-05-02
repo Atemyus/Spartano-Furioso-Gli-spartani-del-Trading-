@@ -104,8 +104,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-red-900/20 rounded-full mb-4">
-            <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-900/20 rounded-full mb-4">
+            <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Verifica accesso...</h2>
           <p className="text-gray-400">Un momento, stiamo verificando la tua autenticazione</p>

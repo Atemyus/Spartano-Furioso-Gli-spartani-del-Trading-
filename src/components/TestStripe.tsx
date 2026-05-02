@@ -110,16 +110,16 @@ const TestStripe = () => {
 
         {result && (
           <div className={`p-4 rounded-lg ${
-            result.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+            result.success ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'
           }`}>
             <div className="flex items-start gap-2">
               {result.success ? (
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
               ) : (
-                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <XCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
               )}
               <p className={`text-sm whitespace-pre-line ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-green-800' : 'text-blue-800'
               }`}>
                 {result.message}
               </p>

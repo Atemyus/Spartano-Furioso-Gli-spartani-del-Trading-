@@ -237,7 +237,7 @@ const TrialManagement: React.FC = () => {
       <div className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${
         theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
       }`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
       </div>
     );
   }
@@ -248,7 +248,7 @@ const TrialManagement: React.FC = () => {
         theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
       }`}>
         <div className="container mx-auto px-4 py-16 text-center">
-          <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+          <AlertTriangle className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
           <h1 className={`text-3xl font-black mb-4 ${
             theme === 'dark' ? 'text-white' : 'text-black'
           }`}>Trial Non Trovato</h1>
@@ -257,7 +257,7 @@ const TrialManagement: React.FC = () => {
           }`}>Non hai un trial attivo per questo prodotto.</p>
           <Link 
             to="/dashboard" 
-            className="px-6 py-3 bg-red-600 rounded-lg text-white hover:bg-red-500"
+            className="px-6 py-3 bg-blue-600 rounded-lg text-white hover:bg-blue-500"
           >
             Torna alla Dashboard
           </Link>
@@ -270,14 +270,14 @@ const TrialManagement: React.FC = () => {
   if (trial.daysRemaining <= 0) {
     return (
       <div className={`min-h-screen transition-colors duration-500 ${
-        theme === 'dark' ? 'bg-gradient-to-b from-black via-red-950/20 to-black' : 'bg-white'
+        theme === 'dark' ? 'bg-gradient-to-b from-black via-blue-950/20 to-black' : 'bg-white'
       }`}>
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto">
-            <div className={`border-2 border-red-500 rounded-2xl p-8 text-center ${
-              theme === 'dark' ? 'bg-red-900/20' : 'bg-white shadow-lg'
+            <div className={`border-2 border-blue-500 rounded-2xl p-8 text-center ${
+              theme === 'dark' ? 'bg-blue-900/20' : 'bg-white shadow-lg'
             }`}>
-              <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse" />
+              <AlertCircle className="w-20 h-20 text-blue-500 mx-auto mb-6 animate-pulse" />
               <h1 className={`text-4xl font-black mb-4 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
@@ -286,11 +286,11 @@ const TrialManagement: React.FC = () => {
               <p className={`text-xl mb-8 ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                Il tuo periodo di prova per <span className="text-yellow-500 font-bold">{product.name}</span> è terminato.
+                Il tuo periodo di prova per <span className="text-cyan-500 font-bold">{product.name}</span> è terminato.
               </p>
               
               <div className={`border rounded-xl p-6 mb-8 ${
-                theme === 'dark' ? 'bg-black/50 border-red-900/30' : 'bg-gray-50 border-gray-200'
+                theme === 'dark' ? 'bg-black/50 border-blue-900/30' : 'bg-gray-50 border-gray-200'
               }`}>
                 <div className="grid grid-cols-2 gap-4 text-left">
                   <div>
@@ -307,7 +307,7 @@ const TrialManagement: React.FC = () => {
                     <span className={`text-sm ${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                     }`}>Terminato il</span>
-                    <p className="text-red-400 font-bold">
+                    <p className="text-blue-400 font-bold">
                       {new Date(trial.endDate).toLocaleDateString('it-IT')}
                     </p>
                   </div>
@@ -317,7 +317,7 @@ const TrialManagement: React.FC = () => {
               <div className="space-y-4">
                 <button
                   onClick={() => setShowPlanSelection(true)}
-                  className="w-full px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                  className="w-full px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
                 >
                   <Rocket className="w-6 h-6" />
                   ACQUISTA VERSIONE COMPLETA
@@ -345,11 +345,11 @@ const TrialManagement: React.FC = () => {
     }`}>
       {/* Header */}
       <div className={`backdrop-blur-sm border-b ${
-        theme === 'dark' ? 'bg-black/50 border-red-900/30' : 'bg-white border-red-200'
+        theme === 'dark' ? 'bg-black/50 border-blue-900/30' : 'bg-white border-blue-200'
       }`}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/dashboard" className="flex items-center gap-3 text-gray-400 hover:text-yellow-500 transition-colors">
+            <Link to="/dashboard" className="flex items-center gap-3 text-gray-400 hover:text-cyan-500 transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span className="font-bold">Dashboard</span>
             </Link>
@@ -359,7 +359,7 @@ const TrialManagement: React.FC = () => {
                 <span className="text-green-400 text-sm font-bold">TRIAL ATTIVO</span>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-black text-yellow-500">{trial.daysRemaining}</div>
+                <div className="text-2xl font-black text-cyan-500">{trial.daysRemaining}</div>
                 <div className="text-xs text-gray-400">giorni rimanenti</div>
               </div>
             </div>
@@ -384,20 +384,20 @@ const TrialManagement: React.FC = () => {
                   {product.description}
                 </p>
               </div>
-              <Shield className="w-16 h-16 text-red-600" />
+              <Shield className="w-16 h-16 text-blue-600" />
             </div>
 
             {/* Progress Bar */}
             <div className="mb-6">
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-400">Progresso Trial</span>
-                <span className="text-yellow-500 font-bold">{progressPercentage}%</span>
+                <span className="text-cyan-500 font-bold">{progressPercentage}%</span>
               </div>
               <div className={`w-full rounded-full h-3 overflow-hidden ${
                 theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
               }`}>
                 <div 
-                  className="bg-gradient-to-r from-yellow-500 to-red-600 h-full rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
@@ -408,7 +408,7 @@ const TrialManagement: React.FC = () => {
               <div className={`border rounded-lg p-4 ${
                 theme === 'dark' ? 'bg-black/30 border-gray-700' : 'bg-white border-gray-200 shadow-sm'
               }`}>
-                <Clock className="w-8 h-8 text-yellow-500 mb-2" />
+                <Clock className="w-8 h-8 text-cyan-500 mb-2" />
                 <div className={`text-2xl font-bold ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>{trial.daysRemaining}</div>
@@ -447,13 +447,13 @@ const TrialManagement: React.FC = () => {
             {isDownloadable() && (
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-r from-red-900/30 to-red-800/30 border-red-800'
-                  : 'bg-white border-red-300 shadow-lg'
+                  ? 'bg-gradient-to-r from-blue-900/30 to-blue-800/30 border-blue-800'
+                  : 'bg-white border-blue-300 shadow-lg'
               }`}>
                 <h3 className={`text-xl font-bold mb-4 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <Download className="w-6 h-6 text-red-500" />
+                  <Download className="w-6 h-6 text-blue-500" />
                   Download {product.category}
                 </h3>
                 
@@ -480,7 +480,7 @@ const TrialManagement: React.FC = () => {
                   className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
                     downloadStarted 
                       ? 'bg-gray-700 text-gray-400 cursor-not-allowed border-2 border-gray-600'
-                      : 'bg-gradient-to-r from-red-600 to-red-700 border-2 border-red-400 text-white hover:from-red-500 hover:to-red-600 hover:border-red-300 transform hover:scale-105'
+                      : 'bg-gradient-to-r from-blue-600 to-blue-700 border-2 border-blue-400 text-white hover:from-blue-500 hover:to-blue-600 hover:border-blue-300 transform hover:scale-105'
                   }`}
                 >
                   {downloadStarted ? (
@@ -533,10 +533,10 @@ const TrialManagement: React.FC = () => {
                   href={TELEGRAM_CONTACT}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border border-yellow-700/30 rounded-lg hover:border-yellow-500/50 transition-all group"
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-cyan-900/20 to-cyan-800/20 border border-cyan-700/30 rounded-lg hover:border-cyan-500/50 transition-all group"
                 >
                   <div className="flex items-center gap-3">
-                    <Key className="w-5 h-5 text-yellow-400" />
+                    <Key className="w-5 h-5 text-cyan-400" />
                     <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Richiedi Licenza</span>
                   </div>
                   <span className="text-gray-400 text-sm">@catiscrazy</span>
@@ -552,11 +552,11 @@ const TrialManagement: React.FC = () => {
                       <span className="text-gray-400">Gruppo Supporto</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Lock className="w-4 h-4 text-yellow-500" />
-                      <span className="text-yellow-500 text-xs font-bold">PREMIUM</span>
+                      <Lock className="w-4 h-4 text-cyan-500" />
+                      <span className="text-cyan-500 text-xs font-bold">PREMIUM</span>
                     </div>
                   </div>
-                  <div className="mt-2 p-2 bg-yellow-900/20 border border-yellow-700/30 rounded text-xs text-yellow-400">
+                  <div className="mt-2 p-2 bg-cyan-900/20 border border-cyan-700/30 rounded text-xs text-cyan-400">
                     💎 Disponibile dopo l'acquisto del prodotto
                   </div>
                 </div>
@@ -736,10 +736,10 @@ const TrialManagement: React.FC = () => {
           </div>
 
           {/* CTA Section */}
-          <div className="bg-gradient-to-r from-yellow-900/30 to-orange-900/30 border border-yellow-800 rounded-xl p-8 text-center">
+          <div className="bg-gradient-to-r from-cyan-900/30 to-sky-900/30 border border-cyan-800 rounded-xl p-8 text-center">
             {showPlanSelection ? (
               <>
-                <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                <Trophy className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
                 <h2 className="text-3xl font-black text-white mb-4">
                   Scegli il Tuo Piano
                 </h2>
@@ -749,15 +749,15 @@ const TrialManagement: React.FC = () => {
                 
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
                   {/* Monthly Plan */}
-                  <div className={`border rounded-xl p-6 hover:border-yellow-600 transition-all transform hover:scale-105 ${
+                  <div className={`border rounded-xl p-6 hover:border-cyan-600 transition-all transform hover:scale-105 ${
                     theme === 'dark'
-                      ? 'bg-gray-900/70 border-yellow-800/50'
-                      : 'bg-white border-yellow-300 shadow-lg'
+                      ? 'bg-gray-900/70 border-cyan-800/50'
+                      : 'bg-white border-cyan-300 shadow-lg'
                   }`}>
                     <h3 className={`text-xl font-bold mb-2 ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>Abbonamento Mensile</h3>
-                    <div className="text-3xl font-black text-yellow-500 mb-4">
+                    <div className="text-3xl font-black text-cyan-500 mb-4">
                       <span className="text-gray-500 line-through text-xl mr-2">€124,99</span>
                       €69,99
                       <span className="text-sm text-gray-400 font-normal">/mese</span>
@@ -779,18 +779,18 @@ const TrialManagement: React.FC = () => {
                   </div>
 
                   {/* Yearly Plan */}
-                  <div className={`border-2 border-yellow-600 rounded-xl p-6 relative transform hover:scale-105 transition-all ${
+                  <div className={`border-2 border-cyan-600 rounded-xl p-6 relative transform hover:scale-105 transition-all ${
                     theme === 'dark'
-                      ? 'bg-gradient-to-br from-yellow-900/30 to-orange-900/30'
-                      : 'bg-gradient-to-br from-yellow-50 to-orange-50 shadow-xl'
+                      ? 'bg-gradient-to-br from-cyan-900/30 to-sky-900/30'
+                      : 'bg-gradient-to-br from-cyan-50 to-sky-50 shadow-xl'
                   }`}>
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-cyan-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                       PIÙ POPOLARE
                     </div>
                     <h3 className={`text-xl font-bold mb-2 ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>Abbonamento Annuale</h3>
-                    <div className="text-3xl font-black text-yellow-500 mb-4">
+                    <div className="text-3xl font-black text-cyan-500 mb-4">
                       <span className="text-gray-500 line-through text-xl mr-2">€999,99</span>
                       €699,99
                       <span className="text-sm text-gray-400 font-normal">/anno</span>
@@ -805,7 +805,7 @@ const TrialManagement: React.FC = () => {
                     </ul>
                     <button
                       onClick={() => handleSelectPlan('yearly')}
-                      className="w-full py-3 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all hover:scale-105"
+                      className="w-full py-3 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all hover:scale-105"
                     >
                       Scegli Annuale
                     </button>
@@ -820,7 +820,7 @@ const TrialManagement: React.FC = () => {
                     <h3 className={`text-xl font-bold mb-2 ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>Acquisto Lifetime</h3>
-                    <div className="text-3xl font-black text-yellow-500 mb-4">
+                    <div className="text-3xl font-black text-cyan-500 mb-4">
                       <span className="text-gray-500 line-through text-xl mr-2">€1899,99</span>
                       €1399,99
                       <span className="text-sm text-gray-400 font-normal">una tantum</span>
@@ -851,7 +851,7 @@ const TrialManagement: React.FC = () => {
               </>
             ) : (
               <>
-                <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                <Trophy className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
                 <h2 className="text-3xl font-black text-white mb-4">
                   Soddisfatto del Trial?
                 </h2>
@@ -861,14 +861,14 @@ const TrialManagement: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setShowPlanSelection(true)}
-                  className="px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-yellow-500/50 animate-pulse inline-flex items-center gap-3"
+                  className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all duration-300 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-cyan-500/50 animate-pulse inline-flex items-center gap-3"
                 >
                   <Rocket className="w-6 h-6" />
                   ACQUISTA ORA - SCONTO SPECIALE TRIAL
                 </button>
                 {product.price && (
                   <p className="text-gray-400 mt-4">
-                    Prezzo speciale per utenti trial: <span className="text-yellow-500 font-bold">
+                    Prezzo speciale per utenti trial: <span className="text-cyan-500 font-bold">
                       {typeof product.price === 'object' 
                         ? `€${product.price.lifetime || product.price.yearly || product.price.monthly}`
                         : `€${product.price}`

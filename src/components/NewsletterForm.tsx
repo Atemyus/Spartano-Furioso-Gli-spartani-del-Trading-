@@ -70,13 +70,13 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={placeholder}
-            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-all duration-300 pr-10"
+            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-all duration-300 pr-10"
             required
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-red-600 hover:bg-red-500 rounded-lg transition-colors disabled:opacity-50"
+            className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors disabled:opacity-50"
             title="Iscriviti"
           >
             {isLoading ? (
@@ -96,7 +96,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
         )}
         {errorMessage && (
           <div className="absolute -bottom-10 left-0 right-0 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg shadow-lg">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-lg">
               <XCircle className="w-4 h-4" />
               <span className="text-xs font-bold">{errorMessage}</span>
             </div>
@@ -114,9 +114,9 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={placeholder}
-          className={`w-full px-6 py-3 border-2 rounded-xl placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-all duration-300 ${
+          className={`w-full px-6 py-3 border-2 rounded-xl placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-black/50 border-red-800/50 text-white'
+              ? 'bg-black/50 border-blue-800/50 text-white'
               : 'bg-white border-gray-300 text-gray-900'
           }`}
           required
@@ -131,7 +131,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
         )}
         {errorMessage && (
           <div className="absolute -top-10 left-0 right-0 flex justify-center animate-fadeIn">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white rounded-xl shadow-2xl border-2 border-red-400">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 text-white rounded-xl shadow-2xl border-2 border-blue-400">
               <XCircle className="w-5 h-5" />
               <span className="text-sm font-bold">{errorMessage}</span>
             </div>
@@ -141,13 +141,13 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full group relative px-8 py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-xl font-bold text-white overflow-hidden transition-all duration-300 hover:from-red-500 hover:to-red-700 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl font-bold text-white overflow-hidden transition-all duration-300 hover:from-blue-500 hover:to-blue-700 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span className="relative z-10 flex items-center justify-center gap-2">
           {isLoading ? 'CARICAMENTO...' : 'ARRUOLATI'}
           <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </span>
-        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-600 opacity-0 group-hover:opacity-20 transition-opacity"></div>
       </button>
     </form>
   );

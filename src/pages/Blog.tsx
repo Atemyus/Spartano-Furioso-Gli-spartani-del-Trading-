@@ -44,7 +44,7 @@ const Blog = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
             BLOG DI GUERRA
           </h1>
           <p className={`text-xl max-w-3xl mx-auto ${
@@ -59,11 +59,11 @@ const Blog = () => {
         <div className={`rounded-2xl p-8 mb-12 ${
           theme === 'light'
             ? 'bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-200'
-            : 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border border-red-800/30'
+            : 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border border-blue-800/30'
         }`}>
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-5 h-5 text-yellow-500" />
-            <span className="text-yellow-500 font-bold text-sm uppercase">In Evidenza</span>
+            <TrendingUp className="w-5 h-5 text-cyan-500" />
+            <span className="text-cyan-500 font-bold text-sm uppercase">In Evidenza</span>
           </div>
           <h2 className={`text-3xl font-black mb-4 ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -87,7 +87,7 @@ const Blog = () => {
               <span>{blogPosts[0].readTime}</span>
             </div>
           </div>
-          <button className={`px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2 border-2 ${theme === 'light' ? 'border-red-900 shadow-lg' : 'border-transparent'}`}>
+          <button className={`px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2 border-2 ${theme === 'light' ? 'border-blue-900 shadow-lg' : 'border-transparent'}`}>
             Leggi l'Articolo <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -97,12 +97,12 @@ const Blog = () => {
           {blogPosts.slice(1).map((post, i) => (
             <div key={i} className={`rounded-xl p-6 transition-all duration-300 ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-lg'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
               <div className="flex items-center gap-2 mb-3">
-                <Tag className="w-4 h-4 text-yellow-500" />
-                <span className="text-xs font-bold text-yellow-500 uppercase">{post.category}</span>
+                <Tag className="w-4 h-4 text-cyan-500" />
+                <span className="text-xs font-bold text-cyan-500 uppercase">{post.category}</span>
               </div>
               <h3 className={`text-xl font-bold mb-3 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -124,8 +124,8 @@ const Blog = () => {
               </div>
               <button className={`w-full py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 border-2 ${
                 theme === 'light'
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-yellow-700 shadow-md'
-                  : 'bg-gray-800 text-white hover:bg-red-600 border-transparent'
+                  ? 'bg-cyan-500 text-white hover:bg-cyan-600 border-cyan-700 shadow-md'
+                  : 'bg-gray-800 text-white hover:bg-blue-600 border-transparent'
               }`}>
                 Leggi <ArrowRight className="w-4 h-4" />
               </button>
@@ -134,13 +134,13 @@ const Blog = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-16 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center">
+        <div className="mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
           <BookOpen className="w-12 h-12 text-white mx-auto mb-4" />
           <h2 className="text-3xl font-black text-white mb-4">Iscriviti alla Newsletter</h2>
           <p className="text-gray-100 mb-6">Ricevi i nuovi articoli direttamente nella tua inbox</p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input type="email" placeholder="La tua email" className="flex-1 px-4 py-3 bg-black/50 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none" />
-            <button className={`px-6 py-3 bg-black text-yellow-500 rounded-xl font-bold hover:bg-gray-900 transition-all hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>ISCRIVITI</button>
+            <button className={`px-6 py-3 bg-black text-cyan-500 rounded-xl font-bold hover:bg-gray-900 transition-all hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>ISCRIVITI</button>
           </div>
         </div>
       </div>

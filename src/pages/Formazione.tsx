@@ -32,7 +32,7 @@ const Formazione = () => {
       lessons: "48 lezioni",
       description: "Trading algoritmico, sistemi automatici, backtesting avanzato e ottimizzazione delle strategie.",
       topics: ["Algo trading", "Sistemi automatici", "Backtesting", "Ottimizzazione"],
-      color: "from-red-600 to-orange-600"
+      color: "from-blue-600 to-sky-600"
     }
   ];
 
@@ -42,7 +42,7 @@ const Formazione = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
             FORMAZIONE ELITE
           </h1>
           <p className={`text-xl max-w-3xl mx-auto ${
@@ -64,9 +64,9 @@ const Formazione = () => {
             <div key={i} className={`rounded-lg p-4 text-center ${
               theme === 'light'
                 ? 'bg-white border-2 border-gray-200 shadow-md'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
             }`}>
-              <div className="text-3xl font-black text-yellow-500">{stat.value}</div>
+              <div className="text-3xl font-black text-cyan-500">{stat.value}</div>
               <div className={`text-sm ${
                 theme === 'light' ? 'text-gray-600' : 'text-gray-400'
               }`}>{stat.label}</div>
@@ -79,8 +79,8 @@ const Formazione = () => {
           {courses.map((course, index) => (
             <div key={index} className={`rounded-2xl p-8 transition-all duration-300 ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-lg'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="flex-shrink-0">
@@ -105,19 +105,19 @@ const Formazione = () => {
                     <div className={`flex items-center gap-2 ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                     }`}>
-                      <Clock className="w-4 h-4 text-yellow-500" />
+                      <Clock className="w-4 h-4 text-cyan-500" />
                       <span className="text-sm">{course.duration}</span>
                     </div>
                     <div className={`flex items-center gap-2 ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                     }`}>
-                      <Video className="w-4 h-4 text-yellow-500" />
+                      <Video className="w-4 h-4 text-cyan-500" />
                       <span className="text-sm">{course.lessons}</span>
                     </div>
                     <div className={`flex items-center gap-2 ${
                       theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                     }`}>
-                      <FileText className="w-4 h-4 text-yellow-500" />
+                      <FileText className="w-4 h-4 text-cyan-500" />
                       <span className="text-sm">Materiale scaricabile</span>
                     </div>
                   </div>
@@ -147,7 +147,7 @@ const Formazione = () => {
         <div className={`rounded-2xl p-8 mb-12 ${
           theme === 'light'
             ? 'bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-200'
-            : 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border border-red-800/30'
+            : 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border border-blue-800/30'
         }`}>
           <h2 className={`text-3xl font-black mb-6 text-center ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -162,7 +162,7 @@ const Formazione = () => {
               { icon: TrendingUp, text: 'Accesso a vita agli aggiornamenti' }
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <item.icon className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                <item.icon className="w-6 h-6 text-cyan-500 flex-shrink-0" />
                 <span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>{item.text}</span>
               </div>
             ))}
@@ -170,10 +170,10 @@ const Formazione = () => {
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
           <h2 className="text-3xl font-black text-white mb-4">Inizia il Tuo Addestramento</h2>
           <p className="text-gray-100 mb-6">Scegli il percorso giusto per il tuo livello e diventa un trader spartano</p>
-          <button className={`px-8 py-4 bg-black text-yellow-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
+          <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
             ESPLORA I CORSI
           </button>
         </div>

@@ -9,7 +9,7 @@ const Affiliazione = () => {
       theme === 'light' ? 'bg-gradient-to-b from-white via-gray-50 to-white' : 'bg-black'
     }`}>
       <div className="container mx-auto px-4 py-16">
-        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
           PROGRAMMA AFFILIAZIONE
         </h1>
         <p className={`mb-12 ${
@@ -19,9 +19,9 @@ const Affiliazione = () => {
           <div className={`rounded-lg p-6 ${
             theme === 'light'
               ? 'bg-white border-2 border-gray-200 shadow-lg'
-              : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+              : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
           }`}>
-            <DollarSign className="w-10 h-10 text-yellow-500 mb-3" />
+            <DollarSign className="w-10 h-10 text-cyan-500 mb-3" />
             <h3 className={`text-xl font-bold mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>Commissioni Alte</h3>
@@ -30,9 +30,9 @@ const Affiliazione = () => {
           <div className={`rounded-lg p-6 ${
             theme === 'light'
               ? 'bg-white border-2 border-gray-200 shadow-lg'
-              : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+              : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
           }`}>
-            <Users className="w-10 h-10 text-yellow-500 mb-3" />
+            <Users className="w-10 h-10 text-cyan-500 mb-3" />
             <h3 className={`text-xl font-bold mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>Supporto Dedicato</h3>
@@ -41,9 +41,9 @@ const Affiliazione = () => {
           <div className={`rounded-lg p-6 ${
             theme === 'light'
               ? 'bg-white border-2 border-gray-200 shadow-lg'
-              : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+              : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
           }`}>
-            <Gift className="w-10 h-10 text-yellow-500 mb-3" />
+            <Gift className="w-10 h-10 text-cyan-500 mb-3" />
             <h3 className={`text-xl font-bold mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
             }`}>Bonus e Premi</h3>

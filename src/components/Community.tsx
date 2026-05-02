@@ -54,19 +54,19 @@ const Community = () => {
   return (
     <section id="community" className={`py-20 transition-colors duration-500 ${
       theme === 'dark'
-        ? 'bg-gradient-to-b from-red-950/20 to-black'
-        : 'bg-gradient-to-b from-red-50/40 to-white'
+        ? 'bg-gradient-to-b from-blue-950/20 to-black'
+        : 'bg-gradient-to-b from-blue-50/40 to-white'
     }`}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600/20 to-red-600/20 px-4 py-2 rounded-full border border-yellow-600/30 mb-6">
-            <Users className="w-4 h-4 text-yellow-500" />
-            <span className="text-yellow-400 text-sm font-medium">UNISCITI ALLA FRATELLANZA</span>
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 px-4 py-2 rounded-full border border-cyan-600/30 mb-6">
+            <Users className="w-4 h-4 text-cyan-500" />
+            <span className="text-cyan-400 text-sm font-medium">UNISCITI ALLA FRATELLANZA</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>LA </span>
-            <span className="bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">COMMUNITY</span>
+            <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">COMMUNITY</span>
             <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}> SPARTANA</span>
           </h2>
           <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
@@ -101,13 +101,13 @@ const Community = () => {
                 description: "Non combatti da solo. La fratellanza spartana ti supporta in ogni battaglia contro i mercati volatili."
               }
             ].map((feature, index) => (
-              <div key={index} className={`flex items-start space-x-4 p-6 border border-yellow-600/30 rounded-xl hover:border-yellow-500/50 transition-all duration-300 ${
+              <div key={index} className={`flex items-start space-x-4 p-6 border border-cyan-600/30 rounded-xl hover:border-cyan-500/50 transition-all duration-300 ${
                 theme === 'dark'
                   ? 'bg-gradient-to-br from-gray-900 to-black'
                   : 'bg-gradient-to-br from-white to-gray-50'
               }`}>
-                <div className="w-12 h-12 bg-gradient-to-br from-red-800 to-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="w-6 h-6 text-yellow-400" />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-800 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <feature.icon className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div>
                   <h4 className={`text-lg font-bold mb-2 ${
@@ -122,7 +122,7 @@ const Community = () => {
           </div>
 
           {/* Newsletter Signup */}
-          <div className={`border border-yellow-600/30 rounded-xl p-8 ${
+          <div className={`border border-cyan-600/30 rounded-xl p-8 ${
             theme === 'dark'
               ? 'bg-gradient-to-br from-gray-900 to-black'
               : 'bg-gradient-to-br from-white to-gray-50'
@@ -152,7 +152,7 @@ const Community = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="spartano@esempio.com"
-                  className={`w-full px-4 py-3 border border-yellow-600/50 rounded-lg placeholder-gray-500 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300 ${
+                  className={`w-full px-4 py-3 border border-cyan-600/50 rounded-lg placeholder-gray-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 ${
                     theme === 'dark'
                       ? 'bg-black text-white'
                       : 'bg-white text-gray-900'
@@ -164,7 +164,7 @@ const Community = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-red-800 to-red-600 px-6 py-4 rounded-lg font-bold hover:from-red-700 hover:to-red-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-blue-800 to-blue-600 px-6 py-4 rounded-lg font-bold hover:from-blue-700 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -185,7 +185,7 @@ const Community = () => {
                 <div className={`p-4 rounded-lg border ${
                   message.type === 'success' 
                     ? 'bg-green-900/20 border-green-700 text-green-300' 
-                    : 'bg-red-900/20 border-red-700 text-red-300'
+                    : 'bg-blue-900/20 border-blue-700 text-blue-300'
                 }`}>
                   <p className="text-sm font-medium">{message.text}</p>
                 </div>
@@ -193,9 +193,9 @@ const Community = () => {
             </form>
 
             {/* Disclaimer */}
-            <div className="mt-6 p-4 bg-yellow-600/10 border border-yellow-600/30 rounded-lg">
+            <div className="mt-6 p-4 bg-cyan-600/10 border border-cyan-600/30 rounded-lg">
               <p className="text-xs text-gray-400 leading-relaxed">
-                <strong className="text-yellow-500">⚠️ AVVERTENZA SPARTANA:</strong> Come ogni battaglia, il trading comporta rischi. 
+                <strong className="text-cyan-500">⚠️ AVVERTENZA SPARTANA:</strong> Come ogni battaglia, il trading comporta rischi. 
                 Fury Of Sparta è uno strumento potente, ma la vittoria finale dipende dalla tua disciplina e gestione del rischio. 
                 I risultati passati non garantiscono performance future. Combatti responsabilmente.
               </p>
@@ -210,10 +210,10 @@ const Community = () => {
           }`}>Unisciti a oltre 300 spartani che stanno già dominando i mercati</p>
           <div className="flex justify-center space-x-4">
             {[...Array(5)].map((_, index) => (
-              <Star key={index} className="w-6 h-6 text-yellow-500 fill-current" />
+              <Star key={index} className="w-6 h-6 text-cyan-500 fill-current" />
             ))}
           </div>
-          <p className="text-yellow-500 font-medium mt-2">4.9/5 stelle da 150+ recensioni</p>
+          <p className="text-cyan-500 font-medium mt-2">4.9/5 stelle da 150+ recensioni</p>
         </div>
       </div>
     </section>

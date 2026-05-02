@@ -216,7 +216,7 @@ const TrialsManagement: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-green-400 bg-green-900/20';
-      case 'expired': return 'text-red-400 bg-red-900/20';
+      case 'expired': return 'text-blue-400 bg-blue-900/20';
       case 'cancelled': return 'text-gray-400 bg-gray-900/20';
       case 'converted': return 'text-blue-400 bg-blue-900/20';
       default: return 'text-gray-400 bg-gray-900/20';
@@ -281,7 +281,7 @@ const TrialsManagement: React.FC = () => {
         
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <XCircle className="w-8 h-8 text-red-400" />
+            <XCircle className="w-8 h-8 text-blue-400" />
             <span className="text-2xl font-bold text-white">{stats.expired}</span>
           </div>
           <p className="text-gray-400 text-sm">Trial Scaduti</p>
@@ -384,8 +384,8 @@ const TrialsManagement: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {trial.status === 'active' ? (
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm font-bold text-yellow-400">
+                        <Clock className="w-4 h-4 text-cyan-400" />
+                        <span className="text-sm font-bold text-cyan-400">
                           {trial.daysRemaining} giorni
                         </span>
                       </div>
@@ -412,7 +412,7 @@ const TrialsManagement: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleStatusChange(trial.id, 'cancelled')}
-                            className="text-red-400 hover:text-red-300 text-sm"
+                            className="text-blue-400 hover:text-blue-300 text-sm"
                             title="Cancella trial"
                           >
                             Cancella
@@ -437,7 +437,7 @@ const TrialsManagement: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteTrial(trial.id)}
-                        className="text-red-500 hover:text-red-400 text-sm flex items-center gap-1"
+                        className="text-blue-500 hover:text-blue-400 text-sm flex items-center gap-1"
                         title="Elimina trial permanentemente"
                       >
                         <Trash2 className="w-4 h-4" />

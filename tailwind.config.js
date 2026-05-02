@@ -5,9 +5,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'spartan-red': '#8B0000',
-        'ancient-gold': '#DAA520',
-        'dark-bronze': '#8B4513',
+        'nexora-navy': '#0b1e3f',
+        'nexora-blue': '#1e3a8a',
+        'nexora-cyan': '#38bdf8',
+        'nexora-silver': '#cbd5e1',
+        'spartan-red': '#1e3a8a',
+        'ancient-gold': '#38bdf8',
+        'dark-bronze': '#475569',
       },
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
@@ -34,8 +38,8 @@ export default {
           '50%': { transform: 'translateY(-10px)' },
         },
         glow: {
-          '0%': { boxShadow: '0 0 20px rgba(218, 165, 32, 0.2)' },
-          '100%': { boxShadow: '0 0 30px rgba(218, 165, 32, 0.4)' },
+          '0%': { boxShadow: '0 0 20px rgba(56, 189, 248, 0.2)' },
+          '100%': { boxShadow: '0 0 30px rgba(56, 189, 248, 0.4)' },
         },
         gradient: {
           '0%, 100%': {
@@ -83,20 +87,22 @@ export default {
           '100%': { transform: 'scale(1)', opacity: '1' }
         },
         rotateGlow: {
-          '0%, 100%': { 
+          '0%, 100%': {
             transform: 'rotate(0deg)',
-            boxShadow: '0 0 20px rgba(234, 179, 8, 0.3)'
+            boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)'
           },
-          '50%': { 
+          '50%': {
             transform: 'rotate(180deg)',
-            boxShadow: '0 0 40px rgba(239, 68, 68, 0.5)'
+            boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)'
           }
         }
       },
       backgroundImage: {
-        'spartan-gradient': 'linear-gradient(135deg, #8B0000 0%, #DAA520 50%, #8B0000 100%)',
-        'gold-gradient': 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
-        'bronze-gradient': 'linear-gradient(135deg, #8B4513 0%, #A0522D 100%)',
+        'spartan-gradient': 'linear-gradient(135deg, #0b1e3f 0%, #38bdf8 50%, #0b1e3f 100%)',
+        'gold-gradient': 'linear-gradient(135deg, #38bdf8 0%, #7dd3fc 100%)',
+        'bronze-gradient': 'linear-gradient(135deg, #1e3a8a 0%, #475569 100%)',
+        'nexora-gradient': 'linear-gradient(135deg, #0b1e3f 0%, #1e3a8a 50%, #38bdf8 100%)',
+        'nexora-shine': 'linear-gradient(135deg, #38bdf8 0%, #cbd5e1 50%, #7dd3fc 100%)',
       }
     },
   },

@@ -190,7 +190,7 @@ const NewsletterManagement: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
-            <Mail className="w-8 h-8 text-yellow-500" />
+            <Mail className="w-8 h-8 text-cyan-500" />
             Gestione Newsletter - FALANGE
           </h1>
           <p className="text-gray-400">Gestisci gli iscritti e invia messaggi alla tua armata</p>
@@ -225,10 +225,10 @@ const NewsletterManagement: React.FC = () => {
             <div className="text-sm text-gray-400">Newsletter inviate</div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-700/30 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/30 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <Eye className="w-8 h-8 text-red-400" />
-              <span className="text-sm text-red-300 font-bold">TASSO</span>
+              <Eye className="w-8 h-8 text-blue-400" />
+              <span className="text-sm text-blue-300 font-bold">TASSO</span>
             </div>
             <div className="text-3xl font-black text-white mb-1">{(stats.avgOpenRate || 0).toFixed(1)}%</div>
             <div className="text-sm text-gray-400">Tasso apertura</div>
@@ -241,7 +241,7 @@ const NewsletterManagement: React.FC = () => {
             onClick={() => setActiveTab('subscribers')}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'subscribers'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -252,7 +252,7 @@ const NewsletterManagement: React.FC = () => {
             onClick={() => setActiveTab('messages')}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'messages'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -267,7 +267,7 @@ const NewsletterManagement: React.FC = () => {
             }}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'create'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -290,7 +290,7 @@ const NewsletterManagement: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Cerca per email o nome..."
-                    className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
                 <div className="relative">
@@ -298,7 +298,7 @@ const NewsletterManagement: React.FC = () => {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="pl-10 pr-8 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none appearance-none cursor-pointer"
+                    className="pl-10 pr-8 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none appearance-none cursor-pointer"
                   >
                     <option value="all">Tutti</option>
                     <option value="ACTIVE">Attivi</option>
@@ -341,7 +341,7 @@ const NewsletterManagement: React.FC = () => {
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                               sub.status === 'ACTIVE' 
                                 ? 'bg-green-900/30 text-green-400 border border-green-700'
-                                : 'bg-red-900/30 text-red-400 border border-red-700'
+                                : 'bg-blue-900/30 text-blue-400 border border-blue-700'
                             }`}>
                               {sub.status === 'ACTIVE' ? 'Attivo' : 'Disiscritto'}
                             </span>
@@ -411,7 +411,7 @@ const NewsletterManagement: React.FC = () => {
                           )}
                           <button
                             onClick={() => handleDeleteMessage(msg.id)}
-                            className="p-2 bg-red-900/30 border border-red-700 rounded-lg text-red-400 hover:bg-red-900/50 transition-colors"
+                            className="p-2 bg-blue-900/30 border border-blue-700 rounded-lg text-blue-400 hover:bg-blue-900/50 transition-colors"
                             title="Elimina"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -463,7 +463,7 @@ const NewsletterManagement: React.FC = () => {
                   type="text"
                   value={messageForm.subject}
                   onChange={(e) => setMessageForm({ ...messageForm, subject: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
                   placeholder="Es: 🔥 Nuova Strategia Spartana - Profitti Garantiti!"
                   required
                 />
@@ -476,7 +476,7 @@ const NewsletterManagement: React.FC = () => {
                 <select
                   value={messageForm.type}
                   onChange={(e) => setMessageForm({ ...messageForm, type: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
                 >
                   <option value="promotional">Promozionale</option>
                   <option value="educational">Educativo</option>
@@ -491,13 +491,13 @@ const NewsletterManagement: React.FC = () => {
                 <textarea
                   value={messageForm.content}
                   onChange={(e) => setMessageForm({ ...messageForm, content: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none font-mono text-sm"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none font-mono text-sm"
                   rows={12}
                   placeholder="<h1>Ciao Guerriero! 🛡️</h1><p>Contenuto della tua email...</p>"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Puoi usare HTML. L'email sarà automaticamente formattata con il template Spartano Furioso.
+                  Puoi usare HTML. L'email sarà automaticamente formattata con il template Nexora Lab.
                 </p>
               </div>
 
@@ -509,7 +509,7 @@ const NewsletterManagement: React.FC = () => {
                   type="datetime-local"
                   value={messageForm.scheduledFor}
                   onChange={(e) => setMessageForm({ ...messageForm, scheduledFor: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   Lascia vuoto per salvare come bozza. Invia manualmente dalla sezione "Messaggi".
@@ -519,7 +519,7 @@ const NewsletterManagement: React.FC = () => {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-6 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 px-6 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" />
                   {editingMessageId ? 'Aggiorna Messaggio' : 'Salva Messaggio'}

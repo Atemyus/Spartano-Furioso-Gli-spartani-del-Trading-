@@ -146,7 +146,7 @@ const AdminDashboard: React.FC = () => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
@@ -213,8 +213,8 @@ const AdminDashboard: React.FC = () => {
                       <p className="text-sm text-gray-600 mb-1">Nuovi Utenti (30gg)</p>
                       <p className="text-2xl font-bold text-gray-800">{stats.users.newThisMonth}</p>
                     </div>
-                    <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-yellow-600" />
+                    <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-cyan-600" />
                     </div>
                   </div>
                 </div>

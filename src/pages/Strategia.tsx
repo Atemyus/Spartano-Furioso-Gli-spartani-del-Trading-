@@ -12,7 +12,7 @@ const Strategia = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-black mb-4">
-            <span className="bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
               STRATEGIA SPARTANA
             </span>
           </h1>
@@ -27,15 +27,15 @@ const Strategia = () => {
         {/* Hero Section */}
         <div className={`rounded-2xl p-8 border mb-12 ${
           theme === 'dark'
-            ? 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border-red-800/30'
-            : 'bg-gradient-to-r from-red-50 via-white to-red-50 border-red-200 shadow-lg'
+            ? 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border-blue-800/30'
+            : 'bg-gradient-to-r from-blue-50 via-white to-blue-50 border-blue-200 shadow-lg'
         }`}>
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <h2 className={`text-3xl font-black mb-4 flex items-center gap-3 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
-                <Swords className="w-8 h-8 text-yellow-500" />
+                <Swords className="w-8 h-8 text-cyan-500" />
                 Il Metodo Spartano
               </h2>
               <p className={`leading-relaxed mb-4 ${
@@ -48,26 +48,26 @@ const Strategia = () => {
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
                 <li className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-yellow-500" />
+                  <Award className="w-5 h-5 text-cyan-500" />
                   <span>Strategie con win rate superiore al 70%</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-yellow-500" />
+                  <Shield className="w-5 h-5 text-cyan-500" />
                   <span>Gestione del rischio militare: mai più del 2% per trade</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-yellow-500" />
+                  <Lock className="w-5 h-5 text-cyan-500" />
                   <span>Backtesting rigoroso su oltre 10 anni di dati storici</span>
                 </li>
               </ul>
             </div>
             <div className={`rounded-xl p-8 border ${
               theme === 'dark'
-                ? 'bg-gradient-to-br from-red-900/30 to-yellow-900/30 border-yellow-500/30'
-                : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-400 shadow-md'
+                ? 'bg-gradient-to-br from-blue-900/30 to-cyan-900/30 border-cyan-500/30'
+                : 'bg-gradient-to-br from-cyan-50 to-sky-50 border-cyan-400 shadow-md'
             }`}>
               <div className="text-center">
-                <div className="text-5xl font-black text-yellow-500 mb-2">95%</div>
+                <div className="text-5xl font-black text-cyan-500 mb-2">95%</div>
                 <div className={`text-sm ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                 }`}>Soddisfazione Clienti</div>
@@ -121,20 +121,20 @@ const Strategia = () => {
           ].map((strategy, index) => (
             <div key={index} className={`group rounded-lg p-6 hover:scale-105 transition-all duration-300 ${
               theme === 'dark'
-                ? 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
-                : 'bg-white border border-red-200 hover:border-yellow-400 shadow-md hover:shadow-xl'
+                ? 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
+                : 'bg-white border border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
             }`}>
-              <strategy.icon className="w-12 h-12 text-yellow-500 mb-4 group-hover:scale-110 transition-transform" />
+              <strategy.icon className="w-12 h-12 text-cyan-500 mb-4 group-hover:scale-110 transition-transform" />
               <h3 className={`text-2xl font-bold mb-3 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>{strategy.title}</h3>
               <p className={`mb-4 ${
                 theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>{strategy.description}</p>
-              <div className={`inline-block px-3 py-1 border rounded-full text-yellow-500 text-sm font-bold ${
+              <div className={`inline-block px-3 py-1 border rounded-full text-cyan-500 text-sm font-bold ${
                 theme === 'dark'
-                  ? 'bg-red-900/30 border-red-700/50'
-                  : 'bg-yellow-50 border-yellow-400'
+                  ? 'bg-blue-900/30 border-blue-700/50'
+                  : 'bg-cyan-50 border-cyan-400'
               }`}>
                 {strategy.stats}
               </div>
@@ -143,12 +143,12 @@ const Strategia = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-2xl p-8 text-center">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
           <h2 className="text-3xl font-black text-white mb-4">Pronto a Combattere?</h2>
           <p className="text-gray-100 mb-6 max-w-2xl mx-auto">
             Unisciti a oltre 10,000 guerrieri che hanno scelto la via spartana per dominare i mercati.
           </p>
-          <button className="px-8 py-4 bg-black border-2 border-yellow-500 text-yellow-500 rounded-xl font-bold text-lg hover:bg-gray-900 hover:border-yellow-400 transition-all duration-300 transform hover:scale-105">
+          <button className="px-8 py-4 bg-black border-2 border-cyan-500 text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 hover:border-cyan-400 transition-all duration-300 transform hover:scale-105">
             INIZIA ORA
           </button>
         </div>

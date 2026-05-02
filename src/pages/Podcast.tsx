@@ -9,7 +9,7 @@ const Podcast = () => {
       theme === 'light' ? 'bg-gradient-to-b from-white via-gray-50 to-white' : 'bg-black'
     }`}>
       <div className="container mx-auto px-4 py-16">
-        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
           PODCAST SPARTANO
         </h1>
         <p className={`mb-8 ${
@@ -20,9 +20,9 @@ const Podcast = () => {
             <div key={i} className={`rounded-lg p-6 flex items-center gap-6 ${
               theme === 'light'
                 ? 'bg-white border-2 border-gray-200 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
             }`}>
-              <Mic className="w-12 h-12 text-yellow-500" />
+              <Mic className="w-12 h-12 text-cyan-500" />
               <div className="flex-1">
                 <h3 className={`text-xl font-bold mb-2 ${
                   theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -30,7 +30,7 @@ const Podcast = () => {
                 <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Durata: 45 min</p>
               </div>
               <button className={`px-4 py-2 text-white rounded-lg transition-all hover:scale-105 ${
-                theme === 'light' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-600 hover:bg-red-700'
+                theme === 'light' ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-blue-600 hover:bg-blue-700'
               }`}>Ascolta</button>
             </div>
           ))}

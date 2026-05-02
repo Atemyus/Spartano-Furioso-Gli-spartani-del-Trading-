@@ -193,9 +193,9 @@ export default function SubscriptionsManagement() {
       case 'active':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'canceled':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-blue-500" />;
       case 'past_due':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-cyan-500" />;
       case 'paused':
         return <PauseCircle className="h-4 w-4 text-gray-500" />;
       case 'trialing':
@@ -210,9 +210,9 @@ export default function SubscriptionsManagement() {
       case 'active':
         return 'bg-green-100 text-green-800';
       case 'canceled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-blue-100 text-blue-800';
       case 'past_due':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-cyan-100 text-cyan-800';
       case 'paused':
         return 'bg-gray-100 text-gray-800';
       case 'trialing':
@@ -317,10 +317,10 @@ export default function SubscriptionsManagement() {
                 <p className="text-sm text-gray-600">Tasso di Churn</p>
                 <p className="text-2xl font-bold">{stats.churnRate.toFixed(1)}%</p>
                 {stats.churnRate > 5 && (
-                  <p className="text-xs text-red-500 mt-1">Alto - necessita attenzione</p>
+                  <p className="text-xs text-blue-500 mt-1">Alto - necessita attenzione</p>
                 )}
               </div>
-              <AlertCircle className="h-8 w-8 text-yellow-600" />
+              <AlertCircle className="h-8 w-8 text-cyan-600" />
             </div>
           </div>
         </div>
@@ -370,7 +370,7 @@ export default function SubscriptionsManagement() {
           onClick={() => setFilter('canceled')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'canceled'
-              ? 'bg-red-600 text-white'
+              ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -380,7 +380,7 @@ export default function SubscriptionsManagement() {
           onClick={() => setFilter('past_due')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'past_due'
-              ? 'bg-yellow-600 text-white'
+              ? 'bg-cyan-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -459,7 +459,7 @@ export default function SubscriptionsManagement() {
                         {getStatusLabel(subscription.status)}
                       </span>
                       {subscription.cancelAtPeriodEnd && (
-                        <p className="text-xs text-red-500 mt-1">
+                        <p className="text-xs text-blue-500 mt-1">
                           Cancella il {new Date(subscription.currentPeriodEnd).toLocaleDateString('it-IT')}
                         </p>
                       )}
@@ -494,7 +494,7 @@ export default function SubscriptionsManagement() {
                             </button>
                             <button
                               onClick={() => handleCancelSubscription(subscription.id)}
-                              className="text-red-600 hover:text-red-700 p-1"
+                              className="text-blue-600 hover:text-blue-700 p-1"
                               title="Cancella a fine periodo"
                             >
                               <XCircle className="h-4 w-4" />
@@ -540,19 +540,19 @@ export default function SubscriptionsManagement() {
             <div className="text-sm text-gray-600">Attivi</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-cyan-600">
               {subscriptions.filter(s => s.status === 'trialing').length}
             </div>
             <div className="text-sm text-gray-600">In Trial</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-sky-600">
               {subscriptions.filter(s => s.status === 'past_due').length}
             </div>
             <div className="text-sm text-gray-600">In Ritardo</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{stats?.totalCanceled || 0}</div>
+            <div className="text-2xl font-bold text-blue-600">{stats?.totalCanceled || 0}</div>
             <div className="text-sm text-gray-600">Cancellati</div>
           </div>
         </div>

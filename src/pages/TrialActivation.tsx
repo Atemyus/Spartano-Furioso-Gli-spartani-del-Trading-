@@ -259,7 +259,7 @@ const TrialActivation: React.FC = () => {
           ? 'bg-gradient-to-b from-black via-gray-950 to-black'
           : 'bg-gradient-to-b from-white via-gray-50 to-white'
       }`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
       </div>
     );
   }
@@ -272,11 +272,11 @@ const TrialActivation: React.FC = () => {
           : 'bg-gradient-to-b from-white via-gray-50 to-white'
       }`}>
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className={`text-2xl font-bold mb-2 ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>Prodotto non trovato</h2>
-          <Link to="/products" className="text-yellow-500 hover:text-yellow-400">
+          <Link to="/products" className="text-cyan-500 hover:text-cyan-400">
             Torna ai prodotti
           </Link>
         </div>
@@ -289,23 +289,23 @@ const TrialActivation: React.FC = () => {
     return (
       <div className={`min-h-screen transition-colors duration-500 ${
         theme === 'dark'
-          ? 'bg-gradient-to-b from-black via-red-950/20 to-black'
-          : 'bg-gradient-to-b from-white via-red-50/40 to-white'
+          ? 'bg-gradient-to-b from-black via-blue-950/20 to-black'
+          : 'bg-gradient-to-b from-white via-blue-50/40 to-white'
       }`}>
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-red-900/20 border-2 border-red-500 rounded-2xl p-8 text-center">
-              <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse" />
+            <div className="bg-blue-900/20 border-2 border-blue-500 rounded-2xl p-8 text-center">
+              <AlertCircle className="w-20 h-20 text-blue-500 mx-auto mb-6 animate-pulse" />
               <h1 className={`text-4xl font-black mb-4 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
                 TRIAL SCADUTO
               </h1>
               <p className="text-xl text-gray-300 mb-8">
-                Il tuo periodo di prova per <span className="text-yellow-500 font-bold">{product.name}</span> è terminato.
+                Il tuo periodo di prova per <span className="text-cyan-500 font-bold">{product.name}</span> è terminato.
               </p>
               
-              <div className="bg-black/50 border border-red-900/30 rounded-xl p-6 mb-8">
+              <div className="bg-black/50 border border-blue-900/30 rounded-xl p-6 mb-8">
                 <div className="grid grid-cols-2 gap-4 text-left">
                   <div>
                     <span className="text-gray-400 text-sm">Iniziato il</span>
@@ -315,7 +315,7 @@ const TrialActivation: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-gray-400 text-sm">Terminato il</span>
-                    <p className="text-red-400 font-bold">
+                    <p className="text-blue-400 font-bold">
                       {new Date(trialData.endDate).toLocaleDateString('it-IT')}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ const TrialActivation: React.FC = () => {
               <div className="space-y-4">
                 <Link
                   to={(product.category === 'course' || product.category === 'Formazione') ? `/course/${productId}` : `/products`}
-                  className="block w-full px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105"
+                  className="block w-full px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 transition-all duration-300 transform hover:scale-105"
                 >
                   <div className="flex items-center justify-center gap-3">
                     <Rocket className="w-6 h-6" />
@@ -389,8 +389,8 @@ const TrialActivation: React.FC = () => {
       {/* Header */}
       <div className={`backdrop-blur-sm border-b ${
         theme === 'dark'
-          ? 'bg-black/50 border-red-900/30'
-          : 'bg-white/50 border-red-200'
+          ? 'bg-black/50 border-blue-900/30'
+          : 'bg-white/50 border-blue-200'
       }`}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -398,8 +398,8 @@ const TrialActivation: React.FC = () => {
               onClick={() => navigate(-1)}
               className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-all ${
                 theme === 'dark'
-                  ? 'bg-gray-900/50 border-yellow-500/50 text-yellow-400 hover:text-yellow-300 hover:bg-gray-900/70 hover:border-yellow-400'
-                  : 'bg-white border-yellow-400/50 text-yellow-600 hover:text-yellow-700 hover:border-yellow-500'
+                  ? 'bg-gray-900/50 border-cyan-500/50 text-cyan-400 hover:text-cyan-300 hover:bg-gray-900/70 hover:border-cyan-400'
+                  : 'bg-white border-cyan-400/50 text-cyan-600 hover:text-cyan-700 hover:border-cyan-500'
               }`}
             >
               <ArrowLeft className="w-5 h-5" />
@@ -407,9 +407,9 @@ const TrialActivation: React.FC = () => {
             </button>
             
             <div className="flex items-center gap-3">
-              <Shield className="w-10 h-10 text-yellow-500" />
+              <Shield className="w-10 h-10 text-cyan-500" />
               <h1 className="text-2xl font-black">
-                <span className="text-red-600">TRIAL</span>
+                <span className="text-blue-600">TRIAL</span>
                 <span className={`ml-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>ACTIVATION</span>
               </h1>
             </div>
@@ -420,7 +420,7 @@ const TrialActivation: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Product Header */}
-          <div className="bg-gray-900/50 border border-red-900/30 rounded-2xl p-8 mb-8">
+          <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 mb-8">
             <div className="flex flex-col md:flex-row items-start gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
@@ -439,7 +439,7 @@ const TrialActivation: React.FC = () => {
                 <div className="bg-black/30 rounded-xl p-4 mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-gray-400">Durata Trial:</span>
-                    <span className="text-2xl font-black text-yellow-500">{product.trialDays || 60} GIORNI</span>
+                    <span className="text-2xl font-black text-cyan-500">{product.trialDays || 60} GIORNI</span>
                   </div>
                   <div className="flex items-center gap-2 text-green-400 text-sm">
                     <CheckCircle className="w-4 h-4" />
@@ -476,7 +476,7 @@ const TrialActivation: React.FC = () => {
                   {!trialActivated ? (
                     <button
                       onClick={activateTrial}
-                      className="flex-1 py-4 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                      className="flex-1 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                     >
                       <Rocket className="w-6 h-6" />
                       ATTIVA TRIAL {product.trialDays || 60} GIORNI
@@ -532,7 +532,7 @@ const TrialActivation: React.FC = () => {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">Categoria:</span>
-                    <span className="text-yellow-500 font-bold">{product.category}</span>
+                    <span className="text-cyan-500 font-bold">{product.category}</span>
                   </div>
                 </div>
               </div>
@@ -545,9 +545,9 @@ const TrialActivation: React.FC = () => {
             <div className="space-y-8">
               {/* Features */}
               {product.features && product.features.length > 0 && (
-                <div className="bg-gray-900/50 border border-red-900/30 rounded-xl p-6">
+                <div className="bg-gray-900/50 border border-blue-900/30 rounded-xl p-6">
                   <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
-                    <Zap className="w-6 h-6 text-yellow-500" />
+                    <Zap className="w-6 h-6 text-cyan-500" />
                     FUNZIONALITÀ
                   </h3>
                   <ul className="space-y-3">
@@ -563,15 +563,15 @@ const TrialActivation: React.FC = () => {
 
               {/* Requirements */}
               {product.requirements && product.requirements.length > 0 && (
-                <div className="bg-gray-900/50 border border-yellow-900/30 rounded-xl p-6">
+                <div className="bg-gray-900/50 border border-cyan-900/30 rounded-xl p-6">
                   <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-6 h-6 text-yellow-500" />
+                    <AlertCircle className="w-6 h-6 text-cyan-500" />
                     REQUISITI
                   </h3>
                   <ul className="space-y-3">
                     {product.requirements.map((req, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <FileText className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <FileText className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
                         <span className="text-gray-300">{req}</span>
                       </li>
                     ))}
@@ -644,11 +644,11 @@ const TrialActivation: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Lock className="w-5 h-5 text-yellow-500" />
-                        <span className="text-yellow-500 text-xs font-bold">PREMIUM</span>
+                        <Lock className="w-5 h-5 text-cyan-500" />
+                        <span className="text-cyan-500 text-xs font-bold">PREMIUM</span>
                       </div>
                     </div>
-                    <div className="mt-3 p-2 bg-yellow-900/20 border border-yellow-700/30 rounded text-xs text-yellow-400 text-center">
+                    <div className="mt-3 p-2 bg-cyan-900/20 border border-cyan-700/30 rounded text-xs text-cyan-400 text-center">
                       💎 Disponibile dopo l'acquisto del prodotto
                     </div>
                   </div>
@@ -658,10 +658,10 @@ const TrialActivation: React.FC = () => {
                     href={TELEGRAM_CONTACT}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/30 border border-yellow-700/30 rounded-xl p-6 hover:border-yellow-500/50 transition-all group"
+                    className="bg-gradient-to-br from-cyan-900/30 to-cyan-800/30 border border-cyan-700/30 rounded-xl p-6 hover:border-cyan-500/50 transition-all group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center group-hover:bg-yellow-600/30 transition-colors">
+                      <div className="w-12 h-12 bg-cyan-600/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-600/30 transition-colors">
                         <Key className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -720,9 +720,9 @@ const TrialActivation: React.FC = () => {
               </div>
 
               {/* Important Notice */}
-              <div className="bg-red-950/30 border border-red-800 rounded-xl p-6">
+              <div className="bg-blue-950/30 border border-blue-800 rounded-xl p-6">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+                  <AlertCircle className="w-6 h-6 text-blue-500 flex-shrink-0" />
                   <div>
                     <h4 className="text-white font-bold mb-2">Informazioni Importanti</h4>
                     <ul className="space-y-2 text-gray-300 text-sm">

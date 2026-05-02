@@ -19,24 +19,24 @@ const Products: React.FC = () => {
       {isAuthenticated && (
         <div className={`backdrop-blur-sm border-b ${
           theme === 'dark'
-            ? 'bg-black/50 border-red-900/30'
-            : 'bg-white/50 border-red-200'
+            ? 'bg-black/50 border-blue-900/30'
+            : 'bg-white/50 border-blue-200'
         }`}>
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <Link to="/dashboard" className={`flex items-center gap-3 transition-colors ${
                 theme === 'dark'
-                  ? 'text-gray-400 hover:text-yellow-500'
-                  : 'text-gray-600 hover:text-yellow-600'
+                  ? 'text-gray-400 hover:text-cyan-500'
+                  : 'text-gray-600 hover:text-cyan-600'
               }`}>
                 <ArrowLeft className="w-5 h-5" />
                 <span className="font-bold">Torna alla Dashboard</span>
               </Link>
               
               <div className="flex items-center gap-3">
-                <Shield className="w-10 h-10 text-yellow-500" />
+                <Shield className="w-10 h-10 text-cyan-500" />
                 <h1 className="text-2xl font-black">
-                  <span className="text-red-600">SPARTANO</span>
+                  <span className="text-blue-600">NEXORA</span>
                   <span className={`ml-2 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>SHOP</span>

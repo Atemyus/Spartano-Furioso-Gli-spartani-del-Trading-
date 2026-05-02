@@ -56,28 +56,28 @@ const ForgotPassword: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black flex items-center justify-center px-4 py-12">
         {/* Background Effects */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-red-900/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-yellow-900/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-cyan-900/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
         <div className="relative z-10 w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-3 group">
-              <Shield className="w-12 h-12 text-yellow-500 group-hover:scale-110 transition-transform" />
+              <Shield className="w-12 h-12 text-cyan-500 group-hover:scale-110 transition-transform" />
               <div>
                 <h1 className="text-3xl font-black">
-                  <span className="bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
-                    SPARTANO
+                  <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
+                    NEXORA
                   </span>
-                  <span className="text-white ml-2">FURIOSO</span>
+                  <span className="text-white ml-2">LAB</span>
                 </h1>
               </div>
             </Link>
           </div>
 
           {/* Card */}
-          <div className="bg-gray-900/50 backdrop-blur-sm border-2 border-red-800/50 rounded-2xl p-8">
+          <div className="bg-gray-900/50 backdrop-blur-sm border-2 border-blue-800/50 rounded-2xl p-8">
             {!success ? (
               <>
                 <div className="text-center mb-8">
@@ -90,9 +90,9 @@ const ForgotPassword: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Error Message */}
                   {error && (
-                    <div className="p-4 bg-red-900/20 border border-red-600/50 rounded-lg flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-red-400 text-sm">{error}</p>
+                    <div className="p-4 bg-blue-900/20 border border-blue-600/50 rounded-lg flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-blue-400 text-sm">{error}</p>
                     </div>
                   )}
 
@@ -106,7 +106,7 @@ const ForgotPassword: React.FC = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 pl-12 bg-black/50 border-2 border-red-900/50 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 pl-12 bg-black/50 border-2 border-blue-900/50 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-colors"
                         placeholder="guerriero@sparta.com"
                         required
                       />
@@ -118,7 +118,7 @@ const ForgotPassword: React.FC = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-bold text-white hover:from-red-500 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg font-bold text-white hover:from-blue-500 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -136,7 +136,7 @@ const ForgotPassword: React.FC = () => {
                   {/* Back to Login */}
                   <Link
                     to="/login"
-                    className="flex items-center justify-center gap-2 text-gray-400 hover:text-yellow-500 transition-colors"
+                    className="flex items-center justify-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Torna al login</span>
@@ -153,7 +153,7 @@ const ForgotPassword: React.FC = () => {
                 <p className="text-gray-400 mb-2">
                   Le istruzioni per recuperare la password sono state inviate a:
                 </p>
-                <p className="text-yellow-500 font-bold mb-6">{email}</p>
+                <p className="text-cyan-500 font-bold mb-6">{email}</p>
                 <p className="text-sm text-gray-500 mb-8">
                   Controlla la tua casella di posta e segui le istruzioni.
                   <br />
@@ -162,7 +162,7 @@ const ForgotPassword: React.FC = () => {
                 <div className="space-y-3">
                   <Link
                     to="/login"
-                    className="block w-full py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-bold text-white hover:from-red-500 hover:to-red-700 transition-all duration-300"
+                    className="block w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg font-bold text-white hover:from-blue-500 hover:to-blue-700 transition-all duration-300"
                   >
                     TORNA AL LOGIN
                   </Link>
@@ -171,7 +171,7 @@ const ForgotPassword: React.FC = () => {
                       setSuccess(false);
                       setEmail('');
                     }}
-                    className="text-gray-400 hover:text-yellow-500 transition-colors text-sm"
+                    className="text-gray-400 hover:text-cyan-500 transition-colors text-sm"
                   >
                     Non hai ricevuto l'email? Riprova
                   </button>

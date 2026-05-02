@@ -181,22 +181,22 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     }`}>
       <div className={`relative w-full max-w-2xl rounded-2xl border-2 shadow-2xl overflow-hidden ${
         theme === 'dark'
-          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-yellow-600/50 shadow-yellow-900/50'
-          : 'bg-white border-yellow-400 shadow-yellow-200'
+          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-cyan-600/50 shadow-cyan-900/50'
+          : 'bg-white border-cyan-400 shadow-cyan-200'
       }`}>
         {/* Header */}
         <div className={`relative border-b p-6 ${
           theme === 'dark'
-            ? 'bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border-yellow-600/50'
-            : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300'
+            ? 'bg-gradient-to-r from-cyan-600/20 to-sky-600/20 border-cyan-600/50'
+            : 'bg-gradient-to-r from-cyan-50 to-sky-50 border-cyan-300'
         }`}>
           <button
             onClick={onClose}
             disabled={isProcessing}
             className={`absolute top-4 right-4 transition-colors disabled:opacity-50 ${
               theme === 'dark'
-                ? 'text-white hover:text-yellow-500'
-                : 'text-gray-700 hover:text-yellow-600'
+                ? 'text-white hover:text-cyan-500'
+                : 'text-gray-700 hover:text-cyan-600'
             }`}
           >
             <X className="w-6 h-6" />
@@ -218,8 +218,8 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
           {/* Dettagli corso */}
           <div className={`border rounded-xl p-4 ${
             theme === 'dark'
-              ? 'bg-gradient-to-br from-yellow-900/30 to-orange-900/30 border-yellow-600/50'
-              : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-400'
+              ? 'bg-gradient-to-br from-cyan-900/30 to-sky-900/30 border-cyan-600/50'
+              : 'bg-gradient-to-br from-cyan-50 to-sky-50 border-cyan-400'
           }`}>
             <div className="flex justify-between items-center">
               <div>
@@ -241,7 +241,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
                     €{originalPrice}
                   </div>
                 )}
-                <div className="text-2xl font-black text-yellow-500">
+                <div className="text-2xl font-black text-cyan-500">
                   €{price}
                 </div>
               </div>
@@ -337,7 +337,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
               disabled={isProcessing}
               className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
                 selectedMethod === 'crypto'
-                  ? 'border-orange-500 bg-orange-500/10'
+                  ? 'border-sky-500 bg-sky-500/10'
                   : theme === 'dark'
                     ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
                     : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
@@ -346,7 +346,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                   selectedMethod === 'crypto'
-                    ? 'bg-orange-500'
+                    ? 'bg-sky-500'
                     : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
                 }`}>
                   <Bitcoin className="w-6 h-6 text-white" />
@@ -357,14 +357,14 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
                   }`}>
                     Criptovalute
                     {selectedMethod === 'crypto' && (
-                      <CheckCircle className="w-5 h-5 text-orange-500" />
+                      <CheckCircle className="w-5 h-5 text-sky-500" />
                     )}
                   </h3>
                   <p className={`text-sm ${
                     theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                   }`}>200+ crypto: BTC, ETH, USDT, BNB, TRX...</p>
                 </div>
-                <div className="text-orange-500 font-bold text-xs">
+                <div className="text-sky-500 font-bold text-xs">
                   CRYPTO
                 </div>
               </div>
@@ -406,7 +406,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
           <button
             onClick={handlePayment}
             disabled={isProcessing}
-            className="w-full py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white text-lg hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full py-4 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-xl font-bold text-white text-lg hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {isProcessing ? (
               <span className="flex items-center justify-center gap-2">
