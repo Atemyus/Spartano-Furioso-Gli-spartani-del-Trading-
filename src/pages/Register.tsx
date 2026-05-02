@@ -229,25 +229,14 @@ const Register: React.FC = () => {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-0 group">
-            <div className="relative flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
-              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full animate-pulse" style={{ transform: 'translateX(60px)' }}></div>
-              <img 
-                src="/logo.png" 
-                alt="Nexora Lab Logo" 
-                className="w-28 h-24 md:w-40 md:h-32 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)]"
-                style={{ transform: 'translateX(60px)' }}
+          <Link to="/" className="inline-block group">
+            <div className="relative transform group-hover:scale-[1.03] transition-transform duration-300">
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full"></div>
+              <img
+                src="/logo.png"
+                alt="Nexora Lab"
+                className="relative z-10 h-16 md:h-20 w-auto mx-auto object-contain"
               />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black">
-                <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                  NEXORA
-                </span>
-                <span className={`ml-2 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>LAB</span>
-              </h1>
             </div>
           </Link>
         </div>

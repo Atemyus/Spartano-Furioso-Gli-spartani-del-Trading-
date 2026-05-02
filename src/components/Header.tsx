@@ -92,37 +92,19 @@ const Header = () => {
       
       <div className="container mx-auto px-4 py-0">
         <div className="flex items-center justify-between gap-8">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-0 group -ml-28 md:-ml-36"
+            className="flex items-center group"
           >
-            {/* Logo Image */}
+            {/* Horizontal Logo (NexoraLab + tagline already embedded) */}
             <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full animate-pulse mt-4" style={{ transform: 'translateX(48px)' }}></div>
-              <img 
-                src="/logo.png" 
-                alt="Nexora Lab Logo" 
-                className="w-24 h-20 md:w-32 md:h-24 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] group-hover:scale-110 transition-transform duration-300"
-                style={{ transform: 'translateX(48px)' }}
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <img
+                src="/logo.png"
+                alt="Nexora Lab"
+                className="relative z-10 h-12 md:h-16 lg:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
               />
-            </div>
-            {/* Logo Text with Epic Gradient */}
-            <div className="relative flex-shrink-0">
-              <h1 className="font-display text-lg md:text-xl font-bold tracking-tight relative whitespace-nowrap">
-                <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto] drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
-                  NEXORA
-                </span>
-                <span className={`ml-1 ${theme === 'dark' ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'text-slate-900 drop-shadow-[0_0_10px_rgba(0,0,0,0.2)]'}`}> LAB</span>
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-cyan-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </h1>
-              <p className={`font-mono-lab text-[0.65rem] md:text-xs font-medium tracking-[0.2em] flex items-center gap-1.5 mt-0.5 uppercase ${theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
-                </span>
-                Trading · Creator · Lab
-              </p>
             </div>
           </Link>
 

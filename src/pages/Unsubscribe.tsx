@@ -48,20 +48,14 @@ const Unsubscribe: React.FC = () => {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-3 group">
-            <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full animate-pulse"></div>
-              <img 
-                src="/logo.png" 
-                alt="Nexora Lab Logo" 
-                className="w-20 h-20 md:w-28 md:h-28 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] group-hover:scale-110 transition-transform duration-300"
+          <Link to="/" className="inline-block group">
+            <div className="relative transform group-hover:scale-[1.03] transition-transform duration-300">
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full"></div>
+              <img
+                src="/logo.png"
+                alt="Nexora Lab"
+                className="relative z-10 h-14 md:h-16 w-auto mx-auto object-contain"
               />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black">
-                <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">NEXORA</span>
-                <span className="text-white ml-2">LAB</span>
-              </h1>
             </div>
           </Link>
         </div>
@@ -74,8 +68,8 @@ const Unsubscribe: React.FC = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-900/30 rounded-full mb-4">
                   <Mail className="w-8 h-8 text-blue-400" />
                 </div>
-                <h2 className="text-2xl font-black text-white mb-2">Disiscrizione Newsletter</h2>
-                <p className="text-gray-400">Ci dispiace vederti andare, guerriero!</p>
+                <h2 className="font-display text-2xl font-semibold text-white mb-2 tracking-tight">Disiscrizione newsletter</h2>
+                <p className="text-slate-400">Ci dispiace vederti andare. Confermi la disiscrizione?</p>
               </div>
 
               {email && (

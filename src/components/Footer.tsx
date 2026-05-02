@@ -106,30 +106,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-0 mb-8 group">
-              <div className="relative transform group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" style={{ transform: 'translateX(60px)' }}></div>
-                <img 
-                  src="/logo.png" 
-                  alt="Nexora Lab Logo" 
-                  className="w-28 h-24 md:w-40 md:h-32 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]"
-                  style={{ transform: 'translateX(60px)' }}
+            <div className="mb-8 group">
+              <div className="relative inline-block transform group-hover:scale-[1.03] transition-transform duration-300">
+                <div className="absolute inset-0 bg-cyan-500/15 blur-2xl rounded-full"></div>
+                <img
+                  src="/logo.png"
+                  alt="Nexora Lab"
+                  className="relative z-10 h-16 md:h-20 lg:h-24 w-auto object-contain"
                 />
-              </div>
-              <div>
-                <h3 className="font-display text-3xl font-bold tracking-tight">
-                  <span className="bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">NEXORA</span>
-                  <span className={`ml-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-slate-900'
-                  }`}>LAB</span>
-                </h3>
-                <p className="font-mono-lab text-xs text-cyan-400 font-medium tracking-[0.25em] uppercase flex items-center gap-1.5 mt-1">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
-                  </span>
-                  Trading · Creator · Lab
-                </p>
               </div>
             </div>
 

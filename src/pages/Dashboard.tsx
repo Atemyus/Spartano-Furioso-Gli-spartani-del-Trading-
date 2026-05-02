@@ -278,20 +278,18 @@ const Dashboard: React.FC = () => {
         }`}>
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-3 group">
+              <Link to="/" className="flex items-center gap-4 group">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-blue-500/30 rounded-full blur-xl animate-pulse"></div>
-                  <img 
-                    src="/logo.png" 
-                    alt="Spartano Logo" 
-                    className="relative w-16 h-16 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] group-hover:scale-110 transition-transform"
+                  <div className="absolute inset-0 bg-cyan-500/15 blur-2xl rounded-full"></div>
+                  <img
+                    src="/logo.png"
+                    alt="Nexora Lab"
+                    className="relative h-12 md:h-14 w-auto object-contain group-hover:scale-[1.03] transition-transform"
                   />
-                  <Flame className="absolute -top-1 -right-1 w-6 h-6 text-sky-500 animate-fire" />
                 </div>
-                <h1 className="text-3xl font-black">
-                  <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">NEXORA</span>
-                  <span className={`ml-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>DASHBOARD</span>
-                </h1>
+                <span className={`font-display text-xl md:text-2xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  / Dashboard
+                </span>
               </Link>
               
               <div className="flex items-center gap-4">
