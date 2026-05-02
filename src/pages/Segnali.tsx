@@ -9,24 +9,27 @@ const Segnali = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            SEGNALI PREMIUM
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Signals</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Segnali di trading professionali testati e verificati. Entry, target e stop loss precisi 
-            direttamente sul tuo Telegram, 24/7.
+            Segnali <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">verificati</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Setup operativi con entry, target e stop loss precisi. Notificati in tempo reale
+            su Telegram, con razionale e tracking pubblico delle performance.
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {[
-            { label: 'Win Rate', value: '74%' },
-            { label: 'Segnali/Mese', value: '200+' },
-            { label: 'Risk/Reward', value: '1:3' },
-            { label: 'Utenti Attivi', value: '3,500+' }
+            { label: 'Win rate', value: '74%' },
+            { label: 'Segnali / mese', value: '200+' },
+            { label: 'Risk / reward', value: '1:3' },
+            { label: 'Utenti attivi', value: '3,500+' }
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center ${
               theme === 'light'
@@ -194,12 +197,13 @@ const Segnali = () => {
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
-          <h2 className="text-3xl font-black text-white mb-4">Ricevi i Segnali Spartani</h2>
-          <p className="text-gray-100 mb-6">Inizia a ricevere segnali professionali sul tuo Telegram oggi stesso</p>
-          <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
-            <Bell className="w-5 h-5" />
-            ATTIVA I SEGNALI
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-center">
+          <span className="font-mono-lab text-xs text-white/70 tracking-[0.3em] uppercase">// Activate</span>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mt-2 mb-3 tracking-tight">Attiva i segnali Pro</h2>
+          <p className="text-white/80 mb-6 max-w-xl mx-auto">Ricevi setup verificati direttamente su Telegram, con tracking pubblico delle performance.</p>
+          <button className="px-7 py-3 bg-white text-blue-600 rounded-lg font-display font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg flex items-center gap-2 mx-auto">
+            <Bell className="w-4 h-4" />
+            Attiva i segnali
           </button>
         </div>
       </div>

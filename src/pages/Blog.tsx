@@ -6,7 +6,7 @@ const Blog = () => {
   const blogPosts = [
     {
       title: "La Disciplina Spartana nel Trading: Come Dominare le Emozioni",
-      excerpt: "Scopri come applicare la leggendaria disciplina spartana per controllare paura e avidità nei mercati.",
+      excerpt: "Scopri come applicare la leggendaria metodo Lab per controllare paura e avidità nei mercati.",
       category: "Psicologia",
       date: "15 Gen 2025",
       readTime: "8 min",
@@ -44,14 +44,17 @@ const Blog = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            BLOG DI GUERRA
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Blog</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Strategie, analisi e storie dal campo di battaglia dei mercati. 
-            Contenuti esclusivi dai nostri trader spartani.
+            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">Lab</span> notes
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Strategie, analisi, framework operativi. Contenuti pratici scritti da chi opera ogni giorno
+            nei mercati e nella creator economy.
           </p>
         </div>
 

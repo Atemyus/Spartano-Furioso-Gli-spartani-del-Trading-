@@ -15,6 +15,8 @@ export default {
       },
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
+        'display': ['Space Grotesk', 'Inter', 'sans-serif'],
+        'mono-lab': ['JetBrains Mono', 'monospace'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',

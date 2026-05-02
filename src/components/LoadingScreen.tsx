@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Shield, Swords, Flame } from 'lucide-react';
+import { Atom, Beaker } from 'lucide-react';
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -76,36 +76,29 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
             </svg>
           </div>
 
-          {/* Shield Icon Container */}
-          <div className="relative w-24 h-24 bg-gradient-to-br from-blue-950 to-black rounded-2xl flex items-center justify-center border-2 border-blue-800/50 shadow-2xl shadow-blue-900/50">
-            {/* Animated Shield */}
+          {/* Lab Icon Container */}
+          <div className="relative w-24 h-24 bg-gradient-to-br from-blue-950 to-black rounded-2xl flex items-center justify-center border border-cyan-500/30 shadow-2xl shadow-cyan-500/20">
             <div className="relative">
-              <Shield 
-                className="w-12 h-12 text-cyan-500 animate-pulse" 
-                style={{ 
-                  filter: 'drop-shadow(0 0 10px rgba(34, 211, 238, 0.5))',
-                  animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+              <Atom
+                className="w-12 h-12 text-cyan-400"
+                style={{
+                  filter: 'drop-shadow(0 0 10px rgba(34, 211, 238, 0.6))',
+                  animation: 'spin-slow 6s linear infinite'
                 }}
               />
-              
-              {/* Crossed Swords */}
-              <Swords 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-blue-600 animate-pulse" 
+              <Beaker
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 text-blue-400 animate-pulse"
                 style={{ animationDelay: '0.5s' }}
               />
             </div>
-
-            {/* Corner Flames */}
-            <Flame className="absolute -top-2 -right-2 w-5 h-5 text-sky-500 animate-bounce" />
-            <Flame className="absolute -bottom-2 -left-2 w-5 h-5 text-sky-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
           </div>
         </div>
 
         {/* Brand Name */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl md:text-6xl font-black mb-2 tracking-tight">
-            <span 
-              className="inline-block bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient"
+          <h1 className="font-display text-5xl md:text-6xl font-bold mb-2 tracking-tight">
+            <span
+              className="inline-block bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 bg-clip-text text-transparent animate-gradient"
               style={{
                 backgroundSize: '200% auto',
                 animation: 'gradient 3s linear infinite'
@@ -115,10 +108,12 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
             </span>
             <span className="text-white ml-3">LAB</span>
           </h1>
-          <p className="text-blue-400 font-bold tracking-[0.3em] text-sm flex items-center justify-center gap-2">
-            <Flame className="w-4 h-4 animate-pulse" />
-            DOMINA I MERCATI
-            <Flame className="w-4 h-4 animate-pulse" />
+          <p className="font-mono-lab text-cyan-400 text-xs tracking-[0.3em] uppercase flex items-center justify-center gap-2">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
+            </span>
+            booting modern income engine
           </p>
         </div>
 
@@ -141,11 +136,11 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
           
           {/* Progress Text */}
           <div className="flex justify-between items-center mt-3">
-            <span className="text-gray-400 text-sm font-medium">
-              {phase === 'ready' ? 'Pronto!' : 'Caricamento...'}
+            <span className="font-mono-lab text-slate-400 text-xs tracking-widest uppercase">
+              {phase === 'ready' ? '// ready' : '// loading'}
             </span>
-            <span className="text-cyan-500 text-sm font-bold tabular-nums">
-              {progress}%
+            <span className="font-mono-lab text-cyan-400 text-xs font-medium tabular-nums tracking-widest">
+              {progress.toString().padStart(3, '0')}%
             </span>
           </div>
         </div>
@@ -153,28 +148,28 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         {/* Loading Messages */}
         <div className="mt-8 h-6">
           {progress < 30 && (
-            <p className="text-gray-500 text-sm animate-pulse">
-              Forgiando le armi spartane...
+            <p className="font-mono-lab text-slate-500 text-xs tracking-widest uppercase animate-pulse">
+              {`// initializing trading modules`}
             </p>
           )}
           {progress >= 30 && progress < 60 && (
-            <p className="text-gray-500 text-sm animate-pulse">
-              Preparando la falange...
+            <p className="font-mono-lab text-slate-500 text-xs tracking-widest uppercase animate-pulse">
+              {`// loading creator studio`}
             </p>
           )}
           {progress >= 60 && progress < 90 && (
-            <p className="text-gray-500 text-sm animate-pulse">
-              Affilando le strategie di battaglia...
+            <p className="font-mono-lab text-slate-500 text-xs tracking-widest uppercase animate-pulse">
+              {`// syncing community signals`}
             </p>
           )}
           {progress >= 90 && progress < 100 && (
-            <p className="text-gray-500 text-sm animate-pulse">
-              Quasi pronto per la vittoria...
+            <p className="font-mono-lab text-slate-500 text-xs tracking-widest uppercase animate-pulse">
+              {`// finalizing lab environment`}
             </p>
           )}
           {progress === 100 && (
-            <p className="text-cyan-500 text-sm font-bold animate-bounce">
-              ⚔️ Pronti al combattimento! ⚔️
+            <p className="font-mono-lab text-cyan-400 text-xs font-medium tracking-widest uppercase">
+              {`// lab ready · welcome`}
             </p>
           )}
         </div>

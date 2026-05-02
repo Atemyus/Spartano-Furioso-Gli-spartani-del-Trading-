@@ -1,4 +1,4 @@
-import { Shield, Flame, Skull, Crown, Instagram, Send, ChevronRight, Award, Users, TrendingUp, Zap, Star, ArrowRight, Facebook } from 'lucide-react';
+import { ArrowUp, Cpu, Sparkles, BookOpen, Instagram, Send, ChevronRight, Award, Users, TrendingUp, Zap, ArrowRight, Facebook } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NewsletterForm from './NewsletterForm';
 import { useTheme } from '../contexts/ThemeContext';
@@ -14,10 +14,10 @@ const Footer = () => {
   const { theme } = useTheme();
 
   const stats = [
-    { icon: Users, value: '100+', label: 'Trader Attivi' },
-    { icon: TrendingUp, value: '€500K+', label: 'Volume Gestito' },
-    { icon: Award, value: '95%', label: 'Soddisfazione Clienti' },
-    { icon: Zap, value: '24/7', label: 'Supporto Dedicato' }
+    { icon: Users, value: '500+', label: 'Membri attivi' },
+    { icon: TrendingUp, value: '€500K+', label: 'Volume gestito' },
+    { icon: Award, value: '95%', label: 'Soddisfazione' },
+    { icon: Zap, value: '24/7', label: 'Lab operativo' }
   ];
 
   const socialLinks = [
@@ -56,14 +56,17 @@ const Footer = () => {
           }`}>
             <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
               <div className="text-center lg:text-left">
-                <h3 className="text-3xl font-black mb-2">
-                  <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">UNISCITI ALLA FALANGE</span>
+                <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.25em] uppercase">// Lab Brief</span>
+                <h3 className={`font-display text-2xl md:text-3xl font-semibold mt-1 mb-2 tracking-tight ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  Insight settimanali su trading e creator economy
                 </h3>
-                <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
-                  Ricevi strategie di guerra e segnali di battaglia esclusivi
+                <p className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Una mail a settimana, niente spam: setup operativi, framework e cose che funzionano.
                 </p>
               </div>
-              
+
               <NewsletterForm source="footer" />
             </div>
           </div>
@@ -87,11 +90,9 @@ const Footer = () => {
                   }`}>
                     <Icon className="w-8 h-8 text-cyan-500" />
                   </div>
-                  <div className={`text-3xl font-black mb-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>{stat.value}</div>
-                  <div className={`text-sm uppercase tracking-wider ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                  <div className={`font-display text-3xl font-bold mb-1 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent`}>{stat.value}</div>
+                  <div className={`font-mono-lab text-[0.7rem] uppercase tracking-widest ${
+                    theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                   }`}>{stat.label}</div>
                 </div>
               );
@@ -116,25 +117,28 @@ const Footer = () => {
                 />
               </div>
               <div>
-                <h3 className="text-3xl font-black">
-                  <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">NEXORA</span>
+                <h3 className="font-display text-3xl font-bold tracking-tight">
+                  <span className="bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">NEXORA</span>
                   <span className={`ml-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' ? 'text-white' : 'text-slate-900'
                   }`}>LAB</span>
                 </h3>
-                <p className="text-sm text-blue-400 font-bold tracking-widest flex items-center gap-1">
-                  <Flame className="w-3 h-3 animate-pulse" />
-                  DOMINA I MERCATI
+                <p className="font-mono-lab text-xs text-cyan-400 font-medium tracking-[0.25em] uppercase flex items-center gap-1.5 mt-1">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
+                  </span>
+                  Trading · Creator · Lab
                 </p>
               </div>
             </div>
-            
+
             <p className={`leading-relaxed mb-8 max-w-md ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
             }`}>
-              La leggendaria disciplina spartana incontra l'innovazione del trading algoritmico. 
-              <span className="text-cyan-500 font-bold">Unisciti a oltre 10,000 guerrieri</span> che hanno scelto 
-              la via della vittoria assoluta.
+              L'ecosistema italiano per costruire reddito digitale moderno. Trading professionale,
+              creator economy, formazione e operazioni in un unico lab.
+              <span className="block mt-2 font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// build · learn · earn · repeat</span>
             </p>
 
             {/* Social Links */}
@@ -168,20 +172,20 @@ const Footer = () => {
 
           {/* Navigation Columns */}
           <div>
-            <h4 className={`text-lg font-black mb-6 flex items-center gap-2 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h4 className={`font-mono-lab text-xs font-medium tracking-[0.25em] uppercase mb-5 flex items-center gap-2 ${
+              theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'
             }`}>
-              <Skull className="w-5 h-5 text-blue-500 animate-pulse" />
-              BATTAGLIA
+              <Cpu className="w-3.5 h-3.5" />
+              // Trading
             </h4>
             <ul className="space-y-3">
               {[
-                { name: 'Strategia Spartana', to: '/strategia', hot: true },
+                { name: 'Strategia', to: '/strategia', hot: true },
                 { name: 'Trading Room', to: '/trading-room' },
-                { name: 'Formazione Elite', to: '/formazione' },
-                { name: 'Segnali Premium', to: '/segnali', hot: true },
-                { name: 'Analisi Mercati', to: '/analisi' },
-                { name: 'Prodotti', to: '/products' }
+                { name: 'Formazione', to: '/formazione' },
+                { name: 'Segnali', to: '/segnali', hot: true },
+                { name: 'Analisi mercati', to: '/analisi' },
+                { name: 'Catalogo tool', to: '/products' }
               ].map((link, index) => (
                 <li key={index} className="group">
                   <Link 
@@ -206,18 +210,18 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className={`text-lg font-black mb-6 flex items-center gap-2 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h4 className={`font-mono-lab text-xs font-medium tracking-[0.25em] uppercase mb-5 flex items-center gap-2 ${
+              theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'
             }`}>
-              <Crown className="w-5 h-5 text-cyan-500 animate-pulse" />
-              RISORSE
+              <Sparkles className="w-3.5 h-3.5" />
+              // Risorse
             </h4>
             <ul className="space-y-3">
               {[
-                { name: 'Blog di Guerra', to: '/blog', new: true },
-                { name: 'Video Tutorial', to: '/video-tutorial' },
-                { name: 'Podcast Spartano', to: '/podcast', new: true },
-                { name: 'Glossario Trading', to: '/glossario' },
+                { name: 'Blog', to: '/blog', new: true },
+                { name: 'Video tutorial', to: '/video-tutorial' },
+                { name: 'Podcast', to: '/podcast', new: true },
+                { name: 'Glossario', to: '/glossario' },
                 { name: 'Calcolatori', to: '/calcolatori' },
                 { name: 'Dashboard', to: '/dashboard' }
               ].map((link, index) => (
@@ -244,17 +248,17 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className={`text-lg font-black mb-6 flex items-center gap-2 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h4 className={`font-mono-lab text-xs font-medium tracking-[0.25em] uppercase mb-5 flex items-center gap-2 ${
+              theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'
             }`}>
-              <Star className="w-5 h-5 text-cyan-500 animate-pulse" />
-              SUPPORTO
+              <BookOpen className="w-3.5 h-3.5" />
+              // Supporto
             </h4>
             <ul className="space-y-3">
               {[
-                { name: 'Centro Aiuto', to: '/centro-aiuto' },
-                { name: 'FAQ Guerrieri', to: '/faq' },
-                { name: 'Contatto Diretto', to: '/contatto' },
+                { name: 'Centro aiuto', to: '/centro-aiuto' },
+                { name: 'FAQ', to: '/faq' },
+                { name: 'Contatti', to: '/contatto' },
                 { name: 'Partnership', to: '/partnership' },
                 { name: 'Affiliazione', to: '/affiliazione' }
               ].map((link, index) => (
@@ -284,11 +288,9 @@ const Footer = () => {
             <div className={`flex flex-col sm:flex-row items-center gap-4 text-sm ${
               theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
             }`}>
-              <p>© 2025 Nexora Lab Trading</p>
-              <span className="hidden sm:block">•</span>
-              <p className="flex items-center gap-1">
-                Forgiato con <span className="text-blue-500">⚔️</span> in Italia
-              </p>
+              <p className="font-mono-lab text-xs tracking-widest">© 2025 NEXORA LAB</p>
+              <span className="hidden sm:block">·</span>
+              <p className="font-mono-lab text-xs tracking-widest">Made in Italy</p>
             </div>
             
             <div className="flex flex-wrap justify-center gap-6 text-sm">
@@ -328,29 +330,31 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Epic Quote */}
+        {/* Manifesto Quote */}
         <div className="mt-12 text-center">
           <blockquote className="relative">
-            <div className="text-6xl text-blue-900/20 font-serif absolute -top-4 left-1/2 transform -translate-x-1/2">"</div>
-            <p className={`italic text-lg font-light relative z-10 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            <p className={`italic text-base font-light relative z-10 max-w-2xl mx-auto ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
-              Μολὼν λαβέ - Vieni a prenderli
+              "Il futuro del reddito è un sistema modulare. Nexora Lab è il lab dove
+              lo costruisci, un modulo alla volta."
             </p>
-            <p className="text-cyan-500 text-sm mt-2 font-bold tracking-wider">
-              - Re Leonida I di Sparta -
+            <p className="font-mono-lab text-cyan-500 text-xs mt-3 tracking-[0.3em] uppercase">
+              — Nexora Lab · Manifesto
             </p>
           </blockquote>
         </div>
       </div>
 
-      {/* Floating Badge */}
+      {/* Scroll-to-top Badge */}
       <div className="fixed bottom-8 right-8 z-50 hidden xl:block">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-3 rounded-full shadow-2xl animate-bounce">
-          <a href="#top" className="flex items-center justify-center text-white">
-            <Shield className="w-6 h-6" />
-          </a>
-        </div>
+        <a
+          href="#top"
+          className="flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-3 rounded-full shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-shadow"
+          aria-label="Torna su"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </a>
       </div>
     </footer>
   );

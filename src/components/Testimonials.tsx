@@ -138,7 +138,7 @@ const Testimonials = () => {
   );
 
   return (
-    <section id="veterani" className={`py-20 transition-colors duration-500 ${
+    <section id="veterani" className={`py-24 transition-colors duration-500 ${
       theme === 'dark'
         ? 'bg-gradient-to-b from-black to-blue-950/20'
         : 'bg-gradient-to-b from-white to-blue-50/40'
@@ -146,19 +146,20 @@ const Testimonials = () => {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 px-4 py-2 rounded-full border border-cyan-600/30 mb-6">
-            <Quote className="w-4 h-4 text-cyan-500" />
-            <span className="text-cyan-400 text-sm font-medium">STORIE DI GLORIA</span>
+          <div className="inline-flex items-center gap-2 bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 backdrop-blur-sm">
+            <Quote className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-mono-lab text-xs text-cyan-300 tracking-[0.25em] uppercase">// Risultati Verificati</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>I </span>
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">VETERANI</span>
-            <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}> PARLANO</span>
-          </h2>
-          <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          <h2 className={`font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
           }`}>
-            Le testimonianze di chi ha già abbracciato la disciplina spartana e conquistato i mercati
+            Numeri reali, <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">membri reali</span>
+          </h2>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+          }`}>
+            Storie operative di chi sta usando il lab per costruire il proprio sistema
+            di reddito digitale: trading certificato e progetti creator validati.
           </p>
         </div>
 
@@ -293,15 +294,15 @@ const Testimonials = () => {
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           {
             [
-              { number: "100+", label: "Utenti Attivi" },
-              { number: "€500K+", label: "Volume Gestito" },
-              { number: "95%", label: "Soddisfazione Clienti" },
-              { number: "24/7", label: "Operatività Continua" }
+              { number: '500+', label: 'Membri attivi' },
+              { number: '€500K+', label: 'Volume gestito' },
+              { number: '95%', label: 'Soddisfazione' },
+              { number: '24/7', label: 'Lab operativo' }
             ].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-cyan-500 mb-2">{stat.number}</div>
-                <div className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                <div className="font-display text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent mb-2">{stat.number}</div>
+                <div className={`font-mono-lab text-[0.7rem] tracking-widest uppercase ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                 }`}>{stat.label}</div>
               </div>
             ))

@@ -1,6 +1,5 @@
-﻿import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MessageCircle, TrendingUp, Users, Mail, ArrowRight, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { MessageCircle, BookOpen, Users, Mail, ArrowRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const Community = () => {
@@ -17,42 +16,31 @@ const Community = () => {
     try {
       const response = await fetch('https://api.spartanofurioso.com/api/newsletter/subscribe', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          email,
-          source: 'community_page'
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'community_page' }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ 
-          type: 'success', 
-          text: '🎉 Benvenuto nella Falange! Controlla la tua email per confermare l\'iscrizione.' 
+        setMessage({
+          type: 'success',
+          text: 'Iscrizione confermata. Controlla l\'email per validare l\'indirizzo.',
         });
         setEmail('');
       } else {
-        setMessage({ 
-          type: 'error', 
-          text: data.error || 'Errore durante l\'iscrizione. Riprova.' 
-        });
+        setMessage({ type: 'error', text: data.error || 'Errore durante l\'iscrizione. Riprova.' });
       }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
-      setMessage({ 
-        type: 'error', 
-        text: 'Errore di connessione. Riprova più tardi.' 
-      });
+      setMessage({ type: 'error', text: 'Errore di connessione. Riprova più tardi.' });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section id="community" className={`py-20 transition-colors duration-500 ${
+    <section id="community" className={`py-24 transition-colors duration-500 ${
       theme === 'dark'
         ? 'bg-gradient-to-b from-blue-950/20 to-black'
         : 'bg-gradient-to-b from-blue-50/40 to-white'
@@ -60,61 +48,67 @@ const Community = () => {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 px-4 py-2 rounded-full border border-cyan-600/30 mb-6">
-            <Users className="w-4 h-4 text-cyan-500" />
-            <span className="text-cyan-400 text-sm font-medium">UNISCITI ALLA FRATELLANZA</span>
+          <div className="inline-flex items-center gap-2 bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 backdrop-blur-sm">
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-mono-lab text-xs text-cyan-300 tracking-[0.25em] uppercase">// Community</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>LA </span>
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">COMMUNITY</span>
-            <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}> SPARTANA</span>
-          </h2>
-          <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          <h2 className={`font-display text-4xl md:text-6xl font-bold mb-6 tracking-tight ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
           }`}>
-            Entra a far parte della più disciplinata community di trader. 
-            Condividiamo strategie, risultati e l'inarrestabile spirito spartano.
+            Una <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">community</span> di builder
+          </h2>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+          }`}>
+            Trader, creator e operatori digitali che condividono setup, contenuti e numeri
+            reali. Niente promesse facili: discussioni concrete e strumenti che funzionano.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
           {/* Community Features */}
-          <div className="space-y-8">
-            <h3 className={`text-2xl font-bold mb-8 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>Benefici della Fratellanza</h3>
-            
+          <div className="space-y-5">
+            <h3 className={`font-display text-2xl font-semibold mb-6 tracking-tight ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>Cosa trovi nel canale</h3>
+
             {[
               {
                 icon: MessageCircle,
-                title: "Canale Telegram Esclusivo",
-                description: "Accesso al canale privato con segnali in tempo reale, analisi di mercato e supporto 24/7 da parte degli spartani veterani."
+                tag: '01',
+                title: 'Canale privato',
+                description: 'Telegram e Discord dedicati: aggiornamenti operativi, segnali, drop di contenuti e Q&A settimanali con i mentor.',
               },
               {
-                icon: TrendingUp,
-                title: "Strategie Condivise",
-                description: "Scopri le tattiche più efficaci dalla community. Ogni spartano condivide le proprie configurazioni vincenti."
+                icon: BookOpen,
+                tag: '02',
+                title: 'Setup e playbook condivisi',
+                description: 'Configurazioni di bot, template per creator, script di ricerca, framework di posizionamento. Riutilizzabili e versionati.',
               },
               {
                 icon: Users,
-                title: "Supporto Fraterno",
-                description: "Non combatti da solo. La fratellanza spartana ti supporta in ogni battaglia contro i mercati volatili."
-              }
+                tag: '03',
+                title: 'Peer support reale',
+                description: 'Niente toxic positivity. Membri che si confrontano sui numeri, fanno review reciproche e condividono cosa non ha funzionato.',
+              },
             ].map((feature, index) => (
-              <div key={index} className={`flex items-start space-x-4 p-6 border border-cyan-600/30 rounded-xl hover:border-cyan-500/50 transition-all duration-300 ${
+              <div key={index} className={`flex items-start gap-4 p-5 border rounded-xl transition-all duration-300 hover:-translate-y-0.5 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-gray-900 to-black'
-                  : 'bg-gradient-to-br from-white to-gray-50'
+                  ? 'bg-slate-900/60 border-slate-700/60 backdrop-blur-sm hover:border-cyan-400'
+                  : 'bg-white border-slate-200 hover:border-cyan-400 shadow-sm'
               }`}>
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-800 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="w-6 h-6 text-cyan-400" />
+                <div className="w-11 h-11 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-cyan-500/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <feature.icon className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div>
-                  <h4 className={`text-lg font-bold mb-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>{feature.title}</h4>
-                  <p className={`leading-relaxed ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="font-mono-lab text-xs text-cyan-500 tracking-widest">{feature.tag}</span>
+                    <h4 className={`font-display text-base font-semibold ${
+                      theme === 'dark' ? 'text-white' : 'text-slate-900'
+                    }`}>{feature.title}</h4>
+                  </div>
+                  <p className={`text-sm leading-relaxed ${
+                    theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                   }`}>{feature.description}</p>
                 </div>
               </div>
@@ -122,82 +116,85 @@ const Community = () => {
           </div>
 
           {/* Newsletter Signup */}
-          <div className={`border border-cyan-600/30 rounded-xl p-8 ${
+          <div className={`border rounded-xl p-8 ${
             theme === 'dark'
-              ? 'bg-gradient-to-br from-gray-900 to-black'
-              : 'bg-gradient-to-br from-white to-gray-50'
+              ? 'bg-slate-900/60 border-slate-700/60 backdrop-blur-sm'
+              : 'bg-white border-slate-200 shadow-sm'
           }`}>
-            <div className="text-center mb-8">
-              <h3 className={`text-2xl font-bold mb-4 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>Ricevi il Bollettino di Guerra</h3>
-              <p className={`leading-relaxed ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            <div className="mb-6">
+              <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.25em] uppercase">// Lab Brief</span>
+              <h3 className={`font-display text-2xl md:text-3xl font-semibold mt-2 mb-3 tracking-tight ${
+                theme === 'dark' ? 'text-white' : 'text-slate-900'
               }`}>
-                Aggiornamenti settimanali sui risultati, nuove strategie e wisdom spartana 
-                applicata ai mercati finanziari.
+                Insight settimanali, zero spam
+              </h3>
+              <p className={`text-sm leading-relaxed ${
+                theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+              }`}>
+                Una mail a settimana con: 1 setup operativo, 1 framework creator, 1 cosa che ha
+                funzionato (o no) sui mercati. Niente fuffa motivazionale.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className={`block text-sm font-medium mb-2 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                <label htmlFor="email" className={`block text-xs font-mono-lab tracking-widest uppercase mb-2 ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                 }`}>
-                  La tua email da guerriero
+                  Email
                 </label>
                 <input
                   type="email"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="spartano@esempio.com"
-                  className={`w-full px-4 py-3 border border-cyan-600/50 rounded-lg placeholder-gray-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 ${
+                  placeholder="tu@dominio.com"
+                  className={`w-full px-4 py-3 border rounded-lg transition-all duration-300 ${
                     theme === 'dark'
-                      ? 'bg-black text-white'
-                      : 'bg-white text-gray-900'
+                      ? 'bg-slate-950/50 border-slate-700 text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20'
+                      : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20'
                   }`}
                   required
                 />
               </div>
-              
-              <button 
+
+              <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-800 to-blue-600 px-6 py-4 rounded-lg font-bold hover:from-blue-700 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-3.5 rounded-lg font-display font-semibold transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>ARRUOLAMENTO IN CORSO...</span>
+                    <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                    <span>Invio in corso...</span>
                   </>
                 ) : (
                   <>
-                    <Mail className="w-5 h-5" />
-                    <span>ARRUOLATI NELLA FALANGE</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <Mail className="w-4 h-4" />
+                    <span>Iscriviti al Lab Brief</span>
+                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
 
-              {/* Success/Error Message */}
               {message && (
-                <div className={`p-4 rounded-lg border ${
-                  message.type === 'success' 
-                    ? 'bg-green-900/20 border-green-700 text-green-300' 
-                    : 'bg-blue-900/20 border-blue-700 text-blue-300'
+                <div className={`p-3 rounded-lg border text-sm ${
+                  message.type === 'success'
+                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                    : 'bg-rose-500/10 border-rose-500/40 text-rose-300'
                 }`}>
-                  <p className="text-sm font-medium">{message.text}</p>
+                  {message.text}
                 </div>
               )}
             </form>
 
-            {/* Disclaimer */}
-            <div className="mt-6 p-4 bg-cyan-600/10 border border-cyan-600/30 rounded-lg">
-              <p className="text-xs text-gray-400 leading-relaxed">
-                <strong className="text-cyan-500">⚠️ AVVERTENZA SPARTANA:</strong> Come ogni battaglia, il trading comporta rischi. 
-                Fury Of Sparta è uno strumento potente, ma la vittoria finale dipende dalla tua disciplina e gestione del rischio. 
-                I risultati passati non garantiscono performance future. Combatti responsabilmente.
+            <div className="mt-6 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-lg">
+              <p className={`font-mono-lab text-xs leading-relaxed ${
+                theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+              }`}>
+                <span className="text-cyan-400">// disclaimer:</span> il trading e gli investimenti
+                comportano rischi. I risultati passati non garantiscono performance future. I
+                contenuti di Nexora Lab sono educativi, non costituiscono consulenza finanziaria.
               </p>
             </div>
           </div>
@@ -205,15 +202,15 @@ const Community = () => {
 
         {/* Social Proof */}
         <div className="mt-16 text-center">
-          <p className={`mb-6 ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}>Unisciti a oltre 300 spartani che stanno già dominando i mercati</p>
-          <div className="flex justify-center space-x-4">
+          <p className={`font-mono-lab text-xs tracking-widest uppercase mb-4 ${
+            theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+          }`}>// 500+ membri attivi · 150+ recensioni</p>
+          <div className="flex justify-center gap-1">
             {[...Array(5)].map((_, index) => (
-              <Star key={index} className="w-6 h-6 text-cyan-500 fill-current" />
+              <Star key={index} className="w-5 h-5 text-cyan-400 fill-current" />
             ))}
           </div>
-          <p className="text-cyan-500 font-medium mt-2">4.9/5 stelle da 150+ recensioni</p>
+          <p className="font-display text-cyan-400 font-semibold mt-2">4.9 / 5 · feedback verificati</p>
         </div>
       </div>
     </section>

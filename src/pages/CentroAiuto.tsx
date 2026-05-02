@@ -16,13 +16,16 @@ const CentroAiuto = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            CENTRO AIUTO
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Help</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Trova risposte rapide, guide dettagliate e supporto immediato. Siamo qui per aiutarti.
+            Centro <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">aiuto</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Risposte rapide, guide approfondite e supporto diretto. Tutto quello che ti serve per partire e operare nel lab.
           </p>
         </div>
 

@@ -11,24 +11,27 @@ const TradingRoom = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            TRADING ROOM
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Trading Room</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
           }`}>
-            Entra nella sala operativa dove i guerrieri spartani combattono insieme. 
-            Sessioni live, analisi in tempo reale e supporto continuo dalla community.
+            La <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">sala operativa</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+          }`}>
+            Sessioni live, analisi in tempo reale e supporto operativo continuo. Una community
+            di trader e analisti che condivide setup, watchlist e decisioni in diretta.
           </p>
         </div>
 
         {/* Hero Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {[
-            { label: 'Membri Attivi', value: '2,500+', icon: Users },
-            { label: 'Sessioni/Settimana', value: '15+', icon: Video },
-            { label: 'Segnali/Giorno', value: '10-20', icon: Bell },
-            { label: 'Supporto', value: '24/7', icon: Clock }
+            { label: 'Membri attivi', value: '2,500+', icon: Users },
+            { label: 'Sessioni / settimana', value: '15+', icon: Video },
+            { label: 'Segnali / giorno', value: '10-20', icon: Bell },
+            { label: 'Lab support', value: '24/7', icon: Clock }
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center border transition-all duration-300 ${
               theme === 'dark'
@@ -53,22 +56,23 @@ const TradingRoom = () => {
               ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
               : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <Users className="w-12 h-12 text-cyan-500 mb-4" />
-            <h3 className={`text-2xl font-bold mb-3 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>Community Elite</h3>
-            <p className={`mb-4 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            <Users className="w-10 h-10 text-cyan-400 mb-4" />
+            <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// 01 Community</span>
+            <h3 className={`font-display text-2xl font-semibold mt-1 mb-3 tracking-tight ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>Community Pro</h3>
+            <p className={`mb-4 text-sm leading-relaxed ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
-              Unisciti a migliaia di trader spartani. Canali Discord dedicati con moderatori esperti, 
-              mentori professionisti e una community che condivide strategie vincenti.
+              Canali Discord e Telegram dedicati con moderatori esperti, mentor verificati
+              e una community che condivide setup, watchlist e analisi.
             </p>
             <ul className={`space-y-2 text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
             }`}>
-              <li>• Canali tematici per ogni asset</li>
-              <li>• Mentorship 1-on-1 disponibile</li>
-              <li>• Network di trader professionisti</li>
+              <li>· Canali tematici per ogni asset</li>
+              <li>· Mentorship 1-on-1 disponibile</li>
+              <li>· Network di trader e analisti</li>
             </ul>
           </div>
           <div className={`rounded-lg p-8 border hover:scale-105 transition-all duration-300 ${
@@ -76,22 +80,23 @@ const TradingRoom = () => {
               ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
               : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <Headphones className="w-12 h-12 text-cyan-500 mb-4" />
-            <h3 className={`text-2xl font-bold mb-3 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>Sessioni Live</h3>
-            <p className={`mb-4 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            <Headphones className="w-10 h-10 text-cyan-400 mb-4" />
+            <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// 02 Live</span>
+            <h3 className={`font-display text-2xl font-semibold mt-1 mb-3 tracking-tight ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>Sessioni live</h3>
+            <p className={`mb-4 text-sm leading-relaxed ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
-              Streaming video privati ogni giorno. Analisi pre-market, operatività in diretta, 
-              Q&A interattive e revisione delle performance settimanali.
+              Streaming video privati ogni giorno: analisi pre-market, operatività in diretta,
+              Q&amp;A e review settimanali delle performance.
             </p>
             <ul className={`space-y-2 text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
             }`}>
-              <li>• Live trading ogni mattina</li>
-              <li>• Analisi tecnica approfondita</li>
-              <li>• Replay disponibili 24/7</li>
+              <li>· Live operativo ogni mattina</li>
+              <li>· Analisi tecnica approfondita</li>
+              <li>· Replay disponibili 24/7</li>
             </ul>
           </div>
           <div className={`rounded-lg p-8 border hover:scale-105 transition-all duration-300 ${
@@ -99,22 +104,23 @@ const TradingRoom = () => {
               ? 'bg-gradient-to-b from-gray-900 to-black border-blue-800/30 hover:border-cyan-500/50'
               : 'bg-white border-blue-200 hover:border-cyan-400 shadow-md hover:shadow-xl'
           }`}>
-            <BarChart2 className="w-12 h-12 text-cyan-500 mb-4" />
-            <h3 className={`text-2xl font-bold mb-3 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <BarChart2 className="w-10 h-10 text-cyan-400 mb-4" />
+            <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// 03 Analisi</span>
+            <h3 className={`font-display text-2xl font-semibold mt-1 mb-3 tracking-tight ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
             }`}>Analisi Pro</h3>
-            <p className={`mb-4 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            <p className={`mb-4 text-sm leading-relaxed ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
-              Setup giornalieri, livelli chiave, report settimanali e analisi macro. 
-              Tutto quello che serve per operare con consapevolezza e precisione.
+              Setup giornalieri, livelli chiave, report settimanali e analisi macro.
+              Tutto quello che serve per operare con metodo e dati.
             </p>
             <ul className={`space-y-2 text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
             }`}>
-              <li>• Report pre/post mercato</li>
-              <li>• Livelli supporto/resistenza</li>
-              <li>• Calendario economico commentato</li>
+              <li>· Report pre / post mercato</li>
+              <li>· Livelli supporto / resistenza</li>
+              <li>· Calendario economico commentato</li>
             </ul>
           </div>
         </div>
@@ -125,15 +131,15 @@ const TradingRoom = () => {
             ? 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border-blue-800/30'
             : 'bg-gradient-to-r from-blue-50 via-white to-blue-50 border-blue-200 shadow-lg'
         }`}>
-          <h2 className={`text-3xl font-black mb-6 text-center ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>Cosa Include</h2>
+          <h2 className={`font-display text-3xl font-semibold mb-6 text-center tracking-tight ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
+          }`}>Cosa è incluso</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { icon: MessageSquare, title: 'Chat Telegram Premium', desc: 'Segnali istantanei e discussioni in tempo reale' },
-              { icon: Video, title: 'Webinar Settimanali', desc: 'Formazione continua con trader professionisti' },
-              { icon: TrendingUp, title: 'Watchlist Condivise', desc: 'Asset monitorati dal team di analisti' },
-              { icon: Shield, title: 'Risk Management', desc: 'Tools e calcolatori per gestire il rischio' }
+              { icon: MessageSquare, title: 'Chat Telegram premium', desc: 'Segnali e discussioni in tempo reale' },
+              { icon: Video, title: 'Webinar settimanali', desc: 'Formazione continua con trader e analisti' },
+              { icon: TrendingUp, title: 'Watchlist condivise', desc: 'Asset monitorati dal team di analisti' },
+              { icon: Shield, title: 'Risk management', desc: 'Tool e calcolatori per gestire il rischio' }
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-4">
                 <item.icon className="w-8 h-8 text-cyan-500 flex-shrink-0" />
@@ -151,11 +157,12 @@ const TradingRoom = () => {
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
-          <h2 className="text-3xl font-black text-white mb-4">Entra nella Trading Room</h2>
-          <p className="text-gray-100 mb-6">Inizia a fare trading con il supporto di una community di guerrieri</p>
-          <button className="px-8 py-4 bg-black border-2 border-cyan-500 text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 hover:border-cyan-400 transition-all duration-300 transform hover:scale-105">
-            ACCEDI ALLA ROOM
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-center">
+          <span className="font-mono-lab text-xs text-white/70 tracking-[0.3em] uppercase">// Join now</span>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mt-2 mb-3 tracking-tight">Entra nella Trading Room</h2>
+          <p className="text-white/80 mb-6 max-w-xl mx-auto">Operatività live e community di trader che condividono setup reali.</p>
+          <button className="px-7 py-3 bg-white text-blue-600 rounded-lg font-display font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
+            Accedi alla room →
           </button>
         </div>
       </div>

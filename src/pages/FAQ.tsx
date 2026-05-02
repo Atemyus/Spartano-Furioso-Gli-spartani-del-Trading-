@@ -123,17 +123,17 @@ const FAQ = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl mb-6 animate-pulse">
-            <HelpCircle className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            FAQ GUERRIERI
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// FAQ</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Risposte alle domande più frequenti. Se non trovi quello che cerchi, 
-            il nostro supporto è sempre disponibile 24/7.
+            Domande <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">frequenti</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Risposte rapide alle domande più comuni. Se non trovi quello che cerchi,
+            il team del lab è disponibile 24/7.
           </p>
         </div>
 
@@ -167,8 +167,8 @@ const FAQ = () => {
           {[
             { label: 'Domande', value: allQuestions.length.toString() },
             { label: 'Categorie', value: faqCategories.length.toString() },
-            { label: 'Tempo Risposta', value: '<2min' },
-            { label: 'Soddisfazione Clienti', value: '95%' }
+            { label: 'Tempo risposta', value: '<2min' },
+            { label: 'Soddisfazione', value: '95%' }
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center transition-all duration-300 ${
               theme === 'light'
@@ -280,15 +280,16 @@ const FAQ = () => {
         )}
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl font-black text-white mb-4">Non hai trovato la risposta?</h2>
-          <p className="text-gray-100 mb-6">Il nostro team di supporto è pronto ad aiutarti 24/7</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
-              Apri Live Chat
+        <div className="mt-16 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-center max-w-4xl mx-auto">
+          <span className="font-mono-lab text-xs text-white/70 tracking-[0.3em] uppercase">// Need help?</span>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mt-2 mb-3 tracking-tight">Non hai trovato la risposta?</h2>
+          <p className="text-white/80 mb-6 max-w-xl mx-auto">Il team del lab è pronto ad aiutarti 24/7.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button className="px-7 py-3 bg-white text-blue-600 rounded-lg font-display font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
+              Apri live chat →
             </button>
-            <button className={`px-8 py-4 bg-white/10 text-white rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border-2 ${theme === 'light' ? 'border-white/30' : 'border-transparent'}`}>
-              Invia Email
+            <button className="px-7 py-3 bg-white/10 text-white border border-white/30 rounded-lg font-display font-semibold transition-all duration-300 hover:bg-white/20">
+              Invia email
             </button>
           </div>
         </div>

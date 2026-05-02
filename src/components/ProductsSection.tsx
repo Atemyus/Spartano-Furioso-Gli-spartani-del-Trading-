@@ -233,29 +233,27 @@ const ProductsSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <Swords className="w-8 h-8 text-blue-600" />
-            <h2 className="text-5xl md:text-6xl font-black">
-              <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-                ARSENALE
-              </span>
-              <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>NEXORA</span>
-            </h2>
-            <Swords className="w-8 h-8 text-blue-600 scale-x-[-1]" />
+          <div className="inline-flex items-center gap-2 bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 backdrop-blur-sm">
+            <span className="font-mono-lab text-xs text-cyan-300 tracking-[0.25em] uppercase">// Catalogo Lab</span>
           </div>
-          <p className={`text-xl max-w-3xl mx-auto font-medium ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          <h2 className={`font-display text-5xl md:text-6xl font-bold tracking-tight mb-6 ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
           }`}>
-            Scegli le tue armi per dominare i mercati. Ogni strumento è forgiato con la 
-            <span className="text-cyan-500"> disciplina spartana</span> e testato in 
-            <span className="text-blue-500"> battaglia reale</span>.
+            Strumenti del{' '}
+            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              lab
+            </span>
+          </h2>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+          }`}>
+            Bot, indicatori, percorsi formativi e toolkit creator: ogni strumento è
+            documentato, testato e mantenuto. Scegli quello che serve al tuo sistema.
           </p>
-          {/* Debug: mostra numero prodotti e ultimo aggiornamento */}
-          <p className={`text-sm mt-2 ${
-            theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+          <p className={`font-mono-lab text-xs tracking-widest mt-3 ${
+            theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
           }`}>
-            {loading ? 'Caricamento...' : `${products.length} prodotti disponibili`} • 
-            Aggiornamento: {lastUpdate.toLocaleTimeString()}
+            {loading ? '// loading...' : `// ${products.length} item disponibili`} · sync {lastUpdate.toLocaleTimeString()}
           </p>
         </div>
 

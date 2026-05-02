@@ -40,24 +40,27 @@ const Analisi = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            ANALISI MERCATI
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Research</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Analisi professionali multi-dimensionali per comprendere i mercati e prendere decisioni informate. 
-            Tecnica, quantitativa e fondamentale integrate in un unico sistema.
+            Analisi <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">multi-livello</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Tecnica, quantitativa, fondamentale e di sentiment: quattro lenti integrate
+            per leggere i mercati con metodo e prendere decisioni basate sui dati.
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           {[
-            { label: 'Mercati Analizzati', value: '50+' },
-            { label: 'Report/Mese', value: '120+' },
-            { label: 'Accuratezza', value: '87%' },
-            { label: 'Anni di Dati', value: '15+' }
+            { label: 'Mercati monitorati', value: '50+' },
+            { label: 'Report / mese', value: '120+' },
+            { label: 'Accuratezza media', value: '87%' },
+            { label: 'Anni di dati', value: '15+' }
           ].map((stat, i) => (
             <div key={i} className={`rounded-lg p-4 text-center ${
               theme === 'light'
@@ -226,11 +229,12 @@ const Analisi = () => {
         </div>
 
         {/* CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center">
-          <h2 className="text-3xl font-black text-white mb-4">Accedi alle Analisi</h2>
-          <p className="text-gray-100 mb-6">Report professionali, strumenti avanzati e aggiornamenti in tempo reale</p>
-          <button className={`px-8 py-4 bg-black text-cyan-500 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all duration-300 hover:scale-105 active:scale-95 border-2 ${theme === 'light' ? 'border-gray-900 shadow-lg' : 'border-transparent'}`}>
-            INIZIA SUBITO
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-center">
+          <span className="font-mono-lab text-xs text-white/70 tracking-[0.3em] uppercase">// Access</span>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mt-2 mb-3 tracking-tight">Accedi al lab di analisi</h2>
+          <p className="text-white/80 mb-6 max-w-xl mx-auto">Report multi-livello, scanner e alert in tempo reale.</p>
+          <button className="px-7 py-3 bg-white text-blue-600 rounded-lg font-display font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
+            Inizia ora →
           </button>
         </div>
       </div>
