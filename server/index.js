@@ -288,7 +288,17 @@ app.listen(PORT, async () => {
   
   // Initialize MongoDB for admin routes
   await initializeMongoDB();
-  
+
+  // Auto-setup database (admin + prodotti) se SEED_ON_BOOT=true
+  if (process.env.SEED_ON_BOOT === 'true') {
+    try {
+      const { runBootstrap } = await import('./scripts/bootstrapSetup.js');
+      await runBootstrap();
+    } catch (error) {
+      console.error('⚠️  Bootstrap auto-setup non riuscito:', error.message);
+    }
+  }
+
   // Initialize trial scheduler (async)
   try {
     await initializeTrialScheduler();
