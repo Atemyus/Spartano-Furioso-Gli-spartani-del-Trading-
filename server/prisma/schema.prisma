@@ -159,3 +159,30 @@ model Subscription {
   @@map("subscriptions")
 }
 
+
+model Analytics {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  page      String   @default("/")
+  referrer  String?
+  userAgent String?
+  sessionId String?
+  ip        String?
+  country   String?
+  device    String   @default("unknown")
+  browser   String   @default("unknown")
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([sessionId])
+  @@index([page])
+  @@map("analytics")
+}
+
+model AppState {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("app_state")
+}

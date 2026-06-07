@@ -3,11 +3,17 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { PrismaClient } from '@prisma/client';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const router = express.Router();
+const prisma = new PrismaClient();
+
+// Chiave del documento MongoDB che contiene tutti i contenuti dei corsi + progressi.
+// Persistente tra i redeploy (a differenza del vecchio file su disco).
+const COURSE_CONTENT_KEY = 'course-content';
 
 // Middleware di autenticazione semplificato
 const authenticateToken = (req, res, next) => {
@@ -30,14 +36,42 @@ const USERS_FILE = path.join(__dirname, '../database/data/users.json');
 const PRODUCTS_FILE = path.join(__dirname, '../database/data/products.json');
 
 // Helper functions
+// Legge il documento dei contenuti corsi da MongoDB.
+// Se non esiste ancora (primo avvio dopo la migrazione), lo inizializza
+// leggendo una sola volta il file committato e lo salva su MongoDB.
 async function loadCourseContent() {
   try {
-    const data = await fs.readFile(COURSE_CONTENT_FILE, 'utf-8');
-    const content = JSON.parse(data);
-    
-    // Sync with products of category "Formazione"
+    let content;
+
+    const record = await prisma.appState.findUnique({
+      where: { key: COURSE_CONTENT_KEY }
+    });
+
+    if (record && record.value) {
+      content = record.value;
+    } else {
+      // Seed iniziale dal file committato nel repo (una tantum)
+      try {
+        const data = await fs.readFile(COURSE_CONTENT_FILE, 'utf-8');
+        content = JSON.parse(data);
+        console.log('🌱 [courses] Seed contenuti corsi da file -> MongoDB');
+      } catch (seedErr) {
+        content = { courses: {}, userProgress: {} };
+      }
+      await prisma.appState.upsert({
+        where: { key: COURSE_CONTENT_KEY },
+        create: { key: COURSE_CONTENT_KEY, value: content },
+        update: { value: content }
+      });
+    }
+
+    // Garantisce la struttura minima
+    if (!content.courses) content.courses = {};
+    if (!content.userProgress) content.userProgress = {};
+
+    // Sync con i prodotti di formazione (come prima)
     await syncWithFormationProducts(content);
-    
+
     return content;
   } catch (error) {
     console.error('Error loading course content:', error);
@@ -111,9 +145,14 @@ async function syncWithFormationProducts(content) {
   }
 }
 
+// Salva i contenuti corsi su MongoDB (persistente tra i redeploy).
 async function saveCourseContent(data) {
   try {
-    await fs.writeFile(COURSE_CONTENT_FILE, JSON.stringify(data, null, 2));
+    await prisma.appState.upsert({
+      where: { key: COURSE_CONTENT_KEY },
+      create: { key: COURSE_CONTENT_KEY, value: data },
+      update: { value: data }
+    });
     return true;
   } catch (error) {
     console.error('Error saving course content:', error);
