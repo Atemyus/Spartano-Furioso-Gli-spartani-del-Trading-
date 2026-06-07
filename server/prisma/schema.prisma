@@ -23,9 +23,11 @@ model User {
   registrationIP            String?
   deviceHash                String?
   lastLogin                 DateTime?
+  stripeCustomerId          String?
+  subscription              Json?     // Abbonamento "embedded" (status, plan, ecc.)
   createdAt                 DateTime  @default(now())
   trials                    Trial[]
-  
+
   @@index([role])
   @@index([verificationToken])
   @@index([resetPasswordToken])
@@ -123,20 +125,37 @@ model Product {
 }
 
 model Order {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String   @db.ObjectId
-  amount          Float
-  currency        String   @default("eur")
-  items           Json     // Array of items
-  status          String   @default("pending") // pending, completed, failed, cancelled
-  notes           String?
-  stripeSessionId String?
-  stripePaymentId String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber        String?
+  userId             String?   @db.ObjectId
+  customerEmail      String?
+  customerName       String?
+  productId          String?
+  productName        String?
+  productType        String?
+  plan               String?
+  amount             Float     @default(0)
+  currency           String    @default("eur")
+  items              Json?     // Array of items
+  status             String    @default("pending") // pending, confirmed, completed, failed, cancelled, refunded
+  paymentStatus      String?   // paid, denied, refunded, failed
+  paymentProvider    String?   // stripe, paypal, crypto-nowpayments
+  paymentId          String?
+  mode               String?   // payment, subscription
+  notes              String?
+  accessDetails      Json?
+  metadata           Json?
+  cancellationReason String?
+  confirmedAt        DateTime?
+  cancelledAt        DateTime?
+  stripeSessionId    String?
+  stripePaymentId    String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
   @@index([userId])
   @@index([status])
+  @@index([paymentId])
   @@index([stripeSessionId])
   @@map("orders")
 }

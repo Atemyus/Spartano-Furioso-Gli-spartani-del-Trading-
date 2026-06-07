@@ -1,5 +1,5 @@
 import express from 'express';
-import db from '../database/index.js';
+import db from '../database/orders.js';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
 
 const router = express.Router();
@@ -7,7 +7,7 @@ const router = express.Router();
 // Get all orders (Admin only)
 router.get('/', async (req, res) => {
   try {
-    const orders = db.getAllOrders();
+    const orders = await db.getAllOrders();
     res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 // Get single order by ID
 router.get('/:id', async (req, res) => {
   try {
-    const order = db.getOrderById(req.params.id);
+    const order = await db.getOrderById(req.params.id);
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
     }
@@ -35,7 +35,7 @@ router.post('/:id/confirm', async (req, res) => {
     const { id } = req.params;
     const { telegramLink, vimeoLink, vimeoPassword } = req.body;
     
-    const order = db.getOrderById(id);
+    const order = await db.getOrderById(id);
     
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
@@ -46,7 +46,7 @@ router.post('/:id/confirm', async (req, res) => {
     }
     
     // Update order status
-    const updatedOrder = db.updateOrder(id, { 
+    const updatedOrder = await db.updateOrder(id, { 
       status: 'confirmed',
       confirmedAt: new Date().toISOString(),
       accessDetails: {
@@ -100,13 +100,13 @@ router.post('/:id/cancel', async (req, res) => {
     const { id } = req.params;
     const { reason } = req.body;
     
-    const order = db.getOrderById(id);
+    const order = await db.getOrderById(id);
     
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
     }
     
-    const updatedOrder = db.updateOrder(id, { 
+    const updatedOrder = await db.updateOrder(id, { 
       status: 'cancelled',
       cancelledAt: new Date().toISOString(),
       cancellationReason: reason || 'Annullato dall\'amministratore'
@@ -150,7 +150,7 @@ router.post('/:id/cancel', async (req, res) => {
 router.get('/status/:status', async (req, res) => {
   try {
     const { status } = req.params;
-    const allOrders = db.getAllOrders();
+    const allOrders = await db.getAllOrders();
     const filteredOrders = allOrders.filter(order => order.status === status);
     res.json(filteredOrders);
   } catch (error) {
@@ -162,7 +162,7 @@ router.get('/status/:status', async (req, res) => {
 // Get orders statistics
 router.get('/stats', async (req, res) => {
   try {
-    const allOrders = db.getAllOrders();
+    const allOrders = await db.getAllOrders();
     
     // Calculate statistics
     const totalOrders = allOrders.length;
@@ -211,7 +211,7 @@ router.get('/stats', async (req, res) => {
 // Get pending orders count
 router.get('/stats/pending-count', async (req, res) => {
   try {
-    const allOrders = db.getAllOrders();
+    const allOrders = await db.getAllOrders();
     const pendingCount = allOrders.filter(order => order.status === 'pending').length;
     res.json({ count: pendingCount });
   } catch (error) {

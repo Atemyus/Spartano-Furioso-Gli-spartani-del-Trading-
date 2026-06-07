@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import db from '../database/index.js';
+import db from '../database/orders.js';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
 
 dotenv.config();
@@ -56,11 +56,11 @@ router.post('/', express.json(), async (req, res) => {
         const plan = metadata.plan;
 
         // Cerca se l'ordine esiste già nel database
-        let order = db.getOrderByPaymentId(orderId);
+        let order = await db.getOrderByPaymentId(orderId);
         
         if (!order) {
           // Crea nuovo ordine
-          order = db.createOrder({
+          order = await db.createOrder({
             orderNumber: `ORD-PP-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
             paymentProvider: 'paypal',
             paymentId: orderId,
@@ -108,9 +108,9 @@ router.post('/', express.json(), async (req, res) => {
         const capture = webhookEvent.resource;
         
         // Aggiorna lo stato dell'ordine se esiste
-        const order = db.getOrderByPaymentId(capture.id);
+        const order = await db.getOrderByPaymentId(capture.id);
         if (order) {
-          db.updateOrder(order.id, {
+          await db.updateOrder(order.id, {
             status: 'failed',
             paymentStatus: 'denied'
           });
@@ -123,9 +123,9 @@ router.post('/', express.json(), async (req, res) => {
         const refund = webhookEvent.resource;
         
         // Aggiorna lo stato dell'ordine
-        const order = db.getOrderByPaymentId(refund.id);
+        const order = await db.getOrderByPaymentId(refund.id);
         if (order) {
-          db.updateOrder(order.id, {
+          await db.updateOrder(order.id, {
             status: 'refunded',
             paymentStatus: 'refunded'
           });

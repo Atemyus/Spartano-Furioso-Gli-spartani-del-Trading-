@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
-import db from '../database/index.js';
+import db from '../database/orders.js';
 
 dotenv.config();
 
@@ -165,7 +165,7 @@ router.post('/paypal/capture-order', async (req, res) => {
     const customerName = captureData.payer?.name?.given_name || 'Studente';
 
     // Salva l'ordine nel database con status 'pending' (attesa conferma admin)
-    const order = db.createOrder({
+    const order = await db.createOrder({
       orderNumber: `ORD-PP-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
       paymentProvider: 'paypal',
       paymentId: captureData.id,
@@ -346,7 +346,7 @@ router.post('/crypto/webhook', async (req, res) => {
         const currency = (payment.price_currency || 'EUR').toUpperCase();
 
         // Salva l'ordine nel database con status 'pending'
-        const order = db.createOrder({
+        const order = await db.createOrder({
           orderNumber: `ORD-CR-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           paymentProvider: 'crypto-nowpayments',
           paymentId: payment.payment_id.toString(),
