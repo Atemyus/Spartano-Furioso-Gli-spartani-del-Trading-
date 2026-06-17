@@ -480,16 +480,48 @@ export default function OrdersManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {(order.paymentIntent || order.subscription) && (
-                        <a
-                          href={`https://dashboard.stripe.com/${order.mode === 'subscription' ? 'subscriptions' : 'payments'}/${order.subscription || order.paymentIntent}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-700 text-sm font-medium"
-                        >
-                          Vedi su Stripe →
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {order.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleConfirmOrder(order)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700 transition-colors"
+                              title="Conferma ordine e invia credenziali"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Conferma
+                            </button>
+                            <button
+                              onClick={() => cancelOrder(order.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors"
+                              title="Annulla ordine"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              Annulla
+                            </button>
+                          </>
+                        )}
+                        {order.status === 'confirmed' && (
+                          <button
+                            onClick={() => cancelOrder(order.id)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                            title="Annulla ordine"
+                          >
+                            <XCircle className="w-3.5 h-3.5" />
+                            Annulla
+                          </button>
+                        )}
+                        {(order.paymentIntent || order.subscription) && (
+                          <a
+                            href={`https://dashboard.stripe.com/${order.mode === 'subscription' ? 'subscriptions' : 'payments'}/${order.subscription || order.paymentIntent}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                          >
+                            Stripe →
+                          </a>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -508,6 +540,79 @@ export default function OrdersManagement() {
               {new Date(order.createdAt).toLocaleString('it-IT')}: {order.error}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal di conferma ordine */}
+      {showConfirmModal && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                Conferma ordine
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedOrder.productName || 'Prodotto'} · {selectedOrder.customerEmail}
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Confermando l'ordine verrà inviata al cliente un'email con le credenziali
+                di accesso. Puoi personalizzare i link qui sotto (opzionale).
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link Telegram</label>
+                <input
+                  type="text"
+                  value={telegramLink}
+                  onChange={(e) => setTelegramLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="https://t.me/..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link Vimeo / Corso</label>
+                <input
+                  type="text"
+                  value={vimeoLink}
+                  onChange={(e) => setVimeoLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="https://vimeo.com/..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password Vimeo (opzionale)</label>
+                <input
+                  type="text"
+                  value={vimeoPassword}
+                  onChange={(e) => setVimeoPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="Password di accesso"
+                />
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={confirmOrder}
+                className="px-4 py-2 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Conferma e invia
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

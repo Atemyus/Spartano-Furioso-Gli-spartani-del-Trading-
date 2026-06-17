@@ -190,33 +190,10 @@ const ProductsManagement: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Migrazione automatica quando i prodotti sono caricati
-  useEffect(() => {
-    const migrateIfNeeded = async () => {
-      const migrated = localStorage.getItem('products_migrated');
-      if (!migrated && products.length > 0) {
-        const inactiveProducts = products.filter(p => p.active === false);
-        if (inactiveProducts.length > 0) {
-          console.log(`Attivando ${inactiveProducts.length} prodotti...`);
-          try {
-            const token = localStorage.getItem('adminToken');
-            await fetch('https://api.spartanofurioso.com/api/admin/products/migrate-active', {
-              method: 'POST',
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
-            localStorage.setItem('products_migrated', 'true');
-            await fetchProducts();
-          } catch (e) {
-            console.error('Errore:', e);
-          }
-        } else {
-          localStorage.setItem('products_migrated', 'true');
-        }
-      }
-    };
-
-    migrateIfNeeded();
-  }, [products]);
+  // NOTA: rimossa la "migrazione automatica" che impostava active=true su TUTTI
+  // i prodotti all'apertura del pannello. Riattivava i prodotti nascosti
+  // dall'admin facendoli riapparire sul sito. Lo stato attivo/nascosto è ora
+  // gestito solo manualmente tramite il toggle Attiva/Nascondi.
 
   // ============= API FUNCTIONS =============
   const fetchProducts = async () => {
