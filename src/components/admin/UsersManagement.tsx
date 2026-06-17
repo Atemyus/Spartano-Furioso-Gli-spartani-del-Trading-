@@ -85,7 +85,9 @@ const UsersManagement: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('https://api.spartanofurioso.com/api/auth/register', {
+      // Usa l'endpoint admin (rispetta ruolo/stato/email verificata);
+      // /api/auth/register li ignorerebbe forzando user pending non verificato.
+      const response = await fetch('https://api.spartanofurioso.com/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,9 +100,13 @@ const UsersManagement: React.FC = () => {
         await fetchUsers();
         setIsCreateModalOpen(false);
         resetForm();
+      } else {
+        const err = await response.json().catch(() => ({}));
+        alert(err.error || 'Errore durante la creazione dell\'utente');
       }
     } catch (error) {
       console.error('Error creating user:', error);
+      alert('Errore di connessione durante la creazione dell\'utente');
     }
   };
 

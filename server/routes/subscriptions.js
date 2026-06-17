@@ -156,13 +156,49 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
   }
 });
 
-// Trova l'utente che possiede un certo abbonamento embedded
+// Trova l'utente che possiede un certo abbonamento:
+//  - prima nel campo embedded user.subscription
+//  - poi via Order (subscription id == order id o stripe id) -> match per email
 async function findUserBySubscriptionId(subscriptionId) {
   const users = await prisma.user.findMany();
-  return users.find(u =>
+  const direct = users.find(u =>
     u.subscription &&
     (u.subscription.id === subscriptionId || u.subscription.stripeId === subscriptionId)
   );
+  if (direct) return direct;
+
+  // Cerca tra gli ordini di tipo subscription
+  const order = await prisma.order.findFirst({
+    where: {
+      mode: 'subscription',
+      OR: [
+        { id: subscriptionId },
+        { paymentId: subscriptionId }
+      ]
+    }
+  });
+  if (!order?.customerEmail) return null;
+
+  const byEmail = users.find(u => u.email === order.customerEmail);
+  if (!byEmail) return null;
+
+  // Se l'utente non ha ancora un sub embedded, lo crea dalle info dell'ordine
+  // così cancel/pause/resume hanno qualcosa su cui agire
+  if (!byEmail.subscription) {
+    const seeded = {
+      id: subscriptionId,
+      productId: order.productId,
+      productName: order.productName,
+      amount: order.amount,
+      currency: order.currency,
+      interval: order.metadata?.interval || 'month',
+      status: 'active',
+      startDate: order.createdAt
+    };
+    await prisma.user.update({ where: { id: byEmail.id }, data: { subscription: seeded } });
+    byEmail.subscription = seeded;
+  }
+  return byEmail;
 }
 
 // Cancel subscription
@@ -174,9 +210,11 @@ router.post('/:subscriptionId/cancel', authenticateAdmin, async (req, res) => {
     const user = await findUserBySubscriptionId(subscriptionId);
     if (!user) return res.status(404).json({ error: 'Subscription not found' });
 
+    // Anche la cancellazione "a fine periodo" deve risultare visibilmente
+    // disattivata nella UI; usiamo lo stato dedicato 'cancel_pending'.
     const updatedSubscription = {
       ...user.subscription,
-      status: immediate ? 'canceled' : user.subscription.status,
+      status: immediate ? 'canceled' : 'cancel_pending',
       cancelAtPeriodEnd: !immediate,
       canceledAt: new Date().toISOString()
     };

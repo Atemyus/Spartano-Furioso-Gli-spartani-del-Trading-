@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,19 +16,49 @@ const prisma = new PrismaClient();
 // Persistente tra i redeploy (a differenza del vecchio file su disco).
 const COURSE_CONTENT_KEY = 'course-content';
 
-// Middleware di autenticazione semplificato
+// Middleware: verifica JWT (user token, fallback su admin token) e decodifica
+// realmente l'utente. Niente più userId hardcoded.
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Token richiesto' });
+  if (!token) return res.status(401).json({ error: 'Token richiesto' });
+
+  // Prova prima JWT_SECRET (utenti), poi JWT_ADMIN_SECRET (admin login)
+  let decoded = null;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (_) {
+    try {
+      decoded = jwt.verify(token, process.env.JWT_ADMIN_SECRET);
+    } catch (_) {
+      return res.status(403).json({ error: 'Token non valido o scaduto' });
+    }
   }
-  
-  // Per ora usiamo l'ID dell'utente esistente per testing
-  // In produzione dovremmo decodificare il JWT token
-  req.user = { userId: 'user_1757115708866' }; // ID dell'utente admin nel database
+
+  req.user = {
+    userId: decoded.userId || decoded.adminId || decoded.id,
+    email: decoded.email,
+    isAdmin: Boolean(decoded.isAdmin)
+  };
   next();
+};
+
+// Middleware: richiede ruolo admin (token admin OPPURE utente Prisma con role=ADMIN)
+const requireAdminAuth = async (req, res, next) => {
+  authenticateToken(req, res, async (err) => {
+    if (err) return;
+    try {
+      if (req.user?.isAdmin) return next();
+      if (req.user?.userId) {
+        const u = await prisma.user.findUnique({ where: { id: req.user.userId } });
+        if (u && u.role === 'ADMIN') return next();
+      }
+      return res.status(403).json({ error: 'Accesso amministratore richiesto' });
+    } catch (e) {
+      console.error('Errore controllo admin:', e);
+      return res.status(500).json({ error: 'Errore durante il controllo dei permessi' });
+    }
+  });
 };
 
 // File paths
@@ -290,16 +321,8 @@ router.post('/:courseId/progress', authenticateToken, async (req, res) => {
 });
 
 // Admin: Update course content
-router.put('/:courseId/content', authenticateToken, async (req, res) => {
+router.put('/:courseId/content', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId } = req.params;
     const { modules, name, description } = req.body;
     
@@ -342,19 +365,8 @@ router.put('/:courseId/content', authenticateToken, async (req, res) => {
 });
 
 // Admin: Get all courses
-router.get('/all', authenticateToken, async (req, res) => {
+router.get('/all', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    console.log('User requesting courses:', user?.email, 'Role:', user?.role);
-    
-    if (!user || user.role !== 'admin') {
-      console.log('Access denied: User is not admin');
-      return res.status(403).json({ error: 'Unauthorized - Admin role required' });
-    }
-    
     const content = await loadCourseContent();
     console.log('Courses loaded:', Object.keys(content.courses));
     
@@ -369,16 +381,8 @@ router.get('/all', authenticateToken, async (req, res) => {
 });
 
 // Admin: Add new module
-router.post('/:courseId/module', authenticateToken, async (req, res) => {
+router.post('/:courseId/module', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId } = req.params;
     const { title, description, duration, isTrialContent, insertBeforeOrder } = req.body;
     
@@ -433,16 +437,8 @@ router.post('/:courseId/module', authenticateToken, async (req, res) => {
 });
 
 // Admin: Delete module
-router.delete('/:courseId/module/:moduleId', authenticateToken, async (req, res) => {
+router.delete('/:courseId/module/:moduleId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     
     const content = await loadCourseContent();
@@ -477,16 +473,8 @@ router.delete('/:courseId/module/:moduleId', authenticateToken, async (req, res)
 });
 
 // Admin: Update module
-router.put('/:courseId/module/:moduleId', authenticateToken, async (req, res) => {
+router.put('/:courseId/module/:moduleId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     const updates = req.body;
     
@@ -519,16 +507,8 @@ router.put('/:courseId/module/:moduleId', authenticateToken, async (req, res) =>
 });
 
 // Admin: Add new video to a lesson
-router.post('/:courseId/module/:moduleId/lesson', authenticateToken, async (req, res) => {
+router.post('/:courseId/module/:moduleId/lesson', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     const { title, description, duration, vimeoId, videoUrl, isTrialContent } = req.body;
     
@@ -573,16 +553,8 @@ router.post('/:courseId/module/:moduleId/lesson', authenticateToken, async (req,
 });
 
 // Admin: Update lesson
-router.put('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, async (req, res) => {
+router.put('/:courseId/module/:moduleId/lesson/:lessonId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId, lessonId } = req.params;
     const updates = req.body;
     
@@ -616,16 +588,8 @@ router.put('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, as
 });
 
 // Admin: Delete lesson
-router.delete('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, async (req, res) => {
+router.delete('/:courseId/module/:moduleId/lesson/:lessonId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId, lessonId } = req.params;
     
     const content = await loadCourseContent();

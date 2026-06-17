@@ -57,22 +57,54 @@ router.get('/user', authenticateToken, async (req, res) => {
 router.get('/subscriptions', authenticateToken, async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await prisma.user.findUnique({
-      where: { id: userId }
-    });
-    
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Sorgente unica = MongoDB. Combina:
+    //  (1) l'abbonamento "embedded" gestito dall'admin (user.subscription)
+    //  (2) gli ordini di tipo subscription per email dell'utente
+    const subscriptions = [];
+
+    if (user.subscription) {
+      const sub = user.subscription;
+      subscriptions.push({
+        id: sub.id || `sub_${user.id}`,
+        productId: sub.productId || 'unknown',
+        productName: sub.productName || 'Abbonamento',
+        amount: sub.amount || 0,
+        currency: sub.currency || 'EUR',
+        interval: sub.interval || 'month',
+        status: sub.status || 'active',
+        startDate: sub.startDate || user.createdAt,
+        currentPeriodEnd: sub.currentPeriodEnd || null,
+        cancelAtPeriodEnd: sub.cancelAtPeriodEnd || false
+      });
     }
 
-    // Get user's subscriptions (per ora mock data dal vecchio db)
-    const oldUser = db.getUserById(userId);
-    const subscriptions = oldUser?.subscriptions || [];
-    
-    res.json({
-      success: true,
-      subscriptions
+    const orders = await prisma.order.findMany({
+      where: { customerEmail: user.email, mode: 'subscription' },
+      orderBy: { createdAt: 'desc' }
     });
+    orders.forEach(o => {
+      // Evita di duplicare se è già presente come embedded
+      const already = subscriptions.find(s => s.productId === o.productId);
+      if (already) return;
+      const paid = o.paymentStatus === 'paid' || o.status === 'confirmed' || o.status === 'completed';
+      subscriptions.push({
+        id: o.id,
+        productId: o.productId || 'unknown',
+        productName: o.productName || 'Abbonamento',
+        amount: o.amount || 0,
+        currency: (o.currency || 'EUR').toUpperCase(),
+        interval: o.metadata?.interval || 'month',
+        status: paid ? 'active' : (o.status || 'pending'),
+        startDate: o.createdAt,
+        currentPeriodEnd: null,
+        cancelAtPeriodEnd: false
+      });
+    });
+
+    res.json({ success: true, subscriptions });
   } catch (error) {
     console.error('Error fetching subscriptions:', error);
     res.status(500).json({ error: 'Failed to fetch subscriptions' });

@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticateAdmin } from '../middleware/auth.js';
 import mongoose from 'mongoose';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -136,6 +137,68 @@ router.get('/users/:id', async (req, res) => {
 });
 
 // Update user
+// Create user (admin) — rispetta ruolo e stato impostati nel pannello.
+// /api/auth/register imposta sempre status=pending + role=USER e ignora i
+// campi admin, quindi servono creazioni dirette tramite Prisma.
+router.post('/users', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      role = 'USER',
+      status = 'active',
+      isActive = true,
+      emailVerified = true
+    } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email e password sono obbligatorie' });
+    }
+    if (String(password).length < 6) {
+      return res.status(400).json({ success: false, error: 'Password troppo corta (min. 6 caratteri)' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'Un utente con questa email esiste già' });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email: normalizedEmail,
+        password: hashed,
+        name: name || null,
+        role: String(role).toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER',
+        status,
+        isActive: Boolean(isActive),
+        emailVerified: Boolean(emailVerified)
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Utente creato con successo',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Admin create user error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.put('/users/:id', async (req, res) => {
   try {
     const { name, email, role, status, isActive, emailVerified } = req.body;

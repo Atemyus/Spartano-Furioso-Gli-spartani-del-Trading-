@@ -107,7 +107,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const loadAllCourses = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     try {
       console.log('Loading all courses');
       const response = await fetch('https://api.spartanofurioso.com/api/courses/all', {
@@ -189,7 +189,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleAddLesson = async (moduleId: string) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -236,7 +236,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleUpdateLesson = async (moduleId: string, lessonId: string, updates: Partial<Lesson>) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -274,7 +274,7 @@ const CourseManagement: React.FC = () => {
   const handleDeleteLesson = async (moduleId: string, lessonId: string) => {
     if (!window.confirm('Sei sicuro di voler eliminare questa lezione?')) return;
     
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -300,7 +300,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleUpdateCourse = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -332,7 +332,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleUpdateModule = async (moduleId: string, updates: Partial<Module>) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -357,7 +357,7 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleAddModule = async (insertBeforeOrder?: number) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -399,7 +399,7 @@ const CourseManagement: React.FC = () => {
   const handleDeleteModule = async (moduleId: string) => {
     if (!window.confirm('Sei sicuro di voler eliminare questo modulo e tutte le sue lezioni?')) return;
     
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     setSaving(true);
     
     try {
@@ -891,7 +891,7 @@ const CourseManagement: React.FC = () => {
                                   formData.append('file', file);
                                   
                                   try {
-                                    const token = localStorage.getItem('token');
+                                    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
                                     const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                       method: 'POST',
                                       headers: {
@@ -971,7 +971,7 @@ const CourseManagement: React.FC = () => {
                                       formData.append('file', file);
                                       
                                       try {
-                                        const token = localStorage.getItem('token');
+                                        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
                                         const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                           method: 'POST',
                                           headers: {
@@ -1216,7 +1216,7 @@ const CourseManagement: React.FC = () => {
                                           formData.append('file', file);
                                           
                                           try {
-                                            const token = localStorage.getItem('token');
+                                            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
                                             const response = await fetch('https://api.spartanofurioso.com/api/upload', {
                                               method: 'POST',
                                               headers: {
