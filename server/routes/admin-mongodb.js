@@ -1,6 +1,5 @@
 import express from 'express';
 import { authenticateAdmin } from '../middleware/auth.js';
-import mongoose from 'mongoose';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -9,28 +8,6 @@ const prisma = new PrismaClient();
 
 // Protect all admin routes
 router.use(authenticateAdmin);
-
-// User Schema (semplificato per admin)
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  role: { type: String, default: 'user' },
-  status: { type: String, default: 'active' },
-  isActive: { type: Boolean, default: true },
-  emailVerified: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model('User', userSchema);
-
-// Newsletter Schema
-const newsletterSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
-  status: { type: String, default: 'ACTIVE' },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
 // Dashboard statistics
 router.get('/stats', async (req, res) => {
@@ -92,48 +69,44 @@ router.get('/stats', async (req, res) => {
 });
 
 // Get all users
+// Helper: valida un ObjectId di Mongo (24 hex)
+const isObjectId = (id) => typeof id === 'string' && /^[a-f\d]{24}$/i.test(id);
+
+const userSelect = {
+  id: true, name: true, email: true, role: true, status: true,
+  isActive: true, emailVerified: true, lastLogin: true, createdAt: true
+};
+
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find({})
-      .sort({ createdAt: -1 })
-      .select('id name email role status isActive emailVerified createdAt');
-    
-    res.json({
-      success: true,
-      users
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: userSelect
     });
+    res.json({ success: true, users });
   } catch (error) {
     console.error('Admin users error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Get user by ID
 router.get('/users/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .select('id name email role status isActive emailVerified createdAt');
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      user
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: userSelect
     });
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'Utente non trovato' });
+    }
+    res.json({ success: true, user });
   } catch (error) {
     console.error('Admin get user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -204,63 +177,57 @@ router.put('/users/:id', async (req, res) => {
   try {
     const { name, email, role, status, isActive, emailVerified } = req.body;
     
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { 
-        name, 
-        email, 
-        role, 
-        status, 
-        isActive, 
-        emailVerified,
-        updatedAt: new Date()
-      },
-      { new: true }
-    );
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      user,
-      message: 'Utente aggiornato con successo'
-    });
+
+    const data = {};
+    if (name !== undefined) data.name = name;
+    if (email !== undefined) data.email = String(email).toLowerCase().trim();
+    if (role !== undefined) data.role = String(role).toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER';
+    if (status !== undefined) data.status = status;
+    if (isActive !== undefined) data.isActive = Boolean(isActive);
+    if (emailVerified !== undefined) data.emailVerified = Boolean(emailVerified);
+
+    try {
+      const user = await prisma.user.update({
+        where: { id: req.params.id },
+        data,
+        select: userSelect
+      });
+      res.json({ success: true, user, message: 'Utente aggiornato con successo' });
+    } catch (e) {
+      if (e.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Utente non trovato' });
+      }
+      throw e;
+    }
   } catch (error) {
     console.error('Admin update user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Delete user
 router.delete('/users/:id', async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      // Caso tipico: frontend manda "undefined" perché l'utente mostrato non
+      // ha un id valido. Rispondiamo 400 chiaro senza crash 500.
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      message: 'Utente eliminato con successo'
-    });
+    try {
+      await prisma.user.delete({ where: { id: req.params.id } });
+      res.json({ success: true, message: 'Utente eliminato con successo' });
+    } catch (e) {
+      if (e.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Utente non trovato' });
+      }
+      throw e;
+    }
   } catch (error) {
     console.error('Admin delete user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -550,19 +517,13 @@ router.delete('/products/:id', async (req, res) => {
 // Get newsletter subscribers
 router.get('/newsletter', async (req, res) => {
   try {
-    const subscribers = await Newsletter.find({})
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      subscribers
+    const subscribers = await prisma.newsletter.findMany({
+      orderBy: { createdAt: 'desc' }
     });
+    res.json({ success: true, subscribers });
   } catch (error) {
     console.error('Admin newsletter error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
