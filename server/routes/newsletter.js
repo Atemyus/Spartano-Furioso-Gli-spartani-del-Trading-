@@ -1,23 +1,10 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import nodemailer from 'nodemailer';
+import { sendEmail, sendRawEmail } from '../services/emailService.js';
 import { authenticateAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
-
-// Configurazione email transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-};
 
 // Iscriviti alla newsletter
 router.post('/subscribe', async (req, res) => {
@@ -308,21 +295,19 @@ router.post('/admin/messages/:id/send', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Nessun iscritto attivo trovato' });
     }
 
-    // Invia email a tutti gli iscritti
-    const transporter = createTransporter();
+    // Invia email a tutti gli iscritti tramite il servizio unificato (Resend/SMTP)
     let sentCount = 0;
 
     for (const subscriber of subscribers) {
-      try {
-        await transporter.sendMail({
-          from: `"Spartano Furioso" <${process.env.EMAIL_USER}>`,
-          to: subscriber.email,
-          subject: message.subject,
-          html: buildEmailHTML(message.content, subscriber.email)
-        });
+      const result = await sendRawEmail(
+        subscriber.email,
+        message.subject,
+        buildEmailHTML(message.content, subscriber.email)
+      );
+      if (result?.success) {
         sentCount++;
-      } catch (error) {
-        console.error(`Errore invio a ${subscriber.email}:`, error);
+      } else {
+        console.error(`Errore invio a ${subscriber.email}:`, result?.error);
       }
     }
 
@@ -386,106 +371,54 @@ router.put('/admin/messages/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
-// Funzione per inviare email di benvenuto
+// Funzione per inviare email di benvenuto newsletter.
+// Usa il servizio email unificato (Resend o SMTP) invece di un transporter
+// separato: così la mail arriva davvero anche se è configurato solo Resend.
 async function sendWelcomeEmail(email, name) {
   try {
-    const transporter = createTransporter();
-
-    const emailHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #DC2626 0%, #7F1D1D 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0; }
-          .logo { font-size: 32px; font-weight: bold; color: #FCD34D; }
-          .content { background-color: #1F2937; padding: 30px; border-radius: 0 0 10px 10px; }
-          .button { display: inline-block; background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
-          .footer { text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">⚔️ SPARTANO FURIOSO ⚔️</div>
-            <h1 style="margin: 10px 0 0 0;">BENVENUTO NELLA FALANGE!</h1>
-          </div>
-          <div class="content">
-            <h2>Ciao ${name || 'Guerriero'}! 🛡️</h2>
-            <p>Hai fatto la scelta giusta unendoti alla Falange di Spartano Furioso!</p>
-            
-            <p>Da oggi riceverai:</p>
-            <ul>
-              <li>📊 Segnali di trading esclusivi</li>
-              <li>💰 Strategie vincenti per massimizzare i profitti</li>
-              <li>🎯 Analisi di mercato approfondite</li>
-              <li>🔥 Offerte speciali riservate ai membri</li>
-              <li>📚 Contenuti formativi di alto livello</li>
-            </ul>
-            
-            <div style="text-align: center;">
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/products" class="button">
-                SCOPRI I NOSTRI PRODOTTI
-              </a>
-            </div>
-            
-            <p style="margin-top: 30px;">Preparati a dominare i mercati con la disciplina spartana! 💪</p>
-            
-            <p style="color: #FCD34D; font-style: italic; text-align: center; margin-top: 30px;">
-              "Μολὼν λαβέ - Vieni a prenderli"<br>
-              - Re Leonida I di Sparta -
-            </p>
-          </div>
-          <div class="footer">
-            <p>Hai ricevuto questa email perché ti sei iscritto alla newsletter di Spartano Furioso.</p>
-            <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/unsubscribe?email=${email}" style="color: #9CA3AF;">Disiscriviti</a></p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-
-    await transporter.sendMail({
-      from: `"Spartano Furioso" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: '⚔️ Benvenuto nella Falange, Guerriero! 🛡️',
-      html: emailHTML
-    });
+    const result = await sendEmail(email, 'newsletterWelcome', { userName: name });
+    if (!result?.success) {
+      console.warn('⚠️ Email benvenuto newsletter non inviata:', result?.error);
+    }
   } catch (error) {
-    console.error('Errore invio email benvenuto:', error);
+    console.error('Errore invio email benvenuto newsletter:', error);
   }
 }
 
-// Funzione per costruire HTML email con link disiscrizione
+// Funzione per costruire HTML email newsletter con link disiscrizione (brand Nexora Lab)
 function buildEmailHTML(content, email) {
+  const site = process.env.FRONTEND_URL || 'https://spartanofurioso.com';
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="it">
     <head>
-      <style>
-        body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #DC2626 0%, #7F1D1D 100%); padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }
-        .logo { font-size: 28px; font-weight: bold; color: #FCD34D; }
-        .content { background-color: #1F2937; padding: 30px; border-radius: 0 0 10px 10px; }
-        .footer { text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px; }
-        a { color: #FCD34D; }
-      </style>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <div class="logo">⚔️ SPARTANO FURIOSO ⚔️</div>
-        </div>
-        <div class="content">
-          ${content}
-        </div>
-        <div class="footer">
-          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/unsubscribe?email=${email}" style="color: #9CA3AF;">Disiscriviti dalla newsletter</a></p>
-          <p>© 2025 Spartano Furioso Trading. Tutti i diritti riservati.</p>
-        </div>
-      </div>
+    <body style="margin:0;padding:0;background:#f1f5f9;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+        <tr><td align="center">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.08);">
+            <tr>
+              <td style="background:linear-gradient(135deg,#0b1e3f 0%,#1e3a8a 55%,#0ea5e9 140%);padding:30px 40px;text-align:center;">
+                <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:26px;font-weight:800;color:#ffffff;">Nexora<span style="color:#38bdf8;">Lab</span></div>
+                <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:6px;">LAB BRIEF</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:36px 40px;font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;line-height:1.65;font-size:16px;">
+                ${content}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 40px;background:#0b1e3f;text-align:center;font-family:Arial,sans-serif;color:#94a3b8;font-size:12px;line-height:1.7;">
+                © ${new Date().getFullYear()} Nexora Lab — Trading &amp; Creator economy<br>
+                <a href="${site}/unsubscribe?email=${encodeURIComponent(email)}" style="color:#38bdf8;text-decoration:none;">Disiscriviti dalla newsletter</a>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+      </table>
     </body>
     </html>
   `;

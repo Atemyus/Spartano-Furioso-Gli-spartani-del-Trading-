@@ -77,570 +77,207 @@ const createTransporter = async () => {
   return transporter;
 };
 
+// ============================================================
+//  TEMPLATE EMAIL — NEXORA LAB
+//  Design unificato (header navy/blu, accenti cyan, layout a tabelle
+//  per la massima compatibilità con i client di posta).
+// ============================================================
+
+const BRAND = {
+  name: 'Nexora Lab',
+  get site() { return process.env.FRONTEND_URL || 'https://spartanofurioso.com'; }
+};
+
+// Scocca base dell'email (header + contenuto + footer)
+const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', contentHtml = '' }) => `
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+</head>
+<body style="margin:0;padding:0;background:#f1f5f9;-webkit-text-size-adjust:100%;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f1f5f9;">${preheader}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.08);">
+        <!-- Header -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#0b1e3f 0%,#1e3a8a 55%,#0ea5e9 140%);padding:36px 40px;text-align:center;">
+            <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;">
+              Nexora<span style="color:#38bdf8;">Lab</span>
+            </div>
+            <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:8px;">${tagline}</div>
+          </td>
+        </tr>
+        <!-- Contenuto -->
+        <tr>
+          <td style="padding:40px;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1e293b;line-height:1.65;font-size:16px;">
+            ${contentHtml}
+          </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+          <td style="padding:26px 40px;background:#0b1e3f;text-align:center;font-family:Arial,sans-serif;">
+            <div style="color:#94a3b8;font-size:12px;line-height:1.7;">
+              © ${new Date().getFullYear()} Nexora Lab — Trading &amp; Creator economy<br>
+              <a href="${BRAND.site}" style="color:#38bdf8;text-decoration:none;">${BRAND.site.replace(/^https?:\/\//, '')}</a>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div style="font-family:Arial,sans-serif;font-size:11px;color:#94a3b8;margin-top:16px;">
+        Hai ricevuto questa email perché sei iscritto a Nexora Lab.
+      </div>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+// Bottone call-to-action
+const emailButton = (label, href) => `
+<table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:30px auto;">
+  <tr>
+    <td align="center" style="border-radius:10px;background:linear-gradient(135deg,#1e3a8a 0%,#38bdf8 100%);box-shadow:0 6px 18px rgba(56,189,248,0.35);">
+      <a href="${href}" target="_blank" style="display:inline-block;padding:15px 38px;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:10px;">${label}</a>
+    </td>
+  </tr>
+</table>`;
+
+// Riquadro link di fallback
+const linkFallback = (href) => `
+<p style="font-family:Arial,sans-serif;font-size:13px;color:#64748b;margin:8px 0 0;">
+  Se il pulsante non funziona, copia e incolla questo link nel browser:<br>
+  <a href="${href}" style="color:#0ea5e9;word-break:break-all;">${href}</a>
+</p>`;
+
 // Template email di verifica
 const getVerificationEmailTemplate = (userName, verificationLink) => {
+  const name = userName || 'trader';
+  const content = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0b1e3f;">Conferma il tuo indirizzo email</h1>
+    <p style="margin:0 0 18px;">Ciao <strong>${name}</strong>, benvenuto in <strong>Nexora Lab</strong> 👋</p>
+    <p style="margin:0 0 8px;">Manca un solo passo per attivare il tuo account. Conferma la tua email cliccando qui sotto:</p>
+    ${emailButton('Conferma la mia email', verificationLink)}
+    <p style="margin:0 0 4px;font-size:14px;color:#64748b;">⏳ Il link è valido per <strong>24 ore</strong>.</p>
+    ${linkFallback(verificationLink)}
+    <p style="margin:22px 0 0;font-size:13px;color:#94a3b8;">Se non hai creato tu questo account, ignora pure questa email.</p>
+  `;
   return {
-    subject: '✅ Conferma la tua registrazione - Trading Falange',
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              padding: 20px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              margin-top: 20px;
-            }
-            .header {
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              padding: 30px;
-              text-align: center;
-              border-radius: 10px 10px 0 0;
-              color: white;
-            }
-            .logo {
-              font-size: 32px;
-              font-weight: bold;
-              margin-bottom: 10px;
-            }
-            .content {
-              padding: 30px;
-              color: #333;
-              line-height: 1.6;
-            }
-            .button {
-              display: inline-block;
-              padding: 15px 30px;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              margin: 20px 0;
-              font-weight: bold;
-              text-align: center;
-            }
-            .button:hover {
-              opacity: 0.9;
-            }
-            .footer {
-              background-color: #f8f9fa;
-              padding: 20px;
-              text-align: center;
-              color: #666;
-              font-size: 12px;
-              border-radius: 0 0 10px 10px;
-            }
-            .warning {
-              background-color: #fff3cd;
-              border: 1px solid #ffc107;
-              padding: 10px;
-              border-radius: 5px;
-              margin: 20px 0;
-              color: #856404;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <div class="logo">⚔️ Trading Falange</div>
-              <p>Benvenuto nella nostra community di trading!</p>
-            </div>
-            
-            <div class="content">
-              <h2>Ciao ${userName || 'Trader'},</h2>
-              
-              <p>
-                Grazie per esserti registrato su Trading Falange! 
-                Sei a un passo dal completare la tua registrazione.
-              </p>
-              
-              <p>
-                Per attivare il tuo account e accedere a tutte le funzionalità della piattaforma,
-                clicca sul pulsante qui sotto:
-              </p>
-              
-              <div style="text-align: center;">
-                <a href="${verificationLink}" class="button">
-                  ✅ CONFERMA LA TUA EMAIL
-                </a>
-              </div>
-              
-              <div class="warning">
-                <strong>⚠️ Importante:</strong> Questo link di verifica scadrà tra 24 ore.
-                Se non hai richiesto questa registrazione, puoi ignorare questa email.
-              </div>
-              
-              <p>
-                Se il pulsante non funziona, puoi copiare e incollare questo link nel tuo browser:
-              </p>
-              <p style="word-break: break-all; color: #667eea;">
-                ${verificationLink}
-              </p>
-              
-              <h3>Cosa potrai fare con Trading Falange?</h3>
-              <ul>
-                <li>📊 Accedere a segnali di trading professionali</li>
-                <li>📚 Formazione completa sul trading</li>
-                <li>👥 Entrare nella community esclusiva</li>
-                <li>🎯 Strategie testate e ottimizzate</li>
-                <li>💬 Supporto diretto dal team</li>
-              </ul>
-              
-              <p>
-                Se hai domande o bisogno di assistenza, non esitare a contattarci 
-                rispondendo a questa email.
-              </p>
-              
-              <p>
-                Buon trading!<br>
-                <strong>Il Team di Trading Falange</strong>
-              </p>
-            </div>
-            
-            <div class="footer">
-              <p>
-                © ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.
-              </p>
-              <p>
-                Questa email è stata inviata a ${userName ? userName + ' ' : ''}
-                perché è stata richiesta una registrazione sul nostro sito.
-              </p>
-              <p style="margin-top: 10px;">
-                <a href="${process.env.FRONTEND_URL}/privacy" style="color: #667eea; margin: 0 10px;">Privacy Policy</a> |
-                <a href="${process.env.FRONTEND_URL}/terms" style="color: #667eea; margin: 0 10px;">Termini di Servizio</a> |
-                <a href="${process.env.FRONTEND_URL}/contact" style="color: #667eea; margin: 0 10px;">Contattaci</a>
-              </p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-    text: `
-      Ciao ${userName || 'Trader'},
-      
-      Grazie per esserti registrato su Trading Falange!
-      
-      Per confermare la tua email e attivare il tuo account, clicca sul link seguente:
-      ${verificationLink}
-      
-      Questo link scadrà tra 24 ore.
-      
-      Se non hai richiesto questa registrazione, puoi ignorare questa email.
-      
-      Buon trading!
-      Il Team di Trading Falange
-    `
+    subject: '✅ Conferma la tua email · Nexora Lab',
+    html: emailShell({ preheader: 'Conferma la tua email per attivare il tuo account Nexora Lab.', contentHtml: content }),
+    text: `Ciao ${name}, benvenuto in Nexora Lab!\n\nConferma la tua email aprendo questo link (valido 24 ore):\n${verificationLink}\n\nSe non hai creato tu questo account, ignora questa email.\n\n— Nexora Lab`
   };
 };
 
 // Template email di benvenuto (dopo la verifica)
 const getWelcomeEmailTemplate = (userName) => {
+  const name = userName || 'trader';
+  const dashboardLink = `${BRAND.site}/dashboard`;
+  const featureCard = (emoji, title, desc) => `
+    <td width="50%" valign="top" style="padding:8px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+        <tr><td style="padding:16px;font-family:'Segoe UI',Arial,sans-serif;">
+          <div style="font-size:22px;">${emoji}</div>
+          <div style="font-size:15px;font-weight:700;color:#0b1e3f;margin:6px 0 2px;">${title}</div>
+          <div style="font-size:13px;color:#64748b;line-height:1.5;">${desc}</div>
+        </td></tr>
+      </table>
+    </td>`;
+  const content = `
+    <div style="text-align:center;">
+      <span style="display:inline-block;font-size:12px;letter-spacing:2px;color:#0ea5e9;font-weight:700;font-family:Arial,sans-serif;">// ACCOUNT ATTIVO</span>
+      <h1 style="margin:8px 0 6px;font-size:26px;font-weight:800;color:#0b1e3f;">Benvenuto nel Lab, ${name}! 🚀</h1>
+      <p style="margin:0 auto 6px;max-width:440px;color:#475569;">Il tuo account è attivo. Da oggi hai accesso all'ecosistema completo per costruire il tuo reddito digitale.</p>
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:22px 0 6px;">
+      <tr>
+        ${featureCard('📈', 'Trading Lab', 'Bot, indicatori e analisi per i mercati.')}
+        ${featureCard('🎓', 'Academy', 'Percorsi formativi step-by-step.')}
+      </tr>
+      <tr>
+        ${featureCard('✨', 'Creator Studio', 'Brand, contenuti e monetizzazione.')}
+        ${featureCard('⚙️', 'Operations', 'Segnali, copy e supporto operativo.')}
+      </tr>
+    </table>
+
+    ${emailButton('Entra nella dashboard', dashboardLink)}
+
+    <p style="text-align:center;margin:6px 0 0;font-family:Arial,sans-serif;font-size:12px;letter-spacing:1.5px;color:#94a3b8;">BUILD · LEARN · EARN · REPEAT</p>
+  `;
   return {
-    subject: '🎉 Benvenuto in Trading Falange!',
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            /* Stessi stili della email di verifica */
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              padding: 20px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              margin-top: 20px;
-            }
-            .header {
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              padding: 30px;
-              text-align: center;
-              border-radius: 10px 10px 0 0;
-              color: white;
-            }
-            .content {
-              padding: 30px;
-              color: #333;
-              line-height: 1.6;
-            }
-            .button {
-              display: inline-block;
-              padding: 15px 30px;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              margin: 20px 0;
-              font-weight: bold;
-            }
-            .footer {
-              background-color: #f8f9fa;
-              padding: 20px;
-              text-align: center;
-              color: #666;
-              font-size: 12px;
-              border-radius: 0 0 10px 10px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🎉 Account Attivato!</h1>
-            </div>
-            
-            <div class="content">
-              <h2>Benvenuto ${userName}!</h2>
-              
-              <p>
-                Il tuo account è stato verificato con successo! 
-                Ora fai parte della community di Trading Falange.
-              </p>
-              
-              <h3>I tuoi prossimi passi:</h3>
-              <ol>
-                <li><strong>Completa il tuo profilo:</strong> Aggiungi informazioni per personalizzare la tua esperienza</li>
-                <li><strong>Esplora i nostri servizi:</strong> Scopri tutti gli strumenti a tua disposizione</li>
-                <li><strong>Scegli un piano:</strong> Seleziona l'abbonamento più adatto alle tue esigenze</li>
-                <li><strong>Unisciti alla community:</strong> Connettiti con altri trader</li>
-              </ol>
-              
-              <div style="text-align: center;">
-                <a href="${process.env.FRONTEND_URL}/dashboard" class="button">
-                  Vai alla Dashboard
-                </a>
-              </div>
-              
-              <p>
-                Se hai bisogno di aiuto, il nostro team di supporto è sempre disponibile.
-              </p>
-              
-              <p>
-                A presto!<br>
-                <strong>Il Team di Trading Falange</strong>
-              </p>
-            </div>
-            
-            <div class="footer">
-              <p>© ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-    text: `
-      Benvenuto ${userName}!
-      
-      Il tuo account è stato verificato con successo!
-      
-      Ora puoi accedere a tutte le funzionalità di Trading Falange.
-      
-      Visita la tua dashboard: ${process.env.FRONTEND_URL}/dashboard
-      
-      A presto!
-      Il Team di Trading Falange
-    `
+    subject: '🚀 Benvenuto in Nexora Lab!',
+    html: emailShell({ preheader: 'Il tuo account è attivo: ecco cosa puoi fare ora.', contentHtml: content }),
+    text: `Benvenuto nel Lab, ${name}!\n\nIl tuo account è attivo. Hai accesso a: Trading Lab, Academy, Creator Studio e Operations.\n\nEntra nella dashboard: ${dashboardLink}\n\n— Nexora Lab`
   };
 };
 
 // Template email di reset password
 const getPasswordResetTemplate = (userName, resetLink) => {
+  const name = userName || 'trader';
+  const content = `
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0b1e3f;">Reimposta la tua password</h1>
+    <p style="margin:0 0 8px;">Ciao <strong>${name}</strong>, abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account Nexora Lab.</p>
+    <p style="margin:0 0 4px;">Clicca sul pulsante per scegliere una nuova password:</p>
+    ${emailButton('Reimposta password', resetLink)}
+    <p style="margin:0 0 4px;font-size:14px;color:#64748b;">⏳ Il link è valido per <strong>1 ora</strong>.</p>
+    ${linkFallback(resetLink)}
+    <p style="margin:22px 0 0;font-size:13px;color:#94a3b8;">Se non hai richiesto tu il reset, ignora questa email: la tua password resterà invariata.</p>
+  `;
   return {
-    subject: '🔐 Richiesta di Reset Password - Trading Falange',
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              padding: 20px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              margin-top: 20px;
-            }
-            .header {
-              background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-              padding: 30px;
-              text-align: center;
-              border-radius: 10px 10px 0 0;
-              color: white;
-            }
-            .logo {
-              font-size: 32px;
-              font-weight: bold;
-              margin-bottom: 10px;
-            }
-            .content {
-              padding: 30px;
-              color: #333;
-              line-height: 1.6;
-            }
-            .button {
-              display: inline-block;
-              padding: 15px 30px;
-              background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              margin: 20px 0;
-              font-weight: bold;
-              text-align: center;
-            }
-            .warning {
-              background-color: #fff3cd;
-              border: 1px solid #ffc107;
-              padding: 15px;
-              border-radius: 5px;
-              margin: 20px 0;
-              color: #856404;
-            }
-            .footer {
-              background-color: #f8f9fa;
-              padding: 20px;
-              text-align: center;
-              color: #666;
-              font-size: 12px;
-              border-radius: 0 0 10px 10px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <div class="logo">🔐 RESET PASSWORD</div>
-              <p>Trading Falange - Sicurezza Account</p>
-            </div>
-            
-            <div class="content">
-              <h2>Ciao ${userName || 'Trader'},</h2>
-              
-              <p>
-                Abbiamo ricevuto una richiesta di reset password per il tuo account.
-              </p>
-              
-              <p>
-                Per reimpostare la tua password, clicca sul pulsante qui sotto:
-              </p>
-              
-              <div style="text-align: center;">
-                <a href="${resetLink}" class="button">
-                  🔑 REIMPOSTA PASSWORD
-                </a>
-              </div>
-              
-              <div class="warning">
-                <strong>⚠️ Importante:</strong>
-                <ul style="margin: 10px 0;">
-                  <li>Questo link scadrà tra <strong>1 ora</strong></li>
-                  <li>Se non hai richiesto il reset, ignora questa email</li>
-                  <li>La tua password attuale rimarrà invariata finché non la cambierai</li>
-                </ul>
-              </div>
-              
-              <p>
-                Se il pulsante non funziona, copia e incolla questo link nel browser:
-              </p>
-              <p style="word-break: break-all; color: #dc2626; background: #f4f4f4; padding: 10px; border-radius: 5px;">
-                ${resetLink}
-              </p>
-              
-              <h3>🔒 Consigli per la sicurezza:</h3>
-              <ul>
-                <li>Usa una password lunga almeno 8 caratteri</li>
-                <li>Includi maiuscole, minuscole, numeri e simboli</li>
-                <li>Non usare la stessa password su altri siti</li>
-                <li>Attiva l'autenticazione a due fattori quando disponibile</li>
-              </ul>
-              
-              <p style="margin-top: 30px;">
-                Se non hai richiesto questo reset o hai bisogno di assistenza,
-                contatta immediatamente il nostro supporto.
-              </p>
-              
-              <p>
-                Cordiali saluti,<br>
-                <strong>Il Team di Sicurezza di Trading Falange</strong>
-              </p>
-            </div>
-            
-            <div class="footer">
-              <p>
-                © ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.
-              </p>
-              <p style="margin-top: 10px; color: #999;">
-                Questa email è stata inviata perché è stato richiesto un reset password
-                per l'account associato a questo indirizzo email.
-              </p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-    text: `
-      Ciao ${userName || 'Trader'},
-      
-      Abbiamo ricevuto una richiesta di reset password per il tuo account.
-      
-      Per reimpostare la tua password, clicca sul link seguente:
-      ${resetLink}
-      
-      Questo link scadrà tra 1 ora.
-      
-      Se non hai richiesto questo reset, puoi ignorare questa email.
-      La tua password attuale rimarrà invariata.
-      
-      Cordiali saluti,
-      Il Team di Trading Falange
-    `
+    subject: '🔐 Reimposta la tua password · Nexora Lab',
+    html: emailShell({ preheader: 'Richiesta di reset password per il tuo account Nexora Lab.', tagline: 'SICUREZZA ACCOUNT', contentHtml: content }),
+    text: `Ciao ${name},\n\nHai richiesto di reimpostare la password. Apri questo link (valido 1 ora):\n${resetLink}\n\nSe non sei stato tu, ignora questa email.\n\n— Nexora Lab`
   };
 };
 
 // Template email di conferma cambio password
 const getPasswordChangedTemplate = (userName) => {
+  const name = userName || 'trader';
+  const loginLink = `${BRAND.site}/login`;
+  const content = `
+    <div style="text-align:center;">
+      <div style="font-size:40px;">✅</div>
+      <h1 style="margin:8px 0 6px;font-size:24px;font-weight:800;color:#0b1e3f;">Password aggiornata</h1>
+    </div>
+    <p style="margin:0 0 8px;">Ciao <strong>${name}</strong>, la password del tuo account Nexora Lab è stata modificata con successo.</p>
+    <p style="margin:0 0 4px;">Ora puoi accedere con la nuova password:</p>
+    ${emailButton('Vai al login', loginLink)}
+    <div style="margin:18px 0 0;padding:14px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;font-size:13px;color:#b91c1c;">
+      ⚠️ Non sei stato tu? Contatta subito il supporto: la sicurezza del tuo account potrebbe essere compromessa.
+    </div>
+  `;
   return {
-    subject: '✅ Password Modificata con Successo - Trading Falange',
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              padding: 20px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              margin-top: 20px;
-            }
-            .header {
-              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-              padding: 30px;
-              text-align: center;
-              border-radius: 10px 10px 0 0;
-              color: white;
-            }
-            .content {
-              padding: 30px;
-              color: #333;
-              line-height: 1.6;
-            }
-            .alert {
-              background-color: #d4edda;
-              border: 1px solid #28a745;
-              padding: 15px;
-              border-radius: 5px;
-              margin: 20px 0;
-              color: #155724;
-            }
-            .footer {
-              background-color: #f8f9fa;
-              padding: 20px;
-              text-align: center;
-              color: #666;
-              font-size: 12px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>✅ Password Modificata!</h1>
-            </div>
-            
-            <div class="content">
-              <h2>Ciao ${userName || 'Trader'},</h2>
-              
-              <div class="alert">
-                <strong>✅ La tua password è stata modificata con successo!</strong>
-              </div>
-              
-              <p>
-                Questa email ti conferma che la password del tuo account Trading Falange
-                è stata reimpostata correttamente.
-              </p>
-              
-              <p>
-                <strong>Data e ora del cambio:</strong><br>
-                ${new Date().toLocaleString('it-IT', { 
-                  dateStyle: 'full', 
-                  timeStyle: 'short',
-                  timeZone: 'Europe/Rome'
-                })}
-              </p>
-              
-              <h3>⚠️ Non sei stato tu?</h3>
-              <p>
-                Se non hai effettuato tu questa modifica, contatta immediatamente
-                il nostro supporto per proteggere il tuo account.
-              </p>
-              
-              <p style="margin-top: 30px;">
-                Ora puoi accedere con la tua nuova password.
-              </p>
-              
-              <p>
-                Cordiali saluti,<br>
-                <strong>Il Team di Trading Falange</strong>
-              </p>
-            </div>
-            
-            <div class="footer">
-              <p>© ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-    text: `
-      Ciao ${userName || 'Trader'},
-      
-      La tua password è stata modificata con successo!
-      
-      Data e ora: ${new Date().toLocaleString('it-IT')}
-      
-      Se non sei stato tu, contatta immediatamente il supporto.
-      
-      Cordiali saluti,
-      Il Team di Trading Falange
-    `
+    subject: '✅ Password aggiornata · Nexora Lab',
+    html: emailShell({ preheader: 'La password del tuo account è stata modificata.', tagline: 'SICUREZZA ACCOUNT', contentHtml: content }),
+    text: `Ciao ${name},\n\nLa password del tuo account Nexora Lab è stata modificata con successo.\nAccedi: ${loginLink}\n\nSe non sei stato tu, contatta subito il supporto.\n\n— Nexora Lab`
+  };
+};
+
+// Template email di benvenuto NEWSLETTER (Lab Brief)
+const getNewsletterWelcomeTemplate = (userName) => {
+  const name = userName || 'trader';
+  const content = `
+    <div style="text-align:center;">
+      <span style="display:inline-block;font-size:12px;letter-spacing:2px;color:#0ea5e9;font-weight:700;font-family:Arial,sans-serif;">// LAB BRIEF</span>
+      <h1 style="margin:8px 0 6px;font-size:24px;font-weight:800;color:#0b1e3f;">Iscrizione confermata 📩</h1>
+    </div>
+    <p style="margin:0 0 8px;">Ciao <strong>${name}</strong>, sei ufficialmente iscritto al <strong>Lab Brief</strong> di Nexora Lab.</p>
+    <p style="margin:0 0 8px;">Ogni settimana riceverai, senza spam:</p>
+    <ul style="margin:0 0 8px;padding-left:20px;color:#475569;">
+      <li style="margin-bottom:6px;">📈 1 setup operativo sui mercati</li>
+      <li style="margin-bottom:6px;">✨ 1 framework di creator economy</li>
+      <li style="margin-bottom:6px;">🧪 1 cosa che ha funzionato (o no), con i numeri</li>
+    </ul>
+    ${emailButton('Esplora la piattaforma', BRAND.site)}
+    <p style="margin:18px 0 0;font-size:13px;color:#94a3b8;">Potrai disiscriverti in qualsiasi momento dal link in fondo a ogni email.</p>
+  `;
+  return {
+    subject: '📩 Iscrizione confermata · Lab Brief di Nexora Lab',
+    html: emailShell({ preheader: 'Sei iscritto al Lab Brief: insight settimanali su trading e creator economy.', contentHtml: content }),
+    text: `Ciao ${name}, sei iscritto al Lab Brief di Nexora Lab.\n\nOgni settimana: 1 setup operativo, 1 framework creator, 1 caso reale con i numeri.\n\nEsplora la piattaforma: ${BRAND.site}\n\n— Nexora Lab`
   };
 };
 
@@ -678,12 +315,15 @@ export const sendEmail = async (to, emailType, data) => {
         case 'passwordChanged':
           emailTemplate = getPasswordChangedTemplate(data.userName);
           break;
+        case 'newsletterWelcome':
+          emailTemplate = getNewsletterWelcomeTemplate(data.userName);
+          break;
         default:
           throw new Error('Tipo di email non valido');
       }
       
       const result = await transportResult.resend.emails.send({
-        from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
+        from: `"Nexora Lab" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
         to: [to],
         subject: emailTemplate.subject,
         html: emailTemplate.html,
@@ -713,12 +353,15 @@ export const sendEmail = async (to, emailType, data) => {
       case 'passwordChanged':
         emailTemplate = getPasswordChangedTemplate(data.userName);
         break;
+      case 'newsletterWelcome':
+        emailTemplate = getNewsletterWelcomeTemplate(data.userName);
+        break;
       default:
         throw new Error('Tipo di email non valido');
     }
     
     const mailOptions = {
-      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
+      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
       to,
       subject: emailTemplate.subject,
       html: emailTemplate.html,
@@ -757,6 +400,31 @@ export const sendEmail = async (to, emailType, data) => {
   }
 };
 
+// Invio generico di un'email con HTML arbitrario (es. newsletter custom).
+// Usa lo stesso transporter unificato (Resend o SMTP) di sendEmail.
+export const sendRawEmail = async (to, subject, html, fromName = 'Nexora Lab') => {
+  try {
+    const transportResult = await createTransporter();
+    const from = `"${fromName}" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`;
+
+    if (transportResult.isResend) {
+      const result = await transportResult.resend.emails.send({
+        from,
+        to: [to],
+        subject,
+        html
+      });
+      return { success: true, messageId: result.id };
+    }
+
+    const info = await transportResult.sendMail({ from, to, subject, html });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Errore invio email (raw):', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 export const sendOrderConfirmation = async ({
   customerName,
   customerEmail,
@@ -790,7 +458,7 @@ export const sendOrderConfirmation = async ({
         : '<p style="color: #10b981; font-weight: bold;">Il tuo ordine è stato confermato!</p>';
 
     const mailOptions = {
-      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'ordini@spartanofurioso.com'}>` ,
+      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'ordini@spartanofurioso.com'}>` ,
       to: customerEmail,
       subject: isCancelled ? `Ordine Annullato ${orderNumber}` : `Conferma Ordine ${orderNumber}`,
       html: `
@@ -886,7 +554,7 @@ export const sendVimeoAccessInstructions = async ({
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: `"Spartano Furioso" <${process.env.MAIL_FROM || 'support@spartanofurioso.com'}>` ,
+      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'support@spartanofurioso.com'}>` ,
       to: customerEmail,
       subject: `Accesso ai contenuti: ${productName}`,
       html: `
