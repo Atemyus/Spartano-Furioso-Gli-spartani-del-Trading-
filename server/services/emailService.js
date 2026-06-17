@@ -353,13 +353,27 @@ export const sendEmail = async (to, emailType, data) => {
         subject: emailTemplate.subject,
         html: emailTemplate.html,
       });
-      
+
+      // Resend ritorna { data: { id }, error: null } in caso di successo,
+      // { data: null, error: { message, name } } in caso di rifiuto.
+      if (result?.error) {
+        console.error('\n❌ RESEND HA RIFIUTATO L\'EMAIL!');
+        console.error('📨 Destinatario:', to);
+        console.error('📝 Oggetto:', emailTemplate.subject);
+        console.error('🔻 Errore Resend:', result.error.name || '', '-', result.error.message || result.error);
+        console.error('💡 Causa tipica: il dominio nel from non è verificato su Resend.');
+        console.error('   Mittente usato:', getFrom());
+        console.error('   Domini verificati: Resend -> Dashboard -> Domains');
+        return { success: false, error: result.error.message || 'Resend rejected the email' };
+      }
+
+      const messageId = result?.data?.id || result?.id;
       console.log('\n✅ EMAIL INVIATA CON SUCCESSO (Resend)!');
       console.log('📨 Destinatario:', to);
       console.log('📝 Oggetto:', emailTemplate.subject);
-      console.log('🆔 Message ID:', result.id);
-      
-      return { success: true, messageId: result.id };
+      console.log('🆔 Message ID:', messageId || '(senza id)');
+
+      return { success: true, messageId };
     }
     
     // Altrimenti usa il transporter SMTP tradizionale
@@ -439,7 +453,11 @@ export const sendRawEmail = async (to, subject, html, fromName = 'Nexora Lab') =
         subject,
         html
       });
-      return { success: true, messageId: result.id };
+      if (result?.error) {
+        console.error('❌ Resend ha rifiutato (raw):', to, '-', result.error.message || result.error);
+        return { success: false, error: result.error.message || 'Resend rejected' };
+      }
+      return { success: true, messageId: result?.data?.id || result?.id };
     }
 
     const info = await transportResult.sendMail({ from, to, subject, html });
