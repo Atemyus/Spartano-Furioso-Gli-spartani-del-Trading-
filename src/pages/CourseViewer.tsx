@@ -20,7 +20,6 @@ import {
   Sparkles
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
-import { getProductById } from '../data/products';
 
 interface Lesson {
   id: string;
@@ -118,35 +117,10 @@ const CourseViewer: React.FC = () => {
       }
     } catch (error) {
       console.error('Error loading course content:', error);
-      // Fallback to static data for now
-      const courseData = getProductById(courseId || '');
-      if (courseData && courseData.courseModules) {
-        const fallbackContent: CourseContent = {
-          id: courseData.id,
-          name: courseData.name,
-          modules: courseData.courseModules.map((m, idx) => ({
-            ...m,
-            lessons: m.lessons || [
-              {
-                id: `lesson_${idx}_1`,
-                title: `Lezione ${idx + 1}.1`,
-                description: 'Contenuto della lezione',
-                duration: '20min',
-                vimeoId: '123456789', // Placeholder
-                order: 1,
-                isTrialContent: m.isTrialContent
-              }
-            ]
-          }))
-        };
-        setCourseContent(fallbackContent);
-        if (fallbackContent.modules.length > 0) {
-          setCurrentModule(fallbackContent.modules[0]);
-          if (fallbackContent.modules[0].lessons.length > 0) {
-            setCurrentLesson(fallbackContent.modules[0].lessons[0]);
-          }
-        }
-      }
+      // Nessun fallback a contenuti statici: mostrare lezioni placeholder
+      // (es. vimeoId fittizio "123456789") mascherava le modifiche reali
+      // fatte dall'admin. In caso di errore lasciamo il contenuto vuoto così
+      // l'interfaccia mostra lo stato corretto invece di dati finti.
     } finally {
       setLoading(false);
     }
