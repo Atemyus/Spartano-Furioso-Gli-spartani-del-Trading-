@@ -209,11 +209,14 @@ const ProductsSection: React.FC = () => {
     { id: 'service', name: 'SERVIZI', icon: Zap, color: 'from-green-600 to-emerald-600' }
   ];
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products.filter(p => p.status === 'active' || p.status === 'beta')
-    : products.filter(p => 
-        (p.displayCategory === selectedCategory || mapCategory(p.category) === selectedCategory) && 
-        (p.status === 'active' || p.status === 'beta')
+  // L'API restituisce già solo prodotti attivi (active:true) dal pannello admin.
+  // Li mostriamo tutti — anche quelli "coming-soon"/"soldout", che ProductCard
+  // gestisce con il proprio stato (pulsante "Prossimamente" disabilitato).
+  // Filtriamo solo per categoria quando non si è su "Tutti".
+  const filteredProducts = selectedCategory === 'all'
+    ? products
+    : products.filter(p =>
+        p.displayCategory === selectedCategory || mapCategory(p.category) === selectedCategory
       );
 
   const handleViewDetails = (product: Product) => {
@@ -275,7 +278,7 @@ const ProductsSection: React.FC = () => {
           <p className={`font-mono-lab text-xs tracking-widest mt-3 ${
             theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
           }`}>
-            {loading ? '// loading...' : `// ${products.length} item disponibili`} · sync {lastUpdate.toLocaleTimeString()}
+            {loading ? '// loading...' : `// ${filteredProducts.length} item disponibili`} · sync {lastUpdate.toLocaleTimeString()}
           </p>
         </div>
 
