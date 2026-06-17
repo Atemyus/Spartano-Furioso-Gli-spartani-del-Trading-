@@ -4,6 +4,21 @@ import { Resend } from 'resend';
 
 dotenv.config();
 
+// Indirizzo mittente, coerente col provider in uso:
+// - Resend: usa MAIL_FROM (dominio VERIFICATO su Resend) o un default
+// - Gmail/SMTP: usa l'indirizzo autenticato (EMAIL_USER/SMTP_USER), perché
+//   Gmail riscrive/rifiuta un from di dominio diverso
+const getFromEmail = () => {
+  if (process.env.MAIL_FROM) return process.env.MAIL_FROM;
+  if (!process.env.RESEND_API_KEY) {
+    // Provider SMTP/Gmail: mittente = utente autenticato
+    return process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.SMTP_USER || 'noreply@spartanofurioso.com';
+  }
+  return 'noreply@spartanofurioso.com';
+};
+
+const getFrom = (name = 'Nexora Lab') => `"${name}" <${getFromEmail()}>`;
+
 // Configurazione del trasportatore email
 // Per sviluppo, useremo Ethereal Email (servizio di test gratuito)
 // In produzione, usa un servizio reale come Gmail, SendGrid, etc.
@@ -30,35 +45,45 @@ const createTransporter = async () => {
   }
   
   // Se sono configurate le credenziali email, usale (production)
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    console.log('📧 Usando servizio email configurato:', process.env.SMTP_HOST);
-    
+  // Supporta sia SMTP_* sia EMAIL_* (Gmail), così funziona con qualunque
+  // convenzione di variabili già impostata su Railway.
+  const smtpHost = process.env.SMTP_HOST || process.env.EMAIL_HOST;
+  const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD;
+  const smtpPort = process.env.SMTP_PORT || process.env.EMAIL_PORT || '587';
+  const smtpSecure = (process.env.SMTP_SECURE || process.env.EMAIL_SECURE) === 'true';
+
+  if (smtpHost && smtpUser && smtpPass) {
+    console.log('📧 Usando servizio email SMTP:', smtpHost);
+
     transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // true per 465, false per altre porte
+      host: smtpHost,
+      port: parseInt(smtpPort),
+      secure: smtpSecure, // true per 465, false per altre porte
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
+        user: smtpUser,
+        pass: smtpPass
       },
       // Opzioni aggiuntive per migliorare la compatibilità
       tls: {
         rejectUnauthorized: false // Per evitare problemi con certificati self-signed
       }
     });
-    
+
     // Verifica la connessione
     try {
       await transporter.verify();
       console.log('✅ Connessione email verificata con successo!');
     } catch (error) {
       console.error('❌ Errore verifica connessione email:', error.message);
-      console.log('Controlla le tue credenziali nel file .env');
+      console.log('Controlla le credenziali email nelle variabili d\'ambiente');
     }
-    
+
   } else {
-    // Per sviluppo: usa Ethereal Email
-    console.log('📧 Usando Ethereal Email per test (modalità development)');
+    // Nessun provider configurato: Ethereal (le email NON arrivano davvero!)
+    console.warn('⚠️  NESSUN PROVIDER EMAIL CONFIGURATO (Resend/SMTP/EMAIL_*).');
+    console.warn('⚠️  Uso Ethereal: le email NON verranno recapitate ai destinatari reali!');
+    console.warn('⚠️  Imposta RESEND_API_KEY oppure EMAIL_HOST/EMAIL_USER/EMAIL_PASS su Railway.');
     const testAccount = await nodemailer.createTestAccount();
     
     transporter = nodemailer.createTransport({
@@ -323,7 +348,7 @@ export const sendEmail = async (to, emailType, data) => {
       }
       
       const result = await transportResult.resend.emails.send({
-        from: `"Nexora Lab" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
+        from: getFrom(),
         to: [to],
         subject: emailTemplate.subject,
         html: emailTemplate.html,
@@ -361,7 +386,7 @@ export const sendEmail = async (to, emailType, data) => {
     }
     
     const mailOptions = {
-      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`,
+      from: getFrom(),
       to,
       subject: emailTemplate.subject,
       html: emailTemplate.html,
@@ -405,7 +430,7 @@ export const sendEmail = async (to, emailType, data) => {
 export const sendRawEmail = async (to, subject, html, fromName = 'Nexora Lab') => {
   try {
     const transportResult = await createTransporter();
-    const from = `"${fromName}" <${process.env.MAIL_FROM || 'noreply@spartanofurioso.com'}>`;
+    const from = getFrom(fromName);
 
     if (transportResult.isResend) {
       const result = await transportResult.resend.emails.send({
@@ -458,7 +483,7 @@ export const sendOrderConfirmation = async ({
         : '<p style="color: #10b981; font-weight: bold;">Il tuo ordine è stato confermato!</p>';
 
     const mailOptions = {
-      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'ordini@spartanofurioso.com'}>` ,
+      from: getFrom(),
       to: customerEmail,
       subject: isCancelled ? `Ordine Annullato ${orderNumber}` : `Conferma Ordine ${orderNumber}`,
       html: `
@@ -554,7 +579,7 @@ export const sendVimeoAccessInstructions = async ({
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: `"Nexora Lab" <${process.env.MAIL_FROM || 'support@spartanofurioso.com'}>` ,
+      from: getFrom(),
       to: customerEmail,
       subject: `Accesso ai contenuti: ${productName}`,
       html: `
