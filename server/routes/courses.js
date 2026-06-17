@@ -16,23 +16,43 @@ const prisma = new PrismaClient();
 // Persistente tra i redeploy (a differenza del vecchio file su disco).
 const COURSE_CONTENT_KEY = 'course-content';
 
-// Middleware: verifica JWT (user token, fallback su admin token) e decodifica
-// realmente l'utente. Niente più userId hardcoded.
+// Verifica un JWT provando tutti i secret disponibili. Restituisce il payload
+// decodificato o null. Logga la causa del fallimento per facilitare il debug
+// in produzione (token scaduto, secret diverso, formato errato).
+function tryDecodeJwt(token) {
+  const secrets = [
+    { name: 'JWT_SECRET', value: process.env.JWT_SECRET },
+    { name: 'JWT_ADMIN_SECRET', value: process.env.JWT_ADMIN_SECRET }
+  ].filter(s => s.value);
+
+  if (secrets.length === 0) {
+    console.error('⚠️ [auth/courses] Nessuno tra JWT_SECRET e JWT_ADMIN_SECRET è configurato!');
+    return null;
+  }
+
+  let lastError = null;
+  for (const s of secrets) {
+    try {
+      return jwt.verify(token, s.value);
+    } catch (e) {
+      lastError = `${s.name}: ${e.name}`;
+    }
+  }
+  console.warn(`🔒 [auth/courses] Verifica JWT fallita (${lastError})`);
+  return null;
+}
+
+// Middleware: verifica JWT (user token o admin token).
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Token richiesto' });
+  if (!token) return res.status(401).json({ error: 'Token richiesto. Effettua di nuovo il login.' });
 
-  // Prova prima JWT_SECRET (utenti), poi JWT_ADMIN_SECRET (admin login)
-  let decoded = null;
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (_) {
-    try {
-      decoded = jwt.verify(token, process.env.JWT_ADMIN_SECRET);
-    } catch (_) {
-      return res.status(403).json({ error: 'Token non valido o scaduto' });
-    }
+  const decoded = tryDecodeJwt(token);
+  if (!decoded) {
+    return res.status(401).json({
+      error: 'Sessione scaduta o token non valido. Effettua di nuovo il login admin.'
+    });
   }
 
   req.user = {
@@ -43,16 +63,28 @@ const authenticateToken = (req, res, next) => {
   next();
 };
 
-// Middleware: richiede ruolo admin (token admin OPPURE utente Prisma con role=ADMIN)
+// Middleware: richiede ruolo admin (token admin OPPURE utente Prisma con role=ADMIN
+// OPPURE email = ADMIN_EMAIL configurato sul server)
 const requireAdminAuth = async (req, res, next) => {
   authenticateToken(req, res, async (err) => {
     if (err) return;
     try {
       if (req.user?.isAdmin) return next();
-      if (req.user?.userId) {
+
+      if (req.user?.email && process.env.ADMIN_EMAIL &&
+          req.user.email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()) {
+        return next();
+      }
+
+      // Solo se userId è un ObjectId valido di Mongo (24 hex)
+      if (req.user?.userId && /^[a-f\d]{24}$/i.test(req.user.userId)) {
         const u = await prisma.user.findUnique({ where: { id: req.user.userId } });
         if (u && u.role === 'ADMIN') return next();
       }
+
+      console.warn('🚫 [auth/courses] accesso admin rifiutato:', {
+        userId: req.user?.userId, email: req.user?.email, isAdmin: req.user?.isAdmin
+      });
       return res.status(403).json({ error: 'Accesso amministratore richiesto' });
     } catch (e) {
       console.error('Errore controllo admin:', e);

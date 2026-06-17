@@ -37,32 +37,33 @@ router.get('/stats', async (req, res) => {
   try {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
-    // Conta utenti da MongoDB
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({
-      isActive: true, 
-      emailVerified: true
+
+    // Tutto via Prisma (fonte univoca con il resto del sistema). I conteggi
+    // Mongoose precedenti potevano restituire 0 se la connessione Mongoose
+    // non veniva inizializzata.
+    const totalUsers = await prisma.user.count();
+    const activeUsers = await prisma.user.count({
+      where: { isActive: true, emailVerified: true }
     });
-    const newUsersThisMonth = await User.countDocuments({
-      createdAt: { $gte: thirtyDaysAgo }
+    const newUsersThisMonth = await prisma.user.count({
+      where: { createdAt: { gte: thirtyDaysAgo } }
     });
-    
-    // Conta newsletter subscribers da MongoDB
-    const newsletterSubscribers = await Newsletter.countDocuments({
-      status: 'ACTIVE'
+
+    const newsletterSubscribers = await prisma.newsletter.count({
+      where: { status: 'ACTIVE' }
     });
-    
-    // Utenti recenti (ultimi 5)
-    const recentUsers = await User.find({})
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('id name email createdAt role status');
-    
-    // Statistiche prodotti da Prisma
+
+    const recentUsers = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      select: {
+        id: true, name: true, email: true, role: true, status: true, createdAt: true
+      }
+    });
+
     const totalProducts = await prisma.product.count();
     const activeProducts = await prisma.product.count({ where: { active: true } });
-    
+
     res.json({
       success: true,
       stats: {
@@ -83,9 +84,9 @@ router.get('/stats', async (req, res) => {
     });
   } catch (error) {
     console.error('Admin stats error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
