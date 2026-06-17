@@ -141,12 +141,15 @@ const ProductsSection: React.FC = () => {
               days: p.trialDays || 0,
               features: []
             },
-            // Trasformo metrics in performance se esiste
+            // Trasformo metrics in performance se esiste.
+            // I valori in MongoDB possono arrivare come numero (es. 22.3 dal pannello admin)
+            // oppure come stringa già formattata (es. "+22.3%" dal seed): normalizziamo
+            // in modo che il display non duplichi mai i simboli "+" / "%" / "-".
             performance: p.metrics ? {
-              winRate: `${p.metrics.winRate || 0}%`,
-              avgProfit: `+${p.metrics.avgProfit || 0}%`,
-              drawdown: '',
-              trades: ''
+              winRate: formatPercent(p.metrics.winRate, false),
+              avgProfit: formatPercent(p.metrics.avgProfit, true),
+              drawdown: formatPercent(p.metrics.drawdown, false),
+              trades: p.metrics.trades != null ? String(p.metrics.trades) : ''
             } : undefined,
             // IMPORTANTE: Preserva la categoria originale per il routing corretto!
             // Non sovrascrivere con mapCategory
@@ -166,6 +169,25 @@ const ProductsSection: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Formatta una metrica percentuale gestendo sia numeri (es. 22.3) sia stringhe
+  // già formattate (es. "+22.3%", "87%", "-8.5%"). Mai duplicare "+" o "%".
+  const formatPercent = (
+    raw: number | string | null | undefined,
+    includePositiveSign: boolean
+  ): string => {
+    if (raw == null || raw === '') return '';
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      if (trimmed === '') return '';
+      // Già formattata (es. "+22.3%", "87%", "N/A"): la rendiamo così com'è.
+      if (trimmed.endsWith('%') || /[a-zA-Z]/.test(trimmed)) return trimmed;
+      raw = parseFloat(trimmed.replace(',', '.'));
+      if (Number.isNaN(raw)) return '';
+    }
+    const sign = includePositiveSign && (raw as number) > 0 ? '+' : '';
+    return `${sign}${raw}%`;
   };
 
   // Mappa le categorie dal backend
