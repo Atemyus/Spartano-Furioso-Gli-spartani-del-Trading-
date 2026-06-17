@@ -113,46 +113,52 @@ const TrialsManagement: React.FC = () => {
 
   const handleStatusChange = async (trialId: string, newStatus: string) => {
     try {
-      // TODO: Implementare API call
-      // await fetch(`/api/admin/trials/${trialId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ status: newStatus })
-      // });
-      
-      // Aggiorna stato locale
-      setTrials(prev => prev.map(t => 
-        t.id === trialId ? { ...t, status: newStatus as Trial['status'] } : t
-      ));
-      
-      alert(`Trial ${trialId} aggiornato a ${newStatus}`);
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Ricarica dal server per riflettere endDate/daysRemaining aggiornati
+        await fetchData();
+        alert(`Trial aggiornato a "${newStatus}"`);
+      } else {
+        const error = await response.json().catch(() => ({}));
+        alert(`Errore: ${error.error || 'aggiornamento non riuscito'}`);
+      }
     } catch (error) {
       console.error('Error updating trial:', error);
+      alert('Errore di connessione durante l\'aggiornamento del trial');
     }
   };
 
   const handleExtendTrial = async (trialId: string, days: number) => {
     try {
-      // TODO: Implementare API call
-      const trial = trials.find(t => t.id === trialId);
-      if (trial) {
-        const newEndDate = new Date(trial.endDate);
-        newEndDate.setDate(newEndDate.getDate() + days);
-        
-        setTrials(prev => prev.map(t => 
-          t.id === trialId 
-            ? { 
-                ...t, 
-                endDate: newEndDate.toISOString(),
-                daysRemaining: t.daysRemaining + days 
-              } 
-            : t
-        ));
-        
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}/extend`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ days })
+      });
+
+      if (response.ok) {
+        await fetchData();
         alert(`Trial esteso di ${days} giorni`);
+      } else {
+        const error = await response.json().catch(() => ({}));
+        alert(`Errore: ${error.error || 'estensione non riuscita'}`);
       }
     } catch (error) {
       console.error('Error extending trial:', error);
+      alert('Errore di connessione durante l\'estensione del trial');
     }
   };
 
