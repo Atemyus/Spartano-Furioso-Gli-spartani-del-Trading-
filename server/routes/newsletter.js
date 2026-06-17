@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import nodemailer from 'nodemailer';
+import { authenticateAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -133,7 +134,7 @@ router.post('/unsubscribe', async (req, res) => {
 });
 
 // Admin: Get tutti gli iscritti
-router.get('/admin/subscribers', async (req, res) => {
+router.get('/admin/subscribers', authenticateAdmin, async (req, res) => {
   try {
     console.log('📧 Fetching subscribers...');
     const { status, search, page = 1, limit = 50 } = req.query;
@@ -178,7 +179,7 @@ router.get('/admin/subscribers', async (req, res) => {
 });
 
 // Admin: Get statistiche newsletter
-router.get('/admin/stats', async (req, res) => {
+router.get('/admin/stats', authenticateAdmin, async (req, res) => {
   try {
     console.log('📊 Fetching newsletter stats...');
     
@@ -234,7 +235,7 @@ router.get('/admin/stats', async (req, res) => {
 });
 
 // Admin: Crea messaggio newsletter
-router.post('/admin/messages', async (req, res) => {
+router.post('/admin/messages', authenticateAdmin, async (req, res) => {
   try {
     const { subject, content, type, scheduledFor } = req.body;
 
@@ -256,7 +257,7 @@ router.post('/admin/messages', async (req, res) => {
 });
 
 // Admin: Get messaggi newsletter
-router.get('/admin/messages', async (req, res) => {
+router.get('/admin/messages', authenticateAdmin, async (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
 
@@ -286,7 +287,7 @@ router.get('/admin/messages', async (req, res) => {
 });
 
 // Admin: Invia messaggio newsletter
-router.post('/admin/messages/:id/send', async (req, res) => {
+router.post('/admin/messages/:id/send', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -346,7 +347,7 @@ router.post('/admin/messages/:id/send', async (req, res) => {
 });
 
 // Admin: Elimina messaggio
-router.delete('/admin/messages/:id', async (req, res) => {
+router.delete('/admin/messages/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -362,7 +363,7 @@ router.delete('/admin/messages/:id', async (req, res) => {
 });
 
 // Admin: Aggiorna messaggio
-router.put('/admin/messages/:id', async (req, res) => {
+router.put('/admin/messages/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { subject, content, type, scheduledFor, status } = req.body;

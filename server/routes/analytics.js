@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { UAParser } from 'ua-parser-js';
+import { authenticateAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -67,7 +68,7 @@ router.post('/track', async (req, res) => {
  * Get analytics statistics
  * GET /api/analytics/stats?days=7
  */
-router.get('/stats', async (req, res) => {
+router.get('/stats', authenticateAdmin, async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 7;
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
@@ -143,7 +144,7 @@ router.get('/stats', async (req, res) => {
  * Get raw analytics data with filters
  * GET /api/analytics/data?startDate=2024-01-01&endDate=2024-12-31&page=/home
  */
-router.get('/data', async (req, res) => {
+router.get('/data', authenticateAdmin, async (req, res) => {
   try {
     const where = {};
     if (req.query.startDate || req.query.endDate) {
@@ -172,7 +173,7 @@ router.get('/data', async (req, res) => {
  * Clear old analytics data
  * DELETE /api/analytics/cleanup?days=30
  */
-router.delete('/cleanup', async (req, res) => {
+router.delete('/cleanup', authenticateAdmin, async (req, res) => {
   try {
     const daysToKeep = parseInt(req.query.days) || 30;
     const cutoffDate = new Date(Date.now() - daysToKeep * 24 * 60 * 60 * 1000);

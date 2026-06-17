@@ -63,11 +63,19 @@ const NewsletterManagement: React.FC = () => {
     fetchData();
   }, [activeTab, searchTerm, filterStatus]);
 
+  // Header con il token admin per gli endpoint protetti
+  const authHeaders = (json = false): Record<string, string> => {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+    const h: Record<string, string> = { Authorization: `Bearer ${token}` };
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
       // Fetch stats
-      const statsRes = await fetch(`${API_URL}/api/newsletter/admin/stats`);
+      const statsRes = await fetch(`${API_URL}/api/newsletter/admin/stats`, { headers: authHeaders() });
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
@@ -80,7 +88,7 @@ const NewsletterManagement: React.FC = () => {
         if (searchTerm) params.append('search', searchTerm);
         if (filterStatus !== 'all') params.append('status', filterStatus);
         
-        const res = await fetch(`${API_URL}/api/newsletter/admin/subscribers?${params}`);
+        const res = await fetch(`${API_URL}/api/newsletter/admin/subscribers?${params}`, { headers: authHeaders() });
         if (res.ok) {
           const data = await res.json();
           setSubscribers(data.subscribers || []);
@@ -89,7 +97,7 @@ const NewsletterManagement: React.FC = () => {
           setSubscribers([]);
         }
       } else if (activeTab === 'messages') {
-        const res = await fetch(`${API_URL}/api/newsletter/admin/messages`);
+        const res = await fetch(`${API_URL}/api/newsletter/admin/messages`, { headers: authHeaders() });
         if (res.ok) {
           const data = await res.json();
           setMessages(data.messages || []);
@@ -119,7 +127,7 @@ const NewsletterManagement: React.FC = () => {
       
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(true),
         body: JSON.stringify(messageForm)
       });
 
@@ -141,7 +149,8 @@ const NewsletterManagement: React.FC = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/newsletter/admin/messages/${messageId}/send`, {
-        method: 'POST'
+        method: 'POST',
+        headers: authHeaders()
       });
 
       if (res.ok) {
@@ -160,7 +169,8 @@ const NewsletterManagement: React.FC = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/newsletter/admin/messages/${messageId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: authHeaders()
       });
 
       if (res.ok) {

@@ -35,7 +35,10 @@ const AnalyticsDashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_URL}/api/analytics/stats?days=${days}`);
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+      const response = await fetch(`${API_URL}/api/analytics/stats?days=${days}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error('Failed to fetch analytics');
       const data = await response.json();
       setStats(data);
