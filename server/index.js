@@ -117,8 +117,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Middleware - CORS configuration
 const allowedOrigins = [
-  'https://spartanofurioso.com',
-  'https://www.spartanofurioso.com',
+  'https://nexoralab.solutions',
+  'https://www.nexoralab.solutions',
   'https://spartano-furioso-gli-spartani-del-trading.vercel.app',
   'https://spartano-furioso.vercel.app', // Dominio Vercel alternativo
   'http://localhost:5173',

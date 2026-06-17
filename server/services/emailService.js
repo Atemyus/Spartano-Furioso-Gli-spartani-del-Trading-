@@ -12,9 +12,9 @@ const getFromEmail = () => {
   if (process.env.MAIL_FROM) return process.env.MAIL_FROM;
   if (!process.env.RESEND_API_KEY) {
     // Provider SMTP/Gmail: mittente = utente autenticato
-    return process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.SMTP_USER || 'noreply@spartanofurioso.com';
+    return process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.SMTP_USER || 'noreply@nexoralab.solutions';
   }
-  return 'noreply@spartanofurioso.com';
+  return 'noreply@nexoralab.solutions';
 };
 
 const getFrom = (name = 'Nexora Lab') => `"${name}" <${getFromEmail()}>`;
@@ -110,7 +110,7 @@ const createTransporter = async () => {
 
 const BRAND = {
   name: 'Nexora Lab',
-  get site() { return process.env.FRONTEND_URL || 'https://spartanofurioso.com'; }
+  get site() { return process.env.FRONTEND_URL || 'https://nexoralab.solutions'; }
 };
 
 // Scocca base dell'email (header + contenuto + footer)

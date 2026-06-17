@@ -53,7 +53,7 @@ const UsersManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/users', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -87,7 +87,7 @@ const UsersManagement: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       // Usa l'endpoint admin (rispetta ruolo/stato/email verificata);
       // /api/auth/register li ignorerebbe forzando user pending non verificato.
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/users', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${selectedUser.id}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -163,7 +163,7 @@ const UsersManagement: React.FC = () => {
   const handleSuspendUser = async (userId: string) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

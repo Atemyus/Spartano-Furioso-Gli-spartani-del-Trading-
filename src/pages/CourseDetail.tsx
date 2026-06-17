@@ -81,12 +81,12 @@ const CourseDetail: React.FC = () => {
   const loadCourseData = async () => {
     try {
       // Carica i dettagli del prodotto
-      const productResponse = await fetch(`https://api.spartanofurioso.com/api/products/${courseId}`);
+      const productResponse = await fetch(`https://api.nexoralab.solutions/api/products/${courseId}`);
       if (productResponse.ok) {
         const productData = await productResponse.json();
         
         // Carica i moduli del corso dal database
-        const modulesResponse = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
+        const modulesResponse = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/content`);
         if (modulesResponse.ok) {
           const modulesData = await modulesResponse.json();
           
@@ -122,7 +122,7 @@ const CourseDetail: React.FC = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/check/${courseId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

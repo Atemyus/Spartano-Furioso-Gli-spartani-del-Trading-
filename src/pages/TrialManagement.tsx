@@ -157,7 +157,7 @@ const TrialManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
       console.log('📥 Inizio download per prodotto:', product.id);
 

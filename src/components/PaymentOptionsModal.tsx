@@ -41,7 +41,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       if (plan === 'monthly') interval = 'month';
       else if (plan === 'yearly') interval = 'year';
       
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     try {
       const userEmail = localStorage.getItem('userEmail');
       
-      const response = await fetch('https://api.spartanofurioso.com/api/payments/paypal/create-order', {
+      const response = await fetch('https://api.nexoralab.solutions/api/payments/paypal/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -126,7 +126,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     try {
       const userEmail = localStorage.getItem('userEmail');
       
-      const response = await fetch('https://api.spartanofurioso.com/api/payments/crypto/create-charge', {
+      const response = await fetch('https://api.nexoralab.solutions/api/payments/crypto/create-charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

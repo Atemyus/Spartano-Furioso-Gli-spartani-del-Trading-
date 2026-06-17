@@ -56,7 +56,7 @@ const Contatto = () => {
               <Mail className="w-5 h-5 text-cyan-400" />
               <div>
                 <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase block">// Email</span>
-                <span className={`text-sm ${theme === 'light' ? 'text-slate-700' : 'text-slate-300'}`}>info@spartanofurioso.com</span>
+                <span className={`text-sm ${theme === 'light' ? 'text-slate-700' : 'text-slate-300'}`}>info@nexoralab.solutions</span>
               </div>
             </div>
             <div className="flex items-center gap-4">

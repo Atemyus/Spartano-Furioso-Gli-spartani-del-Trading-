@@ -387,7 +387,7 @@ async function sendWelcomeEmail(email, name) {
 
 // Funzione per costruire HTML email newsletter con link disiscrizione (brand Nexora Lab)
 function buildEmailHTML(content, email) {
-  const site = process.env.FRONTEND_URL || 'https://spartanofurioso.com';
+  const site = process.env.FRONTEND_URL || 'https://nexoralab.solutions';
   return `
     <!DOCTYPE html>
     <html lang="it">

@@ -11,7 +11,7 @@ import {
   Calendar
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
 interface AnalyticsStats {
   totalPageViews: number;

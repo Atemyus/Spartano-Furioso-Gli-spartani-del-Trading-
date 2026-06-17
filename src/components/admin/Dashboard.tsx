@@ -59,7 +59,7 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/stats', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/stats', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

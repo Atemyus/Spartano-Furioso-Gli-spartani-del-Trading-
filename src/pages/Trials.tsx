@@ -80,7 +80,7 @@ const Trials: React.FC = () => {
       }
 
       // TODO: Fetch trial attivi dell'utente
-      // const trialsResponse = await fetch('https://api.spartanofurioso.com/api/user/trials', {
+      // const trialsResponse = await fetch('https://api.nexoralab.solutions/api/user/trials', {
       //   headers: { 'Authorization': `Bearer ${token}` }
       // });
       // if (trialsResponse.ok) {

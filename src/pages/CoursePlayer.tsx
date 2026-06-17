@@ -110,7 +110,7 @@ const CoursePlayer: React.FC = () => {
 
   const loadCourseData = async () => {
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/${courseId}`);
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/${courseId}`);
       if (response.ok) {
         const data = await response.json();
         setCourse(data);
@@ -154,7 +154,7 @@ const CoursePlayer: React.FC = () => {
     if (!token) return;
 
     try {
-      await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/lessons/${lessonId}/complete`, {
+      await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/lessons/${lessonId}/complete`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -185,7 +185,7 @@ const CoursePlayer: React.FC = () => {
     if (!token) return;
 
     try {
-      await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/lessons/${lessonId}/notes`, {
+      await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/lessons/${lessonId}/notes`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,

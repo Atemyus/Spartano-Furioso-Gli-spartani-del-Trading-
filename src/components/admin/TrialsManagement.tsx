@@ -55,7 +55,7 @@ const TrialsManagement: React.FC = () => {
   const fetchData = async () => {
     try {
       // Fetch prodotti
-      const productsRes = await fetch('https://api.spartanofurioso.com/api/products');
+      const productsRes = await fetch('https://api.nexoralab.solutions/api/products');
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData.filter((p: Product) => p.trialDays > 0));
@@ -71,7 +71,7 @@ const TrialsManagement: React.FC = () => {
       console.log('User token:', userToken ? 'Present' : 'Not found');
       
       if (token) {
-        const trialsRes = await fetch('https://api.spartanofurioso.com/api/trials/admin/all', {
+        const trialsRes = await fetch('https://api.nexoralab.solutions/api/trials/admin/all', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -114,7 +114,7 @@ const TrialsManagement: React.FC = () => {
   const handleStatusChange = async (trialId: string, newStatus: string) => {
     try {
       const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const TrialsManagement: React.FC = () => {
   const handleExtendTrial = async (trialId: string, days: number) => {
     try {
       const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}/extend`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}/extend`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const TrialsManagement: React.FC = () => {
         return;
       }
       
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

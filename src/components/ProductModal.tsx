@@ -133,7 +133,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
     // Prima controlla se ha già un trial attivo
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/trial-status/${product.id}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/trial-status/${product.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

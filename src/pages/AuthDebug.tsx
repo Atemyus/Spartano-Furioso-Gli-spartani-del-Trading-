@@ -29,7 +29,7 @@ const AuthDebug: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/auth/verify-token', {
+      const response = await fetch('https://api.nexoralab.solutions/api/auth/verify-token', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

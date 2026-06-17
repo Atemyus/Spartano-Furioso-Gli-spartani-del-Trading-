@@ -14,7 +14,7 @@ const Community = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/newsletter/subscribe', {
+      const response = await fetch('https://api.nexoralab.solutions/api/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source: 'community_page' }),
