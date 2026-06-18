@@ -117,7 +117,7 @@ const BRAND = {
 // IMPORTANTE: i client email (Gmail/Outlook) rimuovono gli sfondi `gradient`.
 // Per questo usiamo COLORI SOLIDI + attributo bgcolor (sempre rispettato),
 // altrimenti header e pulsanti diventano bianchi e il testo bianco sparisce.
-const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', contentHtml = '' }) => `
+const emailShell = ({ preheader = '', tagline = '', contentHtml = '' }) => `
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -130,13 +130,11 @@ const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', con
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#eef2f7" style="background-color:#eef2f7;padding:28px 12px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
-        <!-- Header (sfondo navy SOLIDO) -->
+        <!-- Header (logo ufficiale Nexora Lab, sfondo bianco) -->
         <tr>
-          <td bgcolor="#0b1e3f" align="center" style="background-color:#0b1e3f;padding:38px 40px 34px;text-align:center;">
-            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;line-height:1;">
-              Nexora<span style="color:#38bdf8;">Lab</span>
-            </div>
-            <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:10px;">${tagline}</div>
+          <td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:34px 40px 26px;text-align:center;">
+            <img src="${BRAND.site}/logo.png" alt="Nexora Lab" width="210" style="display:block;margin:0 auto;border:0;outline:none;text-decoration:none;width:210px;max-width:70%;height:auto;">
+            ${tagline ? `<div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#0ea5e9;margin-top:14px;text-transform:uppercase;">${tagline}</div>` : ''}
           </td>
         </tr>
         <!-- Barra accento cyan SOLIDA -->

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, AlertCircle, Shield } from 'lucide-react';
+import { Lock, Mail, AlertCircle } from 'lucide-react';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -45,9 +45,7 @@ const AdminLogin: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
+            <img src="/logo.png" alt="Nexora Lab" className="mx-auto h-10 w-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-800">Admin Login</h2>
             <p className="text-gray-600 mt-2">Accedi al pannello di amministrazione</p>
           </div>

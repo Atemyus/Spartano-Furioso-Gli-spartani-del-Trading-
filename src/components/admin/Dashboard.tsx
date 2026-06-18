@@ -111,7 +111,7 @@ const AdminDashboard: React.FC = () => {
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
-          <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
+          <img src="/logo.png" alt="Nexora Lab" className="h-8 w-auto" />
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden"
