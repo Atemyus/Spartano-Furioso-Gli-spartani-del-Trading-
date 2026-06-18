@@ -6,7 +6,7 @@ import LAddestramento from '../components/LAddestramento';
 import ProductsSection from '../components/ProductsSection';
 import Testimonials from '../components/Testimonials';
 import Community from '../components/Community';
-// import TestStripe from '../components/TestStripe'; // Rimosso dopo test
+import ScrollReveal from '../components/ScrollReveal';
 
 const Home: React.FC = () => {
   const location = useLocation();
@@ -28,20 +28,21 @@ const Home: React.FC = () => {
   return (
     <>
       <Hero />
-      {/* <TestDataFetch /> Uncommenta per debug */}
-      <div id="falange">
-        <LaFalange />
-      </div>
-      <div id="addestramento">
-        <LAddestramento />
-      </div>
-      <ProductsSection />
-      <div id="veterani">
-        <Testimonials />
-      </div>
-      <div id="community">
-        <Community />
-      </div>
+      <ScrollReveal as="div" distance={32}>
+        <div id="falange"><LaFalange /></div>
+      </ScrollReveal>
+      <ScrollReveal as="div" distance={32}>
+        <div id="addestramento"><LAddestramento /></div>
+      </ScrollReveal>
+      <ScrollReveal as="div" distance={32}>
+        <ProductsSection />
+      </ScrollReveal>
+      <ScrollReveal as="div" distance={32}>
+        <div id="veterani"><Testimonials /></div>
+      </ScrollReveal>
+      <ScrollReveal as="div" distance={32}>
+        <div id="community"><Community /></div>
+      </ScrollReveal>
     </>
   );
 };

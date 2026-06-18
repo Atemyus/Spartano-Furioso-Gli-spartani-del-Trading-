@@ -328,6 +328,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
+        avatar: user.avatar,
         emailVerified: user.emailVerified,
         createdAt: user.createdAt,
         trials: user.trials || [],
@@ -366,6 +367,7 @@ router.get('/verify-token', authenticateToken, async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
+        avatar: user.avatar,
         emailVerified: user.emailVerified,
         status: user.status,
         createdAt: user.createdAt,
@@ -376,6 +378,60 @@ router.get('/verify-token', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Token verification error:', error);
     res.status(500).json({ error: 'Errore verifica token' });
+  }
+});
+
+// Update user profile (name, email, avatar, optional password change)
+router.put('/update-profile', authenticateToken, async (req, res) => {
+  try {
+    const { name, email, avatar, currentPassword, newPassword } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (!user) return res.status(404).json({ error: 'Utente non trovato' });
+
+    const updates = {};
+
+    if (typeof name === 'string' && name.trim()) updates.name = name.trim();
+    if (typeof avatar === 'string') updates.avatar = avatar; // string vuota = rimuovi
+
+    if (typeof email === 'string' && email.trim() && email.trim().toLowerCase() !== user.email.toLowerCase()) {
+      const exists = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } });
+      if (exists) return res.status(400).json({ message: 'Email già in uso' });
+      updates.email = email.trim().toLowerCase();
+    }
+
+    if (newPassword) {
+      if (!currentPassword) return res.status(400).json({ message: 'Password attuale richiesta' });
+      const ok = await comparePassword(currentPassword, user.password);
+      if (!ok) return res.status(400).json({ message: 'Password attuale non corretta' });
+      if (newPassword.length < 8) return res.status(400).json({ message: 'La nuova password deve essere di almeno 8 caratteri' });
+      updates.password = await hashPassword(newPassword);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'Nessuna modifica da salvare' });
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: req.userId },
+      data: updates,
+    });
+
+    res.json({
+      success: true,
+      user: {
+        id: updated.id,
+        email: updated.email,
+        name: updated.name,
+        avatar: updated.avatar,
+        emailVerified: updated.emailVerified,
+        status: updated.status,
+        createdAt: updated.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ message: 'Errore aggiornamento profilo' });
   }
 });
 

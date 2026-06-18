@@ -12,6 +12,7 @@ model User {
   email                     String    @unique
   password                  String
   name                      String?
+  avatar                    String?   // URL avatar del profilo (es. /uploads/xxx.png)
   role                      String    @default("USER") // USER, ADMIN
   isActive                  Boolean   @default(true)
   status                    String    @default("pending") // pending, active, suspended
