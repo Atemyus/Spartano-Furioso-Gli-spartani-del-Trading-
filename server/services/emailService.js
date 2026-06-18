@@ -114,6 +114,9 @@ const BRAND = {
 };
 
 // Scocca base dell'email (header + contenuto + footer)
+// IMPORTANTE: i client email (Gmail/Outlook) rimuovono gli sfondi `gradient`.
+// Per questo usiamo COLORI SOLIDI + attributo bgcolor (sempre rispettato),
+// altrimenti header e pulsanti diventano bianchi e il testo bianco sparisce.
 const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', contentHtml = '' }) => `
 <!DOCTYPE html>
 <html lang="it">
@@ -122,29 +125,32 @@ const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', con
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="x-apple-disable-message-reformatting">
 </head>
-<body style="margin:0;padding:0;background:#f1f5f9;-webkit-text-size-adjust:100%;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f1f5f9;">${preheader}</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+<body style="margin:0;padding:0;background-color:#eef2f7;-webkit-text-size-adjust:100%;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#eef2f7;">${preheader}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#eef2f7" style="background-color:#eef2f7;padding:28px 12px;">
     <tr><td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.08);">
-        <!-- Header -->
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+        <!-- Header (sfondo navy SOLIDO) -->
         <tr>
-          <td style="background:linear-gradient(135deg,#0b1e3f 0%,#1e3a8a 55%,#0ea5e9 140%);padding:36px 40px;text-align:center;">
-            <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:30px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;">
+          <td bgcolor="#0b1e3f" align="center" style="background-color:#0b1e3f;padding:38px 40px 34px;text-align:center;">
+            <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;line-height:1;">
               Nexora<span style="color:#38bdf8;">Lab</span>
             </div>
-            <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:8px;">${tagline}</div>
+            <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:10px;">${tagline}</div>
           </td>
         </tr>
+        <!-- Barra accento cyan SOLIDA -->
+        <tr><td bgcolor="#38bdf8" style="background-color:#38bdf8;height:4px;line-height:4px;font-size:0;">&nbsp;</td></tr>
         <!-- Contenuto -->
         <tr>
-          <td style="padding:40px;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#1e293b;line-height:1.65;font-size:16px;">
+          <td style="padding:40px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e293b;line-height:1.65;font-size:16px;">
             ${contentHtml}
           </td>
         </tr>
-        <!-- Footer -->
+        <!-- Footer (sfondo navy SOLIDO) -->
         <tr>
-          <td style="padding:26px 40px;background:#0b1e3f;text-align:center;font-family:Arial,sans-serif;">
+          <td bgcolor="#0b1e3f" align="center" style="background-color:#0b1e3f;padding:28px 40px;text-align:center;font-family:Arial,sans-serif;">
+            <div style="font-size:18px;font-weight:800;color:#ffffff;margin-bottom:8px;">Nexora<span style="color:#38bdf8;">Lab</span></div>
             <div style="color:#94a3b8;font-size:12px;line-height:1.7;">
               © ${new Date().getFullYear()} Nexora Lab — Trading &amp; Creator economy<br>
               <a href="${BRAND.site}" style="color:#38bdf8;text-decoration:none;">${BRAND.site.replace(/^https?:\/\//, '')}</a>
@@ -152,20 +158,20 @@ const emailShell = ({ preheader = '', tagline = 'TRADING · CREATOR · LAB', con
           </td>
         </tr>
       </table>
-      <div style="font-family:Arial,sans-serif;font-size:11px;color:#94a3b8;margin-top:16px;">
-        Hai ricevuto questa email perché sei iscritto a Nexora Lab.
+      <div style="font-family:Arial,sans-serif;font-size:11px;color:#94a3b8;margin-top:16px;max-width:600px;">
+        Hai ricevuto questa email perché ti sei registrato a Nexora Lab.
       </div>
     </td></tr>
   </table>
 </body>
 </html>`;
 
-// Bottone call-to-action
+// Bottone call-to-action — colore SOLIDO + bgcolor (visibile in tutti i client)
 const emailButton = (label, href) => `
 <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:30px auto;">
   <tr>
-    <td align="center" style="border-radius:10px;background:linear-gradient(135deg,#1e3a8a 0%,#38bdf8 100%);box-shadow:0 6px 18px rgba(56,189,248,0.35);">
-      <a href="${href}" target="_blank" style="display:inline-block;padding:15px 38px;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:10px;">${label}</a>
+    <td align="center" bgcolor="#2563eb" style="background-color:#2563eb;border-radius:10px;">
+      <a href="${href}" target="_blank" style="display:inline-block;padding:15px 40px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:10px;border:1px solid #2563eb;">${label}</a>
     </td>
   </tr>
 </table>`;
@@ -468,6 +474,13 @@ export const sendRawEmail = async (to, subject, html, fromName = 'Nexora Lab') =
   }
 };
 
+// Riga "dettaglio" per le tabelle email
+const detailRow = (label, value) => `
+  <tr>
+    <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:14px;color:#64748b;">${label}</td>
+    <td style="padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;">${value}</td>
+  </tr>`;
+
 export const sendOrderConfirmation = async ({
   customerName,
   customerEmail,
@@ -481,106 +494,58 @@ export const sendOrderConfirmation = async ({
   cancellationReason = ''
 }) => {
   try {
-    const transporter = await createTransporter();
-
     const formattedAmount = formatCurrency(amount, currency);
     const formattedDate = date
-      ? new Date(date).toLocaleString('it-IT', {
-          dateStyle: 'full',
-          timeStyle: 'short'
-        })
+      ? new Date(date).toLocaleString('it-IT', { dateStyle: 'long', timeStyle: 'short' })
       : new Date().toLocaleString('it-IT');
 
-    // Determina colore e titolo in base allo stato
-    const headerColor = isCancelled ? '#dc2626' : '#10b981';
-    const headerTitle = isCancelled ? 'Ordine Annullato' : 'Grazie per il tuo ordine!';
-    const statusMessage = isCancelled 
-      ? `<p style="color: #dc2626; font-weight: bold;">Il tuo ordine è stato annullato.</p>${cancellationReason ? `<p>Motivo: ${cancellationReason}</p>` : ''}`
-      : isPending 
-        ? '<p style="color: #f59e0b; font-weight: bold;">Il tuo ordine è in attesa di conferma.</p>'
-        : '<p style="color: #10b981; font-weight: bold;">Il tuo ordine è stato confermato!</p>';
-
-    const mailOptions = {
-      from: getFrom(),
-      to: customerEmail,
-      subject: isCancelled ? `Ordine Annullato ${orderNumber}` : `Conferma Ordine ${orderNumber}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <style>
-              body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-              .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 10px; }
-              .header { background: linear-gradient(135deg, ${headerColor} 0%, ${headerColor}dd 100%); color: #ffffff; padding: 25px; border-radius: 10px 10px 0 0; text-align: center; }
-              .details { margin-top: 30px; }
-              .details table { width: 100%; border-collapse: collapse; }
-              .details td { padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
-              .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 12px; }
-              .button { display: inline-block; margin-top: 20px; padding: 12px 25px; background: #10b981; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>${headerTitle}</h1>
-              </div>
-              <p>Ciao ${customerName || 'Studente'},</p>
-              ${statusMessage}
-              <p>${isCancelled ? 'Dettagli dell\'ordine annullato' : 'Abbiamo ricevuto il tuo ordine'} con numero <strong>${orderNumber}</strong>.</p>
-              <div class="details">
-                <table>
-                  <tr><td><strong>Prodotto</strong></td><td>${productName}</td></tr>
-                  <tr><td><strong>Importo</strong></td><td>${formattedAmount}</td></tr>
-                  <tr><td><strong>Data</strong></td><td>${formattedDate}</td></tr>
-                  ${isCancelled ? `<tr><td><strong>Stato</strong></td><td style="color: #dc2626;">Annullato</td></tr>` : ''}
-                </table>
-              </div>
-              ${!isCancelled ? `<a class="button" href="${process.env.FRONTEND_URL || '#'}">Accedi alla tua area</a>` : ''}
-              ${!isCancelled && !isPending ? '<p style="margin-top: 25px;">Riceverai un\'ulteriore email con le istruzioni di accesso ai contenuti.</p>' : ''}
-              ${isCancelled ? '<p style="margin-top: 25px;">Se hai domande, contatta il nostro supporto.</p>' : ''}
-              <div class="footer">
-                <p>© ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-      text: `
-        Ciao ${customerName || 'Studente'},
-
-        ${isCancelled ? `Il tuo ordine ${orderNumber} è stato annullato.` : `Abbiamo ricevuto il tuo ordine ${orderNumber} per ${productName}.`}
-        ${isCancelled && cancellationReason ? `Motivo: ${cancellationReason}` : ''}
-        
-        Importo: ${formattedAmount}
-        Data: ${formattedDate}
-
-        ${!isCancelled ? `Accedi all'area riservata: ${process.env.FRONTEND_URL || '#'}` : ''}
-        ${!isCancelled && !isPending ? 'Riceverai un\'altra email con le istruzioni di accesso.' : ''}
-        ${isCancelled ? 'Se hai domande, contatta il nostro supporto.' : ''}
-
-        Il Team di Trading Falange
-      `
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log('\n✅ EMAIL CONFERMA ORDINE INVIATA');
-    console.log('📨 Destinatario:', customerEmail);
-    console.log('📝 Oggetto:', mailOptions.subject);
-    console.log('🆔 Message ID:', info.messageId);
-
-    const previewUrl = nodemailer.getTestMessageUrl(info);
-    if (previewUrl) {
-      console.log('\n🔗 ANTEPRIMA EMAIL (solo per test):');
-      console.log('🌐', previewUrl);
-      console.log('\n');
+    // Banner di stato con colore solido
+    let statusBanner, heading, subject;
+    if (isCancelled) {
+      heading = 'Ordine annullato';
+      subject = `Ordine annullato · ${orderNumber}`;
+      statusBanner = `<div style="background-color:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;margin:0 0 18px;font-size:14px;color:#b91c1c;font-weight:600;">✖ Il tuo ordine è stato annullato.${cancellationReason ? `<br><span style="font-weight:400;">Motivo: ${cancellationReason}</span>` : ''}</div>`;
+    } else if (isPending) {
+      heading = 'Ordine ricevuto';
+      subject = `Ordine ricevuto · ${orderNumber}`;
+      statusBanner = `<div style="background-color:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin:0 0 18px;font-size:14px;color:#b45309;font-weight:600;">⏳ Il tuo ordine è in attesa di conferma.</div>`;
+    } else {
+      heading = 'Ordine confermato';
+      subject = `Ordine confermato · ${orderNumber}`;
+      statusBanner = `<div style="background-color:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:12px 16px;margin:0 0 18px;font-size:14px;color:#047857;font-weight:600;">✓ Il tuo ordine è stato confermato!</div>`;
     }
 
-    return { success: true, messageId: info.messageId };
+    const content = `
+      <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#0b1e3f;">${heading}</h1>
+      <p style="margin:0 0 16px;">Ciao <strong>${customerName || 'trader'}</strong>,</p>
+      ${statusBanner}
+      <p style="margin:0 0 14px;">${isCancelled ? 'Dettagli dell\'ordine annullato' : 'Riepilogo del tuo ordine'} <strong>${orderNumber}</strong>:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background-color:#f8fafc;border-radius:10px;padding:0 16px;">
+        ${detailRow('Prodotto', productName || '-')}
+        ${detailRow('Importo', formattedAmount)}
+        ${detailRow('Data', formattedDate)}
+        ${isCancelled ? detailRow('Stato', '<span style="color:#b91c1c;">Annullato</span>') : ''}
+      </table>
+      ${!isCancelled ? emailButton('Accedi alla tua area', `${BRAND.site}/dashboard`) : ''}
+      ${!isCancelled && !isPending ? '<p style="margin:18px 0 0;font-size:14px;color:#64748b;">📩 Riceverai a breve un\'altra email con le istruzioni di accesso ai contenuti.</p>' : ''}
+      ${isCancelled ? '<p style="margin:18px 0 0;font-size:14px;color:#64748b;">Per qualsiasi domanda rispondi pure a questa email.</p>' : ''}
+    `;
+
+    const html = emailShell({
+      preheader: isCancelled ? 'Il tuo ordine è stato annullato.' : (isPending ? 'Abbiamo ricevuto il tuo ordine.' : 'Il tuo ordine è confermato!'),
+      tagline: 'ORDINE',
+      contentHtml: content
+    });
+
+    const result = await sendRawEmail(customerEmail, subject, html);
+    if (result?.success) {
+      console.log('✅ EMAIL CONFERMA ORDINE INVIATA a', customerEmail);
+    } else {
+      console.error('❌ Email conferma ordine NON inviata:', result?.error);
+    }
+    return result;
   } catch (error) {
-    console.error('\n❌ ERRORE EMAIL CONFERMA ORDINE:');
-    console.error('Errore:', error.message);
+    console.error('\n❌ ERRORE EMAIL CONFERMA ORDINE:', error.message);
     return { success: false, error: error.message };
   }
 };
@@ -594,89 +559,43 @@ export const sendVimeoAccessInstructions = async ({
   telegramLink
 }) => {
   try {
-    const transporter = await createTransporter();
+    const accessBox = (badge, rows) => `
+      <div style="margin:0 0 16px;">
+        <span style="display:inline-block;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#0ea5e9;background-color:#e0f2fe;border-radius:999px;padding:5px 12px;">${badge}</span>
+        <div style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;margin-top:10px;font-size:14px;color:#1e293b;line-height:1.7;">
+          ${rows}
+        </div>
+      </div>`;
 
-    const mailOptions = {
-      from: getFrom(),
-      to: customerEmail,
-      subject: `Accesso ai contenuti: ${productName}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <style>
-              body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-              .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 10px; }
-              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 25px; border-radius: 10px 10px 0 0; text-align: center; }
-              .section { margin-top: 25px; }
-              .badge { display: inline-block; padding: 6px 12px; background: #e0e7ff; color: #3730a3; border-radius: 9999px; font-size: 12px; font-weight: bold; }
-              .box { background: #f9fafb; border-radius: 8px; padding: 15px 20px; margin-top: 15px; }
-              .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 12px; }
-              a { color: #4f46e5; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>Benvenuto nel tuo percorso!</h1>
-              </div>
-              <p>Ciao ${customerName || 'Studente'},</p>
-              <p>Qui trovi tutte le informazioni per accedere al corso <strong>${productName}</strong>.</p>
-              <div class="section">
-                <span class="badge">Accesso Vimeo</span>
-                <div class="box">
-                  <p>Link: <a href="${vimeoLink}" target="_blank">${vimeoLink}</a></p>
-                  <p>Password: <strong>${vimeoPassword}</strong></p>
-                </div>
-              </div>
-              ${telegramLink ? `
-                <div class="section">
-                  <span class="badge">Community Telegram</span>
-                  <div class="box">
-                    <p>Entra nella community: <a href="${telegramLink}" target="_blank">${telegramLink}</a></p>
-                  </div>
-                </div>
-              ` : ''}
-              <p style="margin-top: 25px;">Se hai domande rispondi a questa email, siamo qui per aiutarti.</p>
-              <div class="footer">
-                <p>© ${new Date().getFullYear()} Trading Falange. Tutti i diritti riservati.</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
-      text: `
-        Ciao ${customerName || 'Studente'},
+    const content = `
+      <h1 style="margin:0 0 6px;font-size:24px;font-weight:800;color:#0b1e3f;">Accesso ai contenuti 🎬</h1>
+      <p style="margin:0 0 16px;">Ciao <strong>${customerName || 'trader'}</strong>, ecco come accedere a <strong>${productName}</strong>.</p>
+      ${accessBox('Accesso video', `
+        Link: <a href="${vimeoLink}" target="_blank" style="color:#2563eb;word-break:break-all;">${vimeoLink || '-'}</a><br>
+        Password: <strong>${vimeoPassword || '-'}</strong>
+      `)}
+      ${telegramLink ? accessBox('Community Telegram', `
+        Entra qui: <a href="${telegramLink}" target="_blank" style="color:#2563eb;word-break:break-all;">${telegramLink}</a>
+      `) : ''}
+      ${vimeoLink ? emailButton('Vai al corso', vimeoLink) : ''}
+      <p style="margin:18px 0 0;font-size:14px;color:#64748b;">Per qualsiasi domanda rispondi pure a questa email: siamo qui per aiutarti.</p>
+    `;
 
-        Accedi al corso ${productName} su Vimeo:
-        Link: ${vimeoLink}
-        Password: ${vimeoPassword}
+    const html = emailShell({
+      preheader: `Le tue credenziali di accesso a ${productName}.`,
+      tagline: 'ACCESSO CORSO',
+      contentHtml: content
+    });
 
-        ${telegramLink ? `Unisciti alla community Telegram: ${telegramLink}\n\n` : ''}Se hai bisogno di assistenza rispondi a questa email.
-
-        Il Team di Trading Falange
-      `
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log('\n✅ EMAIL ACCESSO VIMEO INVIATA');
-    console.log('📨 Destinatario:', customerEmail);
-    console.log('📝 Oggetto:', mailOptions.subject);
-    console.log('🆔 Message ID:', info.messageId);
-
-    const previewUrl = nodemailer.getTestMessageUrl(info);
-    if (previewUrl) {
-      console.log('\n🔗 ANTEPRIMA EMAIL (solo per test):');
-      console.log('🌐', previewUrl);
-      console.log('\n');
+    const result = await sendRawEmail(customerEmail, `Accesso ai contenuti · ${productName}`, html);
+    if (result?.success) {
+      console.log('✅ EMAIL ACCESSO CORSO INVIATA a', customerEmail);
+    } else {
+      console.error('❌ Email accesso corso NON inviata:', result?.error);
     }
-
-    return { success: true, messageId: info.messageId };
+    return result;
   } catch (error) {
-    console.error('\n❌ ERRORE EMAIL ACCESSO VIMEO:');
-    console.error('Errore:', error.message);
+    console.error('\n❌ ERRORE EMAIL ACCESSO CORSO:', error.message);
     return { success: false, error: error.message };
   }
 };
