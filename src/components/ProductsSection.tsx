@@ -446,7 +446,7 @@ const ProductsSection: React.FC = () => {
               onClick={() => window.open('https://t.me/your_telegram_bot', '_blank')}
               className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl font-bold text-white text-lg hover:from-blue-500 hover:to-blue-700 hover:scale-105 transition-all duration-300 flex items-center gap-3">
               <Shield className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-              PARLA CON UN GUERRIERO
+              PARLA CON IL TEAM
               <Shield className="w-6 h-6 group-hover:-rotate-12 transition-transform" />
             </button>
           </div>

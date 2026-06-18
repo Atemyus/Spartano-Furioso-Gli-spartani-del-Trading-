@@ -145,7 +145,7 @@ const CourseTrialActivation: React.FC = () => {
           data.courseModules = [
             {
               id: 'mod1',
-              title: 'Introduzione al Trading Spartano',
+              title: 'Introduzione al Trading Professionale',
               description: 'Le basi filosofiche e tecniche del trading professionale',
               order: 1,
               isTrialContent: true,
@@ -153,7 +153,7 @@ const CourseTrialActivation: React.FC = () => {
               lessons: [
                 {
                   id: 'les1',
-                  title: 'Benvenuto nell\'Accademia Spartana',
+                  title: 'Benvenuto in Nexora Academy',
                   description: 'Presentazione del corso e del metodo',
                   duration: '15:30',
                   isTrialContent: true,
@@ -161,7 +161,7 @@ const CourseTrialActivation: React.FC = () => {
                 },
                 {
                   id: 'les2',
-                  title: 'La Mentalità del Guerriero Trader',
+                  title: 'La Mentalità del Trader Professionista',
                   description: 'Psicologia del trading e gestione emotiva',
                   duration: '45:00',
                   isTrialContent: true,
@@ -187,7 +187,7 @@ const CourseTrialActivation: React.FC = () => {
               lessons: [
                 {
                   id: 'les4',
-                  title: 'I Pattern Spartani',
+                  title: 'I Pattern Vincenti',
                   description: 'Riconoscere i pattern ad alta probabilità',
                   duration: '60:00',
                   isTrialContent: true,
@@ -206,7 +206,7 @@ const CourseTrialActivation: React.FC = () => {
             {
               id: 'mod3',
               title: 'Risk Management Militare',
-              description: 'Proteggere il capitale come uno scudo spartano',
+              description: 'Proteggere il capitale con metodo e rigore',
               order: 3,
               isTrialContent: true,
               duration: '5 ore',
@@ -231,7 +231,7 @@ const CourseTrialActivation: React.FC = () => {
             },
             {
               id: 'mod4',
-              title: 'Strategie di Trading Spartane',
+              title: 'Strategie di Trading Avanzate',
               description: 'Le strategie proprietarie dell\'accademia',
               order: 4,
               isTrialContent: false,

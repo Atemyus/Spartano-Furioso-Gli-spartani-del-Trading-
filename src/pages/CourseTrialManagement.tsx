@@ -278,7 +278,7 @@ const CourseTrialManagement: React.FC = () => {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Certificazione Spartan Trader al completamento</span>
+                    <span>Certificazione Nexora Trader al completamento</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />

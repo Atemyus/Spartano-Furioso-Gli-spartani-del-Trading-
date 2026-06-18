@@ -47,7 +47,7 @@ const Products: React.FC = () => {
         </div>
       )}
 
-      {/* Sezione Arsenale Spartano - il componente completo dalla homepage */}
+      {/* Sezione Catalogo - il componente completo dalla homepage */}
       <ProductsSection />
     </div>
   );

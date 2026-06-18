@@ -99,7 +99,7 @@ const ForgotPassword: React.FC = () => {
                   {/* Email Field */}
                   <div>
                     <label className="block text-sm font-bold text-gray-300 mb-2">
-                      Email del Guerriero
+                      La tua email
                     </label>
                     <div className="relative">
                       <input
@@ -107,7 +107,7 @@ const ForgotPassword: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 pl-12 bg-black/50 border-2 border-blue-900/50 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-colors"
-                        placeholder="guerriero@sparta.com"
+                        placeholder="tu@email.it"
                         required
                       />
                       <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />

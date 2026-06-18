@@ -59,12 +59,12 @@ export interface Product {
 export const products: Product[] = [
   {
     id: 'spartan_fury_bot',
-    name: 'SPARTAN FURY BOT',
+    name: 'NEXORA FURY BOT',
     category: 'bot',
-    shortDescription: 'Il bot di trading più aggressivo e redditizio mai creato',
-    description: `Il Spartan Fury Bot è il nostro algoritmo di punta, forgiato con la disciplina e la strategia dei guerrieri spartani. 
+    shortDescription: 'Il bot di trading più aggressivo e redditizio del lab',
+    description: `Nexora Fury Bot è il nostro algoritmo di punta, costruito con un approccio metodico e rigoroso alla gestione del rischio.
     Utilizza un'intelligenza artificiale avanzata per analizzare i mercati 24/7 e identificare le migliori opportunità di trading.
-    Testato in battaglia per oltre 3 anni con risultati straordinari.`,
+    Testato in live per oltre 3 anni con risultati straordinari.`,
     price: {
       monthly: 297,
       yearly: 2970,
@@ -72,8 +72,8 @@ export const products: Product[] = [
     },
     features: [
       '🔥 Trading automatico 24/7',
-      '⚔️ Algoritmo proprietario "Phalanx"',
-      '🛡️ Gestione del rischio militare',
+      '⚙️ Algoritmo proprietario "Phalanx"',
+      '🛡️ Gestione del rischio rigorosa',
       '📊 Dashboard real-time',
       '🎯 Precisione del 87% sui segnali',
       '💰 ROI medio mensile: 15-25%',
@@ -109,11 +109,11 @@ export const products: Product[] = [
   },
   {
     id: 'leonidas_scalper',
-    name: 'LEONIDAS SCALPER',
+    name: 'NEXORA SCALPER',
     category: 'bot',
-    shortDescription: 'Bot di scalping veloce come le lance spartane',
-    description: `Il Leonidas Scalper è progettato per operazioni rapide e precise, proprio come le tattiche del Re Leonida.
-    Specializzato in scalping su timeframe bassi con un'efficacia letale sui mercati volatili.`,
+    shortDescription: 'Bot di scalping ad alta frequenza per mercati volatili',
+    description: `Nexora Scalper è progettato per operazioni rapide e precise.
+    Specializzato in scalping su timeframe bassi con un'efficacia notevole sui mercati volatili.`,
     price: {
       monthly: 197,
       yearly: 1970,
@@ -155,10 +155,10 @@ export const products: Product[] = [
   },
   {
     id: 'thermopylae_defender',
-    name: 'THERMOPYLAE DEFENDER',
+    name: 'NEXORA SHIELD',
     category: 'bot',
     shortDescription: 'Sistema di hedging e protezione del capitale',
-    description: `Come i 300 spartani alle Termopili, questo bot difende il tuo capitale con strategie di hedging avanzate.
+    description: `Nexora Shield difende il tuo capitale con strategie di hedging avanzate.
     Perfetto per mercati incerti e protezione durante eventi di alta volatilità.`,
     price: {
       monthly: 247,
@@ -201,11 +201,11 @@ export const products: Product[] = [
   },
   {
     id: 'spartan_academy',
-    name: 'SPARTAN ACADEMY',
+    name: 'NEXORA ACADEMY',
     category: 'course',
-    shortDescription: 'Formazione completa per diventare un trader spartano',
-    description: `L'accademia di formazione più completa per trasformarti in un vero guerriero dei mercati.
-    12 settimane di training intensivo con i migliori trader spartani.`,
+    shortDescription: 'Formazione completa per diventare un trader professionista',
+    description: `L'accademia di formazione più completa per trasformarti in un trader professionista dei mercati.
+    12 settimane di training intensivo con i nostri migliori mentor.`,
     price: {
       monthly: 0,
       yearly: 0,
@@ -216,7 +216,7 @@ export const products: Product[] = [
       '📚 300+ ore di contenuti video',
       '👨‍🏫 Mentoring settimanale 1-on-1',
       '📊 Analisi live dei mercati',
-      '🏆 Certificazione Spartan Trader',
+      '🏆 Certificazione Nexora Trader',
       '💬 Gruppo Telegram esclusivo',
       '📈 Strategie proprietarie',
       '🔄 Aggiornamenti a vita'
@@ -240,7 +240,7 @@ export const products: Product[] = [
     courseModules: [
       {
         id: 'module_1',
-        title: 'Introduzione al Trading Spartano',
+        title: 'Introduzione al Trading Professionale',
         description: 'Le basi filosofiche e tecniche del trading professionale',
         order: 1,
         isTrialContent: true,
@@ -248,15 +248,15 @@ export const products: Product[] = [
         lessons: [
           {
             id: 'lesson_1_1',
-            title: 'Benvenuto nell\'Accademia Spartana',
-            description: 'Presentazione del corso e del metodo Spartano',
+            title: 'Benvenuto in Nexora Academy',
+            description: 'Presentazione del corso e del metodo Nexora Lab',
             duration: '15:30',
             isTrialContent: true,
             order: 1
           },
           {
             id: 'lesson_1_2',
-            title: 'La Mentalità del Guerriero Trader',
+            title: 'La Mentalità del Trader Professionista',
             description: 'Psicologia del trading e gestione emotiva',
             duration: '45:00',
             isTrialContent: true,
@@ -282,7 +282,7 @@ export const products: Product[] = [
         lessons: [
           {
             id: 'lesson_2_1',
-            title: 'I Pattern Spartani',
+            title: 'I Pattern Vincenti',
             description: 'Riconoscere i pattern ad alta probabilità',
             duration: '60:00',
             isTrialContent: true,
@@ -309,7 +309,7 @@ export const products: Product[] = [
           {
             id: 'lesson_3_1',
             title: 'Le Regole del Risk Management',
-            description: 'Come proteggere il capitale come un vero spartano',
+            description: 'Come proteggere il capitale con metodo',
             duration: '40:00',
             isTrialContent: false,
             order: 1
@@ -328,7 +328,7 @@ export const products: Product[] = [
     category: 'service',
     shortDescription: 'Segnali di trading premium dall\'Oracolo di Delfi',
     description: `Ricevi i segnali di trading più accurati direttamente sul tuo telefono.
-    Il nostro team di analisti spartani lavora 24/7 per identificare le migliori opportunità.`,
+    Il nostro team di analisti lavora 24/7 per identificare le migliori opportunità.`,
     price: {
       monthly: 97,
       yearly: 970
@@ -368,10 +368,10 @@ export const products: Product[] = [
   },
   {
     id: 'ares_indicator_pack',
-    name: 'ARES INDICATOR PACK',
+    name: 'NEXORA INDICATOR PACK',
     category: 'indicator',
-    shortDescription: 'Set completo di indicatori proprietari spartani',
-    description: `12 indicatori proprietari sviluppati e testati in anni di battaglie sui mercati.
+    shortDescription: 'Set completo di indicatori proprietari',
+    description: `12 indicatori proprietari sviluppati e testati in anni di esperienza sui mercati.
     Compatibili con tutte le principali piattaforme di trading.`,
     price: {
       monthly: 47,
@@ -381,7 +381,7 @@ export const products: Product[] = [
     features: [
       '📊 12 indicatori proprietari',
       '🎨 Personalizzazione completa',
-      '📈 Trend Spartan Identifier',
+      '📈 Trend Identifier proprietario',
       '🎯 Entry/Exit point precisi',
       '⚡ Zero lag technology',
       '🔄 Auto-adattamento al mercato',

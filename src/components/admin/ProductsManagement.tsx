@@ -430,7 +430,7 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         // Mostra notifica di successo
         const action = newActive ? 'attivato' : 'disattivato';
-        const visibility = newActive ? 'VISIBILE nell\'arsenale spartano' : 'NASCOSTO dall\'arsenale spartano';
+        const visibility = newActive ? 'VISIBILE nel catalogo' : 'NASCOSTO dal catalogo';
         alert(`✅ Prodotto ${action} con successo!\n\n${visibility}`);
         console.log(`Prodotto ${productId} aggiornato: active ${currentActive} -> ${newActive}`);
       } else {

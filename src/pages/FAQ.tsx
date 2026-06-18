@@ -14,7 +14,7 @@ const FAQ = () => {
       questions: [
         {
           q: "Come posso iniziare con Nexora Lab?",
-          a: "Iniziare è semplice! 1) Registrati gratuitamente sul sito. 2) Verifica la tua email. 3) Completa il tuo profilo. 4) Scegli un piano o attiva una prova gratuita. 5) Accedi alla dashboard e inizia il tuo percorso spartano. Il nostro team di supporto è disponibile 24/7 per guidarti nei primi passi."
+          a: "Iniziare è semplice! 1) Registrati gratuitamente sul sito. 2) Verifica la tua email. 3) Completa il tuo profilo. 4) Scegli un piano o attiva una prova gratuita. 5) Accedi alla dashboard e inizia il tuo percorso nel lab. Il nostro team di supporto è disponibile 24/7 per guidarti nei primi passi."
         },
         {
           q: "Quali sono i requisiti minimi per iniziare?",

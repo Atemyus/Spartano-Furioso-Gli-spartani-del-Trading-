@@ -28,7 +28,7 @@ const VideoTutorial = () => {
                 <h3 className={`text-xl font-bold mb-2 ${
                   theme === 'light' ? 'text-gray-800' : 'text-white'
                 }`}>Tutorial {i}</h3>
-                <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Impara le strategie spartane</p>
+                <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Impara strategie e tecniche operative</p>
               </div>
             </div>
           ))}

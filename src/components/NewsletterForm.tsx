@@ -13,7 +13,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
   source = 'other', 
   className = '',
   compact = false,
-  placeholder = 'La tua email di battaglia'
+  placeholder = 'La tua email'
 }) => {
   const { theme } = useTheme();
   const [email, setEmail] = useState('');
@@ -90,7 +90,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
           <div className="absolute -bottom-10 left-0 right-0 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg shadow-lg animate-bounce">
               <CheckCircle className="w-4 h-4" />
-              <span className="text-xs font-bold">🎉 Benvenuto nella Falange, Guerriero!</span>
+              <span className="text-xs font-bold">🎉 Benvenuto in Nexora Lab!</span>
             </div>
           </div>
         )}
@@ -125,7 +125,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
           <div className="absolute -top-10 left-0 right-0 flex justify-center animate-fadeIn">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white rounded-xl shadow-2xl border-2 border-green-400 animate-bounce">
               <CheckCircle className="w-5 h-5" />
-              <span className="text-sm font-bold">🎉 Benvenuto nella Falange, Guerriero! Riceverai le nostre strategie di battaglia!</span>
+              <span className="text-sm font-bold">🎉 Benvenuto in Nexora Lab! Riceverai i nostri insight settimanali.</span>
             </div>
           </div>
         )}

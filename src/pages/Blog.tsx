@@ -5,20 +5,20 @@ const Blog = () => {
   const { theme } = useTheme();
   const blogPosts = [
     {
-      title: "La Disciplina Spartana nel Trading: Come Dominare le Emozioni",
-      excerpt: "Scopri come applicare la leggendaria metodo Lab per controllare paura e avidità nei mercati.",
+      title: "Disciplina nel Trading: Come Dominare le Emozioni",
+      excerpt: "Scopri come applicare il metodo Nexora Lab per controllare paura e avidità nei mercati.",
       category: "Psicologia",
       date: "15 Gen 2025",
       readTime: "8 min",
-      author: "Marco Leonida"
+      author: "Marco Bianchi"
     },
     {
-      title: "Risk Management: Proteggi il Tuo Capitale Come uno Scudo Spartano",
+      title: "Risk Management: Proteggi il Tuo Capitale con Metodo",
       excerpt: "Le 5 regole d'oro per la gestione del rischio e come calcolare il position sizing perfetto.",
       category: "Risk Management",
       date: "12 Gen 2025",
       readTime: "10 min",
-      author: "Sofia Guerra"
+      author: "Sofia Conti"
     },
     {
       title: "Pattern Price Action: I Segreti dei Trader Professionisti",
@@ -26,15 +26,15 @@ const Blog = () => {
       category: "Analisi Tecnica",
       date: "10 Gen 2025",
       readTime: "12 min",
-      author: "Luca Spartano"
+      author: "Luca Ferrari"
     },
     {
-      title: "Backtesting: Come Testare le Tue Strategie Come un Generale",
+      title: "Backtesting: Come Testare le Tue Strategie con Rigore",
       excerpt: "Metodologia completa per backtestare strategie di trading ed evitare gli errori comuni.",
       category: "Strategie",
       date: "8 Gen 2025",
       readTime: "15 min",
-      author: "Alessandro Tattico"
+      author: "Alessandro Romano"
     }
   ];
 

@@ -799,7 +799,7 @@ const CourseDetail: React.FC = () => {
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Completa il corso e ottieni la prestigiosa certificazione 
-                  <span className="text-cyan-500 font-bold"> Spartan Trader</span>!
+                  <span className="text-cyan-500 font-bold"> Nexora Trader</span>!
                 </p>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li className="flex items-start gap-2">

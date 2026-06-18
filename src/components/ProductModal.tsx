@@ -685,7 +685,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
               <div className="bg-gradient-to-r from-blue-950/20 via-purple-950/20 to-blue-950/20 border border-blue-500/30 rounded-xl p-6">
                 <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-400" />
-                  GARANZIE SPARTANE
+                  LE NOSTRE GARANZIE
                 </h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-2 text-gray-300">

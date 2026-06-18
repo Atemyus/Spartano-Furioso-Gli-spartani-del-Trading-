@@ -250,8 +250,8 @@ const Register: React.FC = () => {
           <div className="text-center mb-8">
             <h2 className={`text-2xl font-black mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>UNISCITI ALLA FALANGE</h2>
-            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Diventa un guerriero del trading</p>
+            }`}>UNISCITI A NEXORA LAB</h2>
+            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Crea il tuo account e inizia subito</p>
           </div>
 
           {/* Success Message */}
@@ -302,7 +302,7 @@ const Register: React.FC = () => {
                       ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                    placeholder="Leonida"
+                    placeholder="Mario"
                     required
                   />
                   <User className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -329,7 +329,7 @@ const Register: React.FC = () => {
                       ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                    placeholder="Di Sparta"
+                    placeholder="Rossi"
                     required
                   />
                   <User className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -361,7 +361,7 @@ const Register: React.FC = () => {
                   } ${
                     errors.email ? 'border-blue-500' : ''
                   }`}
-                  placeholder="guerriero@sparta.com"
+                  placeholder="tu@email.it"
                   required
                 />
                 <Mail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -529,7 +529,7 @@ const Register: React.FC = () => {
               ) : (
                 <>
                   <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  <span>DIVENTA SPARTANO</span>
+                  <span>CREA ACCOUNT</span>
                 </>
               )}
             </button>

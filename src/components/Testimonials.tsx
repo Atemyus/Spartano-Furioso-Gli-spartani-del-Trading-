@@ -17,7 +17,7 @@ const Testimonials = () => {
       role: "POSTE ITALIANE",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
       certificate: "/testimonials/daniele-ftmo.jpg",
-      quote: "Grazie a Fury of Sparta ho superato l'intero FTMO Evaluation Process! La disciplina spartana del bot mi ha permesso di completare sia la FTMO Challenge che la Verification, raggiungendo tutti gli obiettivi di trading richiesti. Un trading avanzato e costante che ha portato risultati concreti. Certificato FTMO ottenuto!",
+      quote: "Grazie a Nexora Fury Bot ho superato l'intero FTMO Evaluation Process! La disciplina del bot del bot mi ha permesso di completare sia la FTMO Challenge che la Verification, raggiungendo tutti gli obiettivi di trading richiesti. Un trading avanzato e costante che ha portato risultati concreti. Certificato FTMO ottenuto!",
       rating: 5,
       profit: "FTMO Verified"
     },
@@ -26,7 +26,7 @@ const Testimonials = () => {
       role: "Lavoratore Autonomo",
       image: "/testimonials/daniel-photo.jpg",
       certificate: "/testimonials/daniel-fundednext.jpg",
-      quote: "Con Fury of Sparta sono diventato ufficialmente un FundedNext 'ELITE TRADER'! La strategia del bot è impeccabile: esecuzione perfetta, gestione del rischio rigorosa e disciplina assoluta. Le competenze acquisite mi permettono ora di operare come trader professionista nei mercati ad alta frequenza. Un risultato straordinario!",
+      quote: "Con Nexora Fury Bot sono diventato ufficialmente un FundedNext 'ELITE TRADER'! La strategia del bot è impeccabile: esecuzione perfetta, gestione del rischio rigorosa e disciplina assoluta. Le competenze acquisite mi permettono ora di operare come trader professionista nei mercati ad alta frequenza. Un risultato straordinario!",
       rating: 5,
       profit: "Elite Trader"
     },
@@ -35,7 +35,7 @@ const Testimonials = () => {
       role: "Pensionato",
       image: "/testimonials/vitantonio-photo.jpg",
       certificate: "/testimonials/vitantonio-ftmo.jpg",
-      quote: "A 65 anni ho scoperto una nuova passione grazie a Fury of Sparta! Il bot mi ha guidato con precisione militare attraverso la FTMO Challenge. La sua disciplina ferrea e la gestione del rischio impeccabile mi hanno permesso di superare tutte le fasi. Mai avrei pensato di diventare un trader certificato FTMO in pensione!",
+      quote: "A 65 anni ho scoperto una nuova passione grazie a Nexora Fury Bot! Il bot mi ha guidato con precisione militare attraverso la FTMO Challenge. La sua disciplina ferrea e la gestione del rischio impeccabile mi hanno permesso di superare tutte le fasi. Mai avrei pensato di diventare un trader certificato FTMO in pensione!",
       rating: 5,
       profit: "FTMO Passed"
     },
@@ -47,7 +47,7 @@ const Testimonials = () => {
         "/testimonials/giuliano-propnumberone-1.jpg",
         "/testimonials/giuliano-propnumberone-2.jpg"
       ],
-      quote: "Grazie alla Spartan Codex Academy ho superato ben 2 challenge PropNumberOne! La formazione ricevuta e la disciplina spartana mi hanno permesso di raggiungere obiettivi che sembravano impossibili. Due account finanziati, due successi consecutivi. Un percorso formativo che cambia davvero la vita!",
+      quote: "Grazie alla Nexora Codex Academy ho superato ben 2 challenge PropNumberOne! La formazione ricevuta e la disciplina del bot mi hanno permesso di raggiungere obiettivi che sembravano impossibili. Due account finanziati, due successi consecutivi. Un percorso formativo che cambia davvero la vita!",
       rating: 5,
       profit: "2x Prop Funded"
     },
@@ -56,7 +56,7 @@ const Testimonials = () => {
       role: "Estetista",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
       certificate: "/testimonials/luana-propnumberone.jpg",
-      quote: "Grazie alla Spartan Codex Academy ho superato la Fase 2 della sfida PropNumberOne per un account da 100k! Ho completato tutti i passaggi richiesti e ora sono pronta per diventare un Trader Finanziato con la Proposta Numero Uno. Un traguardo incredibile che sembrava impossibile!",
+      quote: "Grazie alla Nexora Codex Academy ho superato la Fase 2 della sfida PropNumberOne per un account da 100k! Ho completato tutti i passaggi richiesti e ora sono pronta per diventare un Trader Finanziato con la Proposta Numero Uno. Un traguardo incredibile che sembrava impossibile!",
       rating: 5,
       profit: "100K Funded"
     },
@@ -65,7 +65,7 @@ const Testimonials = () => {
       role: "Trader Intermedio",
       image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop",
       certificate: "/testimonials/francesco-acceleration.jpg",
-      quote: "Grazie alla Spartan Codex Academy sono riuscito ad arrivare in fase Acceleration in pochissimo tempo! La formazione ricevuta e le strategie apprese mi hanno permesso di progredire rapidamente. Profitto mensile previsto: $761.56. Un risultato straordinario che dimostra l'efficacia del metodo spartano!",
+      quote: "Grazie alla Nexora Codex Academy sono riuscito ad arrivare in fase Acceleration in pochissimo tempo! La formazione ricevuta e le strategie apprese mi hanno permesso di progredire rapidamente. Profitto mensile previsto: $761.56. Un risultato straordinario che dimostra l'efficacia del metodo Nexora Lab!",
       rating: 5,
       profit: "Acceleration Phase"
     },
@@ -74,7 +74,7 @@ const Testimonials = () => {
       role: "Ex Falegname",
       image: "/testimonials/fabiano-photo.jpg",
       certificate: "/testimonials/fabiano-axi-gold.jpg",
-      quote: "Grazie alla Spartan Codex Academy sono arrivato direttamente in fase Gold su Axi Select! Edge Score 91/100, equity $21,408.73 e performance del 7.04%. Da falegname a trader professionista: un percorso incredibile che ha cambiato completamente la mia vita. La disciplina spartana funziona davvero!",
+      quote: "Grazie alla Nexora Codex Academy sono arrivato direttamente in fase Gold su Axi Select! Edge Score 91/100, equity $21,408.73 e performance del 7.04%. Da falegname a trader professionista: un percorso incredibile che ha cambiato completamente la mia vita. La disciplina del bot funziona davvero!",
       rating: 5,
       profit: "Axi Gold Phase"
     },
@@ -83,7 +83,7 @@ const Testimonials = () => {
       role: "Commerciante",
       image: "/testimonials/mirco-photo.jpg",
       certificate: "/testimonials/mirco-axi-acceleration.jpg",
-      quote: "Grazie alla Spartan Codex Academy sono arrivato alla fase Acceleration su Axi Select! Edge Score 81/100, equity $1606.38 e profitto mensile $305.72. Gestisco un negozio e la formazione ricevuta mi ha permesso di diventare trader mentre lavoro. Un risultato straordinario!",
+      quote: "Grazie alla Nexora Codex Academy sono arrivato alla fase Acceleration su Axi Select! Edge Score 81/100, equity $1606.38 e profitto mensile $305.72. Gestisco un negozio e la formazione ricevuta mi ha permesso di diventare trader mentre lavoro. Un risultato straordinario!",
       rating: 5,
       profit: "Axi Acceleration"
     },
@@ -92,7 +92,7 @@ const Testimonials = () => {
       role: "Insegnante",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
       certificate: "/testimonials/antonio-fundednext.jpg",
-      quote: "Ho superato la fase di FundedNext con tempi davvero rapidi grazie a Fury of Sparta! Sono ora ufficialmente un FundedNext 'CROWN TRADER'. La disciplina del bot e la strategia impeccabile mi hanno permesso di raggiungere questo traguardo straordinario. Un certificato che testimonia competenze professionali di alto livello!",
+      quote: "Ho superato la fase di FundedNext con tempi davvero rapidi grazie a Nexora Fury Bot! Sono ora ufficialmente un FundedNext 'CROWN TRADER'. La disciplina del bot e la strategia impeccabile mi hanno permesso di raggiungere questo traguardo straordinario. Un certificato che testimonia competenze professionali di alto livello!",
       rating: 5,
       profit: "Crown Trader"
     },
@@ -101,7 +101,7 @@ const Testimonials = () => {
       role: "Trader Esperto",
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop",
       certificate: "/testimonials/alice-certificate.jpg",
-      quote: "Grazie alla Spartan Codex Academy ho superato la challenge con risultati eccezionali! La formazione avanzata e le strategie professionali mi hanno permesso di raggiungere un livello superiore nel trading. La disciplina spartana unita alla mia esperienza ha creato una combinazione vincente. Risultati concreti e certificati!",
+      quote: "Grazie alla Nexora Codex Academy ho superato la challenge con risultati eccezionali! La formazione avanzata e le strategie professionali mi hanno permesso di raggiungere un livello superiore nel trading. La disciplina del bot unita alla mia esperienza ha creato una combinazione vincente. Risultati concreti e certificati!",
       rating: 5,
       profit: "Challenge Passed"
     },
@@ -110,7 +110,7 @@ const Testimonials = () => {
       role: "Architetto",
       image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
       certificate: "/testimonials/alessandro-ftmo-payout.jpg",
-      quote: "Grazie a Fury of Sparta sono riuscito a fare il payout! FTMO Overall Rewards: $5,469.98. La disciplina del bot e la gestione del rischio impeccabile mi hanno permesso di raggiungere questo traguardo straordinario. Un risultato concreto che dimostra l'efficacia del sistema spartano. Payout certificato FTMO!",
+      quote: "Grazie a Nexora Fury Bot sono riuscito a fare il payout! FTMO Overall Rewards: $5,469.98. La disciplina del bot e la gestione del rischio impeccabile mi hanno permesso di raggiungere questo traguardo straordinario. Un risultato concreto che dimostra l'efficacia del sistema Nexora. Payout certificato FTMO!",
       rating: 5,
       profit: "$5,469 Payout"
     }

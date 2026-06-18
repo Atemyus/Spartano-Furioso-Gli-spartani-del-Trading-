@@ -201,9 +201,9 @@ const NewsletterManagement: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
             <Mail className="w-8 h-8 text-cyan-500" />
-            Gestione Newsletter - FALANGE
+            Gestione Newsletter
           </h1>
-          <p className="text-gray-400">Gestisci gli iscritti e invia messaggi alla tua armata</p>
+          <p className="text-gray-400">Gestisci gli iscritti e invia messaggi alla community</p>
         </div>
 
         {/* Stats Cards */}
@@ -214,7 +214,7 @@ const NewsletterManagement: React.FC = () => {
               <span className="text-sm text-green-300 font-bold">ATTIVI</span>
             </div>
             <div className="text-3xl font-black text-white mb-1">{stats.totalSubscribers}</div>
-            <div className="text-sm text-gray-400">Guerrieri Iscritti</div>
+            <div className="text-sm text-gray-400">Iscritti</div>
           </div>
 
           <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/30 rounded-xl p-6">
@@ -474,7 +474,7 @@ const NewsletterManagement: React.FC = () => {
                   value={messageForm.subject}
                   onChange={(e) => setMessageForm({ ...messageForm, subject: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
-                  placeholder="Es: 🔥 Nuova Strategia Spartana - Profitti Garantiti!"
+                  placeholder="Es: Nuova strategia di trading - Insight della settimana"
                   required
                 />
               </div>
@@ -503,7 +503,7 @@ const NewsletterManagement: React.FC = () => {
                   onChange={(e) => setMessageForm({ ...messageForm, content: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none font-mono text-sm"
                   rows={12}
-                  placeholder="<h1>Ciao Guerriero! 🛡️</h1><p>Contenuto della tua email...</p>"
+                  placeholder="<h1>Ciao!</h1><p>Contenuto della tua email...</p>"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-2">

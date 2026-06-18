@@ -188,8 +188,8 @@ const Login: React.FC = () => {
           <div className="text-center mb-8">
             <h2 className={`text-2xl font-black mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>BENTORNATO GUERRIERO</h2>
-            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Accedi al tuo account spartano</p>
+            }`}>BENTORNATO IN NEXORA LAB</h2>
+            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Accedi al tuo account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -231,7 +231,7 @@ const Login: React.FC = () => {
                       ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
                       : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                  placeholder="guerriero@sparta.com"
+                  placeholder="tu@email.it"
                   required
                 />
                 <Mail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -363,7 +363,7 @@ const Login: React.FC = () => {
               }`}
             >
               <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-              UNISCITI ALLA FALANGE
+              UNISCITI A NEXORA LAB
             </Link>
           </div>
         </div>

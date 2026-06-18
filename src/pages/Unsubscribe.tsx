@@ -105,7 +105,7 @@ const Unsubscribe: React.FC = () => {
 
               <div className="mt-6 p-4 bg-cyan-900/20 border border-cyan-700/50 rounded-lg">
                 <p className="text-xs text-cyan-400 text-center">
-                  ⚠️ Cliccando "Conferma Disiscrizione" non riceverai più email dalla Falange di Nexora Lab
+                  ⚠️ Cliccando "Conferma Disiscrizione" non riceverai più email da Nexora Lab
                 </p>
               </div>
             </>
@@ -140,8 +140,8 @@ const Unsubscribe: React.FC = () => {
         {/* Quote */}
         <div className="mt-8 text-center">
           <blockquote className="text-gray-400 italic text-sm">
-            "La vera sconfitta è quando un guerriero perde la speranza."
-            <p className="text-cyan-500 text-xs mt-2 font-bold">- Filosofia Spartana -</p>
+            "Il futuro del reddito non è un singolo lavoro: è un sistema."
+            <p className="text-cyan-500 text-xs mt-2 font-bold">— Nexora Lab · Manifesto</p>
           </blockquote>
         </div>
       </div>

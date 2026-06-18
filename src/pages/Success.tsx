@@ -152,8 +152,8 @@ const Success: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-500">
             Hai domande? Contattaci a{' '}
-            <a href="mailto:support@spartantrading.com" className="text-purple-400 hover:text-purple-300">
-              support@spartantrading.com
+            <a href="mailto:support@nexoralab.solutions" className="text-purple-400 hover:text-purple-300">
+              support@nexoralab.solutions
             </a>
           </p>
         </div>

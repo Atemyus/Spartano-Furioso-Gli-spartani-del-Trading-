@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Shield, 
-  TrendingUp, 
-  Package, 
-  Clock, 
+import {
+  TrendingUp,
+  Package,
+  Clock,
   CreditCard,
   Settings,
   LogOut,
   CheckCircle,
   AlertCircle,
-  Gift,
   Rocket,
-  Flame,
-  Zap,
-  Star,
   User,
   BookOpen,
-  Trophy,
   Bell,
   Calendar,
   Home,
@@ -26,1353 +20,924 @@ import {
   Eye,
   EyeOff,
   Save,
-  Trash2
+  Trash2,
+  Menu,
+  X,
+  ChevronRight,
+  Activity,
+  Sparkles,
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
 import { useTheme } from '../contexts/ThemeContext';
 import { API_ENDPOINTS, API_URL } from '../config/api';
 
+type Tab = 'overview' | 'trials' | 'subscriptions' | 'settings';
+
+const NAV: { id: Tab; label: string; icon: React.ElementType; tag: string }[] = [
+  { id: 'overview',      label: 'Panoramica',  icon: Home,       tag: '01' },
+  { id: 'trials',        label: 'Prove gratuite', icon: Clock,    tag: '02' },
+  { id: 'subscriptions', label: 'Abbonamenti', icon: CreditCard, tag: '03' },
+  { id: 'settings',      label: 'Profilo',     icon: Settings,   tag: '04' },
+];
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState('overview');
+  const dark = theme === 'dark';
+
+  const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
   const [settingsData, setSettingsData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    firstName: '', lastName: '', email: '',
+    currentPassword: '', newPassword: '', confirmPassword: '',
   });
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [settingsError, setSettingsError] = useState('');
-  
-  // Ottieni dati utente reali dal localStorage
+
+  const [trials, setTrials] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [trialsProgress, setTrialsProgress] = useState<{ [k: string]: number }>({});
+  const [loading, setLoading] = useState(true);
+
+  // ====== utility ======
   const getUserData = () => {
     const userStr = localStorage.getItem('user');
     if (userStr) {
-      const userData = JSON.parse(userStr);
-      // Estrai nome e cognome dal campo name
-      const nameParts = (userData.name || '').split(' ');
+      const u = JSON.parse(userStr);
+      const np = (u.name || '').split(' ');
       return {
-        firstName: nameParts[0] || 'Utente',
-        lastName: nameParts.slice(1).join(' ') || '',
-        email: userData.email,
-        joinDate: new Date(userData.createdAt || Date.now()).toLocaleDateString('it-IT', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        })
+        firstName: np[0] || 'Trader',
+        lastName: np.slice(1).join(' ') || '',
+        email: u.email,
+        joinDate: new Date(u.createdAt || Date.now()).toLocaleDateString('it-IT', {
+          day: 'numeric', month: 'long', year: 'numeric',
+        }),
       };
     }
     return {
-      firstName: 'Guerriero',
-      lastName: '',
+      firstName: 'Trader', lastName: '',
       email: 'utente@esempio.com',
-      joinDate: new Date().toLocaleDateString('it-IT')
+      joinDate: new Date().toLocaleDateString('it-IT'),
     };
   };
-  
   const user = getUserData();
-  
-  // Initialize settings data
-  React.useEffect(() => {
-    const userData = getUserData();
-    setSettingsData(prev => ({
-      ...prev,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      email: userData.email
-    }));
-  }, []);
-  
-  const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSettingsData({
-      ...settingsData,
-      [e.target.name]: e.target.value
-    });
-  };
-  
-  const handleSaveSettings = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    
-    // Reset messages
-    setSettingsError('');
-    setSettingsSaved(false);
-    
-    // Validate password confirmation
-    if (settingsData.newPassword && settingsData.newPassword !== settingsData.confirmPassword) {
-      setSettingsError('Le password non corrispondono');
-      return;
-    }
-    
-    // Validate password length
-    if (settingsData.newPassword && settingsData.newPassword.length < 8) {
-      setSettingsError('La nuova password deve essere di almeno 8 caratteri');
-      return;
-    }
-    
-    // Validate that current password is provided if new password is set
-    if (settingsData.newPassword && !settingsData.currentPassword) {
-      setSettingsError('Inserisci la password attuale per cambiarla');
-      return;
-    }
-    
-    try {
-      const response = await fetch(API_ENDPOINTS.updateProfile, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          name: `${settingsData.firstName} ${settingsData.lastName}`,
-          email: settingsData.email,
-          currentPassword: settingsData.currentPassword,
-          newPassword: settingsData.newPassword
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setSettingsSaved(true);
-        setTimeout(() => setSettingsSaved(false), 3000);
-        // Clear password fields
-        setSettingsData(prev => ({
-          ...prev,
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        }));
-      } else {
-        setSettingsError(data.message || 'Errore durante l\'aggiornamento del profilo');
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setSettingsError('Errore di connessione. Riprova più tardi.');
-    }
-  };
 
-  // Dati reali dall'utente
-  const [trials, setTrials] = React.useState<any[]>([]);
-  const [subscriptions, setSubscriptions] = React.useState<any[]>([]);
-  const [totalProducts, setTotalProducts] = React.useState(0);
-  const [loading, setLoading] = React.useState(true);
-  const [trialsProgress, setTrialsProgress] = React.useState<{ [key: string]: number }>({});
-  
-  React.useEffect(() => {
-    loadUserData();
-    // Ricarica i dati ogni 30 secondi
-    const interval = setInterval(loadUserData, 30000);
-    return () => clearInterval(interval);
+  useEffect(() => {
+    const d = getUserData();
+    setSettingsData((p) => ({ ...p, firstName: d.firstName, lastName: d.lastName, email: d.email }));
   }, []);
-  
-  // Load progress for course trials
-  React.useEffect(() => {
-    const loadTrialProgress = async () => {
-      const token = localStorage.getItem('token');
-      const userStr = localStorage.getItem('user');
-      if (!token || !userStr) return;
-      
-      const userData = JSON.parse(userStr);
-      const courseTrials = trials.filter(t => t.productCategory === 'Formazione' && t.status === 'active');
-      const progressMap: { [key: string]: number } = {};
-      
-      for (const trial of courseTrials) {
-        try {
-          const response = await fetch(
-            `${API_URL}/api/courses/${trial.productId}/progress/${userData.id}`,
-            { headers: { 'Authorization': `Bearer ${token}` } }
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
-            progressMap[trial.productId] = data.progress || 0;
-          }
-        } catch (error) {
-          console.error('Error loading trial progress:', error);
-        }
-      }
-      
-      setTrialsProgress(progressMap);
-    };
-    
-    if (trials.length > 0) {
-      loadTrialProgress();
-    }
-  }, [trials]);
-  
+
+  // ====== data loading ======
   const loadUserData = async () => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-    
+    if (!token) { navigate('/login'); return; }
     try {
-      // Carica i trial dell'utente
-      const trialsResponse = await fetch(API_ENDPOINTS.userTrials, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (trialsResponse.ok) {
-        const trialsData = await trialsResponse.json();
-        if (trialsData.success) {
-          console.log('🔍 Trials received:', trialsData.trials);
-          setTrials(trialsData.trials || []);
-        }
+      const tRes = await fetch(API_ENDPOINTS.userTrials, { headers: { Authorization: `Bearer ${token}` } });
+      if (tRes.ok) {
+        const d = await tRes.json();
+        if (d.success) setTrials(d.trials || []);
       }
-      
-      // Carica gli abbonamenti dell'utente
-      const subsResponse = await fetch(API_ENDPOINTS.subscriptions, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (subsResponse.ok) {
-        const subsData = await subsResponse.json();
-        if (subsData.success) {
-          setSubscriptions(subsData.subscriptions || []);
-        }
+      const sRes = await fetch(API_ENDPOINTS.subscriptions, { headers: { Authorization: `Bearer ${token}` } });
+      if (sRes.ok) {
+        const d = await sRes.json();
+        if (d.success) setSubscriptions(d.subscriptions || []);
       }
-      
-      // Carica il numero totale di prodotti disponibili
-      const productsResponse = await fetch(API_ENDPOINTS.products);
-      if (productsResponse.ok) {
-        const productsData = await productsResponse.json();
-        setTotalProducts(productsData.length);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
+      const pRes = await fetch(API_ENDPOINTS.products);
+      if (pRes.ok) setTotalProducts((await pRes.json()).length);
+    } catch (e) {
+      console.error('Error loading user data:', e);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadUserData();
+    const id = setInterval(loadUserData, 30000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (!token || !userStr) return;
+      const u = JSON.parse(userStr);
+      const courseT = trials.filter((t) => t.productCategory === 'Formazione' && t.status === 'active');
+      const map: { [k: string]: number } = {};
+      for (const tr of courseT) {
+        try {
+          const r = await fetch(`${API_URL}/api/courses/${tr.productId}/progress/${u.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (r.ok) {
+            const d = await r.json();
+            map[tr.productId] = d.progress || 0;
+          }
+        } catch {}
+      }
+      setTrialsProgress(map);
+    };
+    if (trials.length > 0) loadProgress();
+  }, [trials]);
+
+  const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSettingsData({ ...settingsData, [e.target.name]: e.target.value });
+  };
+
+  const handleSaveSettings = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    setSettingsError('');
+    setSettingsSaved(false);
+    if (settingsData.newPassword && settingsData.newPassword !== settingsData.confirmPassword) {
+      setSettingsError('Le password non corrispondono'); return;
+    }
+    if (settingsData.newPassword && settingsData.newPassword.length < 8) {
+      setSettingsError('La nuova password deve essere di almeno 8 caratteri'); return;
+    }
+    if (settingsData.newPassword && !settingsData.currentPassword) {
+      setSettingsError('Inserisci la password attuale per cambiarla'); return;
+    }
+    try {
+      const res = await fetch(API_ENDPOINTS.updateProfile, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          name: `${settingsData.firstName} ${settingsData.lastName}`,
+          email: settingsData.email,
+          currentPassword: settingsData.currentPassword,
+          newPassword: settingsData.newPassword,
+        }),
+      });
+      const d = await res.json();
+      if (res.ok) {
+        localStorage.setItem('user', JSON.stringify(d.user));
+        setSettingsSaved(true);
+        setTimeout(() => setSettingsSaved(false), 3000);
+        setSettingsData((p) => ({ ...p, currentPassword: '', newPassword: '', confirmPassword: '' }));
+      } else {
+        setSettingsError(d.message || 'Errore durante l\'aggiornamento del profilo');
+      }
+    } catch {
+      setSettingsError('Errore di connessione. Riprova più tardi.');
+    }
+  };
+
   const handleLogout = () => {
-    // Rimuovi token e dati utente
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
-    // Redirect alla home
     navigate('/');
   };
 
-  return (
-    <AnimatedPage>
-      <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
-        theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
-      }`}>
-        {/* Epic Background Effects */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+  // ====== styling helpers ======
+  const surface = dark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const surfaceHover = dark ? 'hover:border-cyan-500/50' : 'hover:border-cyan-500/70';
+  const textMain = dark ? 'text-white' : 'text-slate-900';
+  const textMuted = dark ? 'text-slate-400' : 'text-slate-600';
+  const textDim = dark ? 'text-slate-500' : 'text-slate-500';
+  const inputBase = dark
+    ? 'bg-slate-950/60 border-slate-800 text-white focus:border-cyan-500 focus:ring-cyan-500/20'
+    : 'bg-white border-slate-300 text-slate-900 focus:border-cyan-500 focus:ring-cyan-500/20';
+
+  const activeTitle = NAV.find((n) => n.id === activeTab);
+
+  // ====== components ======
+  const Sidebar = () => (
+    <aside
+      className={`flex flex-col justify-between border-r ${
+        dark ? 'bg-black/80 border-slate-800/80' : 'bg-white border-slate-200'
+      } backdrop-blur-md`}
+    >
+      <div>
+        {/* Logo */}
+        <div className={`px-6 py-6 border-b ${dark ? 'border-slate-800/80' : 'border-slate-200'}`}>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img src="/logo.png" alt="Nexora Lab" className={`h-9 w-auto ${dark ? '' : 'bg-slate-900 rounded-lg px-2 py-1'}`} />
+          </Link>
+          <p className={`mt-3 font-mono-lab text-[0.65rem] tracking-[0.28em] uppercase ${textDim}`}>
+            // Dashboard
+          </p>
         </div>
 
-        {/* Epic Header */}
-        <div className={`relative z-10 backdrop-blur-md border-b-2 transition-colors ${
-          theme === 'dark' ? 'bg-black/50 border-blue-900/30' : 'bg-white border-blue-200'
-        }`}>
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-4 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-cyan-500/15 blur-2xl rounded-full"></div>
-                  <img
-                    src="/logo.png"
-                    alt="Nexora Lab"
-                    className="relative h-12 md:h-14 w-auto object-contain group-hover:scale-[1.03] transition-transform"
-                  />
-                </div>
-                <span className={`font-display text-xl md:text-2xl font-semibold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                  / Dashboard
+        {/* Nav */}
+        <nav className="px-3 py-6 space-y-1">
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            const active = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => { setActiveTab(item.id); setMobileNavOpen(false); }}
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-display text-sm transition-all ${
+                  active
+                    ? dark
+                      ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/40'
+                      : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/40'
+                    : dark
+                      ? 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                <span className={`font-mono-lab text-[0.65rem] tracking-widest ${active ? 'text-cyan-500' : 'text-slate-500'}`}>
+                  {item.tag}
                 </span>
-              </Link>
-              
-              <div className="flex items-center gap-4">
-                <button className={`p-3 rounded-lg transition-all duration-300 hover:scale-110 ${
-                  theme === 'dark' ? 'text-gray-400 hover:text-cyan-500 hover:bg-cyan-500/10' : 'text-gray-600 hover:text-cyan-600 hover:bg-cyan-100'
-                }`}>
-                  <Bell className="w-6 h-6" />
-                </button>
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 border-2 border-blue-600 rounded-lg text-white hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 font-bold"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>LOGOUT</span>
-                </button>
+                <Icon className="w-4 h-4" />
+                <span className="font-medium">{item.label}</span>
+                {active && <ChevronRight className="w-3.5 h-3.5 ml-auto text-cyan-400" />}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* User block */}
+      <div className={`px-3 py-4 border-t ${dark ? 'border-slate-800/80' : 'border-slate-200'}`}>
+        <div className={`px-3 py-3 mb-3 rounded-lg ${dark ? 'bg-slate-900/60' : 'bg-slate-50'}`}>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-display font-semibold">
+              {user.firstName.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className={`text-sm font-display font-semibold truncate ${textMain}`}>
+                {user.firstName} {user.lastName}
               </div>
+              <div className={`text-xs truncate ${textDim}`}>{user.email}</div>
             </div>
           </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-display text-sm font-medium transition-all ${
+            dark
+              ? 'text-slate-300 hover:text-white hover:bg-slate-900/80 ring-1 ring-slate-800 hover:ring-cyan-500/40'
+              : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50 ring-1 ring-slate-200 hover:ring-cyan-500/40'
+          }`}
+        >
+          <LogOut className="w-4 h-4" />
+          Esci
+        </button>
+      </div>
+    </aside>
+  );
 
-        {/* Navigation Tabs */}
-        <div className={`relative z-10 border-b ${
-          theme === 'dark' ? 'border-blue-900/30 bg-black/30' : 'border-blue-200 bg-white/50'
-        } backdrop-blur-sm`}>
-          <div className="container mx-auto px-4">
-            <div className="flex gap-2 overflow-x-auto">
-              {[
-                { id: 'overview', label: 'Panoramica', icon: Home },
-                { id: 'trials', label: 'Trial', icon: Clock },
-                { id: 'subscriptions', label: 'Abbonamenti', icon: CreditCard },
-                { id: 'settings', label: 'Impostazioni', icon: Settings }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 font-bold transition-all duration-300 border-b-4 whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'border-cyan-500 text-cyan-500'
-                      : theme === 'dark'
-                        ? 'border-transparent text-gray-400 hover:text-white hover:border-gray-700'
-                        : 'border-transparent text-gray-600 hover:text-black hover:border-gray-300'
-                  }`}
-                >
-                  <tab.icon className="w-5 h-5" />
-                  <span>{tab.label}</span>
-                </button>
+  // Reusable stat card
+  const StatCard = ({ icon: Icon, label, value, tag }: { icon: React.ElementType; label: string; value: React.ReactNode; tag: string }) => (
+    <div className={`relative overflow-hidden rounded-xl p-5 border transition-all duration-300 ${surface} ${surfaceHover}`}>
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+          dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'
+        }`}>
+          <Icon className="w-5 h-5 text-cyan-500" />
+        </div>
+        <span className={`font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase ${textDim}`}>{tag}</span>
+      </div>
+      <div className={`font-display text-3xl font-semibold tracking-tight ${textMain}`}>{value}</div>
+      <div className={`font-mono-lab text-[0.65rem] tracking-[0.2em] uppercase mt-1 ${textMuted}`}>{label}</div>
+    </div>
+  );
+
+  // ====== Tab: Overview ======
+  const OverviewTab = () => {
+    const activeTrials = trials.filter((t) => t.status === 'active');
+    return (
+      <div className="space-y-10">
+        {/* Welcome */}
+        <section className={`relative overflow-hidden rounded-2xl border p-6 md:p-8 ${surface}`}>
+          <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <p className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500 mb-3">
+                // Benvenuto
+              </p>
+              <h1 className={`font-display text-3xl md:text-4xl font-semibold tracking-tight ${textMain}`}>
+                Ciao, <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">{user.firstName}</span>
+              </h1>
+              <p className={`mt-2 text-sm ${textMuted}`}>
+                Membro dal {user.joinDate}. Hai <span className="text-cyan-500 font-semibold">{activeTrials.length}</span> prove
+                e <span className="text-cyan-500 font-semibold">{subscriptions.length}</span> abbonamenti attivi.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/products"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-cyan-500/30 transition-all"
+              >
+                <Package className="w-4 h-4" /> Esplora catalogo
+              </Link>
+              <Link
+                to="/trials"
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-display text-sm font-semibold transition-all ${
+                  dark ? 'bg-slate-900 text-slate-200 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-800 ring-1 ring-slate-200 hover:ring-cyan-500/50'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-cyan-500" /> Prove gratuite
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="w-3.5 h-3.5 text-cyan-500" />
+            <h2 className={`font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500`}>// Metriche</h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={Package} label="Catalogo" value={totalProducts} tag="01" />
+            <StatCard icon={Clock} label="Prove attive" value={activeTrials.length} tag="02" />
+            <StatCard icon={CreditCard} label="Abbonamenti" value={subscriptions.length} tag="03" />
+            <StatCard icon={TrendingUp} label="Performance mese" value="+24%" tag="04" />
+          </div>
+        </section>
+
+        {/* Active trials */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Clock className="w-3.5 h-3.5 text-cyan-500" />
+              <h2 className={`font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500`}>// Prove in corso</h2>
+            </div>
+            {activeTrials.length > 0 && (
+              <button onClick={() => setActiveTab('trials')} className="text-xs text-cyan-500 hover:text-cyan-400 font-display">
+                Vedi tutte →
+              </button>
+            )}
+          </div>
+          {activeTrials.length > 0 ? (
+            <div className="grid md:grid-cols-2 gap-4">
+              {activeTrials.slice(0, 4).map((trial) => {
+                const isCourse = trial.productCategory === 'Formazione';
+                const progress = isCourse ? trialsProgress[trial.productId] || 0 : 0;
+                return (
+                  <div key={trial.id} className={`rounded-xl border p-5 ${surface} ${surfaceHover} transition-all`}>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                          {isCourse ? <BookOpen className="w-4 h-4 text-cyan-500" /> : <Package className="w-4 h-4 text-cyan-500" />}
+                        </div>
+                        <div className="min-w-0">
+                          <div className={`font-display font-semibold truncate ${textMain}`}>{trial.productName}</div>
+                          <div className={`text-xs ${textDim}`}>Avviata il {new Date(trial.startDate).toLocaleDateString('it-IT')}</div>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-display text-2xl font-semibold text-cyan-500">{trial.daysRemaining}</div>
+                        <div className={`font-mono-lab text-[0.55rem] tracking-[0.25em] uppercase ${textDim}`}>giorni</div>
+                      </div>
+                    </div>
+                    {isCourse && (
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <span className={textMuted}>Progresso</span>
+                          <span className="text-cyan-500 font-semibold">{progress}%</span>
+                        </div>
+                        <div className={`w-full rounded-full h-1.5 ${dark ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => navigate(isCourse ? `/course/${trial.productId}/manage-trial` : `/trial-activation/${trial.productId}`)}
+                        className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+                      >Gestisci</button>
+                      <Link
+                        to={`/products?product=${trial.productId}`}
+                        className={`px-3 py-2 rounded-lg text-sm font-display font-semibold transition-all ${dark ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'}`}
+                      >Abbonati</Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Clock}
+              title="Nessuna prova attiva"
+              desc="Attiva una prova gratuita per esplorare tool e corsi senza impegno."
+              ctaLabel="Scopri le prove"
+              ctaTo="/trials"
+            />
+          )}
+        </section>
+
+        {/* Active subscriptions */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-3.5 h-3.5 text-cyan-500" />
+              <h2 className={`font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500`}>// Abbonamenti attivi</h2>
+            </div>
+            {subscriptions.length > 0 && (
+              <button onClick={() => setActiveTab('subscriptions')} className="text-xs text-cyan-500 hover:text-cyan-400 font-display">
+                Vedi tutti →
+              </button>
+            )}
+          </div>
+          {subscriptions.length > 0 ? (
+            <div className="space-y-3">
+              {subscriptions.slice(0, 3).map((s) => (
+                <div key={s.id} className={`rounded-xl border p-5 ${surface} ${surfaceHover} transition-all flex items-center justify-between gap-4`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                      <Package className="w-5 h-5 text-cyan-500" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className={`font-display font-semibold truncate ${textMain}`}>{s.productName}</div>
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className={textMuted}>{s.plan || 'Mensile'}</span>
+                        <span className="inline-flex items-center gap-1 text-emerald-500">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Attivo
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('subscriptions')}
+                    className={`px-3 py-2 rounded-lg text-sm font-display font-semibold transition-all ${dark ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'}`}
+                  >Gestisci</button>
+                </div>
               ))}
             </div>
+          ) : (
+            <EmptyState
+              icon={CreditCard}
+              title="Nessun abbonamento attivo"
+              desc="Esplora il catalogo o avvia una prova prima di sottoscrivere un piano."
+              ctaLabel="Vedi catalogo"
+              ctaTo="/products"
+            />
+          )}
+        </section>
+
+        {/* Quick actions */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Rocket className="w-3.5 h-3.5 text-cyan-500" />
+            <h2 className={`font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500`}>// Azioni rapide</h2>
           </div>
-        </div>
-
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <>
-        {/* Epic Welcome Section */}
-        <div className="mb-10 relative">
-          <div className={`p-8 rounded-2xl backdrop-blur-sm border-2 ${
-            theme === 'dark' ? 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border-cyan-500/30' : 'bg-white border-cyan-400/50 shadow-sm'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className={`text-4xl font-black mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                  <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                    Benvenuto, {user.firstName}!
-                  </span>
-                </h2>
-                <p className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                  <Shield className="w-5 h-5 text-cyan-500" />
-                  Spartano dal {user.joinDate}
-                </p>
-              </div>
-              <div className="hidden md:flex items-center gap-2">
-                <Trophy className="w-16 h-16 text-cyan-500 animate-bounce-slow" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Epic Stats Grid with 3D Effects */}
-        <div className="grid md:grid-cols-4 gap-6 mb-10">
-          {[
-            { icon: Package, value: totalProducts, label: 'Prodotti Disponibili', color: 'from-cyan-600 to-sky-600', iconColor: 'text-cyan-500', glow: 'shadow-cyan-500/50' },
-            { icon: Clock, value: trials.filter(t => t.status === 'active').length, label: 'Trial Attivi', color: 'from-blue-600 to-cyan-600', iconColor: 'text-blue-500', glow: 'shadow-blue-500/50' },
-            { icon: CreditCard, value: subscriptions.length, label: 'Abbonamenti', color: 'from-green-600 to-emerald-600', iconColor: 'text-green-500', glow: 'shadow-green-500/50' },
-            { icon: TrendingUp, value: '+24%', label: 'Performance Mese', color: 'from-purple-600 to-indigo-600', iconColor: 'text-purple-500', glow: 'shadow-purple-500/50' }
-          ].map((stat, index) => (
-            <div 
-              key={index}
-              className="group relative"
-            >
-              {/* Glow effect */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-20 rounded-2xl blur-xl transition-opacity duration-500`}></div>
-              
-              {/* Card */}
-              <div className={`relative overflow-hidden rounded-2xl p-6 border-2 transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 ${
-                theme === 'dark' 
-                  ? 'bg-gray-900/70 backdrop-blur-sm border-gray-700 hover:border-cyan-500' 
-                  : 'bg-white border-gray-200 hover:border-cyan-400 shadow-md'
-              } ${stat.glow} hover:shadow-2xl`}>
-                {/* Top shine */}
-                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-                
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color} transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-                    <stat.icon className="w-8 h-8 text-white drop-shadow-lg" />
-                  </div>
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'} group-hover:text-cyan-500 transition-colors`}>
-                    {stat.value}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</p>
-                
-                {/* Bottom glow */}
-                <div className={`absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Active Trials */}
-        <div className="mb-8">
-          <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
-            theme === 'dark' ? 'text-white' : 'text-black'
-          }`}>
-            <Clock className="w-6 h-6 text-cyan-500" />
-            PROVE GRATUITE ATTIVE
-          </h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {trials.length > 0 ? trials.filter(trial => trial.status === 'active').map(trial => {
-              const isCourse = trial.productCategory === 'Formazione';
-              const courseProgress = isCourse ? trialsProgress[trial.productId] || 0 : 0;
-              
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { to: '/products', icon: Package, title: 'Catalogo', desc: 'Tool e corsi disponibili' },
+              { to: '/trials', icon: Sparkles, title: 'Prove gratuite', desc: '60 giorni senza carta' },
+              { to: '/centro-aiuto', icon: AlertCircle, title: 'Supporto', desc: 'Assistenza dedicata' },
+              { to: '/community', icon: User, title: 'Community', desc: 'Unisciti al lab' },
+            ].map((a) => {
+              const Icon = a.icon;
               return (
-                <div key={trial.id} className={`border rounded-xl p-6 ${
-                  theme === 'dark'
-                    ? 'bg-gray-900/50 border-cyan-500/30'
-                    : 'bg-white border-cyan-400/50 shadow-md'
-                }`}>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h4 className={`text-lg font-bold mb-2 ${
-                        theme === 'dark' ? 'text-white' : 'text-black'
-                      }`}>{trial.productName}</h4>
-                      <div className="flex items-center gap-2 text-green-400">
-                        <CheckCircle className="w-4 h-4" />
-                        <span className="text-sm">Trial Attivo</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Iniziato il {new Date(trial.startDate).toLocaleDateString('it-IT')}
-                      </p>
-                      
-                      {/* Progress bar for courses */}
-                      {isCourse && (
-                        <div className="mt-3">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
-                              Progresso Corso
-                            </span>
-                            <span className="text-cyan-500 font-bold">{courseProgress}%</span>
-                          </div>
-                          <div className={`w-full rounded-full h-2 ${
-                            theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-                          }`}>
-                            <div 
-                              className="bg-gradient-to-r from-cyan-600 to-sky-600 h-2 rounded-full transition-all duration-500"
-                              style={{ width: `${courseProgress}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right ml-4">
-                      <div className="text-2xl font-black text-cyan-500">{trial.daysRemaining}</div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                      }`}>giorni rimanenti</div>
-                    </div>
-                  </div>
-                
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => {
-                      // Reindirizza direttamente alla pagina di gestione trial
-                      if (trial.productCategory === 'Formazione') {
-                        navigate(`/course/${trial.productId}/manage-trial`);
-                      } else {
-                        navigate(`/trial-activation/${trial.productId}`);
-                      }
-                    }}
-                    className="flex-1 px-4 py-2 bg-green-600 rounded-lg font-bold text-white hover:bg-green-500 transition-colors text-center"
-                  >
-                    Gestisci Trial
-                  </button>
-                  <Link
-                    to={`/products?product=${trial.productId}`}
-                    className="px-4 py-2 bg-cyan-600 rounded-lg font-bold text-white hover:bg-cyan-500 transition-colors"
-                  >
-                    Abbonati
-                  </Link>
-                </div>
-                </div>
+                <Link key={a.to} to={a.to} className={`group rounded-xl border p-4 transition-all ${surface} ${surfaceHover}`}>
+                  <Icon className="w-5 h-5 text-cyan-500 mb-3 group-hover:scale-110 transition-transform" />
+                  <div className={`font-display font-semibold text-sm ${textMain}`}>{a.title}</div>
+                  <div className={`text-xs mt-1 ${textDim}`}>{a.desc}</div>
+                </Link>
               );
-            }) : (
-              <div className={`col-span-2 border rounded-xl p-8 text-center ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-gray-700'
-                  : 'bg-white border-gray-200 shadow-md'
-              }`}>
-                <Clock className={`w-12 h-12 mx-auto mb-4 ${
-                  theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-                }`} />
-                <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                  Nessuna prova gratuita attiva
-                </p>
-                <Link to="/products" className="inline-block mt-4 px-6 py-2 bg-cyan-600 rounded-lg text-white hover:bg-cyan-500 transition-colors">
-                  Scopri i nostri prodotti
-                </Link>
-              </div>
-            )}
+            })}
           </div>
+        </section>
+      </div>
+    );
+  };
+
+  // ====== Tab: Trials ======
+  const TrialsTab = () => {
+    const active = trials.filter((t) => t.status === 'active');
+    const completed = trials.filter((t) => t.status === 'completed' || t.status === 'expired');
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StatCard icon={Clock} label="Attive" value={active.length} tag="01" />
+          <StatCard icon={CheckCircle} label="Completate" value={trials.filter((t) => t.status === 'completed').length} tag="02" />
+          <StatCard icon={AlertCircle} label="Scadute" value={trials.filter((t) => t.status === 'expired').length} tag="03" />
         </div>
 
-        {/* Active Subscriptions */}
-        <div className="mb-8">
-          <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
-            theme === 'dark' ? 'text-white' : 'text-black'
-          }`}>
-            <CreditCard className="w-6 h-6 text-green-500" />
-            ABBONAMENTI ATTIVI
-          </h3>
-          <div className="space-y-4">
-            {subscriptions.length > 0 ? subscriptions.map(sub => (
-              <div key={sub.id} className={`border rounded-xl p-6 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-green-500/30'
-                  : 'bg-white border-green-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className={`text-lg font-bold mb-2 ${
-                      theme === 'dark' ? 'text-white' : 'text-black'
-                    }`}>{sub.productName}</h4>
-                    <div className={`flex items-center gap-4 text-sm ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                      <span>Piano: <span className="text-cyan-500 font-bold">{sub.plan || 'Mensile'}</span></span>
-                      <span>Stato: <span className="text-green-400 font-bold">Attivo</span></span>
-                    </div>
-                    {sub.nextBilling && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Prossimo rinnovo: {new Date(sub.nextBilling).toLocaleDateString('it-IT')}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-3">
-                    <Link 
-                      to="/dashboard" 
-                      className="px-4 py-2 bg-gray-800 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
-                    >
-                      Gestisci
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )) : (
-              <div className={`border rounded-xl p-8 text-center ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-gray-700'
-                  : 'bg-white border-gray-200 shadow-md'
-              }`}>
-                <CreditCard className={`w-12 h-12 mx-auto mb-4 ${
-                  theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-                }`} />
-                <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Nessun abbonamento attivo</p>
-                <Link to="/products" className="inline-block mt-4 px-6 py-2 bg-green-600 rounded-lg text-white hover:bg-green-500 transition-colors">
-                  Attiva un abbonamento
-                </Link>
-              </div>
-            )}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Rocket className="w-3.5 h-3.5 text-cyan-500" />
+            <h2 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// Prove attive</h2>
           </div>
-        </div>
-
-        {/* Special Banner for Trials */}
-        <div className="mb-8 bg-gradient-to-r from-cyan-950/50 via-blue-950/50 to-cyan-950/50 border-2 border-cyan-500/50 rounded-2xl p-6 backdrop-blur-sm">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center animate-pulse">
-                <Gift className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-white flex items-center gap-2">
-                  60 GIORNI DI PROVA GRATUITA
-                  <Rocket className="w-5 h-5 text-cyan-500 animate-pulse" />
-                </h3>
-                <p className="text-gray-300">
-                  Prova qualsiasi bot o servizio. 
-                  <span className="text-cyan-500 font-bold"> Nessuna carta di credito richiesta!</span>
-                </p>
-              </div>
-            </div>
-            <Link 
-              to="/trials"
-              className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all transform hover:scale-105 flex items-center gap-2"
-            >
-              <Rocket className="w-5 h-5" />
-              SCOPRI LE PROVE GRATUITE
-            </Link>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-4 gap-6">
-          <Link 
-            to="/products"
-            className="bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-800 rounded-xl p-6 hover:from-blue-900/50 hover:to-blue-800/50 transition-all group"
-          >
-            <Package className="w-8 h-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
-            <h4 className="text-lg font-bold text-white mb-2">Esplora Prodotti</h4>
-            <p className="text-gray-400 text-sm">Scopri nuovi bot e servizi</p>
-          </Link>
-
-          <Link 
-            to="/trials"
-            className="bg-gradient-to-r from-cyan-900/30 to-cyan-800/30 border border-cyan-800 rounded-xl p-6 hover:from-cyan-900/50 hover:to-cyan-800/50 transition-all group"
-          >
-            <Gift className="w-8 h-8 text-cyan-500 mb-4 group-hover:scale-110 transition-transform" />
-            <h4 className="text-lg font-bold text-white mb-2">Prove Gratuite</h4>
-            <p className="text-gray-400 text-sm">60 giorni gratis</p>
-          </Link>
-          
-          <Link 
-            to="/support"
-            className="bg-gradient-to-r from-green-900/30 to-green-800/30 border border-green-800 rounded-xl p-6 hover:from-green-900/50 hover:to-green-800/50 transition-all group"
-          >
-            <AlertCircle className="w-8 h-8 text-green-500 mb-4 group-hover:scale-110 transition-transform" />
-            <h4 className="text-lg font-bold text-white mb-2">Supporto</h4>
-            <p className="text-gray-400 text-sm">Assistenza 24/7</p>
-          </Link>
-          
-          <Link 
-            to="/community"
-            className="bg-gradient-to-r from-purple-900/30 to-purple-800/30 border border-purple-800 rounded-xl p-6 hover:from-purple-900/50 hover:to-purple-800/50 transition-all group"
-          >
-            <Shield className="w-8 h-8 text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
-            <h4 className="text-lg font-bold text-white mb-2">Community</h4>
-            <p className="text-gray-400 text-sm">Unisciti ai guerrieri</p>
-          </Link>
-        </div>
-        </>
-        )}
-
-        {/* Trials Tab */}
-        {activeTab === 'trials' && (
-          <div>
-            <div className="mb-8">
-              <h2 className={`text-3xl font-black mb-2 flex items-center gap-3 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <Clock className="w-8 h-8 text-blue-500" />
-                GESTIONE PROVE GRATUITE
-              </h2>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Monitora e gestisci tutte le tue prove gratuite attive
-              </p>
-            </div>
-
-            {/* Stats Overview */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-blue-500/30'
-                  : 'bg-white border-blue-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <Clock className="w-8 h-8 text-blue-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    {trials.filter(t => t.status === 'active').length}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Trial Attivi
-                </p>
-              </div>
-
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-cyan-500/30'
-                  : 'bg-white border-cyan-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="w-8 h-8 text-green-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    {trials.filter(t => t.status === 'completed').length}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Trial Completati
-                </p>
-              </div>
-
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-blue-500/30'
-                  : 'bg-white border-blue-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <AlertCircle className="w-8 h-8 text-blue-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    {trials.filter(t => t.status === 'expired').length}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Trial Scaduti
-                </p>
-              </div>
-            </div>
-
-            {/* Active Trials List */}
-            <div className="mb-8">
-              <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <Rocket className="w-6 h-6 text-blue-500" />
-                TRIAL ATTIVI
-              </h3>
-              
-              {trials.filter(t => t.status === 'active').length > 0 ? (
-                <div className="space-y-4">
-                  {trials.filter(t => t.status === 'active').map(trial => {
-                    const isCourse = trial.productCategory === 'Formazione';
-                    const courseProgress = isCourse ? trialsProgress[trial.productId] || 0 : 0;
-                    const daysLeft = trial.daysRemaining;
-                    const isExpiringSoon = daysLeft <= 7;
-                    
-                    return (
-                      <div key={trial.id} className={`border-2 rounded-xl p-6 transition-all hover:scale-[1.02] ${
-                        theme === 'dark'
-                          ? 'bg-gray-900/50 border-blue-500/30 hover:border-blue-500/50'
-                          : 'bg-white border-blue-400/50 hover:border-blue-500 shadow-md'
-                      }`}>
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-start gap-3 mb-3">
-                              <div className="p-3 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg">
-                                {isCourse ? (
-                                  <BookOpen className="w-6 h-6 text-white" />
-                                ) : (
-                                  <Package className="w-6 h-6 text-white" />
-                                )}
-                              </div>
-                              <div className="flex-1">
-                                <h4 className={`text-xl font-bold mb-1 ${
-                                  theme === 'dark' ? 'text-white' : 'text-black'
-                                }`}>{trial.productName}</h4>
-                                <div className="flex flex-wrap items-center gap-3 text-sm">
-                                  <span className="flex items-center gap-1 text-green-400">
-                                    <CheckCircle className="w-4 h-4" />
-                                    Attivo
-                                  </span>
-                                  <span className={theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}>
-                                    Iniziato: {new Date(trial.startDate).toLocaleDateString('it-IT')}
-                                  </span>
-                                  {isCourse && (
-                                    <span className="px-2 py-1 bg-purple-600/20 text-purple-400 rounded-full text-xs font-bold">
-                                      CORSO
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Progress bar for courses */}
-                            {isCourse && (
-                              <div className="mb-3">
-                                <div className="flex items-center justify-between text-sm mb-2">
-                                  <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                                    Progresso Corso
-                                  </span>
-                                  <span className="text-blue-500 font-bold">{courseProgress}%</span>
-                                </div>
-                                <div className={`w-full rounded-full h-3 ${
-                                  theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-                                }`}>
-                                  <div 
-                                    className="bg-gradient-to-r from-blue-600 to-cyan-600 h-3 rounded-full transition-all duration-500"
-                                    style={{ width: `${courseProgress}%` }}
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Time remaining */}
-                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
-                              isExpiringSoon 
-                                ? 'bg-blue-900/20 border border-blue-500/50' 
-                                : 'bg-blue-900/20 border border-blue-500/50'
-                            }`}>
-                              <Clock className={`w-4 h-4 ${isExpiringSoon ? 'text-blue-400' : 'text-blue-400'}`} />
-                              <span className={`text-sm font-bold ${isExpiringSoon ? 'text-blue-400' : 'text-blue-400'}`}>
-                                {daysLeft} giorni rimanenti
-                                {isExpiringSoon && ' - In scadenza!'}
-                              </span>
-                            </div>
+          {active.length > 0 ? (
+            <div className="space-y-3">
+              {active.map((trial) => {
+                const isCourse = trial.productCategory === 'Formazione';
+                const progress = isCourse ? trialsProgress[trial.productId] || 0 : 0;
+                const expiring = trial.daysRemaining <= 7;
+                return (
+                  <div key={trial.id} className={`rounded-xl border p-5 ${surface} ${surfaceHover} transition-all`}>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                            {isCourse ? <BookOpen className="w-5 h-5 text-cyan-500" /> : <Package className="w-5 h-5 text-cyan-500" />}
                           </div>
-
-                          {/* Actions */}
-                          <div className="flex flex-col gap-2 min-w-[200px]">
-                            <button
-                              onClick={() => {
-                                // Reindirizza direttamente alla pagina di gestione trial
-                                if (isCourse) {
-                                  navigate(`/course/${trial.productId}/manage-trial`);
-                                } else {
-                                  navigate(`/trial-activation/${trial.productId}`);
-                                }
-                              }}
-                              className="px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-500 transition-all text-center"
-                            >
-                              Gestisci Trial
-                            </button>
-                            <Link
-                              to={`/products?product=${trial.productId}`}
-                              className="px-4 py-3 bg-gradient-to-r from-cyan-600 to-sky-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 transition-all text-center"
-                            >
-                              Abbonati Ora
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className={`border-2 rounded-xl p-12 text-center ${
-                  theme === 'dark'
-                    ? 'bg-gray-900/50 border-gray-700'
-                    : 'bg-white border-gray-200 shadow-md'
-                }`}>
-                  <Clock className={`w-16 h-16 mx-auto mb-4 ${
-                    theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-                  }`} />
-                  <h3 className={`text-xl font-bold mb-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-black'
-                  }`}>Nessun Trial Attivo</h3>
-                  <p className={`mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Inizia una prova gratuita di 60 giorni per qualsiasi prodotto!
-                  </p>
-                  <Link 
-                    to="/trials"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-500 transition-all"
-                  >
-                    <Rocket className="w-5 h-5" />
-                    Scopri le Prove Gratuite
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Expired/Completed Trials */}
-            {(trials.filter(t => t.status === 'expired' || t.status === 'completed').length > 0) && (
-              <div>
-                <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-black'
-                }`}>
-                  <Trophy className="w-6 h-6 text-gray-500" />
-                  STORICO TRIAL
-                </h3>
-                
-                <div className="space-y-3">
-                  {trials.filter(t => t.status === 'expired' || t.status === 'completed').map(trial => (
-                    <div key={trial.id} className={`border rounded-lg p-4 ${
-                      theme === 'dark'
-                        ? 'bg-gray-900/30 border-gray-700'
-                        : 'bg-gray-50 border-gray-300'
-                    }`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                            {trial.productName}
-                          </h4>
-                          <p className="text-sm text-gray-500">
-                            {trial.status === 'expired' ? 'Scaduto' : 'Completato'} il {new Date(trial.endDate || trial.startDate).toLocaleDateString('it-IT')}
-                          </p>
-                        </div>
-                        <Link
-                          to={`/products?product=${trial.productId}`}
-                          className="px-4 py-2 bg-cyan-600 rounded-lg text-white hover:bg-cyan-500 transition-colors text-sm font-bold"
-                        >
-                          Abbonati
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Subscriptions Tab */}
-        {activeTab === 'subscriptions' && (
-          <div>
-            <div className="mb-8">
-              <h2 className={`text-3xl font-black mb-2 flex items-center gap-3 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <CreditCard className="w-8 h-8 text-green-500" />
-                GESTIONE ABBONAMENTI
-              </h2>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Visualizza e gestisci tutti i tuoi abbonamenti attivi
-              </p>
-            </div>
-
-            {/* Stats Overview */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-green-500/30'
-                  : 'bg-white border-green-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="w-8 h-8 text-green-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    {subscriptions.length}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Abbonamenti Attivi
-                </p>
-              </div>
-
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-cyan-500/30'
-                  : 'bg-white border-cyan-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <TrendingUp className="w-8 h-8 text-cyan-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    {totalProducts}
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Prodotti Disponibili
-                </p>
-              </div>
-
-              <div className={`rounded-xl p-6 border-2 ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-purple-500/30'
-                  : 'bg-white border-purple-400/50 shadow-md'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <Star className="w-8 h-8 text-purple-500" />
-                  <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    VIP
-                  </span>
-                </div>
-                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Stato Membro
-                </p>
-              </div>
-            </div>
-
-            {/* Active Subscriptions */}
-            {subscriptions.length > 0 ? (
-              <div className="space-y-6">
-                {subscriptions.map(sub => (
-                  <div key={sub.id} className={`border-2 rounded-xl p-6 transition-all hover:scale-[1.01] ${
-                    theme === 'dark'
-                      ? 'bg-gray-900/50 border-green-500/30 hover:border-green-500/50'
-                      : 'bg-white border-green-400/50 hover:border-green-500 shadow-md'
-                  }`}>
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                      <div className="flex-1">
-                        <div className="flex items-start gap-4 mb-4">
-                          <div className="p-4 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl">
-                            <Package className="w-8 h-8 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className={`text-2xl font-black mb-2 ${
-                              theme === 'dark' ? 'text-white' : 'text-black'
-                            }`}>{sub.productName}</h3>
-                            
-                            <div className="flex flex-wrap items-center gap-4 mb-3">
-                              <span className="flex items-center gap-2 px-3 py-1 bg-green-900/30 border border-green-500/50 rounded-full">
-                                <CheckCircle className="w-4 h-4 text-green-400" />
-                                <span className="text-sm font-bold text-green-400">Attivo</span>
+                          <div className="min-w-0">
+                            <div className={`font-display text-lg font-semibold ${textMain}`}>{trial.productName}</div>
+                            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
+                              <span className="inline-flex items-center gap-1 text-emerald-500">
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Attiva
                               </span>
-                              <span className="flex items-center gap-2 px-3 py-1 bg-cyan-900/30 border border-cyan-500/50 rounded-full">
-                                <Star className="w-4 h-4 text-cyan-400" />
-                                <span className="text-sm font-bold text-cyan-400">{sub.plan || 'Piano Mensile'}</span>
-                              </span>
-                            </div>
-
-                            <div className={`space-y-2 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                              <p className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
-                                Attivato il: {new Date(sub.startDate || Date.now()).toLocaleDateString('it-IT')}
-                              </p>
-                              {sub.nextBilling && (
-                                <p className="flex items-center gap-2">
-                                  <Clock className="w-4 h-4" />
-                                  Prossimo rinnovo: {new Date(sub.nextBilling).toLocaleDateString('it-IT')}
-                                </p>
+                              <span className={textDim}>· avviata {new Date(trial.startDate).toLocaleDateString('it-IT')}</span>
+                              {isCourse && (
+                                <span className={`font-mono-lab text-[0.55rem] tracking-widest uppercase px-1.5 py-0.5 rounded ${
+                                  dark ? 'bg-cyan-500/10 text-cyan-300' : 'bg-cyan-50 text-cyan-700'
+                                }`}>Corso</span>
                               )}
                             </div>
                           </div>
                         </div>
-
-                        {/* Benefits */}
-                        <div className={`p-4 rounded-lg ${
-                          theme === 'dark' ? 'bg-green-900/10' : 'bg-green-50'
+                        {isCourse && (
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between text-xs mb-1.5">
+                              <span className={textMuted}>Progresso</span>
+                              <span className="text-cyan-500 font-semibold">{progress}%</span>
+                            </div>
+                            <div className={`w-full rounded-full h-1.5 ${dark ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full" style={{ width: `${progress}%` }} />
+                            </div>
+                          </div>
+                        )}
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-display font-medium ${
+                          expiring
+                            ? dark ? 'bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30' : 'bg-amber-50 text-amber-700 ring-1 ring-amber-500/30'
+                            : dark ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/30' : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/30'
                         }`}>
-                          <h4 className={`text-sm font-bold mb-2 ${
-                            theme === 'dark' ? 'text-green-400' : 'text-green-700'
-                          }`}>Vantaggi Inclusi:</h4>
-                          <ul className={`space-y-1 text-sm ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
-                            <li className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                              Accesso completo al prodotto
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                              Supporto prioritario 24/7
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                              Aggiornamenti automatici
-                            </li>
-                          </ul>
+                          <Clock className="w-3.5 h-3.5" />
+                          {trial.daysRemaining} giorni rimanenti{expiring && ' · in scadenza'}
                         </div>
                       </div>
-
-                      {/* Actions */}
-                      <div className="flex flex-col gap-3 min-w-[200px]">
+                      <div className="flex md:flex-col gap-2 md:min-w-[180px]">
+                        <button
+                          onClick={() => navigate(isCourse ? `/course/${trial.productId}/manage-trial` : `/trial-activation/${trial.productId}`)}
+                          className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+                        >Gestisci</button>
                         <Link
-                          to={`/products?product=${sub.productId}`}
-                          className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg font-bold text-white hover:from-green-500 hover:to-emerald-500 transition-all text-center"
-                        >
-                          Gestisci
-                        </Link>
-                        <button
-                          className={`px-6 py-3 rounded-lg font-bold transition-all text-center ${
-                            theme === 'dark'
-                              ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                          }`}
-                        >
-                          Modifica Piano
-                        </button>
-                        <button
-                          className="px-6 py-3 bg-blue-900/20 border border-blue-500/50 rounded-lg font-bold text-blue-400 hover:bg-blue-900/30 transition-all text-center"
-                        >
-                          Annulla
-                        </button>
+                          to={`/products?product=${trial.productId}`}
+                          className={`flex-1 text-center px-4 py-2 rounded-lg text-sm font-display font-semibold transition-all ${dark ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'}`}
+                        >Abbonati</Link>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className={`border-2 rounded-xl p-12 text-center ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-gray-700'
-                  : 'bg-white border-gray-200 shadow-md'
-              }`}>
-                <CreditCard className={`w-16 h-16 mx-auto mb-4 ${
-                  theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-                }`} />
-                <h3 className={`text-xl font-bold mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-black'
-                }`}>Nessun Abbonamento Attivo</h3>
-                <p className={`mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Inizia con una prova gratuita o attiva un abbonamento per accedere ai nostri prodotti premium!
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link 
-                    to="/trials"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-500 transition-all"
-                  >
-                    <Clock className="w-5 h-5" />
-                    Prova Gratuita 60 Giorni
-                  </Link>
-                  <Link 
-                    to="/products"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg font-bold text-white hover:from-green-500 hover:to-emerald-500 transition-all"
-                  >
-                    <Package className="w-5 h-5" />
-                    Esplora Prodotti
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* Upgrade Banner */}
-            <div className="mt-8 bg-gradient-to-r from-purple-950/50 via-indigo-950/50 to-purple-950/50 border-2 border-purple-500/50 rounded-2xl p-8 backdrop-blur-sm">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center animate-pulse">
-                    <Star className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-black text-white flex items-center gap-2 mb-1">
-                      DIVENTA MEMBRO VIP
-                      <Zap className="w-5 h-5 text-cyan-500 animate-pulse" />
-                    </h3>
-                    <p className="text-gray-300">
-                      Accesso illimitato a tutti i prodotti con un unico abbonamento.
-                      <span className="text-purple-400 font-bold"> Risparmia fino al 40%!</span>
-                    </p>
-                  </div>
-                </div>
-                <Link 
-                  to="/products"
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg font-bold text-white hover:from-purple-500 hover:to-indigo-500 transition-all transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
-                >
-                  <Rocket className="w-5 h-5" />
-                  SCOPRI DI PIÙ
-                </Link>
-              </div>
+                );
+              })}
             </div>
-          </div>
+          ) : (
+            <EmptyState
+              icon={Clock}
+              title="Nessuna prova attiva"
+              desc="Attiva una prova gratuita di 60 giorni — nessuna carta richiesta."
+              ctaLabel="Scopri le prove"
+              ctaTo="/trials"
+            />
+          )}
+        </section>
+
+        {completed.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle className="w-3.5 h-3.5 text-cyan-500" />
+              <h2 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// Storico</h2>
+            </div>
+            <div className="space-y-2">
+              {completed.map((trial) => (
+                <div key={trial.id} className={`rounded-lg border p-4 flex items-center justify-between gap-3 ${
+                  dark ? 'bg-slate-900/30 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="min-w-0">
+                    <div className={`font-display font-medium text-sm truncate ${textMain}`}>{trial.productName}</div>
+                    <div className={`text-xs ${textDim}`}>
+                      {trial.status === 'expired' ? 'Scaduta' : 'Completata'} il{' '}
+                      {new Date(trial.endDate || trial.startDate).toLocaleDateString('it-IT')}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/products?product=${trial.productId}`}
+                    className="px-3 py-1.5 rounded-lg text-xs font-display font-semibold text-cyan-500 hover:text-cyan-400"
+                  >Abbonati →</Link>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
+      </div>
+    );
+  };
 
-        {/* Settings Tab */}
-        {activeTab === 'settings' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-8">
-              <h2 className={`text-3xl font-black mb-2 flex items-center gap-3 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <Settings className="w-8 h-8 text-cyan-500" />
-                IMPOSTAZIONI ACCOUNT
-              </h2>
-              <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                Gestisci il tuo profilo e le preferenze
-              </p>
-            </div>
+  // ====== Tab: Subscriptions ======
+  const SubscriptionsTab = () => (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <StatCard icon={CheckCircle} label="Attivi" value={subscriptions.length} tag="01" />
+        <StatCard icon={Package} label="Catalogo" value={totalProducts} tag="02" />
+        <StatCard icon={TrendingUp} label="Performance" value="+24%" tag="03" />
+      </div>
 
-            {/* Success Message */}
-            {settingsSaved && (
-              <div className="mb-6 p-4 bg-green-900/20 border border-green-600/50 rounded-lg flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <p className="text-green-400 font-medium">Impostazioni salvate con successo!</p>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {settingsError && (
-              <div className="mb-6 p-4 bg-blue-900/20 border border-blue-600/50 rounded-lg flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-500" />
-                <p className="text-blue-400 font-medium">{settingsError}</p>
-              </div>
-            )}
-
-            {/* Profile Settings */}
-            <div className={`rounded-2xl p-8 mb-6 border-2 ${
-              theme === 'dark'
-                ? 'bg-gray-900/50 border-cyan-500/30'
-                : 'bg-white border-cyan-400/50 shadow-md'
-            }`}>
-              <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <User className="w-6 h-6 text-cyan-500" />
-                Informazioni Profilo
-              </h3>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Nome
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={settingsData.firstName}
-                    onChange={handleSettingsChange}
-                    className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                      theme === 'dark'
-                        ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                        : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Cognome
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={settingsData.lastName}
-                    onChange={handleSettingsChange}
-                    className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                      theme === 'dark'
-                        ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                        : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                    }`}
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                    }`} />
-                    <input
-                      type="email"
-                      name="email"
-                      value={settingsData.email}
-                      onChange={handleSettingsChange}
-                      className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
-                        theme === 'dark'
-                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                      }`}
-                    />
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <CreditCard className="w-3.5 h-3.5 text-cyan-500" />
+          <h2 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// I tuoi abbonamenti</h2>
+        </div>
+        {subscriptions.length > 0 ? (
+          <div className="space-y-3">
+            {subscriptions.map((sub) => (
+              <div key={sub.id} className={`rounded-xl border p-6 ${surface} ${surfaceHover} transition-all`}>
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className={`w-11 h-11 rounded-lg flex items-center justify-center ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                        <Package className="w-5 h-5 text-cyan-500" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className={`font-display text-xl font-semibold ${textMain}`}>{sub.productName}</div>
+                        <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs">
+                          <span className="inline-flex items-center gap-1 text-emerald-500">
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Attivo
+                          </span>
+                          <span className={textDim}>· {sub.plan || 'Piano mensile'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`space-y-1.5 text-sm ${textMuted}`}>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Attivato il {new Date(sub.startDate || Date.now()).toLocaleDateString('it-IT')}
+                      </div>
+                      {sub.nextBilling && (
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-3.5 h-3.5" />
+                          Rinnovo previsto: {new Date(sub.nextBilling).toLocaleDateString('it-IT')}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Password Change */}
-            <div className={`rounded-2xl p-8 mb-6 border-2 ${
-              theme === 'dark'
-                ? 'bg-gray-900/50 border-blue-500/30'
-                : 'bg-white border-blue-400/50 shadow-md'
-            }`}>
-              <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${
-                theme === 'dark' ? 'text-white' : 'text-black'
-              }`}>
-                <Lock className="w-6 h-6 text-blue-500" />
-                Cambia Password
-              </h3>
-
-              <div className="space-y-6">
-                <div>
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Password Attuale
-                  </label>
-                  <div className="relative">
-                    <Lock className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                    }`} />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="currentPassword"
-                      value={settingsData.currentPassword}
-                      onChange={handleSettingsChange}
-                      className={`w-full px-4 py-3 pl-12 pr-12 border-2 rounded-lg focus:outline-none transition-colors ${
-                        theme === 'dark'
-                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                      }`}
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${
-                        theme === 'dark' ? 'text-gray-500 hover:text-cyan-500' : 'text-gray-400 hover:text-cyan-600'
-                      }`}
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  <div className="flex lg:flex-col gap-2 lg:min-w-[180px]">
+                    <Link
+                      to={`/products?product=${sub.productId}`}
+                      className="flex-1 text-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+                    >Gestisci</Link>
+                    <button className={`flex-1 px-4 py-2 rounded-lg text-sm font-display font-semibold transition-all ${dark ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'}`}>
+                      Modifica piano
                     </button>
                   </div>
                 </div>
-
-                <div>
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Nuova Password
-                  </label>
-                  <div className="relative">
-                    <Lock className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                    }`} />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="newPassword"
-                      value={settingsData.newPassword}
-                      onChange={handleSettingsChange}
-                      className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
-                        theme === 'dark'
-                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                      }`}
-                      placeholder="••••••••"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className={`block text-sm font-bold mb-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Conferma Nuova Password
-                  </label>
-                  <div className="relative">
-                    <Lock className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                    }`} />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="confirmPassword"
-                      value={settingsData.confirmPassword}
-                      onChange={handleSettingsChange}
-                      className={`w-full px-4 py-3 pl-12 border-2 rounded-lg focus:outline-none transition-colors ${
-                        theme === 'dark'
-                          ? 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
-                          : 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
-                      }`}
-                      placeholder="••••••••"
-                    />
-                  </div>
-                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={CreditCard}
+            title="Nessun abbonamento attivo"
+            desc="Avvia un piano per accedere a tool e corsi senza limiti di tempo."
+            ctaLabel="Vedi catalogo"
+            ctaTo="/products"
+          />
+        )}
+      </section>
+    </div>
+  );
 
-            {/* Save Button */}
-            <div className="flex gap-4">
-              <button
-                onClick={handleSaveSettings}
-                className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-600 to-cyan-800 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-cyan-700 transition-all transform hover:scale-105"
-              >
-                <Save className="w-5 h-5" />
-                SALVA MODIFICHE
-              </button>
-              <button
-                onClick={() => navigate('/dashboard')}
-                className={`px-8 py-4 rounded-lg font-bold transition-all ${
-                  theme === 'dark'
-                    ? 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                ANNULLA
-              </button>
-            </div>
+  // ====== Tab: Settings ======
+  const SettingsTab = () => (
+    <div className="max-w-3xl space-y-6">
+      {settingsSaved && (
+        <div className={`rounded-lg px-4 py-3 flex items-center gap-3 ${dark ? 'bg-emerald-500/10 ring-1 ring-emerald-500/30' : 'bg-emerald-50 ring-1 ring-emerald-500/30'}`}>
+          <CheckCircle className="w-4 h-4 text-emerald-500" />
+          <p className="text-sm font-medium text-emerald-500">Impostazioni salvate</p>
+        </div>
+      )}
+      {settingsError && (
+        <div className={`rounded-lg px-4 py-3 flex items-center gap-3 ${dark ? 'bg-rose-500/10 ring-1 ring-rose-500/30' : 'bg-rose-50 ring-1 ring-rose-500/30'}`}>
+          <AlertCircle className="w-4 h-4 text-rose-500" />
+          <p className="text-sm font-medium text-rose-500">{settingsError}</p>
+        </div>
+      )}
 
-            {/* Danger Zone */}
-            <div className={`rounded-2xl p-8 mt-8 border-2 ${
-              theme === 'dark'
-                ? 'bg-blue-900/10 border-blue-500/50'
-                : 'bg-blue-50 border-blue-300'
-            }`}>
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-500">
-                <AlertCircle className="w-6 h-6" />
-                Zona Pericolosa
-              </h3>
-              <p className={`mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Una volta eliminato l'account, non c'è modo di tornare indietro. Sii sicuro.
-              </p>
-              <button
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 rounded-lg font-bold text-white hover:bg-blue-500 transition-all"
-              >
-                <Trash2 className="w-5 h-5" />
-                ELIMINA ACCOUNT
-              </button>
+      <section className={`rounded-xl border p-6 ${surface}`}>
+        <div className="flex items-center gap-2 mb-1">
+          <User className="w-3.5 h-3.5 text-cyan-500" />
+          <h3 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// Profilo</h3>
+        </div>
+        <p className={`text-sm mb-6 ${textMuted}`}>Le informazioni del tuo account</p>
+
+        <div className="grid md:grid-cols-2 gap-5">
+          <div>
+            <label className={`block text-xs font-display font-medium mb-1.5 ${textMain}`}>Nome</label>
+            <input
+              type="text" name="firstName" value={settingsData.firstName} onChange={handleSettingsChange}
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all ${inputBase}`}
+            />
+          </div>
+          <div>
+            <label className={`block text-xs font-display font-medium mb-1.5 ${textMain}`}>Cognome</label>
+            <input
+              type="text" name="lastName" value={settingsData.lastName} onChange={handleSettingsChange}
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all ${inputBase}`}
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className={`block text-xs font-display font-medium mb-1.5 ${textMain}`}>Email</label>
+            <div className="relative">
+              <Mail className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 ${textDim}`} />
+              <input
+                type="email" name="email" value={settingsData.email} onChange={handleSettingsChange}
+                className={`w-full pl-10 pr-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all ${inputBase}`}
+              />
             </div>
           </div>
-        )}
+        </div>
+      </section>
+
+      <section className={`rounded-xl border p-6 ${surface}`}>
+        <div className="flex items-center gap-2 mb-1">
+          <Lock className="w-3.5 h-3.5 text-cyan-500" />
+          <h3 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// Sicurezza</h3>
+        </div>
+        <p className={`text-sm mb-6 ${textMuted}`}>Cambia la password del tuo account</p>
+
+        <div className="space-y-5">
+          {[
+            { name: 'currentPassword', label: 'Password attuale' },
+            { name: 'newPassword',     label: 'Nuova password' },
+            { name: 'confirmPassword', label: 'Conferma nuova password' },
+          ].map((f) => (
+            <div key={f.name}>
+              <label className={`block text-xs font-display font-medium mb-1.5 ${textMain}`}>{f.label}</label>
+              <div className="relative">
+                <Lock className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 ${textDim}`} />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name={f.name}
+                  value={(settingsData as any)[f.name]}
+                  onChange={handleSettingsChange}
+                  placeholder="••••••••"
+                  className={`w-full pl-10 pr-10 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all ${inputBase}`}
+                />
+                {f.name === 'currentPassword' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={`absolute right-3.5 top-1/2 -translate-y-1/2 ${textDim} hover:text-cyan-500`}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="flex gap-3">
+        <button
+          onClick={handleSaveSettings}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+        >
+          <Save className="w-4 h-4" /> Salva modifiche
+        </button>
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`px-5 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${dark ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40' : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'}`}
+        >Annulla</button>
       </div>
+
+      <section className={`rounded-xl border p-6 ${dark ? 'bg-rose-500/5 border-rose-500/30' : 'bg-rose-50 border-rose-300'}`}>
+        <div className="flex items-center gap-2 mb-1">
+          <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
+          <h3 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-rose-500">// Zona pericolosa</h3>
+        </div>
+        <p className={`text-sm mb-4 ${textMuted}`}>L'eliminazione dell'account è permanente e non reversibile.</p>
+        <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 text-rose-500 ring-1 ring-rose-500/30 text-sm font-display font-semibold hover:bg-rose-500/20 transition-all">
+          <Trash2 className="w-4 h-4" /> Elimina account
+        </button>
+      </section>
     </div>
+  );
+
+  // ====== Empty state ======
+  function EmptyState({ icon: Icon, title, desc, ctaLabel, ctaTo }: { icon: React.ElementType; title: string; desc: string; ctaLabel: string; ctaTo: string }) {
+    return (
+      <div className={`rounded-xl border p-10 text-center ${surface}`}>
+        <div className={`w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center ${dark ? 'bg-slate-900' : 'bg-slate-100'}`}>
+          <Icon className={`w-5 h-5 ${textDim}`} />
+        </div>
+        <h3 className={`font-display text-lg font-semibold mb-1 ${textMain}`}>{title}</h3>
+        <p className={`text-sm max-w-md mx-auto mb-5 ${textMuted}`}>{desc}</p>
+        <Link
+          to={ctaTo}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+        >
+          {ctaLabel} →
+        </Link>
+      </div>
+    );
+  }
+
+  // ====== Layout ======
+  return (
+    <AnimatedPage>
+      <div className={`min-h-screen ${dark ? 'bg-black text-white' : 'bg-slate-50 text-slate-900'}`}>
+        {/* Subtle grid pattern background */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(${dark ? '#ffffff' : '#0b1e3f'} 1px, transparent 1px), linear-gradient(90deg, ${dark ? '#ffffff' : '#0b1e3f'} 1px, transparent 1px)`,
+            backgroundSize: '48px 48px',
+          }}
+        />
+
+        <div className="flex min-h-screen relative">
+          {/* Sidebar desktop */}
+          <div className="hidden lg:flex w-64 shrink-0">
+            <Sidebar />
+          </div>
+
+          {/* Mobile sidebar drawer */}
+          {mobileNavOpen && (
+            <>
+              <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setMobileNavOpen(false)} />
+              <div className="fixed inset-y-0 left-0 w-72 z-50 lg:hidden">
+                <Sidebar />
+              </div>
+            </>
+          )}
+
+          {/* Main */}
+          <main className="flex-1 min-w-0 flex flex-col">
+            {/* Topbar */}
+            <header className={`sticky top-0 z-30 backdrop-blur-md border-b ${
+              dark ? 'bg-black/70 border-slate-800/80' : 'bg-white/70 border-slate-200'
+            }`}>
+              <div className="px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <button
+                    onClick={() => setMobileNavOpen(true)}
+                    className={`lg:hidden p-2 rounded-lg ${dark ? 'text-slate-300 hover:bg-slate-900' : 'text-slate-700 hover:bg-slate-100'}`}
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                  <div className="min-w-0">
+                    <div className={`font-mono-lab text-[0.65rem] tracking-[0.3em] uppercase ${textDim}`}>
+                      // Nexora Lab Dashboard
+                    </div>
+                    <h1 className={`font-display text-xl md:text-2xl font-semibold tracking-tight truncate ${textMain}`}>
+                      {activeTitle?.label}
+                    </h1>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className={`p-2 rounded-lg transition-colors ${dark ? 'text-slate-400 hover:text-cyan-400 hover:bg-slate-900' : 'text-slate-500 hover:text-cyan-600 hover:bg-slate-100'}`}>
+                    <Bell className="w-4 h-4" />
+                  </button>
+                  <Link to="/" className={`hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-display font-medium transition-all ${
+                    dark ? 'text-slate-300 hover:text-white hover:bg-slate-900 ring-1 ring-slate-800' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100 ring-1 ring-slate-200'
+                  }`}>
+                    <Home className="w-3.5 h-3.5" /> Home
+                  </Link>
+                  <button
+                    onClick={() => setMobileNavOpen(true)}
+                    className={`lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white font-display font-semibold text-sm`}
+                  >
+                    {user.firstName.charAt(0).toUpperCase()}
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile tab pills */}
+              <div className={`lg:hidden flex items-center gap-1 px-4 pb-3 overflow-x-auto`}>
+                {NAV.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-display font-medium whitespace-nowrap transition-all ${
+                      activeTab === item.id
+                        ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/40'
+                        : dark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >{item.label}</button>
+                ))}
+              </div>
+            </header>
+
+            {/* Content */}
+            <div className="flex-1 px-4 md:px-8 py-8">
+              {loading ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <>
+                  {activeTab === 'overview' && <OverviewTab />}
+                  {activeTab === 'trials' && <TrialsTab />}
+                  {activeTab === 'subscriptions' && <SubscriptionsTab />}
+                  {activeTab === 'settings' && <SettingsTab />}
+                </>
+              )}
+            </div>
+          </main>
+        </div>
+      </div>
     </AnimatedPage>
   );
 };
