@@ -45,7 +45,9 @@ const AdminLogin: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <img src="/logo.png" alt="Nexora Lab" className="mx-auto h-10 w-auto mb-6" />
+            <div className="inline-block bg-slate-900 rounded-xl px-4 py-2 mb-6 shadow-md ring-1 ring-slate-800/10">
+              <img src="/logo.png" alt="Nexora Lab" className="h-9 w-auto" />
+            </div>
             <h2 className="text-3xl font-bold text-gray-800">Admin Login</h2>
             <p className="text-gray-600 mt-2">Accedi al pannello di amministrazione</p>
           </div>

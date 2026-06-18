@@ -109,11 +109,17 @@ const Footer = () => {
             <div className="mb-8 group">
               <div className="relative inline-block transform group-hover:scale-[1.03] transition-transform duration-300">
                 <div className="absolute inset-0 bg-cyan-500/15 blur-2xl rounded-full"></div>
-                <img
-                  src="/logo.png"
-                  alt="Nexora Lab"
-                  className="relative z-10 h-16 md:h-20 lg:h-24 w-auto object-contain"
-                />
+                <div className={`relative z-10 inline-block transition-colors duration-300 ${
+                  theme === 'light'
+                    ? 'bg-slate-900 rounded-xl px-4 py-2 shadow-md shadow-slate-900/10 ring-1 ring-slate-800/10'
+                    : ''
+                }`}>
+                  <img
+                    src="/logo.png"
+                    alt="Nexora Lab"
+                    className="h-14 md:h-16 lg:h-20 w-auto object-contain"
+                  />
+                </div>
               </div>
             </div>
 

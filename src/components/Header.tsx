@@ -100,11 +100,17 @@ const Header = () => {
             {/* Horizontal Logo (NexoraLab + tagline already embedded) */}
             <div className="relative flex-shrink-0">
               <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <img
-                src="/logo.png"
-                alt="Nexora Lab"
-                className="relative z-10 h-12 md:h-16 lg:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
-              />
+              <div className={`relative z-10 transition-colors duration-300 ${
+                theme === 'light'
+                  ? 'bg-slate-900 rounded-xl px-3 py-1.5 shadow-md shadow-slate-900/10 ring-1 ring-slate-800/10'
+                  : ''
+              }`}>
+                <img
+                  src="/logo.png"
+                  alt="Nexora Lab"
+                  className="h-10 md:h-14 lg:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                />
+              </div>
             </div>
           </Link>
 
