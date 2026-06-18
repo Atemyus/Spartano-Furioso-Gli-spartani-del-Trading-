@@ -3,6 +3,7 @@ import { Shield, TrendingUp, Users, Sparkles, BarChart3, Cpu, Beaker, ArrowRight
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import HologramSphere from './HologramSphere';
+import NeonCracks from './NeonCracks';
 
 const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -74,6 +75,14 @@ const Hero = () => {
 
         {/* Radial glow */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
+
+        {/* Reticolo di crepe neon (riveste le aree vuote) */}
+        <NeonCracks
+          className="absolute inset-0"
+          density="medium"
+          intensity={theme === 'dark' ? 0.75 : 0.35}
+          interactive
+        />
 
         {/* Ologramma 3D centrale (centerpiece) */}
         <HologramSphere

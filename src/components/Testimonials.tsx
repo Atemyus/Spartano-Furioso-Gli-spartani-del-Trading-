@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import HologramSphere from './HologramSphere';
+import NeonCracks from './NeonCracks';
 
 const Testimonials = () => {
   const { theme } = useTheme();
@@ -144,6 +145,11 @@ const Testimonials = () => {
         ? 'bg-gradient-to-b from-black to-blue-950/20'
         : 'bg-gradient-to-b from-white to-blue-50/40'
     }`}>
+      <NeonCracks
+        className="absolute inset-0"
+        density="low"
+        intensity={theme === 'dark' ? 0.5 : 0.25}
+      />
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"

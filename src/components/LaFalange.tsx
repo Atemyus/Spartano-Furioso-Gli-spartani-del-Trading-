@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LineChart, GraduationCap, Sparkles, Users, CheckCircle2, Cpu, Mic2, Briefcase } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import HologramSphere from './HologramSphere';
+import NeonCracks from './NeonCracks';
 
 const LaFalange = () => {
   const { theme } = useTheme();
@@ -58,6 +59,11 @@ const LaFalange = () => {
         <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
       </div>
+      <NeonCracks
+        className="absolute inset-0"
+        density="low"
+        intensity={theme === 'dark' ? 0.55 : 0.28}
+      />
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"

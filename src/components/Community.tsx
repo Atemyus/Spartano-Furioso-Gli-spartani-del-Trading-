@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MessageCircle, BookOpen, Users, Mail, ArrowRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import HologramSphere from './HologramSphere';
+import NeonCracks from './NeonCracks';
 
 const Community = () => {
   const { theme } = useTheme();
@@ -46,6 +47,11 @@ const Community = () => {
         ? 'bg-gradient-to-b from-blue-950/20 to-black'
         : 'bg-gradient-to-b from-blue-50/40 to-white'
     }`}>
+      <NeonCracks
+        className="absolute inset-0"
+        density="low"
+        intensity={theme === 'dark' ? 0.55 : 0.28}
+      />
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"

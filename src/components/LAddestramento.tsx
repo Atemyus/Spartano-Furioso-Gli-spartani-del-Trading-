@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Compass, FlaskConical, Rocket, LineChart, ArrowRight, Clock } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import HologramSphere from './HologramSphere';
+import NeonCracks from './NeonCracks';
 
 const LAddestramento = () => {
   const navigate = useNavigate();
@@ -60,6 +61,11 @@ const LAddestramento = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
+      <NeonCracks
+        className="absolute inset-0"
+        density="low"
+        intensity={theme === 'dark' ? 0.55 : 0.28}
+      />
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
