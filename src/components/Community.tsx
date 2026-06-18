@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, BookOpen, Users, Mail, ArrowRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import HologramSphere from './HologramSphere';
 
 const Community = () => {
   const { theme } = useTheme();
@@ -40,12 +41,18 @@ const Community = () => {
   };
 
   return (
-    <section id="community" className={`py-24 transition-colors duration-500 ${
+    <section id="community" className={`py-24 relative overflow-hidden transition-colors duration-500 ${
       theme === 'dark'
         ? 'bg-gradient-to-b from-blue-950/20 to-black'
         : 'bg-gradient-to-b from-blue-50/40 to-white'
     }`}>
-      <div className="container mx-auto px-4">
+      <HologramSphere
+        className="absolute top-1/2 -right-40 -translate-y-1/2 w-[40rem] h-[40rem] hidden md:block"
+        detail="high"
+        speed={0.75}
+        intensity={theme === 'dark' ? 0.55 : 0.35}
+      />
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 backdrop-blur-sm">

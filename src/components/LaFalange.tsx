@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LineChart, GraduationCap, Sparkles, Users, CheckCircle2, Cpu, Mic2, Briefcase } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import HologramSphere from './HologramSphere';
 
 const LaFalange = () => {
   const { theme } = useTheme();
@@ -57,6 +58,12 @@ const LaFalange = () => {
         <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
       </div>
+      <HologramSphere
+        className="absolute -top-20 -right-24 w-[28rem] h-[28rem] hidden md:block"
+        detail="low"
+        speed={0.8}
+        intensity={theme === 'dark' ? 0.5 : 0.35}
+      />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}

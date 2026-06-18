@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Shield, TrendingUp, Users, Sparkles, BarChart3, Cpu, Beaker, ArrowRight, Play, Atom } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import HologramSphere from './HologramSphere';
 
 const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -73,6 +74,14 @@ const Hero = () => {
 
         {/* Radial glow */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
+
+        {/* Ologramma 3D centrale (centerpiece) */}
+        <HologramSphere
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[34rem] h-[34rem] md:w-[46rem] md:h-[46rem] lg:w-[56rem] lg:h-[56rem]"
+          detail="high"
+          interactive
+          intensity={theme === 'dark' ? 0.85 : 0.6}
+        />
       </div>
 
       <div className="container mx-auto px-4 py-16 relative z-10">

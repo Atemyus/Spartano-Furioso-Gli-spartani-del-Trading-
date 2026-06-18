@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
+import HologramSphere from './HologramSphere';
 import { 
   Shield, 
   TrendingUp, 
@@ -253,6 +254,12 @@ const ProductsSection: React.FC = () => {
         <div className={`absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] ${
           theme === 'dark' ? 'opacity-5' : 'opacity-10'
         }`}></div>
+        <HologramSphere
+          className="absolute top-1/2 -right-32 -translate-y-1/2 w-[34rem] h-[34rem] hidden lg:block"
+          detail="low"
+          speed={0.6}
+          intensity={theme === 'dark' ? 0.45 : 0.3}
+        />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">

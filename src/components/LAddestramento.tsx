@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Compass, FlaskConical, Rocket, LineChart, ArrowRight, Clock } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import HologramSphere from './HologramSphere';
 
 const LAddestramento = () => {
   const navigate = useNavigate();
@@ -59,6 +60,13 @@ const LAddestramento = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
+      <HologramSphere
+        className="absolute -bottom-24 -left-28 w-[30rem] h-[30rem] hidden md:block"
+        detail="low"
+        variant="globe"
+        speed={0.7}
+        intensity={theme === 'dark' ? 0.5 : 0.32}
+      />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}

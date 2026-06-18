@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import HologramSphere from './HologramSphere';
 
 const Testimonials = () => {
   const { theme } = useTheme();
@@ -138,12 +139,19 @@ const Testimonials = () => {
   );
 
   return (
-    <section id="veterani" className={`py-24 transition-colors duration-500 ${
+    <section id="veterani" className={`py-24 relative overflow-hidden transition-colors duration-500 ${
       theme === 'dark'
         ? 'bg-gradient-to-b from-black to-blue-950/20'
         : 'bg-gradient-to-b from-white to-blue-50/40'
     }`}>
-      <div className="container mx-auto px-4">
+      <HologramSphere
+        className="absolute -top-28 -left-32 w-[32rem] h-[32rem] hidden lg:block"
+        detail="low"
+        variant="globe"
+        speed={0.65}
+        intensity={theme === 'dark' ? 0.42 : 0.28}
+      />
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 backdrop-blur-sm">
