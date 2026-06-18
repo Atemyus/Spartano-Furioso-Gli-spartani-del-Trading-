@@ -145,11 +145,20 @@ const Testimonials = () => {
         : 'bg-gradient-to-b from-white to-blue-50/40'
     }`}>
       <HologramSphere
-        className="absolute -top-28 -left-32 w-[32rem] h-[32rem] hidden lg:block"
-        detail="low"
+        className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
         variant="globe"
-        speed={0.65}
-        intensity={theme === 'dark' ? 0.42 : 0.28}
+        interactive
+        speed={0.85}
+        intensity={theme === 'dark' ? 0.5 : 0.35}
+      />
+      <HologramSphere
+        className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
+        variant="neural"
+        interactive
+        speed={0.9}
+        intensity={theme === 'dark' ? 0.5 : 0.35}
       />
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}

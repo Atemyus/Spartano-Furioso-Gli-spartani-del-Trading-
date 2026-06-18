@@ -47,10 +47,20 @@ const Community = () => {
         : 'bg-gradient-to-b from-blue-50/40 to-white'
     }`}>
       <HologramSphere
-        className="absolute top-1/2 -right-40 -translate-y-1/2 w-[40rem] h-[40rem] hidden md:block"
+        className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        speed={0.75}
-        intensity={theme === 'dark' ? 0.55 : 0.35}
+        variant="neural"
+        interactive
+        speed={0.9}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
+      />
+      <HologramSphere
+        className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
+        variant="globe"
+        interactive
+        speed={0.85}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
       />
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}

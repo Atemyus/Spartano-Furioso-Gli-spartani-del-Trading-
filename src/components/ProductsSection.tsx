@@ -255,10 +255,20 @@ const ProductsSection: React.FC = () => {
           theme === 'dark' ? 'opacity-5' : 'opacity-10'
         }`}></div>
         <HologramSphere
-          className="absolute top-1/2 -right-32 -translate-y-1/2 w-[34rem] h-[34rem] hidden lg:block"
-          detail="low"
-          speed={0.6}
-          intensity={theme === 'dark' ? 0.45 : 0.3}
+          className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+          detail="high"
+          variant="cpu"
+          interactive
+          speed={0.85}
+          intensity={theme === 'dark' ? 0.5 : 0.35}
+        />
+        <HologramSphere
+          className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+          detail="high"
+          variant="chart"
+          interactive
+          speed={0.9}
+          intensity={theme === 'dark' ? 0.5 : 0.35}
         />
       </div>
 

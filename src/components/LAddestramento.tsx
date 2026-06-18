@@ -61,11 +61,20 @@ const LAddestramento = () => {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
       <HologramSphere
-        className="absolute -bottom-24 -left-28 w-[30rem] h-[30rem] hidden md:block"
-        detail="low"
+        className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
+        variant="chart"
+        interactive
+        speed={0.9}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
+      />
+      <HologramSphere
+        className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
         variant="globe"
-        speed={0.7}
-        intensity={theme === 'dark' ? 0.5 : 0.32}
+        interactive
+        speed={0.85}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
       />
 
       <div className="container mx-auto px-4 relative z-10">

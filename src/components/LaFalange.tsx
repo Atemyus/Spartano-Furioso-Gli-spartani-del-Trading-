@@ -59,10 +59,20 @@ const LaFalange = () => {
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
       </div>
       <HologramSphere
-        className="absolute -top-20 -right-24 w-[28rem] h-[28rem] hidden md:block"
-        detail="low"
-        speed={0.8}
-        intensity={theme === 'dark' ? 0.5 : 0.35}
+        className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
+        variant="neural"
+        interactive
+        speed={0.9}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
+      />
+      <HologramSphere
+        className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
+        detail="high"
+        variant="cpu"
+        interactive
+        speed={0.85}
+        intensity={theme === 'dark' ? 0.55 : 0.38}
       />
 
       <div className="container mx-auto px-4 relative z-10">
