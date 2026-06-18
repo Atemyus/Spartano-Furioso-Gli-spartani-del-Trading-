@@ -147,7 +147,7 @@ const Testimonials = () => {
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        variant="globe"
+        variant="candles"
         interactive
         speed={0.85}
         intensity={theme === 'dark' ? 0.5 : 0.35}
@@ -155,7 +155,7 @@ const Testimonials = () => {
       <HologramSphere
         className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        variant="neural"
+        variant="torus"
         interactive
         speed={0.9}
         intensity={theme === 'dark' ? 0.5 : 0.35}

@@ -63,7 +63,7 @@ const LAddestramento = () => {
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        variant="chart"
+        variant="dna"
         interactive
         speed={0.9}
         intensity={theme === 'dark' ? 0.55 : 0.38}
@@ -71,7 +71,7 @@ const LAddestramento = () => {
       <HologramSphere
         className="absolute top-1/2 -right-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        variant="globe"
+        variant="atom"
         interactive
         speed={0.85}
         intensity={theme === 'dark' ? 0.55 : 0.38}

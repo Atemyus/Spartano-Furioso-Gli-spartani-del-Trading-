@@ -49,7 +49,7 @@ const Community = () => {
       <HologramSphere
         className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
         detail="high"
-        variant="neural"
+        variant="crypto"
         interactive
         speed={0.9}
         intensity={theme === 'dark' ? 0.55 : 0.38}

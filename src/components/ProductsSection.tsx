@@ -257,7 +257,7 @@ const ProductsSection: React.FC = () => {
         <HologramSphere
           className="absolute top-1/2 -left-32 -translate-y-1/2 w-[28rem] h-[28rem] hidden lg:block"
           detail="high"
-          variant="cpu"
+          variant="cube"
           interactive
           speed={0.85}
           intensity={theme === 'dark' ? 0.5 : 0.35}
