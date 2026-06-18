@@ -69,9 +69,14 @@ export default function OrdersManagement() {
     fetchStats();
   }, []);
 
+  const authHeader = (): Record<string, string> => {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+    return { Authorization: `Bearer ${token}` };
+  };
+
   const fetchOrders = async () => {
     try {
-      const response = await fetch('https://api.nexoralab.solutions/api/orders');
+      const response = await fetch('https://api.nexoralab.solutions/api/orders', { headers: authHeader() });
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -95,7 +100,8 @@ export default function OrdersManagement() {
       const response = await fetch(`https://api.nexoralab.solutions/api/orders/${selectedOrder.id}/confirm`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeader()
         },
         body: JSON.stringify({
           telegramLink,
@@ -125,7 +131,8 @@ export default function OrdersManagement() {
       const response = await fetch(`https://api.nexoralab.solutions/api/orders/${orderId}/cancel`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeader()
         },
         body: JSON.stringify({
           reason: 'Annullato da admin'
@@ -143,7 +150,7 @@ export default function OrdersManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('https://api.nexoralab.solutions/api/orders/stats');
+      const response = await fetch('https://api.nexoralab.solutions/api/orders/stats', { headers: authHeader() });
       if (response.ok) {
         const data = await response.json();
         setStats(data);

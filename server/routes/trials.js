@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, authenticateAdmin } from '../middleware/auth.js';
 import { db } from '../database/index.js';
 import { PrismaClient } from '@prisma/client';
 import { recordTrialActivation } from '../middleware/trialProtection.js';
@@ -237,7 +237,7 @@ router.get('/check/:productId', authenticateToken, async (req, res) => {
 });
 
 // Admin: Get all trials
-router.get('/admin/all', async (req, res) => {
+router.get('/admin/all', authenticateAdmin, async (req, res) => {
   try {
     console.log('📊 Admin fetching all trials from Prisma...');
     
@@ -291,7 +291,7 @@ router.get('/admin/all', async (req, res) => {
 });
 
 // Admin: Delete a trial
-router.delete('/admin/:trialId', async (req, res) => {
+router.delete('/admin/:trialId', authenticateAdmin, async (req, res) => {
   try {
     // Verifica autenticazione
     const authHeader = req.headers['authorization'];
@@ -339,7 +339,7 @@ router.delete('/admin/:trialId', async (req, res) => {
 });
 
 // Admin: Aggiorna lo stato di un trial (active / cancelled / expired)
-router.patch('/admin/:trialId', async (req, res) => {
+router.patch('/admin/:trialId', authenticateAdmin, async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.split(' ')[1]) {
@@ -379,7 +379,7 @@ router.patch('/admin/:trialId', async (req, res) => {
 });
 
 // Admin: Estendi un trial di N giorni
-router.post('/admin/:trialId/extend', async (req, res) => {
+router.post('/admin/:trialId/extend', authenticateAdmin, async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.split(' ')[1]) {

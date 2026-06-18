@@ -1,11 +1,12 @@
 import express from 'express';
+import { authenticateAdmin } from '../middleware/auth.js';
 import db from '../database/orders.js';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
 
 const router = express.Router();
 
 // Get all orders (Admin only)
-router.get('/', async (req, res) => {
+router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const orders = await db.getAllOrders();
     res.json(orders);
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 // di /:id, altrimenti Express le interpreta come un id e restituisce 404.
 
 // Get orders statistics
-router.get('/stats', async (req, res) => {
+router.get('/stats', authenticateAdmin, async (req, res) => {
   try {
     const allOrders = await db.getAllOrders();
 
@@ -65,7 +66,7 @@ router.get('/stats', async (req, res) => {
 });
 
 // Get pending orders count
-router.get('/stats/pending-count', async (req, res) => {
+router.get('/stats/pending-count', authenticateAdmin, async (req, res) => {
   try {
     const allOrders = await db.getAllOrders();
     const pendingCount = allOrders.filter(order => order.status === 'pending').length;
@@ -77,7 +78,7 @@ router.get('/stats/pending-count', async (req, res) => {
 });
 
 // Get orders by status
-router.get('/status/:status', async (req, res) => {
+router.get('/status/:status', authenticateAdmin, async (req, res) => {
   try {
     const { status } = req.params;
     const allOrders = await db.getAllOrders();
@@ -90,7 +91,7 @@ router.get('/status/:status', async (req, res) => {
 });
 
 // Get single order by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateAdmin, async (req, res) => {
   try {
     const order = await db.getOrderById(req.params.id);
     if (!order) {
@@ -104,7 +105,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Confirm order (Admin only) - Sends Vimeo credentials and Telegram link
-router.post('/:id/confirm', async (req, res) => {
+router.post('/:id/confirm', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { telegramLink, vimeoLink, vimeoPassword } = req.body;
@@ -169,7 +170,7 @@ router.post('/:id/confirm', async (req, res) => {
 });
 
 // Cancel/Reject order (Admin only)
-router.post('/:id/cancel', async (req, res) => {
+router.post('/:id/cancel', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
