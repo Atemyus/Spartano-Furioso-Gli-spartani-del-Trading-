@@ -221,7 +221,7 @@ const CourseDetail: React.FC = () => {
           <div className="relative container mx-auto px-4 h-full flex items-center">
             <div className="max-w-4xl">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-purple-600 text-white text-sm font-bold rounded">
+                <span className="px-3 py-1 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/30 text-xs font-mono-lab tracking-widest uppercase rounded-md">
                   FORMAZIONE
                 </span>
                 {userAccess === 'trial' && (
@@ -236,7 +236,7 @@ const CourseDetail: React.FC = () => {
                 )}
               </div>
               
-              <h1 className={`text-5xl md:text-6xl font-black mb-4 ${
+              <h1 className={`text-5xl md:text-6xl font-display font-semibold mb-4 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
                 {course.name}
@@ -283,7 +283,7 @@ const CourseDetail: React.FC = () => {
                     </button>
                     <button 
                       onClick={handlePurchase}
-                      className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-800 border-2 border-purple-400 rounded-lg font-bold text-white hover:from-purple-500 hover:to-purple-700 hover:border-purple-300 transition-all"
+                      className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-400 hover:border-cyan-300 transition-all"
                     >
                       ACQUISTA CORSO COMPLETO - €{course.price}
                     </button>
@@ -327,7 +327,7 @@ const CourseDetail: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           {/* Course Contents Summary */}
           <div className="mb-16">
-            <h2 className={`text-4xl font-black mb-8 text-center ${
+            <h2 className={`text-4xl font-display font-semibold mb-8 text-center ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               📚 Cosa Imparerai in Questo Corso
@@ -337,8 +337,8 @@ const CourseDetail: React.FC = () => {
               {/* Contenuti principali */}
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/20 border-purple-600/30'
-                  : 'bg-white border-purple-300 shadow-md'
+                  ? 'bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border-cyan-600/30'
+                  : 'bg-white border-cyan-300 shadow-md'
               }`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className="text-3xl">📘</div>
@@ -442,8 +442,8 @@ const CourseDetail: React.FC = () => {
               
               <div className={`border rounded-xl p-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-indigo-900/30 to-indigo-800/20 border-indigo-600/30'
-                  : 'bg-white border-indigo-300 shadow-md'
+                  ? 'bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border-blue-600/30'
+                  : 'bg-white border-blue-300 shadow-md'
               }`}>
                 <div className="flex items-start gap-3 mb-4">
                   <div className="text-3xl">🤝</div>
@@ -501,7 +501,7 @@ const CourseDetail: React.FC = () => {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content - Modules */}
             <div className="lg:col-span-2">
-              <h2 className={`text-3xl font-black mb-8 ${
+              <h2 className={`text-3xl font-display font-semibold mb-8 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
                 Moduli del Corso
@@ -576,7 +576,7 @@ const CourseDetail: React.FC = () => {
               {/* Info Box - I contenuti sono su Vimeo */}
               <div className={`border-2 rounded-xl p-6 mb-8 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-600/50'
+                  ? 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border-cyan-600/50'
                   : 'bg-white border-blue-400 shadow-lg'
               }`}>
                 <div className="flex items-start gap-4">
@@ -784,8 +784,8 @@ const CourseDetail: React.FC = () => {
               {/* Certificate Info */}
               <div className={`border-2 rounded-xl p-6 mb-6 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-br from-purple-900/30 to-blue-900/30 border-purple-600/50'
-                  : 'bg-white border-purple-400 shadow-lg'
+                  ? 'bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border-cyan-600/50'
+                  : 'bg-white border-cyan-400 shadow-lg'
               }`}>
                 <div className="flex items-center gap-3 mb-4">
                   <Award className="w-8 h-8 text-cyan-500" />
@@ -842,7 +842,7 @@ const CourseDetail: React.FC = () => {
                       <div className="text-gray-400 line-through text-lg">
                         €{course.originalPrice || 1997}
                       </div>
-                      <div className="text-4xl font-black text-cyan-500 mb-2">
+                      <div className="text-4xl font-display font-semibold text-cyan-500 mb-2">
                         €1500
                       </div>
                       <p className="text-sm text-green-400 font-semibold">Prezzo Speciale Trial - Risparmia €497!</p>
@@ -854,7 +854,7 @@ const CourseDetail: React.FC = () => {
                           €{course.originalPrice}
                         </div>
                       )}
-                      <div className="text-4xl font-black text-cyan-500 mb-2">
+                      <div className="text-4xl font-display font-semibold text-cyan-500 mb-2">
                         €{course.price}
                       </div>
                       <p className="text-sm text-gray-400">Pagamento unico - Accesso a vita</p>
