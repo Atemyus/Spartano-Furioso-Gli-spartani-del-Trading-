@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { X, CreditCard, Wallet, Bitcoin, Clock, CheckCircle } from 'lucide-react';
+import { X, CreditCard, Bitcoin, Clock, CheckCircle, CalendarClock } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface PaymentOptionsModalProps {
@@ -13,7 +13,7 @@ interface PaymentOptionsModalProps {
   plan?: 'monthly' | 'yearly' | 'lifetime';  // Piano selezionato
 }
 
-type PaymentMethod = 'stripe' | 'paypal' | 'crypto';
+type PaymentMethod = 'stripe' | 'klarna' | 'crypto';
 
 const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   isOpen,
@@ -31,16 +31,16 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleStripePayment = async () => {
+  const submitStripeCheckout = async (paymentMethod: 'card' | 'klarna') => {
     setIsProcessing(true);
     try {
       const token = localStorage.getItem('token');
-      
+
       // Determina l'intervallo in base al piano
       let interval = 'one-time';
       if (plan === 'monthly') interval = 'month';
       else if (plan === 'yearly') interval = 'year';
-      
+
       const response = await fetch('https://api.nexoralab.solutions/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -53,6 +53,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
           amount: Math.round(price * 100), // Converti in centesimi
           currency: 'EUR',
           interval: interval,
+          paymentMethod, // 'card' o 'klarna'
           successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: window.location.href,
           productType: productType,
@@ -74,52 +75,15 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
         alert(errorData.error || 'Errore durante il processo di pagamento');
       }
     } catch (error) {
-      console.error('Errore Stripe:', error);
-      alert('Errore nel processo di pagamento Stripe');
+      console.error('Errore checkout:', error);
+      alert('Errore nel processo di pagamento');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handlePayPalPayment = async () => {
-    setIsProcessing(true);
-    try {
-      const userEmail = localStorage.getItem('userEmail');
-      
-      const response = await fetch('https://api.nexoralab.solutions/api/payments/paypal/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          amount: price,
-          currency: 'EUR',
-          productName: productName,
-          productId: productId,
-          customerEmail: userEmail,
-          productType: productType,
-          plan: plan
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Errore nella creazione dell\'ordine PayPal');
-      }
-
-      const data = await response.json();
-      
-      if (data.approveUrl) {
-        // Reindirizza a PayPal per il pagamento
-        window.location.href = data.approveUrl;
-      } else {
-        throw new Error('URL PayPal non disponibile');
-      }
-    } catch (error) {
-      console.error('Errore PayPal:', error);
-      alert('Errore nel processo di pagamento PayPal');
-      setIsProcessing(false);
-    }
-  };
+  const handleStripePayment = () => submitStripeCheckout('card');
+  const handleKlarnaPayment = () => submitStripeCheckout('klarna');
 
   const handleCryptoPayment = async () => {
     setIsProcessing(true);
@@ -161,19 +125,28 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     }
   };
 
+  const isSubscriptionPlan = plan === 'monthly' || plan === 'yearly';
+
   const handlePayment = () => {
     switch (selectedMethod) {
       case 'stripe':
         handleStripePayment();
         break;
-      case 'paypal':
-        handlePayPalPayment();
+      case 'klarna':
+        handleKlarnaPayment();
         break;
       case 'crypto':
         handleCryptoPayment();
         break;
     }
   };
+
+  // Se l'utente seleziona Klarna ma poi cambia piano in abbonamento, resetta a stripe
+  React.useEffect(() => {
+    if (selectedMethod === 'klarna' && isSubscriptionPlan) {
+      setSelectedMethod('stripe');
+    }
+  }, [isSubscriptionPlan, selectedMethod]);
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm ${
@@ -289,47 +262,53 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
               </div>
             </button>
 
-            {/* PayPal */}
-            <button
-              onClick={() => setSelectedMethod('paypal')}
-              disabled={isProcessing}
-              className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
-                selectedMethod === 'paypal'
-                  ? 'border-[#0070ba] bg-[#0070ba]/10'
-                  : theme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                    : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  selectedMethod === 'paypal'
-                    ? 'bg-[#0070ba]'
-                    : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-                }`}>
-                  <Wallet className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className={`font-bold flex items-center gap-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+            {/* Klarna — paga in 3 rate (solo su pagamenti unici) */}
+            {!isSubscriptionPlan && (
+              <button
+                onClick={() => setSelectedMethod('klarna')}
+                disabled={isProcessing}
+                className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
+                  selectedMethod === 'klarna'
+                    ? 'border-[#ffa8cd] bg-[#ffa8cd]/10'
+                    : theme === 'dark'
+                      ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                      : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    selectedMethod === 'klarna'
+                      ? 'bg-[#ffa8cd]'
+                      : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
                   }`}>
-                    PayPal
-                    {selectedMethod === 'paypal' && (
-                      <CheckCircle className="w-5 h-5 text-[#0070ba]" />
-                    )}
-                  </h3>
-                  <p className={`text-sm flex items-center gap-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    <CalendarClock className={`w-6 h-6 ${selectedMethod === 'klarna' ? 'text-black' : 'text-white'}`} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-bold flex items-center gap-2 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      Klarna — Paga in 3 rate
+                      {selectedMethod === 'klarna' && (
+                        <CheckCircle className="w-5 h-5 text-[#ffa8cd]" />
+                      )}
+                    </h3>
+                    <p className={`text-sm flex items-center gap-1 ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      <Clock className="w-3 h-3" />
+                      3 rate senza interessi · approvazione istantanea
+                    </p>
+                  </div>
+                  <div className={`px-2 py-1 rounded font-bold text-xs ${
+                    selectedMethod === 'klarna'
+                      ? 'bg-[#ffa8cd] text-black'
+                      : theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
                   }`}>
-                    <Clock className="w-3 h-3" />
-                    Include opzione "Paga in 3 rate" senza interessi
-                  </p>
+                    Klarna.
+                  </div>
                 </div>
-                <div>
-                  <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" className="h-6" />
-                </div>
-              </div>
-            </button>
+              </button>
+            )}
 
             {/* Crypto */}
             <button

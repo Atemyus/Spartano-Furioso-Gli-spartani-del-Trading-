@@ -32,7 +32,7 @@ const FAQ = () => {
       questions: [
         {
           q: "Quali metodi di pagamento accettate?",
-          a: "Accettiamo: Carte di credito/debito (Visa, Mastercard, American Express), PayPal, Bonifico bancario (SEPA), Criptovalute (Bitcoin, Ethereum, USDT), Apple Pay e Google Pay. Tutti i pagamenti sono protetti con crittografia SSL a 256-bit."
+          a: "Accettiamo: Carte di credito/debito (Visa, Mastercard, American Express), Klarna (paga in 3 rate senza interessi), Criptovalute (Bitcoin, Ethereum, USDT e oltre 200 monete tramite NOWPayments), Apple Pay e Google Pay. Tutti i pagamenti sono protetti con crittografia SSL a 256-bit."
         },
         {
           q: "Posso ottenere un rimborso?",
