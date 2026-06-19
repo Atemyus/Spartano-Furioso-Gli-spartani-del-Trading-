@@ -698,7 +698,7 @@ const CourseViewer: React.FC = () => {
                   className={`flex-1 px-6 py-3 rounded-lg font-bold text-white transition-all duration-300 flex items-center justify-center gap-2 ${
                     completedLessons.has(currentLesson.id)
                       ? 'bg-gray-700 border-2 border-gray-600 cursor-not-allowed opacity-50'
-                      : 'bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-cyan-400 hover:from-purple-500 hover:to-indigo-500 hover:border-cyan-300'
+                      : 'bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-cyan-400 hover:from-blue-500 hover:to-cyan-400 hover:border-cyan-300'
                   }`}
                 >
                   <CheckCircle className="w-5 h-5" />

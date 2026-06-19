@@ -134,11 +134,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
       case 'NUOVO':
         return 'from-green-600 to-emerald-600';
       case 'HIGH SPEED':
-        return 'from-blue-600 to-purple-600';
+        return 'from-blue-600 to-cyan-500';
       case 'POPOLARE':
         return 'from-cyan-600 to-sky-600';
       case 'FORMAZIONE':
-        return 'from-purple-600 to-indigo-600';
+        return 'from-blue-600 to-cyan-500';
       case 'PROSSIMAMENTE':
         return 'from-gray-600 to-gray-800';
       default:
@@ -173,7 +173,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
                 {product.category}
               </span>
             </div>
-            <h3 className={`text-2xl font-black group-hover:text-cyan-500 transition-colors ${
+            <h3 className={`text-2xl font-display font-semibold group-hover:text-cyan-500 transition-colors ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
               {product.name}
@@ -272,7 +272,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
                   return null;
                 })()}
                 
-                <span className="text-3xl font-black text-white">
+                <span className="text-3xl font-display font-semibold text-white">
                   {(() => {
                     // Gestisci diversi formati di prezzo
                     if (typeof product.price === 'number') {

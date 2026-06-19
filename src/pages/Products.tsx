@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import ProductsSection from '../components/ProductsSection';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -8,43 +8,41 @@ const Products: React.FC = () => {
   // Verifica se l'utente è autenticato
   const isAuthenticated = !!localStorage.getItem('token');
   const { theme } = useTheme();
+  const dark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 ${
-      theme === 'dark'
-        ? 'bg-gradient-to-b from-black via-gray-950 to-black'
-        : 'bg-gradient-to-b from-white via-gray-50 to-white'
-    }`}>
-      {/* Header della dashboard - solo se autenticato */}
+    <div className={`min-h-screen ${dark ? 'bg-black' : 'bg-slate-50'}`}>
+      {/* Topbar dashboard-style - solo se autenticato */}
       {isAuthenticated && (
-        <div className={`backdrop-blur-sm border-b ${
-          theme === 'dark'
-            ? 'bg-black/50 border-blue-900/30'
-            : 'bg-white/50 border-blue-200'
+        <header className={`sticky top-0 z-30 backdrop-blur-md border-b ${
+          dark ? 'bg-black/70 border-slate-800/80' : 'bg-white/70 border-slate-200'
         }`}>
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link to="/dashboard" className={`flex items-center gap-3 transition-colors ${
-                theme === 'dark'
-                  ? 'text-gray-400 hover:text-cyan-500'
-                  : 'text-gray-600 hover:text-cyan-600'
-              }`}>
-                <ArrowLeft className="w-5 h-5" />
-                <span className="font-bold">Torna alla Dashboard</span>
-              </Link>
-              
-              <div className="flex items-center gap-3">
-                <Shield className="w-10 h-10 text-cyan-500" />
-                <h1 className="text-2xl font-black">
-                  <span className="text-blue-600">NEXORA</span>
-                  <span className={`ml-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>SHOP</span>
-                </h1>
+          <div className="container mx-auto px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+            <Link
+              to="/dashboard"
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-display font-semibold transition-all ${
+                dark
+                  ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40'
+                  : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50'
+              }`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
+            </Link>
+            <div className="text-center">
+              <div className={`font-mono-lab text-[0.65rem] tracking-[0.3em] uppercase ${dark ? 'text-slate-500' : 'text-slate-500'}`}>
+                // Nexora Lab
+              </div>
+              <div className={`font-display text-sm font-semibold ${dark ? 'text-white' : 'text-slate-900'}`}>
+                Catalogo
               </div>
             </div>
+            <img
+              src="/logo.png"
+              alt="Nexora Lab"
+              className={`h-8 w-auto ${dark ? '' : 'bg-slate-900 rounded-lg px-2 py-1'}`}
+            />
           </div>
-        </div>
+        </header>
       )}
 
       {/* Sezione Catalogo - il componente completo dalla homepage */}

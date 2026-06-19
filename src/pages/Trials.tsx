@@ -121,8 +121,8 @@ const Trials: React.FC = () => {
   const categories = [
     { id: 'all', name: 'TUTTI', icon: Gift, color: 'from-cyan-600 to-blue-600' },
     { id: 'bot', name: 'BOT TRADING', icon: Shield, color: 'from-blue-600 to-blue-800' },
-    { id: 'indicator', name: 'INDICATORI', icon: TrendingUp, color: 'from-blue-600 to-purple-600' },
-    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-purple-600 to-indigo-600' },
+    { id: 'indicator', name: 'INDICATORI', icon: TrendingUp, color: 'from-blue-600 to-cyan-500' },
+    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-blue-600 to-cyan-500' },
     { id: 'service', name: 'SERVIZI', icon: Zap, color: 'from-green-600 to-emerald-600' }
   ];
 
@@ -174,7 +174,7 @@ const Trials: React.FC = () => {
             
             <div className="flex items-center gap-3">
               <Gift className="w-10 h-10 text-cyan-500" />
-              <h1 className="text-2xl font-black">
+              <h1 className="text-2xl font-display font-semibold">
                 <span className="text-blue-600">PROVE</span>
                 <span className="text-white ml-2">GRATUITE</span>
               </h1>
@@ -188,7 +188,7 @@ const Trials: React.FC = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-3 mb-6">
             <Rocket className="w-8 h-8 text-blue-600 animate-pulse" />
-            <h2 className="text-4xl md:text-5xl font-black">
+            <h2 className="text-4xl md:text-5xl font-display font-semibold">
               <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-clip-text text-transparent">
                 60 GIORNI
               </span>
@@ -207,22 +207,22 @@ const Trials: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           <div className="bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-800 rounded-xl p-4 text-center">
             <Target className="w-8 h-8 text-cyan-500 mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">100%</div>
+            <div className="text-2xl font-display font-semibold text-white">100%</div>
             <div className="text-sm text-gray-400">Gratuito</div>
           </div>
           <div className="bg-gradient-to-r from-cyan-900/30 to-cyan-800/30 border border-cyan-800 rounded-xl p-4 text-center">
             <Clock className="w-8 h-8 text-cyan-500 mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">60</div>
+            <div className="text-2xl font-display font-semibold text-white">60</div>
             <div className="text-sm text-gray-400">Giorni di prova</div>
           </div>
           <div className="bg-gradient-to-r from-green-900/30 to-green-800/30 border border-green-800 rounded-xl p-4 text-center">
             <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">NO</div>
+            <div className="text-2xl font-display font-semibold text-white">NO</div>
             <div className="text-sm text-gray-400">Carta richiesta</div>
           </div>
-          <div className="bg-gradient-to-r from-purple-900/30 to-purple-800/30 border border-purple-800 rounded-xl p-4 text-center">
-            <Award className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">FULL</div>
+          <div className="bg-gradient-to-r from-cyan-900/20 to-blue-900/20 border border-cyan-700/40 rounded-xl p-4 text-center">
+            <Award className="w-8 h-8 text-cyan-500 mx-auto mb-2" />
+            <div className="text-2xl font-display font-semibold text-white">FULL</div>
             <div className="text-sm text-gray-400">Accesso completo</div>
           </div>
         </div>
@@ -230,7 +230,7 @@ const Trials: React.FC = () => {
         {/* Active Trials Section */}
         {activeTrials.length > 0 && (
           <div className="mb-12">
-            <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
+            <h3 className="text-2xl font-display font-semibold text-white mb-6 flex items-center gap-2">
               <PlayCircle className="w-6 h-6 text-green-500" />
               I TUOI TRIAL ATTIVI
             </h3>
@@ -246,7 +246,7 @@ const Trials: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-black text-cyan-500">{trial.daysRemaining}</div>
+                      <div className="text-2xl font-display font-semibold text-cyan-500">{trial.daysRemaining}</div>
                       <div className="text-xs text-gray-400">giorni rimanenti</div>
                     </div>
                   </div>
@@ -295,7 +295,7 @@ const Trials: React.FC = () => {
 
         {/* Products with Trial */}
         <div className="mb-12">
-          <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
+          <h3 className="text-2xl font-display font-semibold text-white mb-6 flex items-center gap-2">
             <Gift className="w-6 h-6 text-cyan-500" />
             PRODOTTI DISPONIBILI PER LA PROVA
           </h3>
@@ -401,7 +401,7 @@ const Trials: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-950/50 via-cyan-950/50 to-blue-950/50 border-2 border-cyan-500/50 rounded-2xl p-8 backdrop-blur-sm">
           <div className="text-center">
             <Shield className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-black text-white mb-4">Come Funziona?</h3>
+            <h3 className="text-2xl font-display font-semibold text-white mb-4">Come Funziona?</h3>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               <div className="text-center">
                 <div className="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3 text-white font-bold text-xl">

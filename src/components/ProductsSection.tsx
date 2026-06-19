@@ -206,8 +206,8 @@ const ProductsSection: React.FC = () => {
   const categories = [
     { id: 'all', name: 'TUTTI', icon: Crown, color: 'from-cyan-600 to-blue-600' },
     { id: 'bot', name: 'BOT TRADING', icon: Shield, color: 'from-blue-600 to-blue-800' },
-    { id: 'indicator', name: 'INDICATORI', icon: TrendingUp, color: 'from-blue-600 to-purple-600' },
-    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-purple-600 to-indigo-600' },
+    { id: 'indicator', name: 'INDICATORI', icon: TrendingUp, color: 'from-blue-600 to-cyan-500' },
+    { id: 'course', name: 'FORMAZIONE', icon: Star, color: 'from-blue-600 to-cyan-500' },
     { id: 'service', name: 'SERVIZI', icon: Zap, color: 'from-green-600 to-emerald-600' }
   ];
 
@@ -354,7 +354,7 @@ const ProductsSection: React.FC = () => {
                 <Target className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className={`text-2xl font-black flex items-center gap-2 ${
+                <h3 className={`text-2xl font-display font-semibold flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   PROVA GRATUITA DISPONIBILE
@@ -423,7 +423,7 @@ const ProductsSection: React.FC = () => {
                     theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                   }`} />
                 </div>
-                <div className={`text-3xl font-black mb-1 ${
+                <div className={`text-3xl font-display font-semibold mb-1 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>{stat.value}</div>
                 <div className={`text-sm uppercase tracking-wider ${
