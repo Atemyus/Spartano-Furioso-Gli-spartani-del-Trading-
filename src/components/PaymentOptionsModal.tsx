@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, CreditCard, Bitcoin, Clock, CheckCircle, CalendarClock } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -28,6 +28,15 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   const { theme } = useTheme();
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('stripe');
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const isSubscriptionPlan = plan === 'monthly' || plan === 'yearly';
+
+  // Klarna disponibile solo per pagamenti unici: se diventa abbonamento, resetta a card
+  useEffect(() => {
+    if (selectedMethod === 'klarna' && isSubscriptionPlan) {
+      setSelectedMethod('stripe');
+    }
+  }, [isSubscriptionPlan, selectedMethod]);
 
   if (!isOpen) return null;
 
@@ -125,8 +134,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     }
   };
 
-  const isSubscriptionPlan = plan === 'monthly' || plan === 'yearly';
-
   const handlePayment = () => {
     switch (selectedMethod) {
       case 'stripe':
@@ -140,13 +147,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
         break;
     }
   };
-
-  // Se l'utente seleziona Klarna ma poi cambia piano in abbonamento, resetta a stripe
-  React.useEffect(() => {
-    if (selectedMethod === 'klarna' && isSubscriptionPlan) {
-      setSelectedMethod('stripe');
-    }
-  }, [isSubscriptionPlan, selectedMethod]);
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm ${
