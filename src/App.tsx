@@ -65,16 +65,19 @@ function AppContent() {
   // Track pageviews automaticamente
   usePageTracking();
   
-  const hideHeaderFooter = [
-    '/login', 
-    '/register', 
-    '/dashboard',
-    '/admin/login',
-    '/admin/dashboard',
-    '/forgot-password',
-    '/reset-password',
-    '/unsubscribe'
-  ].includes(location.pathname);
+  const hideHeaderFooter =
+    [
+      '/login',
+      '/register',
+      '/dashboard',
+      '/admin/login',
+      '/admin/dashboard',
+      '/forgot-password',
+      '/reset-password',
+      '/unsubscribe',
+    ].includes(location.pathname) ||
+    location.pathname.startsWith('/course/') ||
+    location.pathname.startsWith('/admin/');
 
   return (
     <div className="min-h-screen bg-black text-white">
