@@ -272,7 +272,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
                   return null;
                 })()}
                 
-                <span className="text-3xl font-display font-semibold text-white">
+                <span className={`text-3xl font-display font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                   {(() => {
                     // Gestisci diversi formati di prezzo
                     if (typeof product.price === 'number') {
@@ -289,10 +289,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
                   })()}
                 </span>
                 {product.type === 'subscription' && (
-                  <span className="text-sm text-gray-400">/mese</span>
+                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-slate-500'}`}>/mese</span>
                 )}
                 {product.type === 'one-time' && product.category === 'Formazione' && (
-                  <span className="text-sm text-gray-400">pagamento unico</span>
+                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-slate-500'}`}>pagamento unico</span>
                 )}
               </div>
               

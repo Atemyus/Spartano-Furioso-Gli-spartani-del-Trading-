@@ -366,9 +366,13 @@ const ProductsSection: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-green-400 font-bold">
-              <Shield className="w-5 h-5" />
-              <span>NESSUNA CARTA RICHIESTA</span>
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-display font-semibold text-sm ${
+              theme === 'dark'
+                ? 'bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/30'
+                : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500/40'
+            }`}>
+              <Shield className="w-4 h-4" />
+              <span>Nessuna carta richiesta</span>
             </div>
           </div>
         </div>
