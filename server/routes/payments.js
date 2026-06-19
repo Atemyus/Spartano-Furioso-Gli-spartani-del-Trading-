@@ -8,6 +8,81 @@ dotenv.config();
 const router = express.Router();
 
 // ============================================
+// PAYMENTS HEALTH / DIAGNOSTICS
+// ============================================
+
+/**
+ * Diagnostica generale dei provider di pagamento
+ * GET /api/payments/health
+ */
+router.get('/health', (req, res) => {
+  const base = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    providers: {
+      stripe: {
+        configured: !!process.env.STRIPE_SECRET_KEY,
+        webhookConfigured: !!process.env.STRIPE_WEBHOOK_SECRET,
+        publishableKey: !!process.env.STRIPE_PUBLISHABLE_KEY,
+        webhookUrl: `${base}/api/stripe/webhook`,
+      },
+      crypto: {
+        provider: 'NOWPayments',
+        configured: !!process.env.NOWPAYMENTS_API_KEY,
+        ipnSecretConfigured: !!process.env.NOWPAYMENTS_IPN_SECRET,
+        webhookUrl: `${base}/api/payments/crypto/webhook`,
+        diagnostic: `${base}/api/payments/crypto/webhook/info`,
+      },
+    },
+    notes: [
+      'Tutti i webhook accettano solo richieste POST.',
+      'I valori "configured" indicano solo se la variabile e\' presente, non se e\' valida.',
+      'Per testare un provider, usa il diagnostic URL o invia un pagamento di prova.',
+    ],
+  });
+});
+
+/**
+ * Diagnostica specifica del webhook NOWPayments (apribile da browser)
+ * GET /api/payments/crypto/webhook/info
+ */
+router.get('/crypto/webhook/info', (req, res) => {
+  const base = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  const apiKeyOk = !!process.env.NOWPAYMENTS_API_KEY;
+  const ipnSecretOk = !!process.env.NOWPAYMENTS_IPN_SECRET;
+  const allOk = apiKeyOk && ipnSecretOk;
+  res.json({
+    endpoint: `${base}/api/payments/crypto/webhook`,
+    methodAccepted: 'POST only',
+    expectedHeaders: ['x-nowpayments-sig (HMAC-SHA512 del body con IPN_SECRET)'],
+    serverStatus: 'online',
+    nowpaymentsConfig: {
+      apiKeyConfigured: apiKeyOk,
+      ipnSecretConfigured: ipnSecretOk,
+      ready: allOk,
+    },
+    nextSteps: allOk
+      ? [
+          'Webhook pronto. Configurato correttamente.',
+          'Verifica che su NOWPayments dashboard l\'IPN Callback URL sia impostato all\'endpoint qui sopra.',
+          'Per un test reale: invia un IPN di prova dal dashboard NOWPayments o effettua un acquisto crypto.',
+        ]
+      : [
+          !apiKeyOk && 'Mancante NOWPAYMENTS_API_KEY su Railway',
+          !ipnSecretOk && 'Mancante NOWPAYMENTS_IPN_SECRET su Railway (i webhook senza firma non verranno validati)',
+          'Aggiungi le variabili e fai redeploy del backend',
+        ].filter(Boolean),
+    howToTest: {
+      browserGetOnWebhook: 'Restituisce "Cannot GET" -> NORMALE, il webhook accetta solo POST',
+      curlPost: `curl -X POST ${base}/api/payments/crypto/webhook -H "Content-Type: application/json" -d '{"payment_status":"finished","payment_id":"test"}'`,
+      nowpaymentsTestIpn: 'Sul dashboard NOWPayments: Settings -> IPN Settings -> Send test IPN',
+    },
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ============================================
 // CRYPTO PAYMENT INTEGRATION (NOWPayments)
 // ============================================
 
