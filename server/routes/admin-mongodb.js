@@ -21,6 +21,56 @@ router.post('/seed/ranger-prop-pass', async (_req, res) => {
   }
 });
 
+// One-shot fix per il corso Academy:
+//  - rinomina il prodotto con productId='spartan_academy' in 'Codex Algo Academy'
+//  - aggiorna trialDays da 7 a 11
+// Idempotente: se gia' corretto, non cambia nulla.
+router.post('/fix/course-academy', async (_req, res) => {
+  try {
+    const NEW_NAME = 'Codex Algo Academy';
+    const NEW_TRIAL_DAYS = 11;
+    const changes = [];
+
+    // Candidati: il productId 'spartan_academy' (id seed canonico) +
+    // qualsiasi altro prodotto formazione il cui nome contiene "Spartan"
+    const candidates = await prisma.product.findMany({
+      where: {
+        OR: [
+          { productId: 'spartan_academy' },
+          { AND: [
+              { OR: [{ category: 'course' }, { category: 'Formazione' }] },
+              { name: { contains: 'Spartan', mode: 'insensitive' } },
+          ]},
+        ],
+      },
+    });
+
+    for (const p of candidates) {
+      const updates = {};
+      if (p.name !== NEW_NAME) updates.name = NEW_NAME;
+      if (p.trialDays !== NEW_TRIAL_DAYS) updates.trialDays = NEW_TRIAL_DAYS;
+      if (Object.keys(updates).length === 0) {
+        changes.push({ productId: p.productId, oldName: p.name, status: 'unchanged' });
+        continue;
+      }
+      await prisma.product.update({ where: { id: p.id }, data: updates });
+      changes.push({
+        productId: p.productId,
+        oldName: p.name,
+        newName: updates.name || p.name,
+        oldTrialDays: p.trialDays,
+        newTrialDays: updates.trialDays ?? p.trialDays,
+        status: 'updated',
+      });
+    }
+
+    res.json({ success: true, found: candidates.length, changes });
+  } catch (e) {
+    console.error('Error fixing course academy:', e);
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // Dashboard statistics
 router.get('/stats', async (req, res) => {
   try {
