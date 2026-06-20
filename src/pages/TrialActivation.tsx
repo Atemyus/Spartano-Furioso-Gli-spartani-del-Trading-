@@ -152,7 +152,7 @@ const TrialActivation: React.FC = () => {
         },
         body: JSON.stringify({ 
           productId: product.id,
-          trialDays: product.trialDays || 7
+          trialDays: product.trialDays || 11
         })
       });
       
@@ -171,7 +171,7 @@ const TrialActivation: React.FC = () => {
         }
         
         // Mostra messaggio di successo
-        alert(`Trial attivato con successo! Hai ${product.trialDays || 7} giorni di accesso completo.`);
+        alert(`Trial attivato con successo! Hai ${product.trialDays || 11} giorni di accesso completo.`);
         
         // Reindirizza dopo 2 secondi
         setTimeout(() => {

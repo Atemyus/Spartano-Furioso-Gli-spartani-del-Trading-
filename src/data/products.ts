@@ -223,7 +223,7 @@ export const products: Product[] = [
     ],
     trial: {
       available: true,
-      days: 7,
+      days: 11,
       features: [
         'Primo modulo completo',
         '10 ore di contenuti',
@@ -320,7 +320,7 @@ export const products: Product[] = [
     totalModules: 12,
     totalLessons: 150,
     totalDuration: '300+',
-    trialDays: 7
+    trialDays: 11
   },
   {
     id: 'oracle_signals',

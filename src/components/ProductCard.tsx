@@ -188,8 +188,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onSta
           {product.shortDescription}
         </p>
 
-        {/* Performance Stats (if available) */}
-        {product.performance && (
+        {/* Performance Stats (if available) — non mostrate per i corsi */}
+        {product.performance && product.category !== 'Formazione' && product.category !== 'course' && (
           <div className="grid grid-cols-2 gap-3 mb-6">
             <div className={`border rounded-lg p-3 ${
               theme === 'dark'

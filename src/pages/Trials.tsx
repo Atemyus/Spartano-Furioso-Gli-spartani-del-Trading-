@@ -261,7 +261,7 @@ const Trials: React.FC = () => {
                       <span className="text-cyan-500 font-display font-semibold">{product.trialDays} giorni</span>
                     </div>
 
-                    {product.metrics && (
+                    {product.metrics && product.category !== 'Formazione' && product.category !== 'course' && (
                       <div className="grid grid-cols-2 gap-2 mb-4">
                         {product.metrics.winRate != null && (
                           <div className={`rounded-lg p-2.5 text-center ${dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'}`}>

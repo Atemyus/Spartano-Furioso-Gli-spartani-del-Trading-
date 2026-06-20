@@ -311,8 +311,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <FormattedDescription text={product.description} dark={theme === 'dark'} />
                 </div>
                 
-                {/* Quick Stats */}
-                {product.performance && (
+                {/* Quick Stats — non mostrate per i corsi */}
+                {product.performance && product.category !== 'Formazione' && product.category !== 'course' && (
                   <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-green-400" />

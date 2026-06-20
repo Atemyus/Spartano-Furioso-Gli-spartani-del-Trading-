@@ -132,7 +132,7 @@ const PRODUCTS = [
     ],
     badge: 'FORMAZIONE',
     popular: false,
-    trialDays: 7,
+    trialDays: 11,
     comingSoon: false,
   },
   {

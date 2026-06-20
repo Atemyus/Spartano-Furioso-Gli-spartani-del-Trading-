@@ -279,7 +279,7 @@ const CourseDetail: React.FC = () => {
                       className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 hover:border-cyan-300 transition-all transform hover:scale-105 flex items-center gap-2"
                     >
                       <Gift className="w-5 h-5" />
-                      PROVA GRATIS {course.trialDays || 7} GIORNI
+                      PROVA GRATIS {course.trialDays || 11} GIORNI
                     </button>
                     <button 
                       onClick={handlePurchase}
