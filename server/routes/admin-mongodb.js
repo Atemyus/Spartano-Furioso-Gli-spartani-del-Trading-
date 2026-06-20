@@ -24,6 +24,9 @@ router.post('/seed/ranger-prop-pass', async (_req, res) => {
 // One-shot fix per il corso Academy:
 //  - rinomina il prodotto con productId='spartan_academy' in 'Codex Algo Academy'
 //  - aggiorna trialDays da 7 a 11
+//  - aggiorna anche tutti i Trial esistenti che hanno il vecchio nome
+//    snapshotato (la dashboard utente legge productName dal trial, non
+//    dal prodotto live)
 // Idempotente: se gia' corretto, non cambia nulla.
 router.post('/fix/course-academy', async (_req, res) => {
   try {
@@ -31,8 +34,6 @@ router.post('/fix/course-academy', async (_req, res) => {
     const NEW_TRIAL_DAYS = 11;
     const changes = [];
 
-    // Candidati: il productId 'spartan_academy' (id seed canonico) +
-    // qualsiasi altro prodotto formazione il cui nome contiene "Spartan"
     const candidates = await prisma.product.findMany({
       where: {
         OR: [
@@ -45,16 +46,20 @@ router.post('/fix/course-academy', async (_req, res) => {
       },
     });
 
+    const productIdsToFix = candidates.map((p) => p.productId);
+
+    // 1) Rinomina i prodotti
     for (const p of candidates) {
       const updates = {};
       if (p.name !== NEW_NAME) updates.name = NEW_NAME;
       if (p.trialDays !== NEW_TRIAL_DAYS) updates.trialDays = NEW_TRIAL_DAYS;
       if (Object.keys(updates).length === 0) {
-        changes.push({ productId: p.productId, oldName: p.name, status: 'unchanged' });
+        changes.push({ kind: 'product', productId: p.productId, oldName: p.name, status: 'unchanged' });
         continue;
       }
       await prisma.product.update({ where: { id: p.id }, data: updates });
       changes.push({
+        kind: 'product',
         productId: p.productId,
         oldName: p.name,
         newName: updates.name || p.name,
@@ -62,6 +67,38 @@ router.post('/fix/course-academy', async (_req, res) => {
         newTrialDays: updates.trialDays ?? p.trialDays,
         status: 'updated',
       });
+    }
+
+    // 2) Aggiorna i Trial snapshotati col vecchio nome
+    // Match: stesso productId oppure productName che contiene "Spartan"
+    const trialUpdate = await prisma.trial.updateMany({
+      where: {
+        OR: [
+          { productId: { in: productIdsToFix } },
+          { productName: { contains: 'Spartan', mode: 'insensitive' } },
+        ],
+        NOT: { productName: NEW_NAME },
+      },
+      data: { productName: NEW_NAME },
+    });
+    changes.push({ kind: 'trials', updated: trialUpdate.count });
+
+    // 3) Aggiorna anche eventuali ordini snapshotati col vecchio nome
+    try {
+      const orderUpdate = await prisma.order.updateMany({
+        where: {
+          OR: [
+            { productId: { in: productIdsToFix } },
+            { productName: { contains: 'Spartan', mode: 'insensitive' } },
+          ],
+          NOT: { productName: NEW_NAME },
+        },
+        data: { productName: NEW_NAME },
+      });
+      changes.push({ kind: 'orders', updated: orderUpdate.count });
+    } catch (_e) {
+      // Order model potrebbe avere productName opzionale o struttura diversa: ignora
+      changes.push({ kind: 'orders', updated: 0, note: 'skipped' });
     }
 
     res.json({ success: true, found: candidates.length, changes });
