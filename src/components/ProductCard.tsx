@@ -1,30 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import { 
-  Shield, 
-  Clock, 
-  CheckCircle, 
-  TrendingUp, 
-  Zap, 
-  Star,
-  ArrowRight,
-  Lock,
-  Unlock
+import {
+  Shield, Clock, CheckCircle, TrendingUp, Zap, Star,
+  ArrowRight, Lock, Unlock, Package,
 } from 'lucide-react';
 import { useTrialStatus } from '../hooks/useTrialStatus';
 
-// Interfaccia Product aggiornata
 interface Product {
   id: string;
   name: string;
   description: string;
   shortDescription?: string;
-  price: number | {
-    monthly?: number;
-    yearly?: number;
-    lifetime?: number;
-  };
+  price: number | { monthly?: number; yearly?: number; lifetime?: number };
   pricingPlans?: any;
   originalPrice?: number;
   currency: string;
@@ -43,11 +31,7 @@ interface Product {
   metrics?: any;
   trialDays?: number;
   performance?: any;
-  trial?: {
-    available: boolean;
-    days: number;
-    features?: string[];
-  };
+  trial?: { available: boolean; days: number; features?: string[] };
   status?: 'active' | 'coming-soon' | 'beta' | 'soldout';
 }
 
@@ -57,355 +41,250 @@ interface ProductCardProps {
   onStartTrial: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails, onStartTrial }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => {
   const { theme } = useTheme();
+  const dark = theme === 'dark';
   const navigate = useNavigate();
   const trialStatus = useTrialStatus(product.id);
-  
+
+  // ===== styling helpers (dashboard-style) =====
+  const surface = dark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const surfaceHover = dark ? 'hover:border-cyan-500/50' : 'hover:border-cyan-500/70';
+  const textMain = dark ? 'text-white' : 'text-slate-900';
+  const textBody = dark ? 'text-slate-300' : 'text-slate-700';
+  const textMuted = dark ? 'text-slate-400' : 'text-slate-600';
+  const textDim = dark ? 'text-slate-500' : 'text-slate-500';
+  const innerCard = dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200';
+  const primaryBtn = 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-md hover:shadow-cyan-500/20';
+  const secondaryBtn = dark
+    ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40'
+    : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50';
+
   const handleStartTrial = () => {
-    // Verifica se l'utente è loggato controllando il token
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    
-    if (!token || !user) {
-      navigate('/register');
-    } else {
-      // Se ha già un trial attivo, vai direttamente alla gestione
-      if (trialStatus.isActive) {
-        if (product.category === 'Formazione' || product.category === 'course') {
-          // Per formazione con trial attivo, vai alla gestione del trial
-          navigate(`/course/${product.id}/manage-trial`);
-        } else {
-          // Per altri prodotti, vai alla dashboard sezione trials
-          navigate('/dashboard', { state: { activeTab: 'trials' } });
-        }
-      } else if (trialStatus.hasExpired) {
-        // Se il trial è scaduto, vai direttamente alla pagina di acquisto
-        if (product.category === 'Formazione' || product.category === 'course') {
-          navigate(`/course/${product.id}`);
-        } else {
-          navigate('/products');
-        }
+    if (!token || !user) { navigate('/register'); return; }
+    if (trialStatus.isActive) {
+      if (product.category === 'Formazione' || product.category === 'course') {
+        navigate(`/course/${product.id}/manage-trial`);
       } else {
-        // Se non ha trial attivo, vai alla pagina di attivazione
-        // Per i corsi, usa la route dedicata
-        if (product.category === 'Formazione' || product.category === 'course') {
-          navigate(`/course/${product.id}/trial`);
-        } else {
-          navigate(`/trial-activation/${product.id}`);
-        }
+        navigate('/dashboard', { state: { activeTab: 'trials' } });
+      }
+    } else if (trialStatus.hasExpired) {
+      if (product.category === 'Formazione' || product.category === 'course') {
+        navigate(`/course/${product.id}`);
+      } else {
+        navigate('/products');
+      }
+    } else {
+      if (product.category === 'Formazione' || product.category === 'course') {
+        navigate(`/course/${product.id}/trial`);
+      } else {
+        navigate(`/trial-activation/${product.id}`);
       }
     }
   };
+
   const getCategoryIcon = () => {
     switch (product.category) {
-      case 'bot':
-        return <Shield className="w-5 h-5" />;
-      case 'indicator':
-        return <TrendingUp className="w-5 h-5" />;
+      case 'bot': return Shield;
+      case 'indicator': return TrendingUp;
       case 'course':
-        return <Star className="w-5 h-5" />;
+      case 'Formazione': return Star;
       case 'service':
-        return <Zap className="w-5 h-5" />;
-      default:
-        return <Shield className="w-5 h-5" />;
+      case 'Servizi': return Zap;
+      default: return Package;
     }
   };
 
-  const getStatusColor = () => {
+  const getCategoryLabel = () => {
+    switch (product.category) {
+      case 'bot': return 'bot';
+      case 'indicator': return 'indicator';
+      case 'course':
+      case 'Formazione': return 'course';
+      case 'service':
+      case 'Servizi': return 'service';
+      default: return product.category || 'tool';
+    }
+  };
+
+  const getStatusDot = () => {
     switch (product.status) {
-      case 'active':
-        return 'bg-green-500';
-      case 'beta':
-        return 'bg-blue-500';
-      case 'coming-soon':
-        return 'bg-cyan-500';
-      case 'soldout':
-        return 'bg-blue-500';
-      default:
-        return 'bg-gray-500';
+      case 'active': return 'bg-emerald-500';
+      case 'beta': return 'bg-cyan-500';
+      case 'coming-soon': return 'bg-amber-500';
+      case 'soldout': return 'bg-rose-500';
+      default: return 'bg-slate-500';
     }
   };
 
-  const getBadgeColor = () => {
-    switch (product.badge) {
-      case 'BEST SELLER':
-        return 'from-blue-600 to-sky-600';
-      case 'NUOVO':
-        return 'from-green-600 to-emerald-600';
-      case 'HIGH SPEED':
-        return 'from-blue-600 to-cyan-500';
-      case 'POPOLARE':
-        return 'from-cyan-600 to-sky-600';
-      case 'FORMAZIONE':
-        return 'from-blue-600 to-cyan-500';
-      case 'PROSSIMAMENTE':
-        return 'from-gray-600 to-gray-800';
-      default:
-        return 'from-gray-600 to-gray-800';
-    }
-  };
+  const formatPrice = (p: number) => (p === 0 ? 'Gratis' : `€${p.toLocaleString('it-IT')}`);
 
-  const formatPrice = (price: number) => {
-    if (price === 0) return 'Gratis';
-    return `€${price.toLocaleString('it-IT')}`;
-  };
+  // Calcolo prezzo corrente / originale (gestisce tutti i formati)
+  const pricing = (() => {
+    let current = 0, original = 0;
+    if (typeof product.price === 'number') current = product.price;
+    else if (product.pricingPlans?.monthly?.price) current = product.pricingPlans.monthly.price;
+    else if (product.pricingPlans?.oneTime?.price) current = product.pricingPlans.oneTime.price;
+    else if (product.price && typeof product.price === 'object' && product.price.monthly) current = product.price.monthly;
+
+    if (product.originalPrice && product.originalPrice > 0) original = product.originalPrice;
+    else if (product.pricingPlans?.monthly?.originalPrice) original = product.pricingPlans.monthly.originalPrice;
+    else if (product.pricingPlans?.oneTime?.originalPrice) original = product.pricingPlans.oneTime.originalPrice;
+
+    const discount = original > 0 && original > current ? Math.round(((original - current) / original) * 100) : 0;
+    return { current, original, discount };
+  })();
+
+  const Icon = getCategoryIcon();
+  const isFormazione = product.category === 'Formazione' || product.category === 'course';
+  const isComingSoon = product.status === 'coming-soon';
 
   return (
-    <div className={`group relative border-2 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/20 ${
-      theme === 'dark'
-        ? 'bg-gradient-to-b from-gray-900/90 to-black/90 border-blue-800/30'
-        : 'bg-gradient-to-b from-white to-gray-50 border-blue-200'
-    }`}>
-      {/* Status Indicator */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className={`w-3 h-3 ${getStatusColor()} rounded-full animate-pulse`}></div>
+    <div className={`group relative rounded-xl border p-5 flex flex-col transition-all duration-300 ${surface} ${surfaceHover}`}>
+      {/* Top accent line on hover */}
+      <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/0 to-transparent group-hover:via-cyan-500/40 transition-all duration-500" />
+
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+            dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'
+          }`}>
+            <Icon className="w-4 h-4 text-cyan-500" />
+          </div>
+          <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-cyan-500">
+            {getCategoryLabel()}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {product.badge && (
+            <span className={`px-2 py-0.5 rounded-md text-[0.55rem] font-mono-lab tracking-widest uppercase font-bold ${
+              dark ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/30' : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/30'
+            }`}>{product.badge}</span>
+          )}
+          <span className={`w-2 h-2 rounded-full ${getStatusDot()}`} />
+        </div>
       </div>
 
-      {/* Card Content */}
-      <div className="p-6 relative">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 text-cyan-500 mb-2">
-              {getCategoryIcon()}
-              <span className="text-xs font-bold uppercase tracking-wider">
-                {product.category}
-              </span>
-            </div>
-            <h3 className={`text-2xl font-display font-semibold group-hover:text-cyan-500 transition-colors ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {product.name}
-            </h3>
+      {/* Title */}
+      <h3 className={`font-display text-lg font-semibold tracking-tight ${textMain}`}>{product.name}</h3>
+
+      {/* Description */}
+      <p className={`text-sm mt-1.5 mb-4 line-clamp-2 ${textMuted}`}>
+        {product.shortDescription || product.description}
+      </p>
+
+      {/* Performance Stats — solo bot / indicator / service */}
+      {product.performance && !isFormazione && (
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className={`rounded-lg p-2.5 ${innerCard}`}>
+            <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim}`}>Win Rate</div>
+            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>{product.performance.winRate}</div>
+          </div>
+          <div className={`rounded-lg p-2.5 ${innerCard}`}>
+            <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim}`}>Avg Profit</div>
+            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>{product.performance.avgProfit}</div>
           </div>
         </div>
+      )}
 
-        {/* Description */}
-        <p className={`text-sm mb-6 line-clamp-2 ${
-          theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-        }`}>
-          {product.shortDescription}
-        </p>
-
-        {/* Performance Stats (if available) — non mostrate per i corsi */}
-        {product.performance && product.category !== 'Formazione' && product.category !== 'course' && (
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className={`border rounded-lg p-3 ${
-              theme === 'dark'
-                ? 'bg-black/50 border-blue-900/30'
-                : 'bg-white border-blue-200'
-            }`}>
-              <div className={`text-xs mb-1 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>Win Rate</div>
-              <div className="text-lg font-bold text-green-400">{product.performance.winRate}</div>
-            </div>
-            <div className={`border rounded-lg p-3 ${
-              theme === 'dark'
-                ? 'bg-black/50 border-blue-900/30'
-                : 'bg-white border-blue-200'
-            }`}>
-              <div className={`text-xs mb-1 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>Avg Profit</div>
-              <div className="text-lg font-bold text-cyan-400">{product.performance.avgProfit}</div>
-            </div>
-          </div>
+      {/* Features preview (max 3) */}
+      <ul className="space-y-1.5 mb-4">
+        {product.features.slice(0, 3).map((f, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm">
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
+            <span className={`${textBody} line-clamp-1`}>{f}</span>
+          </li>
+        ))}
+        {product.features.length > 3 && (
+          <li className={`text-xs font-mono-lab tracking-wider ml-5 text-cyan-500`}>
+            +{product.features.length - 3} altre funzionalità
+          </li>
         )}
+      </ul>
 
-        {/* Features Preview */}
-        <div className="space-y-2 mb-6">
-          {product.features.slice(0, 3).map((feature, index) => (
-            <div key={index} className="flex items-center gap-2 text-sm">
-              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-              <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{feature}</span>
+      {/* Pricing */}
+      <div className={`mt-auto pt-4 border-t ${dark ? 'border-slate-800' : 'border-slate-200'}`}>
+        <div className="flex items-end justify-between gap-3 mb-4">
+          <div className="min-w-0">
+            <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim} mb-0.5`}>
+              {product.type === 'subscription' ? 'A partire da' : 'Prezzo'}
             </div>
-          ))}
-          {product.features.length > 3 && (
-            <div className="text-sm text-cyan-500 font-semibold">
-              +{product.features.length - 3} altre funzionalità
+            <div className="flex items-baseline gap-2 flex-wrap">
+              {pricing.original > 0 && pricing.original > pricing.current && (
+                <span className={`text-sm line-through ${textDim}`}>{formatPrice(pricing.original)}</span>
+              )}
+              <span className={`font-display text-2xl font-semibold ${textMain}`}>{formatPrice(pricing.current)}</span>
+              {product.type === 'subscription' && <span className={`text-xs ${textDim}`}>/mese</span>}
+              {product.type === 'one-time' && isFormazione && <span className={`text-xs ${textDim}`}>una tantum</span>}
+            </div>
+            {pricing.discount > 0 && (
+              <span className={`inline-block mt-1.5 px-1.5 py-0.5 rounded text-[0.55rem] font-mono-lab tracking-widest uppercase font-bold ${
+                dark ? 'bg-emerald-500/10 text-emerald-300' : 'bg-emerald-50 text-emerald-700'
+              }`}>−{pricing.discount}%</span>
+            )}
+          </div>
+          {product.trial?.available && (
+            <div className="text-right shrink-0">
+              <div className="flex items-center gap-1 text-cyan-500">
+                <Clock className="w-3.5 h-3.5" />
+                <span className="font-display font-semibold text-sm">{product.trial.days}g</span>
+              </div>
+              <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase mt-0.5 ${textDim}`}>di prova</div>
             </div>
           )}
         </div>
 
-        {/* Pricing */}
-        <div className={`border-t pt-6 ${
-          theme === 'dark' ? 'border-blue-900/30' : 'border-blue-200'
-        }`}>
-          <div className="flex items-end justify-between mb-4">
-            <div>
-              <div className={`text-xs mb-1 ${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-              }`}>A partire da</div>
-              <div className="flex items-baseline gap-2">
-                {/* Prezzo originale barrato */}
-                {(() => {
-                  let originalPrice = 0;
-                  // Determina il prezzo originale
-                  if (product.originalPrice && product.originalPrice > 0) {
-                    originalPrice = product.originalPrice;
-                  } else if (product.pricingPlans?.monthly?.originalPrice) {
-                    originalPrice = product.pricingPlans.monthly.originalPrice;
-                  } else if (product.pricingPlans?.oneTime?.originalPrice) {
-                    originalPrice = product.pricingPlans.oneTime.originalPrice;
-                  }
-                  
-                  // Determina il prezzo corrente per il confronto
-                  let currentPrice = 0;
-                  if (typeof product.price === 'number') {
-                    currentPrice = product.price;
-                  } else if (product.pricingPlans?.monthly?.price) {
-                    currentPrice = product.pricingPlans.monthly.price;
-                  } else if (product.pricingPlans?.oneTime?.price) {
-                    currentPrice = product.pricingPlans.oneTime.price;
-                  }
-                  
-                  // Mostra il prezzo barrato solo se diverso dal prezzo corrente e maggiore di zero
-                  if (originalPrice > 0 && originalPrice > currentPrice) {
-                    return (
-                      <span className="text-lg text-gray-500 line-through">
-                        {formatPrice(originalPrice)}
-                      </span>
-                    );
-                  }
-                  return null;
-                })()}
-                
-                <span className={`text-3xl font-display font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                  {(() => {
-                    // Gestisci diversi formati di prezzo
-                    if (typeof product.price === 'number') {
-                      return formatPrice(product.price);
-                    } else if (product.pricingPlans?.monthly) {
-                      return formatPrice(product.pricingPlans.monthly.price);
-                    } else if (product.pricingPlans?.oneTime) {
-                      return formatPrice(product.pricingPlans.oneTime.price);
-                    } else if (product.price?.monthly) {
-                      return formatPrice(product.price.monthly);
-                    } else {
-                      return formatPrice(0);
-                    }
-                  })()}
-                </span>
-                {product.type === 'subscription' && (
-                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-slate-500'}`}>/mese</span>
-                )}
-                {product.type === 'one-time' && product.category === 'Formazione' && (
-                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-slate-500'}`}>pagamento unico</span>
-                )}
-              </div>
-              
-              {/* Mostra il risparmio percentuale se c'è uno sconto */}
-              {(() => {
-                let originalPrice = 0;
-                let currentPrice = 0;
-                
-                if (product.originalPrice && product.originalPrice > 0) {
-                  originalPrice = product.originalPrice;
-                } else if (product.pricingPlans?.monthly?.originalPrice) {
-                  originalPrice = product.pricingPlans.monthly.originalPrice;
-                } else if (product.pricingPlans?.oneTime?.originalPrice) {
-                  originalPrice = product.pricingPlans.oneTime.originalPrice;
-                }
-                
-                if (typeof product.price === 'number') {
-                  currentPrice = product.price;
-                } else if (product.pricingPlans?.monthly?.price) {
-                  currentPrice = product.pricingPlans.monthly.price;
-                } else if (product.pricingPlans?.oneTime?.price) {
-                  currentPrice = product.pricingPlans.oneTime.price;
-                }
-                
-                if (originalPrice > 0 && originalPrice > currentPrice) {
-                  const discount = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
-                  return (
-                    <div className="mt-1">
-                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full font-bold">
-                        Risparmi {discount}%
-                      </span>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-            </div>
-            {product.trial && product.trial.available && (
-              <div className="text-right">
-                <div className="flex items-center gap-1 text-green-400">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm font-bold">{product.trial.days} giorni</span>
-                </div>
-                <div className="text-xs text-gray-400">di prova</div>
-              </div>
-            )}
-          </div>
+        {/* Action buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              if (isFormazione && trialStatus.isActive) navigate(`/course/${product.id}/manage-trial`);
+              else onViewDetails(product);
+            }}
+            className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all group/btn ${secondaryBtn}`}
+          >
+            {isFormazione && trialStatus.isActive ? 'Accedi al corso' : 'Dettagli'}
+            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+          </button>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3">
+          {isComingSoon ? (
             <button
-              onClick={() => {
-                // Se ha un trial attivo per formazione, vai direttamente alla gestione trial
-                if (product.category === 'Formazione' && trialStatus.isActive) {
-                  navigate(`/course/${product.id}/manage-trial`);
-                } else {
-                  // Altrimenti mostra sempre la pagina dettagli standard
-                  onViewDetails(product);
-                }
-              }}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border border-blue-800/50 rounded-xl font-bold text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 group/btn"
+              disabled
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold cursor-not-allowed ${
+                dark ? 'bg-slate-900 text-slate-500' : 'bg-slate-100 text-slate-400'
+              }`}
             >
-              {product.category === 'Formazione' && trialStatus.isActive ? 'Accedi al Corso' : 'Dettagli'}
-              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              <Clock className="w-3.5 h-3.5" /> Coming soon
             </button>
-            
-            {product.trial && product.trial.available && product.status === 'active' && (
-              <button
-                onClick={handleStartTrial}
-                className={`flex-1 px-4 py-3 border-2 rounded-xl font-bold text-white hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group/trial ${
-                  trialStatus.hasExpired 
-                    ? 'bg-gradient-to-r from-cyan-600 to-sky-600 border-cyan-400 hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300'
-                    : 'bg-gradient-to-r from-blue-600 to-blue-800 border-blue-400 hover:from-blue-500 hover:to-blue-700 hover:border-blue-300'
-                }`}>
-                {trialStatus.hasExpired ? (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    Acquista Ora
-                  </>
-                ) : (
-                  <>
-                    <Unlock className="w-4 h-4 group-hover/trial:rotate-12 transition-transform" />
-                    Prova Gratis
-                  </>
-                )}
-              </button>
-            )}
-            
-            {product.trial && !product.trial.available && product.status === 'active' && (
-              <button
-                onClick={() => onViewDetails(product)}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-cyan-800 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-cyan-700 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <Lock className="w-4 h-4" />
-                {product.category === 'Formazione' ? 'Inizia il Corso' : 'Acquista Ora'}
-              </button>
-            )}
-            
-            {product.status === 'coming-soon' && (
-              <button
-                disabled
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-gray-700 to-gray-800 rounded-xl font-bold text-gray-400 cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                <Clock className="w-4 h-4" />
-                Coming Soon
-              </button>
-            )}
-          </div>
+          ) : product.trial?.available && product.status === 'active' ? (
+            <button
+              onClick={handleStartTrial}
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${primaryBtn}`}
+            >
+              {trialStatus.hasExpired ? (
+                <>
+                  <Lock className="w-3.5 h-3.5" /> Acquista ora
+                </>
+              ) : (
+                <>
+                  <Unlock className="w-3.5 h-3.5" /> Prova gratis
+                </>
+              )}
+            </button>
+          ) : product.status === 'active' ? (
+            <button
+              onClick={() => onViewDetails(product)}
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${primaryBtn}`}
+            >
+              <Lock className="w-3.5 h-3.5" />
+              {isFormazione ? 'Inizia il corso' : 'Acquista ora'}
+            </button>
+          ) : null}
         </div>
       </div>
-
-      {/* Hover Effect Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
     </div>
   );
 };

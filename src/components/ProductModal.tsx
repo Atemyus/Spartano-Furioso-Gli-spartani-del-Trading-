@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
 import PaymentOptionsModal from './PaymentOptionsModal';
@@ -101,7 +102,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
   // Load dynamic product configuration (platforms, etc.)
   const { config, loading: configLoading } = useProductConfig(product?.id);
 
-  if (!isOpen || !product) return null;
+  // NB: niente early return su !isOpen — AnimatePresence (sotto)
+  // gestisce mount/unmount animato del modale tramite isOpen.
+  // Il check su !product e' fatto inline dove serve.
 
   // Debug: log product data
   console.log('ProductModal - Full product data:', product);
@@ -232,21 +235,38 @@ const ProductModal: React.FC<ProductModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <>
+    <AnimatePresence>
+    {isOpen && product && (
+    <motion.div
+      key="product-modal-wrap"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
       {/* Backdrop */}
-      <div 
-        className={`absolute inset-0 backdrop-blur-sm ${
-          theme === 'dark' ? 'bg-black/80' : 'bg-gray-900/50'
+      <div
+        className={`absolute inset-0 backdrop-blur-md ${
+          theme === 'dark' ? 'bg-black/80' : 'bg-slate-900/60'
         }`}
         onClick={onClose}
       ></div>
 
       {/* Modal */}
-      <div className={`relative w-full max-w-6xl max-h-[90vh] border-2 border-blue-800 rounded-3xl overflow-hidden ${
-        theme === 'dark'
-          ? 'bg-gradient-to-b from-gray-900 to-black'
-          : 'bg-gradient-to-b from-white to-gray-50'
-      }`}>
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 16, scale: 0.97 }}
+        transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-6xl max-h-[90vh] border rounded-2xl overflow-hidden shadow-2xl ${
+          theme === 'dark'
+            ? 'bg-slate-900/95 border-slate-800'
+            : 'bg-white border-slate-200'
+        }`}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -710,9 +730,13 @@ const ProductModal: React.FC<ProductModalProps> = ({
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Payment Options Modal */}
+      </motion.div>
+    </motion.div>
+    )}
+    </AnimatePresence>
+
+    {/* Payment Options Modal — vive fuori dall'AnimatePresence, ha il proprio animator */}
+    {product && (
       <PaymentOptionsModal
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
@@ -730,7 +754,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                      'course'}
         plan={selectedPlan}
       />
-    </div>
+    )}
+    </>
   );
 };
 
