@@ -351,13 +351,13 @@ const TrialActivation: React.FC = () => {
                 {product.metrics?.winRate && (
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Win Rate del {product.metrics.winRate}%</span>
+                    <span>Win Rate del {pct(product.metrics.winRate)}</span>
                   </li>
                 )}
                 {product.metrics?.avgProfit && (
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Profitto medio del {product.metrics.avgProfit}%</span>
+                    <span>Profitto medio del {pctSigned(product.metrics.avgProfit)}</span>
                   </li>
                 )}
                 <li className="flex items-center gap-2">
@@ -382,6 +382,24 @@ const TrialActivation: React.FC = () => {
 
   const dark = theme === 'dark';
   const bg = dark ? 'bg-black' : 'bg-slate-50';
+
+  // Normalizza valori % (DB puo' avere "72", "72%", "+18.7%", ecc.)
+  const pct = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.endsWith('%') || /[a-zA-Z]/.test(s)) return s; // gia' formattato o "N/A"
+    const n = parseFloat(s.replace(',', '.'));
+    return Number.isNaN(n) ? '' : `${n}%`;
+  };
+  const pctSigned = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.startsWith('+') || s.startsWith('-')) return pct(s);
+    const n = parseFloat(s.replace('%', '').replace(',', '.'));
+    if (Number.isNaN(n)) return pct(s);
+    const sign = n > 0 ? '+' : '';
+    return `${sign}${n}%`;
+  };
   const headerBg = dark ? 'bg-black/70 border-slate-800/80' : 'bg-white/70 border-slate-200';
   const textMain = dark ? 'text-white' : 'text-slate-900';
   const textDim = dark ? 'text-slate-500' : 'text-slate-500';
@@ -448,7 +466,7 @@ const TrialActivation: React.FC = () => {
                           <Trophy className="w-5 h-5 text-green-500" />
                           <span className="text-gray-400 text-sm">Win Rate</span>
                         </div>
-                        <div className="text-2xl font-display font-semibold text-white">{product.metrics.winRate}%</div>
+                        <div className="text-2xl font-display font-semibold text-white">{pct(product.metrics.winRate)}</div>
                       </div>
                     )}
                     {product.metrics.avgProfit && (
@@ -457,7 +475,7 @@ const TrialActivation: React.FC = () => {
                           <Star className="w-5 h-5 text-blue-500" />
                           <span className="text-gray-400 text-sm">Profit Medio</span>
                         </div>
-                        <div className="text-2xl font-display font-semibold text-white">+{product.metrics.avgProfit}%</div>
+                        <div className="text-2xl font-display font-semibold text-white">{pctSigned(product.metrics.avgProfit)}</div>
                       </div>
                     )}
                   </div>

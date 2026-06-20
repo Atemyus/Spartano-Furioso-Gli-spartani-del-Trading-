@@ -103,6 +103,24 @@ const Trials: React.FC = () => {
 
   const isTrialActive = (productId: string) => activeTrials.some(t => t.productId === productId && t.status === 'active');
 
+  // Normalizza valori % (DB puo' avere "72", "72%", "+18.7%", ecc.)
+  const pct = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.endsWith('%') || /[a-zA-Z]/.test(s)) return s;
+    const n = parseFloat(s.replace(',', '.'));
+    return Number.isNaN(n) ? '' : `${n}%`;
+  };
+  const pctSigned = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.startsWith('+') || s.startsWith('-')) return pct(s);
+    const n = parseFloat(s.replace('%', '').replace(',', '.'));
+    if (Number.isNaN(n)) return pct(s);
+    const sign = n > 0 ? '+' : '';
+    return `${sign}${n}%`;
+  };
+
   // ====== styling helpers (dashboard-style) ======
   const bg = dark ? 'bg-black' : 'bg-slate-50';
   const surface = dark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
@@ -266,13 +284,13 @@ const Trials: React.FC = () => {
                         {product.metrics.winRate != null && (
                           <div className={`rounded-lg p-2.5 text-center ${dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'}`}>
                             <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim}`}>Win Rate</div>
-                            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>{product.metrics.winRate}%</div>
+                            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>{pct(product.metrics.winRate)}</div>
                           </div>
                         )}
                         {product.metrics.avgProfit != null && (
                           <div className={`rounded-lg p-2.5 text-center ${dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'}`}>
                             <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim}`}>Profit medio</div>
-                            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>+{product.metrics.avgProfit}%</div>
+                            <div className={`font-display text-sm font-semibold mt-0.5 ${textMain}`}>{pctSigned(product.metrics.avgProfit)}</div>
                           </div>
                         )}
                       </div>
