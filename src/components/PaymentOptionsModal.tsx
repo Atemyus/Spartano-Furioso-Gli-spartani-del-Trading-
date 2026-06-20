@@ -16,6 +16,40 @@ interface PaymentOptionsModalProps {
 
 type PaymentMethod = 'stripe' | 'klarna' | 'crypto';
 
+/**
+ * Loghi/simboli ufficiali dei provider di pagamento, resi inline (niente
+ * immagini esterne che possono rompersi o rallentare). Colori brand reali:
+ *  - Stripe: wordmark "stripe" su viola #635BFF
+ *  - Klarna: wordmark "Klarna" su rosa #FFB3C7 (badge ufficiale)
+ *  - Crypto: cluster di monete reali (BTC #F7931A, ETH #627EEA, USDT #26A17B)
+ */
+const BrandBadge: React.FC<{ id: PaymentMethod; dark: boolean }> = ({ id, dark }) => {
+  if (id === 'stripe') {
+    return (
+      <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-md bg-[#635BFF] text-white font-semibold text-sm tracking-tight lowercase">
+        stripe
+      </span>
+    );
+  }
+  if (id === 'klarna') {
+    return (
+      <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-md bg-[#FFB3C7] text-black font-bold text-sm tracking-tight">
+        Klarna
+      </span>
+    );
+  }
+  // crypto: cluster di 3 monete reali
+  const ring = dark ? 'ring-slate-900' : 'ring-white';
+  const coin = `w-5 h-5 rounded-full flex items-center justify-center text-white text-[0.6rem] font-bold ring-2 ${ring}`;
+  return (
+    <span className="shrink-0 flex items-center">
+      <span className={`${coin} bg-[#F7931A] z-30`} title="Bitcoin">₿</span>
+      <span className={`${coin} bg-[#627EEA] -ml-2 z-20`} title="Ethereum">Ξ</span>
+      <span className={`${coin} bg-[#26A17B] -ml-2 z-10`} title="Tether">₮</span>
+    </span>
+  );
+};
+
 const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   isOpen,
   onClose,
@@ -165,7 +199,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     title: string;
     desc: string;
     Icon: React.ElementType;
-    badge: string;
     available: boolean;
   }[] = [
     {
@@ -173,7 +206,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       title: 'Carta di credito / debito',
       desc: 'Pagamento sicuro con Stripe',
       Icon: CreditCard,
-      badge: 'Stripe',
       available: true,
     },
     {
@@ -181,7 +213,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       title: 'Klarna — paga in 3 rate',
       desc: '3 rate senza interessi · approvazione istantanea',
       Icon: CalendarClock,
-      badge: 'Klarna',
       available: !isSubscriptionPlan,
     },
     {
@@ -189,7 +220,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       title: 'Criptovalute',
       desc: '200+ crypto: BTC, ETH, USDT, BNB, TRX...',
       Icon: Bitcoin,
-      badge: 'Crypto',
       available: true,
     },
   ];
@@ -312,11 +342,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
                         </div>
                       </div>
 
-                      <span className={`font-mono-lab text-[0.6rem] tracking-[0.2em] uppercase font-bold px-2 py-0.5 rounded shrink-0 ${
-                        active
-                          ? 'bg-cyan-500/20 text-cyan-400'
-                          : dark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600'
-                      }`}>{m.badge}</span>
+                      <BrandBadge id={m.id} dark={dark} />
                     </button>
                   );
                 })}
