@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
 import PaymentOptionsModal from './PaymentOptionsModal';
+import FormattedDescription from './FormattedDescription';
 import { 
   X, 
   Shield, 
@@ -306,9 +307,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     </span>
                   )}
                 </div>
-                <p className={`text-lg mb-4 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                }`}>{product.description}</p>
+                <div className="mb-4">
+                  <FormattedDescription text={product.description} dark={theme === 'dark'} />
+                </div>
                 
                 {/* Quick Stats */}
                 {product.performance && (
