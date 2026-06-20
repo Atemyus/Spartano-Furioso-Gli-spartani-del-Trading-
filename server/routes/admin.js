@@ -3,6 +3,7 @@ import { authenticateAdmin } from '../middleware/auth.js';
 import { db } from '../database/index.js';
 import { PrismaClient } from '@prisma/client';
 import { getAbuseReport } from '../middleware/trialProtection.js';
+import { seedRangerPropPass } from '../scripts/seedRangerPropPass.js';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,17 @@ const router = express.Router();
 
 // Protect all admin routes
 router.use(authenticateAdmin);
+
+// One-shot seed: inserisce/aggiorna i 3 prodotti Ranger Prop Pass
+router.post('/seed/ranger-prop-pass', async (_req, res) => {
+  try {
+    const result = await seedRangerPropPass(prisma);
+    res.json({ success: true, ...result });
+  } catch (e) {
+    console.error('Error seeding ranger prop pass:', e);
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
 
 // Dashboard statistics
 router.get('/stats', async (req, res) => {

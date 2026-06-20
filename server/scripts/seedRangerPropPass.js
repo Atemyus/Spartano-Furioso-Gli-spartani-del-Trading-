@@ -1,9 +1,13 @@
 /**
  * Seed dei 3 prodotti "Ranger Prop Pass" nel database MongoDB.
  *
- * USO:
+ * USO da CLI (locale o Railway):
  *   cd server
  *   node scripts/seedRangerPropPass.js
+ *
+ * USO programmatico (es. da endpoint admin):
+ *   import { seedRangerPropPass } from './scripts/seedRangerPropPass.js';
+ *   await seedRangerPropPass(prismaClient);
  *
  * Lo script e' IDEMPOTENTE: se i prodotti esistono gia' (productId match),
  * vengono aggiornati invece di duplicati. Puoi rilanciarlo in sicurezza.
@@ -11,9 +15,6 @@
 
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
-
-// Descrizione condivisa da tutti e 3 i prodotti, con coda specifica per tier
 const sharedDescription = (tierSpecific) => `Ranger Prop Pass è il servizio premium di Ranger Signals Hub (partner Nexora Lab) dedicato alla gestione professionale delle challenge prop firm.
 
 Molti trader possiedono strategie valide ma falliscono le challenge per overtrading, mancanza di disciplina, gestione emotiva inadeguata o violazione delle regole della prop firm. Il problema raramente è la strategia: è l'esecuzione.
@@ -43,7 +44,6 @@ Il prezzo si riferisce ESCLUSIVAMENTE al servizio di gestione professionale Rang
 
 ${tierSpecific}`;
 
-// Features condivise da tutti i prodotti
 const sharedFeatures = [
   '🎯 Gestione professionale della challenge fino al funding',
   '🛡️ Controllo rigoroso del rischio e money management',
@@ -56,7 +56,6 @@ const sharedFeatures = [
   '🏆 Approccio basato su Disciplina, Struttura, Esecuzione',
 ];
 
-// Requirements condivisi
 const sharedRequirements = [
   'Acquisto della challenge tramite link partner ufficiale Ranger (obbligatorio)',
   'Account Telegram per il contatto con il team',
@@ -113,7 +112,7 @@ const products = [
     metrics: null,
     trialDays: 0,
     active: true,
-    popular: true, // Il piano "più popolare" è il 200K
+    popular: true,
     badge: 'BULLWAVES PRO',
     badgeColor: '#2563eb',
     category: 'service',
@@ -152,34 +151,54 @@ const products = [
   },
 ];
 
-async function main() {
-  console.log('\n🚀 Seed Ranger Prop Pass — inizio...\n');
+/**
+ * Esegue il seed. Accetta opzionalmente un PrismaClient esterno (per chiamate
+ * da endpoint che gia' hanno un client). Se non passato, ne crea uno proprio
+ * e lo chiude alla fine.
+ *
+ * @param {import('@prisma/client').PrismaClient} [externalPrisma]
+ * @returns {Promise<{created: number, updated: number, totalServiceProducts: number, items: string[]}>}
+ */
+export async function seedRangerPropPass(externalPrisma) {
+  const prisma = externalPrisma || new PrismaClient();
+  const ownsClient = !externalPrisma;
+  const items = [];
+  let created = 0;
+  let updated = 0;
 
-  for (const p of products) {
-    const existing = await prisma.product.findUnique({ where: { productId: p.productId } });
-
-    if (existing) {
-      await prisma.product.update({
-        where: { productId: p.productId },
-        data: p,
-      });
-      console.log(`✏️  Aggiornato: ${p.name}  (€${p.price})`);
-    } else {
-      await prisma.product.create({ data: p });
-      console.log(`✅ Creato:    ${p.name}  (€${p.price})`);
+  try {
+    for (const p of products) {
+      const existing = await prisma.product.findUnique({ where: { productId: p.productId } });
+      if (existing) {
+        await prisma.product.update({ where: { productId: p.productId }, data: p });
+        updated++;
+        items.push(`updated: ${p.name} (€${p.price})`);
+      } else {
+        await prisma.product.create({ data: p });
+        created++;
+        items.push(`created: ${p.name} (€${p.price})`);
+      }
     }
+    const totalServiceProducts = await prisma.product.count({ where: { category: 'service', active: true } });
+    return { created, updated, totalServiceProducts, items };
+  } finally {
+    if (ownsClient) await prisma.$disconnect();
   }
-
-  // Conta totale prodotti nella categoria service
-  const totalService = await prisma.product.count({ where: { category: 'service', active: true } });
-  console.log(`\n📦 Prodotti attivi in categoria "service": ${totalService}`);
-  console.log('\n✨ Fatto! I 3 prodotti Ranger Prop Pass sono nel catalogo.\n');
-
-  await prisma.$disconnect();
 }
 
-main().catch(async (err) => {
-  console.error('❌ Errore durante il seed:', err);
-  await prisma.$disconnect();
-  process.exit(1);
-});
+// Se eseguito direttamente da CLI (node scripts/seedRangerPropPass.js)
+const isMain = import.meta.url === `file://${process.argv[1]}`;
+if (isMain) {
+  console.log('\n🚀 Seed Ranger Prop Pass — inizio...\n');
+  seedRangerPropPass()
+    .then((res) => {
+      res.items.forEach((line) => console.log(`  ${line}`));
+      console.log(`\n📦 Prodotti attivi in categoria "service": ${res.totalServiceProducts}`);
+      console.log(`✨ Fatto! (${res.created} creati, ${res.updated} aggiornati)\n`);
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error('❌ Errore durante il seed:', err);
+      process.exit(1);
+    });
+}
