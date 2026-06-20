@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Bitcoin, Clock, CheckCircle, CalendarClock, Lock, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 interface PaymentOptionsModalProps {
   isOpen: boolean;
@@ -72,6 +73,10 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       setSelectedMethod('stripe');
     }
   }, [isSubscriptionPlan, selectedMethod]);
+
+  // Blocca lo scroll del body quando il modale e' aperto (evita "salto"
+  // visivo e scroll della pagina sotto)
+  useScrollLock(isOpen);
 
   // NB: niente early return su !isOpen — AnimatePresence (sotto) gestisce
   // mount/unmount animato del modale tramite la prop isOpen.

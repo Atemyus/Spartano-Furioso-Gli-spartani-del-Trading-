@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
+import { useScrollLock } from '../hooks/useScrollLock';
 import PaymentOptionsModal from './PaymentOptionsModal';
 import FormattedDescription from './FormattedDescription';
 import { 
@@ -101,6 +102,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
   
   // Load dynamic product configuration (platforms, etc.)
   const { config, loading: configLoading } = useProductConfig(product?.id);
+
+  // Blocca lo scroll del body quando il modale e' aperto
+  useScrollLock(isOpen && !!product);
 
   // NB: niente early return su !isOpen — AnimatePresence (sotto)
   // gestisce mount/unmount animato del modale tramite isOpen.
