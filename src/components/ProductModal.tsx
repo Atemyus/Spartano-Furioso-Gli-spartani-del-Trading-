@@ -104,13 +104,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   // NB: niente early return su !isOpen — AnimatePresence (sotto)
   // gestisce mount/unmount animato del modale tramite isOpen.
-  // Il check su !product e' fatto inline dove serve.
-
-  // Debug: log product data
-  console.log('ProductModal - Full product data:', product);
-  console.log('ProductModal - pricingPlans:', product.pricingPlans);
-  console.log('ProductModal - requirements:', product.requirements);
-  console.log('ProductModal - platforms:', product.platforms);
+  // Il check su !product e' fatto nel render (isOpen && product).
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Gratis';
