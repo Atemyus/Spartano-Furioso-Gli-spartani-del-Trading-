@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
-import { useScrollLock } from '../hooks/useScrollLock';
+import Portal from './Portal';
 import PaymentOptionsModal from './PaymentOptionsModal';
 import FormattedDescription from './FormattedDescription';
 import { 
@@ -102,9 +102,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
   
   // Load dynamic product configuration (platforms, etc.)
   const { config, loading: configLoading } = useProductConfig(product?.id);
-
-  // Blocca lo scroll del body quando il modale e' aperto
-  useScrollLock(isOpen && !!product);
 
   // NB: niente early return su !isOpen — AnimatePresence (sotto)
   // gestisce mount/unmount animato del modale tramite isOpen.
@@ -234,6 +231,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   return (
     <>
+    <Portal>
     <AnimatePresence>
     {isOpen && product && (
     <motion.div
@@ -242,7 +240,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
     >
       {/* Backdrop */}
       <div
@@ -732,6 +730,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     </motion.div>
     )}
     </AnimatePresence>
+    </Portal>
 
     {/* Payment Options Modal — vive fuori dall'AnimatePresence, ha il proprio animator */}
     {product && (

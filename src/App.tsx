@@ -77,7 +77,10 @@ function AppContent() {
       '/unsubscribe',
     ].includes(location.pathname) ||
     location.pathname.startsWith('/course/') ||
-    location.pathname.startsWith('/admin/');
+    location.pathname.startsWith('/admin/') ||
+    location.pathname.startsWith('/trial-activation/') ||
+    location.pathname.startsWith('/trial/') ||
+    location.pathname.startsWith('/tutorial/');
 
   return (
     <div className="min-h-screen bg-black text-white">

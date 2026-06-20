@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Bitcoin, Clock, CheckCircle, CalendarClock, Lock, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { useScrollLock } from '../hooks/useScrollLock';
+import Portal from './Portal';
 
 interface PaymentOptionsModalProps {
   isOpen: boolean;
@@ -73,10 +73,6 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       setSelectedMethod('stripe');
     }
   }, [isSubscriptionPlan, selectedMethod]);
-
-  // Blocca lo scroll del body quando il modale e' aperto (evita "salto"
-  // visivo e scroll della pagina sotto)
-  useScrollLock(isOpen);
 
   // NB: niente early return su !isOpen — AnimatePresence (sotto) gestisce
   // mount/unmount animato del modale tramite la prop isOpen.
@@ -230,6 +226,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   ];
 
   return (
+    <Portal>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -239,10 +236,11 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md ${
+          className={`fixed inset-0 z-[100] overflow-y-auto backdrop-blur-md ${
             dark ? 'bg-black/80' : 'bg-slate-900/60'
           }`}
         >
+          <div className="flex min-h-full items-center justify-center p-4">
           <motion.div
             key="payment-card"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
@@ -250,7 +248,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className={`relative w-full max-w-xl rounded-2xl border shadow-2xl overflow-hidden max-h-[92vh] flex flex-col ${surface}`}
+            className={`relative w-full max-w-xl rounded-2xl border shadow-2xl overflow-hidden flex flex-col my-auto ${surface}`}
           >
             {/* Top accent line */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
@@ -396,9 +394,11 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
               </p>
             </div>
           </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
+    </Portal>
   );
 };
 

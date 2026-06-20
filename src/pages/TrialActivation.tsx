@@ -593,55 +593,53 @@ const TrialActivation: React.FC = () => {
             </div>
 
             {/* Telegram & Support */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Telegram Links */}
-              <div className="bg-gradient-to-r from-blue-950/50 to-cyan-950/50 border-2 border-blue-500/50 rounded-xl p-6">
-                <h3 className="text-xl font-display font-semibold text-white mb-6 flex items-center gap-2">
-                  <MessageCircle className="w-6 h-6 text-blue-500" />
-                  SUPPORTO TELEGRAM
-                </h3>
-                
-                <div className="space-y-4">
+              <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <MessageCircle className="w-3.5 h-3.5 text-cyan-500" />
+                  <h3 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// supporto telegram</h3>
+                </div>
+
+                <div className="space-y-3">
                   {/* Canale Annunci */}
                   <a
                     href={TELEGRAM_CHANNEL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block bg-black/30 border border-blue-800 rounded-lg p-4 hover:bg-blue-900/20 transition-all group"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 p-4 hover:border-cyan-500/40 transition-all group"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                          <MessageCircle className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-bold">Canale Ufficiale</h4>
-                          <p className="text-gray-400 text-sm">Annunci e aggiornamenti</p>
-                        </div>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-cyan-500/10 ring-1 ring-cyan-500/30">
+                        <MessageCircle className="w-4 h-4 text-cyan-500" />
                       </div>
-                      <ExternalLink className="w-5 h-5 text-gray-500 group-hover:text-blue-400" />
+                      <div className="min-w-0">
+                        <h4 className="font-display font-semibold text-sm text-white">Canale Ufficiale</h4>
+                        <p className="text-xs text-slate-400">Annunci e aggiornamenti</p>
+                      </div>
                     </div>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 shrink-0" />
                   </a>
 
                   {/* Gruppo Supporto - Bloccato per Trial */}
-                  <div className="block bg-black/30 border border-gray-700 rounded-lg p-4 opacity-50 cursor-not-allowed relative">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                          <Users className="w-6 h-6 text-gray-500" />
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/30 p-4 opacity-70">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-slate-800">
+                          <Users className="w-4 h-4 text-slate-500" />
                         </div>
-                        <div>
-                          <h4 className="text-gray-400 font-bold">Gruppo Community</h4>
-                          <p className="text-gray-500 text-sm">Supporto e discussioni</p>
+                        <div className="min-w-0">
+                          <h4 className="font-display font-semibold text-sm text-slate-400">Gruppo Community</h4>
+                          <p className="text-xs text-slate-500">Supporto e discussioni</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Lock className="w-5 h-5 text-cyan-500" />
-                        <span className="text-cyan-500 text-xs font-bold">PREMIUM</span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Lock className="w-3.5 h-3.5 text-cyan-500" />
+                        <span className="font-mono-lab text-[0.55rem] tracking-widest uppercase font-bold text-cyan-500">Premium</span>
                       </div>
                     </div>
-                    <div className="mt-3 p-2 bg-cyan-900/20 border border-cyan-700/30 rounded text-xs text-cyan-400 text-center">
-                      💎 Disponibile dopo l'acquisto del prodotto
+                    <div className="mt-3 rounded-lg bg-cyan-500/5 ring-1 ring-cyan-500/20 px-3 py-2 text-xs text-cyan-300 text-center">
+                      Disponibile dopo l'acquisto del prodotto
                     </div>
                   </div>
 
@@ -650,17 +648,16 @@ const TrialActivation: React.FC = () => {
                     href={TELEGRAM_CONTACT}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-cyan-900/30 to-cyan-800/30 border border-cyan-700/30 rounded-xl p-6 hover:border-cyan-500/50 transition-all group"
+                    className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 hover:border-cyan-500/60 transition-all group"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-cyan-600/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-600/30 transition-colors">
-                        <Key className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-white font-bold">Richiedi Licenza</h4>
-                        <p className="text-gray-400 text-sm">Contatta @catiscrazy per la licenza 60 giorni</p>
-                      </div>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br from-blue-500 to-cyan-500">
+                      <Key className="w-4 h-4 text-white" />
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-display font-semibold text-sm text-white">Richiedi Licenza</h4>
+                      <p className="text-xs text-slate-400">Contatta @catiscrazy per la licenza 60 giorni</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 shrink-0" />
                   </a>
                 </div>
               </div>
