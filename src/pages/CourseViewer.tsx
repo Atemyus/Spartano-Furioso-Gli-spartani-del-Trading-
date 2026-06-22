@@ -515,28 +515,48 @@ const CourseViewer: React.FC = () => {
                     </motion.div>
                   )}
                   
-                  {/* Video Player - Supports both MP4 and Vimeo */}
-                  {(currentLesson as any).videoUrl ? (
-                    <video
-                      ref={playerRef as any}
-                      controls
-                      className="w-full h-full bg-black"
-                      style={{ border: 0 }}
-                    >
-                      <source src={`https://api.nexoralab.solutions${(currentLesson as any).videoUrl}`} type="video/mp4" />
-                      Il tuo browser non supporta il tag video.
-                    </video>
-                  ) : currentLesson.vimeoId && currentLesson.vimeoId !== '123456789' ? (
-                    <iframe
-                      ref={playerRef}
-                      src={`https://player.vimeo.com/video/${currentLesson.vimeoId}`}
-                      className="w-full h-full"
-                      style={{ border: 0 }}
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                      title={currentLesson.title}
-                    />
-                  ) : (
+                  {/* Video Player - Vimeo ha priorita' sul MP4 se entrambi presenti.
+                      Estrae l'ID numerico dal vimeoId anche se l'admin ha incollato l'URL completo. */}
+                  {(() => {
+                    const rawVimeo = (currentLesson.vimeoId || '').toString().trim();
+                    // Pattern accettati:
+                    //  - "123456789"
+                    //  - "https://vimeo.com/123456789"
+                    //  - "https://vimeo.com/123456789/HASH"
+                    //  - "vimeo.com/123456789?h=hash"
+                    const m = rawVimeo.match(/(\d{6,})/);
+                    const vimeoNumericId = m ? m[1] : '';
+                    const hasValidVimeo = !!vimeoNumericId && vimeoNumericId !== '123456789';
+                    const videoUrl = (currentLesson as any).videoUrl as string | undefined;
+
+                    if (hasValidVimeo) {
+                      return (
+                        <iframe
+                          ref={playerRef}
+                          src={`https://player.vimeo.com/video/${vimeoNumericId}`}
+                          className="w-full h-full"
+                          style={{ border: 0 }}
+                          allow="autoplay; fullscreen; picture-in-picture"
+                          allowFullScreen
+                          title={currentLesson.title}
+                        />
+                      );
+                    }
+                    if (videoUrl) {
+                      return (
+                        <video
+                          ref={playerRef as any}
+                          controls
+                          className="w-full h-full bg-black"
+                          style={{ border: 0 }}
+                        >
+                          <source src={`https://api.nexoralab.solutions${videoUrl}`} type="video/mp4" />
+                          Il tuo browser non supporta il tag video.
+                        </video>
+                      );
+                    }
+                    return null;
+                  })() || (
                     <div className="w-full h-full flex items-center justify-center bg-slate-950">
                       <div className="text-center p-8 max-w-md">
                         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center">
