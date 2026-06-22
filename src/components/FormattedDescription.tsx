@@ -2,22 +2,20 @@ import React from 'react';
 import { CheckCircle, Info } from 'lucide-react';
 
 /**
- * FormattedDescription — parser leggero per descrizioni di prodotto in plain text.
+ * FormattedDescription — parser leggero per descrizioni in plain text.
  *
  * Riconosce:
- *  - Separatori (linee di ═══ / ─── / ━━━): vengono ignorati (rappresentati
- *    visivamente dal cambio di sezione successivo)
- *  - Header di sezione: blocchi di una sola riga TUTTA MAIUSCOLA breve
- *    (es. "COME FUNZIONA", "IMPORTANTE") → tag mono-lab + barra cyan
- *  - Lista puntata: blocchi dove ogni riga inizia con ✓ / • / ■ / ▸
+ *  - Separatori (linee di ═══ / ─── / ━━━): vengono ignorati
+ *  - Header di sezione MAIUSCOLI standalone (es. "COME FUNZIONA")
+ *    → tag mono-lab + barra cyan
+ *  - Mini-header con emoji finiti in ":" (es. "📒 Cosa scoprirai:")
+ *    → riga in font-display semibold con accento cyan
+ *  - Lista puntata: righe che iniziano con ✓ ✅ ✔ • ■ ▸ ☑
  *    → CheckCircle emerald + testo
- *  - Lista numerata: blocchi dove ogni riga inizia con "1." "2." ...
- *    → numero in mono-lab + testo
- *  - Callout "TIER: ..." o "NB:" → box info evidenziato
- *  - Tutto il resto: paragrafo normale
- *
- * Pensato per descrizioni come quelle dei prodotti Ranger Prop Pass dove
- * il testo nel DB e' gia' strutturato con ═══, sezioni MAIUSCOLE e bullet ✓.
+ *  - Lista numerata (1. 2. 3.)
+ *    → numero in pill cyan + testo
+ *  - Callout "TIER: / NB: / IMPORTANTE:" → box info
+ *  - Tutto il resto: paragrafo normale (rispetta righe singole)
  */
 
 interface Props {
@@ -25,25 +23,37 @@ interface Props {
   dark: boolean;
 }
 
+// Regex emoji generica (range Unicode dei simboli/pittogrammi)
+const EMOJI_RE = /^(\p{Extended_Pictographic}|[☀-➿])(️)?/u;
+
 const isSeparator = (line: string) => /^[═━─\-]{3,}$/.test(line.trim());
 
 const isHeaderLine = (line: string) => {
   const trimmed = line.trim();
   if (!trimmed) return false;
   if (trimmed.length < 3 || trimmed.length > 45) return false;
-  // No leading bullet, no leading number
   if (/^[✓•■▸\d]/.test(trimmed)) return false;
-  // Tutto MAIUSCOLO (ignorando spazi, simboli e accenti)
   const letters = trimmed.replace(/[^A-Za-zÀ-ÿ]/g, '');
   if (letters.length < 3) return false;
   return letters === letters.toUpperCase();
 };
 
-const isBulletLine = (line: string) => /^[✓•■▸]\s/.test(line.trim());
+// Mini-header con emoji finito in ":" (es. "📒 Cosa scoprirai:", "🎯 Perfetto se:")
+const isMiniHeaderLine = (line: string) => {
+  const t = line.trim();
+  if (t.length > 80 || t.length < 4) return false;
+  if (!EMOJI_RE.test(t)) return false;
+  return t.endsWith(':');
+};
+
+// Bullet markers riconosciuti (anche emoji check)
+const BULLET_RE = /^(✅|✔️?|☑️?|✓|•|■|▸|◆|◾|◽|⬛|⬜)\s+/;
+const isBulletLine = (line: string) => BULLET_RE.test(line.trim());
+const stripBullet = (line: string) => line.trim().replace(BULLET_RE, '');
+
 const isNumberedLine = (line: string) => /^\d+\.\s/.test(line.trim());
 const isCalloutLine = (line: string) => /^(TIER|NB|NOTA|IMPORTANTE|ATTENZIONE):/i.test(line.trim());
 
-const stripBullet = (line: string) => line.trim().replace(/^[✓•■▸]\s+/, '');
 const stripNumber = (line: string) => {
   const m = line.trim().match(/^(\d+)\.\s+(.*)$/);
   return m ? { num: m[1], text: m[2] } : { num: '', text: line.trim() };
@@ -51,6 +61,7 @@ const stripNumber = (line: string) => {
 
 type Block =
   | { kind: 'header'; text: string }
+  | { kind: 'miniHeader'; text: string }
   | { kind: 'paragraph'; text: string }
   | { kind: 'bullets'; items: string[] }
   | { kind: 'numbered'; items: { num: string; text: string }[] }
@@ -59,8 +70,6 @@ type Block =
 function parseDescription(text: string): Block[] {
   const blocks: Block[] = [];
 
-  // Spezza il testo in blocchi separati da una o piu' righe vuote, dopo aver
-  // rimosso eventuali righe-separatore (═══) che inquinano i blocchi.
   const cleanedLines = text
     .replace(/\r\n/g, '\n')
     .split('\n')
@@ -72,45 +81,38 @@ function parseDescription(text: string): Block[] {
     const lines = rb.split('\n').map((l) => l.trim()).filter(Boolean);
     if (lines.length === 0) continue;
 
+    // Single-line cases
+    if (lines.length === 1) {
+      const only = lines[0];
+      if (isHeaderLine(only)) { blocks.push({ kind: 'header', text: only }); continue; }
+      if (isMiniHeaderLine(only)) { blocks.push({ kind: 'miniHeader', text: only }); continue; }
+      if (isCalloutLine(only)) { blocks.push({ kind: 'callout', text: only }); continue; }
+      blocks.push({ kind: 'paragraph', text: only });
+      continue;
+    }
+
+    // Multi-line: processa riga per riga, raggruppa bullets/numbered consecutive
     const allBullets = lines.every(isBulletLine);
     const allNumbered = lines.every(isNumberedLine);
+    if (allBullets) { blocks.push({ kind: 'bullets', items: lines.map(stripBullet) }); continue; }
+    if (allNumbered) { blocks.push({ kind: 'numbered', items: lines.map(stripNumber) }); continue; }
 
-    // Header standalone
-    if (lines.length === 1 && isHeaderLine(lines[0])) {
-      blocks.push({ kind: 'header', text: lines[0] });
-      continue;
+    // Misto: scorri linea per linea
+    let bulletBuf: string[] = [];
+    let numberedBuf: { num: string; text: string }[] = [];
+    const flushBullets = () => { if (bulletBuf.length) { blocks.push({ kind: 'bullets', items: bulletBuf }); bulletBuf = []; } };
+    const flushNumbered = () => { if (numberedBuf.length) { blocks.push({ kind: 'numbered', items: numberedBuf }); numberedBuf = []; } };
+
+    for (const line of lines) {
+      if (isBulletLine(line)) { flushNumbered(); bulletBuf.push(stripBullet(line)); continue; }
+      if (isNumberedLine(line)) { flushBullets(); numberedBuf.push(stripNumber(line)); continue; }
+      flushBullets(); flushNumbered();
+      if (isHeaderLine(line)) blocks.push({ kind: 'header', text: line });
+      else if (isMiniHeaderLine(line)) blocks.push({ kind: 'miniHeader', text: line });
+      else if (isCalloutLine(line)) blocks.push({ kind: 'callout', text: line });
+      else blocks.push({ kind: 'paragraph', text: line });
     }
-
-    // Lista puntata pura
-    if (allBullets) {
-      blocks.push({ kind: 'bullets', items: lines.map(stripBullet) });
-      continue;
-    }
-
-    // Lista numerata pura
-    if (allNumbered) {
-      blocks.push({ kind: 'numbered', items: lines.map(stripNumber) });
-      continue;
-    }
-
-    // Header + righe seguenti (es. "COME FUNZIONA\n1. ...")
-    if (lines.length > 1 && isHeaderLine(lines[0])) {
-      blocks.push({ kind: 'header', text: lines[0] });
-      const rest = lines.slice(1);
-      if (rest.every(isBulletLine)) blocks.push({ kind: 'bullets', items: rest.map(stripBullet) });
-      else if (rest.every(isNumberedLine)) blocks.push({ kind: 'numbered', items: rest.map(stripNumber) });
-      else blocks.push({ kind: 'paragraph', text: rest.join(' ') });
-      continue;
-    }
-
-    // Callout (TIER: / NB: ...)
-    if (lines.length === 1 && isCalloutLine(lines[0])) {
-      blocks.push({ kind: 'callout', text: lines[0] });
-      continue;
-    }
-
-    // Paragrafo (linee unite con spazio per evitare blocchetti spezzati)
-    blocks.push({ kind: 'paragraph', text: lines.join(' ') });
+    flushBullets(); flushNumbered();
   }
   return blocks;
 }
@@ -135,6 +137,18 @@ const FormattedDescription: React.FC<Props> = ({ text, dark }) => {
               <h4 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">
                 // {b.text.toLowerCase()}
               </h4>
+            </div>
+          );
+        }
+        if (b.kind === 'miniHeader') {
+          // Estrae l'emoji iniziale + il testo (senza ":" finale)
+          const m = b.text.match(EMOJI_RE);
+          const emoji = m ? m[0] : '';
+          const rest = b.text.replace(EMOJI_RE, '').replace(/:\s*$/, '').trim();
+          return (
+            <div key={i} className="flex items-center gap-2 pt-2">
+              {emoji && <span className="text-base shrink-0">{emoji}</span>}
+              <h5 className={`font-display font-semibold text-sm ${textMain}`}>{rest}</h5>
             </div>
           );
         }

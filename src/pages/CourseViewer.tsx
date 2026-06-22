@@ -20,6 +20,8 @@ import {
   Sparkles
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
+import FormattedDescription from '../components/FormattedDescription';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Lesson {
   id: string;
@@ -54,6 +56,8 @@ interface CourseContent {
 }
 
 const CourseViewer: React.FC = () => {
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -589,14 +593,14 @@ const CourseViewer: React.FC = () => {
                       </motion.span>
                     )}
                   </motion.h2>
-                  <motion.p 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-gray-400 mb-4 whitespace-pre-line"
+                    className="mb-4"
                   >
-                    {currentLesson.description}
-                  </motion.p>
+                    <FormattedDescription text={currentLesson.description} dark={dark} />
+                  </motion.div>
 
                   {/* Download Button - Only for lesson 4 of module 1 */}
                   {currentLesson.downloadButton?.enabled && (
