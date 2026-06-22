@@ -1192,9 +1192,65 @@ const CourseManagement: React.FC = () => {
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                   </svg>
-                                  File caricato: {(lesson as any).downloadButton?.fileName}
+                                  <span className="truncate">File: {(lesson as any).downloadButton?.fileName || (lesson as any).downloadButton?.fileUrl}</span>
                                 </div>
                               )}
+
+                              {/* OPZIONE ALTERNATIVA: link esterno per file grandi */}
+                              <div className="mt-4 pt-4 border-t border-gray-700">
+                                <label className="block text-xs font-bold text-gray-400 mb-2">
+                                  Oppure: link esterno (per file grandi &gt; 100MB)
+                                </label>
+                                <p className="text-xs text-gray-500 mb-2">
+                                  Carica il file su Google Drive / Dropbox / Mega e incolla qui il link diretto al download.
+                                </p>
+                                <div className="flex gap-2">
+                                  <input
+                                    type="url"
+                                    placeholder="https://drive.google.com/... oppure https://www.dropbox.com/..."
+                                    defaultValue={(lesson as any).downloadButton?.fileUrl?.startsWith('http') ? (lesson as any).downloadButton.fileUrl : ''}
+                                    onBlur={async (e) => {
+                                      const url = e.target.value.trim();
+                                      if (!url || url === (lesson as any).downloadButton?.fileUrl) return;
+
+                                      // Normalizza link Google Drive / Dropbox in download diretti
+                                      let finalUrl = url;
+                                      let fileName = url.split('/').pop()?.split('?')[0] || 'download';
+
+                                      // Google Drive: https://drive.google.com/file/d/FILE_ID/view -> uc?export=download&id=FILE_ID
+                                      const gdMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+                                      if (gdMatch) {
+                                        finalUrl = `https://drive.google.com/uc?export=download&id=${gdMatch[1]}`;
+                                        fileName = 'SQX_download.zip';
+                                      }
+                                      // Dropbox: ?dl=0 -> ?dl=1
+                                      else if (url.includes('dropbox.com')) {
+                                        finalUrl = url.replace('?dl=0', '?dl=1');
+                                        if (!finalUrl.includes('dl=1')) {
+                                          finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'dl=1';
+                                        }
+                                      }
+
+                                      const updatedLesson = {
+                                        ...lesson,
+                                        downloadButton: {
+                                          enabled: true,
+                                          label: 'SCARICA QUI',
+                                          fileUrl: finalUrl,
+                                          fileName: fileName,
+                                        },
+                                      };
+                                      await handleUpdateLesson(module.id, lesson.id, updatedLesson);
+                                      alert(`✅ Link esterno salvato!\nIl pulsante "SCARICA QUI" punterà a questo URL.`);
+                                      await loadAllCourses();
+                                    }}
+                                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white focus:border-cyan-500 focus:outline-none"
+                                  />
+                                </div>
+                                <p className="text-[0.65rem] text-gray-500 mt-2">
+                                  💡 Tip: per Google Drive devi rendere il file "accessibile a chiunque con il link". Lo script converte automaticamente l'URL nella forma di download diretto.
+                                </p>
+                              </div>
                             </div>
                           )}
 

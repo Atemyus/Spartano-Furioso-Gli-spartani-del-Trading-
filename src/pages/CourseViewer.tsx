@@ -612,7 +612,13 @@ const CourseViewer: React.FC = () => {
                     >
                       {currentLesson.downloadButton.fileUrl ? (
                         <a
-                          href={`https://api.nexoralab.solutions/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`}
+                          href={
+                            currentLesson.downloadButton.fileUrl.startsWith('http')
+                              ? currentLesson.downloadButton.fileUrl
+                              : `https://api.nexoralab.solutions/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`
+                          }
+                          target={currentLesson.downloadButton.fileUrl.startsWith('http') ? '_blank' : undefined}
+                          rel={currentLesson.downloadButton.fileUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
                           className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-sky-500 hover:from-cyan-600 hover:to-sky-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
