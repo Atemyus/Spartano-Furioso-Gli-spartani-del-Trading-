@@ -30,6 +30,7 @@ interface Lesson {
   vimeoId?: string;
   videoUrl?: string;
   order: number;
+  isTrialContent?: boolean;
 }
 interface Module {
   id: string;
@@ -37,6 +38,7 @@ interface Module {
   description: string;
   order: number;
   lessons: Lesson[];
+  isTrialContent?: boolean;
 }
 
 // Estrae l'ID numerico Vimeo da id puro o URL completo
@@ -73,14 +75,25 @@ const LandingCodex: React.FC = () => {
     })();
   }, []);
 
-  // ====== lezioni visibili: tutto il modulo 1 + primi N del modulo 2 ======
+  // ====== lezioni visibili: TUTTI i video del trial (isTrialContent) ======
+  // Mostra tutte le lezioni marcate come contenuto trial dal pannello admin.
+  // Fallback (se nessuna lezione è marcata): tutto il Modulo 1 + primi N del Modulo 2.
   const previewLessons = useMemo(() => {
     const out: { module: Module; lesson: Lesson }[] = [];
     const sorted = [...modules].sort((a, b) => a.order - b.order);
-    const m1 = sorted[0];
-    const m2 = sorted[1];
-    if (m1) m1.lessons.forEach((l) => out.push({ module: m1, lesson: l }));
-    if (m2) m2.lessons.slice(0, MODULE2_PREVIEW).forEach((l) => out.push({ module: m2, lesson: l }));
+    sorted.forEach((m) => {
+      [...(m.lessons || [])]
+        .sort((a, b) => a.order - b.order)
+        .forEach((l) => {
+          if (l.isTrialContent) out.push({ module: m, lesson: l });
+        });
+    });
+    if (out.length === 0) {
+      const m1 = sorted[0];
+      const m2 = sorted[1];
+      if (m1) m1.lessons.forEach((l) => out.push({ module: m1, lesson: l }));
+      if (m2) m2.lessons.slice(0, MODULE2_PREVIEW).forEach((l) => out.push({ module: m2, lesson: l }));
+    }
     return out;
   }, [modules]);
 
@@ -93,7 +106,7 @@ const LandingCodex: React.FC = () => {
 
   const current = previewLessons.find((p) => p.lesson.id === activeVideo)?.lesson;
 
-  // Set di lezioni accessibili (Modulo 1 completo + primi N del Modulo 2)
+  // Set di lezioni accessibili gratuitamente (tutti i video del trial)
   const previewIds = useMemo(() => new Set(previewLessons.map((p) => p.lesson.id)), [previewLessons]);
 
   // Totali per il riepilogo del programma completo
@@ -273,8 +286,8 @@ const LandingCodex: React.FC = () => {
             Guarda i primi moduli, gratis
           </h2>
           <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
-            Iscriviti al portale per sbloccare il <strong className="text-white">Modulo 1 completo</strong> e i{' '}
-            <strong className="text-white">primi {MODULE2_PREVIEW} video del Modulo 2</strong>. Dopo averli visti, prenota la tua call.
+            Iscriviti al portale per sbloccare <strong className="text-white">tutti i video gratuiti del trial</strong>.
+            Dopo averli visti, prenota la tua call.
           </p>
 
           {loading ? (
@@ -299,7 +312,7 @@ const LandingCodex: React.FC = () => {
                   </div>
                 ))}
                 <p className="text-xs text-slate-500 text-center pt-2">
-                  + tutti gli altri video del Modulo 1 e 2 dopo l'iscrizione
+                  + tutti gli altri video gratuiti del trial dopo l'iscrizione
                 </p>
               </div>
 
@@ -403,8 +416,8 @@ const LandingCodex: React.FC = () => {
           </h2>
           <p className="text-center text-slate-400 max-w-2xl mx-auto mb-10">
             Tutti i moduli e le lezioni che ti porteranno da zero a trader algoritmico professionale.
-            I contenuti contrassegnati come <span className="text-cyan-400">gratuiti</span> sono già accessibili
-            dopo l'iscrizione; gli altri si sbloccano accordandoti direttamente con il fondatore in call.
+            I contenuti contrassegnati come <span className="text-cyan-400">gratis</span> sono i video del trial,
+            già accessibili dopo l'iscrizione; gli altri si sbloccano accordandoti direttamente con il fondatore in call.
           </p>
 
           {/* riepilogo numeri */}
