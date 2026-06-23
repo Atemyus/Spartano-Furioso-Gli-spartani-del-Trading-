@@ -93,6 +93,16 @@ const LandingCodex: React.FC = () => {
 
   const current = previewLessons.find((p) => p.lesson.id === activeVideo)?.lesson;
 
+  // Set di lezioni accessibili (Modulo 1 completo + primi N del Modulo 2)
+  const previewIds = useMemo(() => new Set(previewLessons.map((p) => p.lesson.id)), [previewLessons]);
+
+  // Totali per il riepilogo del programma completo
+  const totals = useMemo(() => {
+    let totLessons = 0;
+    modules.forEach((m) => { totLessons += (m.lessons || []).length; });
+    return { modules: modules.length, lessons: totLessons, free: previewLessons.length };
+  }, [modules, previewLessons]);
+
   const scrollToVideos = () => videosRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   // ════════ RENDER ════════
@@ -367,13 +377,147 @@ const LandingCodex: React.FC = () => {
                       </button>
                     );
                   })}
-                  <Link to={`/course/${COURSE_ID}`} className="block text-center text-xs text-cyan-500 hover:text-cyan-400 font-display pt-2">
-                    Vedi il corso completo →
-                  </Link>
+                  <Link to={`/course/${COURSE_ID}`} className="hidden">Legacy</Link>
+                  <button
+                    onClick={() => document.getElementById('programma-completo')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="block w-full text-center text-xs text-cyan-500 hover:text-cyan-400 font-display pt-2"
+                  >
+                    Vedi il programma completo →
+                  </button>
                 </div>
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ═══════════════════ PROGRAMMA COMPLETO ═══════════════════ */}
+      <section id="programma-completo" className="relative py-20 border-t border-slate-900">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex items-center gap-2 mb-4 justify-center">
+            <BookOpen className="w-3.5 h-3.5 text-cyan-500" />
+            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// programma completo</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+            Il percorso completo di Codex Algo Academy
+          </h2>
+          <p className="text-center text-slate-400 max-w-2xl mx-auto mb-10">
+            Tutti i moduli e le lezioni che ti porteranno da zero a trader algoritmico professionale.
+            I contenuti contrassegnati come <span className="text-cyan-400">gratuiti</span> sono già accessibili
+            dopo l'iscrizione; gli altri si sbloccano accordandoti direttamente con il fondatore in call.
+          </p>
+
+          {/* riepilogo numeri */}
+          <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto mb-10">
+            {[
+              { v: String(totals.modules), l: 'Moduli' },
+              { v: String(totals.lessons), l: 'Lezioni' },
+              { v: String(totals.free), l: 'Gratis' },
+            ].map((s, i) => (
+              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-3 text-center">
+                <div className="font-display text-2xl font-semibold text-cyan-300">{s.v}</div>
+                <div className="font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase text-slate-500 mt-1">{s.l}</div>
+              </div>
+            ))}
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <Loader2 className="w-6 h-6 text-cyan-500 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-5 max-w-6xl mx-auto">
+              {[...modules].sort((a, b) => a.order - b.order).map((m) => {
+                const lessons = [...(m.lessons || [])].sort((a, b) => a.order - b.order);
+                const freeInModule = lessons.filter((l) => previewIds.has(l.id)).length;
+                return (
+                  <div key={m.id} className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/30 transition-all">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-cyan-500">// modulo {m.order}</span>
+                          {freeInModule > 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30 text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">
+                              {freeInModule} gratis
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-display text-lg font-semibold leading-tight">{m.title}</h3>
+                        {m.description && (
+                          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{m.description}</p>
+                        )}
+                      </div>
+                      <div className="shrink-0 w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center font-display text-sm text-cyan-300">
+                        {m.order}
+                      </div>
+                    </div>
+                    <ul className="space-y-1.5">
+                      {lessons.map((l) => {
+                        const isFree = previewIds.has(l.id);
+                        return (
+                          <li
+                            key={l.id}
+                            className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm ${
+                              isFree
+                                ? 'border-cyan-500/30 bg-cyan-500/5'
+                                : 'border-slate-800/80 bg-slate-950/40 opacity-80'
+                            }`}
+                          >
+                            <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isFree ? 'bg-cyan-500/15' : 'bg-slate-800/80'}`}>
+                              {isFree ? (
+                                <PlayCircle className="w-4 h-4 text-cyan-400" />
+                              ) : (
+                                <Lock className="w-3.5 h-3.5 text-slate-500" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className={`truncate font-display ${isFree ? 'text-white' : 'text-slate-400'}`}>{l.title}</div>
+                              {l.duration && (
+                                <div className="text-[0.6rem] font-mono-lab tracking-widest uppercase text-slate-500">{l.duration}</div>
+                              )}
+                            </div>
+                            {isFree ? (
+                              <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">gratis</span>
+                            ) : (
+                              <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-slate-500">premium</span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* CTA call col fondatore */}
+          <div className="mt-12 max-w-3xl mx-auto rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-blue-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+            <Sparkles className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
+            <h3 className="font-display text-2xl md:text-3xl font-semibold tracking-tight mb-2">
+              Vuoi accedere a tutto il percorso?
+            </h3>
+            <p className="text-slate-400 max-w-xl mx-auto mb-6 text-sm md:text-base">
+              I moduli premium si sbloccano direttamente in call col fondatore. Nessuna pressione,
+              nessun checkout online: solo una chiacchierata per capire se l'academy fa per te.
+            </p>
+            <button
+              onClick={() => {
+                if (!unlocked) {
+                  document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' });
+                  return;
+                }
+                setStep('survey');
+                setTimeout(() => document.getElementById('call-box')?.scrollIntoView({ behavior: 'smooth' }), 80);
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all"
+            >
+              <Calendar className="w-4 h-4" />
+              {unlocked ? 'Prenota una call col fondatore' : 'Iscriviti e prenota una call'}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </section>
 
