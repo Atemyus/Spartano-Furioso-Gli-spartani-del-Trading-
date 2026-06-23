@@ -55,6 +55,7 @@ import CourseViewer from './pages/CourseViewer';
 import VimeoTest from './pages/VimeoTest';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Unsubscribe from './pages/Unsubscribe';
+import LandingCodex from './pages/LandingCodex';
 // Admin components
 import AdminLogin from './components/admin/Login';
 import AdminDashboard from './components/admin/Dashboard';
@@ -80,7 +81,8 @@ function AppContent() {
     location.pathname.startsWith('/admin/') ||
     location.pathname.startsWith('/trial-activation/') ||
     location.pathname.startsWith('/trial/') ||
-    location.pathname.startsWith('/tutorial/');
+    location.pathname.startsWith('/tutorial/') ||
+    location.pathname.startsWith('/lp/');
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -180,6 +182,8 @@ function AppContent() {
         <Route path="/partnership" element={<Partnership />} />
         <Route path="/supporto/affiliazione" element={<Affiliazione />} />
         <Route path="/affiliazione" element={<Affiliazione />} />
+        {/* Landing pages (sponsorizzate) */}
+        <Route path="/lp/codex-algo-academy" element={<LandingCodex />} />
         {/* Legali */}
         <Route path="/legal/privacy" element={<Privacy />} />
         <Route path="/legal/termini" element={<Termini />} />

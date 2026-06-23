@@ -1,0 +1,606 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  PlayCircle, Lock, CheckCircle, ArrowRight, Sparkles, TrendingUp, Shield,
+  Cpu, Users, Star, Calendar, ChevronRight, Loader2, Mail, User as UserIcon,
+  Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap,
+} from 'lucide-react';
+import HologramSphere from '../components/HologramSphere';
+import NeonCracks from '../components/NeonCracks';
+import CalendlyInline from '../components/CalendlyInline';
+import { API_ENDPOINTS, API_URL } from '../config/api';
+
+// ════════════════════════════════════════════════════════════════
+// CONFIG — modifica questi valori
+// ════════════════════════════════════════════════════════════════
+const COURSE_ID = 'spartan_academy';          // productId del corso Codex
+const FOUNDER_IMG = '/founder.png';           // metti la foto (PNG trasparente) in public/
+const FOUNDER_NAME = 'Il Fondatore';          // nome del fondatore
+const CALENDLY_URL = 'https://calendly.com/INSERISCI-IL-TUO-LINK/discovery-call';
+// Quanti video del modulo 2 mostrare (oltre a tutto il modulo 1)
+const MODULE2_PREVIEW = 3;
+// ════════════════════════════════════════════════════════════════
+
+interface Lesson {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  vimeoId?: string;
+  videoUrl?: string;
+  order: number;
+}
+interface Module {
+  id: string;
+  title: string;
+  description: string;
+  order: number;
+  lessons: Lesson[];
+}
+
+// Estrae l'ID numerico Vimeo da id puro o URL completo
+const vimeoNumeric = (raw?: string) => {
+  if (!raw) return '';
+  const m = String(raw).match(/(\d{6,})/);
+  return m ? m[1] : '';
+};
+
+const LandingCodex: React.FC = () => {
+  const [modules, setModules] = useState<Module[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [unlocked, setUnlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
+  const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
+  const [step, setStep] = useState<'videos' | 'survey' | 'calendly'>('videos');
+  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
+  const videosRef = useRef<HTMLDivElement>(null);
+
+  // ====== fetch course content ======
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch(API_ENDPOINTS.courseContent(COURSE_ID));
+        if (r.ok) {
+          const d = await r.json();
+          setModules(d.course?.modules || []);
+        }
+      } catch (e) {
+        console.error('LP: errore caricamento corso', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  // ====== lezioni visibili: tutto il modulo 1 + primi N del modulo 2 ======
+  const previewLessons = useMemo(() => {
+    const out: { module: Module; lesson: Lesson }[] = [];
+    const sorted = [...modules].sort((a, b) => a.order - b.order);
+    const m1 = sorted[0];
+    const m2 = sorted[1];
+    if (m1) m1.lessons.forEach((l) => out.push({ module: m1, lesson: l }));
+    if (m2) m2.lessons.slice(0, MODULE2_PREVIEW).forEach((l) => out.push({ module: m2, lesson: l }));
+    return out;
+  }, [modules]);
+
+  // Imposta il primo video come attivo quando sblocchi
+  useEffect(() => {
+    if (unlocked && !activeVideo && previewLessons.length) {
+      setActiveVideo(previewLessons[0].lesson.id);
+    }
+  }, [unlocked, previewLessons, activeVideo]);
+
+  const current = previewLessons.find((p) => p.lesson.id === activeVideo)?.lesson;
+
+  const scrollToVideos = () => videosRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  // ════════ RENDER ════════
+  return (
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      {/* ───── Mini top bar ───── */}
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-black/70 border-b border-slate-800/80">
+        <div className="container mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+          <Link to="/" className="flex items-center">
+            <img src="/logo.png" alt="Nexora Lab" className="h-9 w-auto" />
+          </Link>
+          <Link
+            to="/login"
+            className="text-sm font-display font-semibold text-slate-300 hover:text-cyan-400 transition-colors"
+          >
+            Accedi
+          </Link>
+        </div>
+      </header>
+
+      {/* ═══════════════════ HERO ═══════════════════ */}
+      <section className="relative overflow-hidden">
+        {/* sfondi animati algo */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-black to-black" />
+        <NeonCracks className="absolute inset-0" density="medium" intensity={0.7} interactive />
+        <HologramSphere
+          className="absolute top-0 right-0 w-[40rem] h-[40rem] opacity-60 hidden lg:block"
+          detail="high" variant="chart" interactive intensity={0.6}
+        />
+
+        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-12 pb-20">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            {/* testo */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 mb-6">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-cyan-300">
+                  // Codex Algo Academy
+                </span>
+              </div>
+              <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+                Diventa un <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">trader algoritmico</span> professionale
+              </h1>
+              <p className="mt-5 text-lg text-slate-300 max-w-xl leading-relaxed">
+                Impara a costruire, testare e automatizzare strategie di trading con un metodo
+                strutturato e data-driven. Guarda <strong className="text-white">gratis i primi moduli</strong> e
+                prenota una call con il nostro team.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button
+                  onClick={unlocked ? scrollToVideos : () => document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all"
+                >
+                  {unlocked ? <><PlayCircle className="w-5 h-5" /> Guarda i video</> : <>Inizia gratis ora <ArrowRight className="w-5 h-5" /></>}
+                </button>
+                <button onClick={() => document.getElementById('cosa-imparerai')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-slate-900/60 text-slate-200 ring-1 ring-slate-700 hover:ring-cyan-500/40 font-display font-semibold transition-all">
+                  Scopri il percorso
+                </button>
+              </div>
+              {/* mini stats */}
+              <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
+                {[
+                  { icon: BookOpen, v: '22', l: 'Moduli' },
+                  { icon: Users, v: '500+', l: 'Studenti' },
+                  { icon: Star, v: '4.9/5', l: 'Rating' },
+                ].map((s, i) => (
+                  <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-3 text-center">
+                    <s.icon className="w-4 h-4 text-cyan-500 mx-auto mb-1.5" />
+                    <div className="font-display text-xl font-semibold">{s.v}</div>
+                    <div className="font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase text-slate-500">{s.l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* fondatore con effetti algo */}
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative w-[20rem] h-[24rem] md:w-[24rem] md:h-[30rem]">
+                {/* alone radiale dietro */}
+                <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full" />
+                {/* anello/halo */}
+                <div className="absolute inset-4 rounded-[2rem] ring-1 ring-cyan-500/30" />
+                {/* griglia tech */}
+                <div
+                  className="absolute inset-0 opacity-[0.12] rounded-[2rem]"
+                  style={{
+                    backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)',
+                    backgroundSize: '28px 28px',
+                  }}
+                />
+                {/* foto fondatore */}
+                <img
+                  src={FOUNDER_IMG}
+                  alt={FOUNDER_NAME}
+                  className="relative z-10 w-full h-full object-cover object-top rounded-[2rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
+                  style={{ filter: 'drop-shadow(0 0 40px rgba(56,189,248,0.35)) contrast(1.05) saturate(1.1)' }}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0.15'; }}
+                />
+                {/* scanlines sopra la persona */}
+                <div
+                  className="absolute inset-0 z-20 rounded-[2rem] pointer-events-none mix-blend-overlay opacity-30"
+                  style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(56,189,248,0.25) 0px, rgba(56,189,248,0.25) 1px, transparent 1px, transparent 4px)' }}
+                />
+                {/* badge fondatore */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-xl bg-slate-900/80 backdrop-blur-md ring-1 ring-cyan-500/30 text-center">
+                  <div className="font-display font-semibold text-sm">{FOUNDER_NAME}</div>
+                  <div className="font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase text-cyan-400">// founder · codex</div>
+                </div>
+                {/* candele decorative */}
+                <HologramSphere className="absolute -bottom-10 -left-10 w-40 h-40 opacity-70" detail="low" variant="candles" intensity={0.7} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
+      <section id="cosa-imparerai" className="relative py-20 border-t border-slate-900">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex items-center gap-2 mb-4 justify-center">
+            <Cpu className="w-3.5 h-3.5 text-cyan-500" />
+            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// cosa imparerai</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-12">
+            Dal backtest alla strategia in produzione
+          </h2>
+          <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {[
+              { icon: Cpu, t: 'Generazione automatica', d: 'Crea strategie con il generatore genetico e filtri logici di mercato.' },
+              { icon: Shield, t: 'Risk management', d: 'Position sizing dinamico, Monte Carlo, gestione multi-strategy.' },
+              { icon: TrendingUp, t: 'Validazione robusta', d: 'Out-of-sample, walk-forward, stress test per strategie solide.' },
+              { icon: Zap, t: 'Automazione', d: 'Workflow completo in StrategyQuant e integrazione MT4/MT5.' },
+              { icon: Trophy, t: 'Mentalità quant', d: 'Disciplina operativa, approccio data-driven, gestione del drawdown.' },
+              { icon: Users, t: 'Community & support', d: 'Gruppo privato, sessioni live e mentorship sui tuoi progetti.' },
+            ].map((c, i) => (
+              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/40 transition-all">
+                <div className="w-9 h-9 rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-3">
+                  <c.icon className="w-4 h-4 text-cyan-500" />
+                </div>
+                <h3 className="font-display font-semibold">{c.t}</h3>
+                <p className="text-sm text-slate-400 mt-1">{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ VIDEO + GATING ═══════════════════ */}
+      <section ref={videosRef} className="relative py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex items-center gap-2 mb-4 justify-center">
+            <PlayCircle className="w-3.5 h-3.5 text-cyan-500" />
+            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// video gratuiti</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+            Guarda i primi moduli, gratis
+          </h2>
+          <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
+            Iscriviti al portale per sbloccare il <strong className="text-white">Modulo 1 completo</strong> e i{' '}
+            <strong className="text-white">primi {MODULE2_PREVIEW} video del Modulo 2</strong>. Dopo averli visti, prenota la tua call.
+          </p>
+
+          {loading ? (
+            <div className="flex justify-center py-16">
+              <Loader2 className="w-7 h-7 text-cyan-500 animate-spin" />
+            </div>
+          ) : !unlocked ? (
+            /* ───── stato BLOCCATO: teaser + form ───── */
+            <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+              {/* teaser video bloccati */}
+              <div className="space-y-3">
+                {previewLessons.slice(0, 5).map(({ lesson }, idx) => (
+                  <div key={lesson.id} className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                    <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
+                      {idx === 0 ? <PlayCircle className="w-5 h-5 text-cyan-500" /> : <Lock className="w-4 h-4 text-slate-500" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-display font-medium text-sm truncate">{lesson.title}</div>
+                      <div className="text-xs text-slate-500">{lesson.duration || 'video'}</div>
+                    </div>
+                    {idx === 0 && <span className="font-mono-lab text-[0.55rem] tracking-widest uppercase text-emerald-400">anteprima</span>}
+                  </div>
+                ))}
+                <p className="text-xs text-slate-500 text-center pt-2">
+                  + tutti gli altri video del Modulo 1 e 2 dopo l'iscrizione
+                </p>
+              </div>
+
+              {/* form iscrizione inline */}
+              <div id="register-box">
+                <RegisterInline onSuccess={() => { setUnlocked(true); setTimeout(scrollToVideos, 300); }} />
+              </div>
+            </div>
+          ) : (
+            /* ───── stato SBLOCCATO: player + playlist ───── */
+            <div className="max-w-6xl mx-auto">
+              <div className="grid lg:grid-cols-[1fr_22rem] gap-6">
+                {/* player */}
+                <div>
+                  <div className="aspect-video rounded-xl overflow-hidden bg-slate-950 ring-1 ring-slate-800">
+                    {current && vimeoNumeric(current.vimeoId) ? (
+                      <iframe
+                        key={current.id}
+                        src={`https://player.vimeo.com/video/${vimeoNumeric(current.vimeoId)}`}
+                        className="w-full h-full" style={{ border: 0 }}
+                        allow="autoplay; fullscreen; picture-in-picture" allowFullScreen
+                        title={current.title}
+                      />
+                    ) : current && current.videoUrl ? (
+                      <video controls className="w-full h-full bg-black">
+                        <source src={`${API_URL}${current.videoUrl}`} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">
+                        Video non disponibile
+                      </div>
+                    )}
+                  </div>
+                  {current && (
+                    <div className="mt-4">
+                      <h3 className="font-display text-xl font-semibold">{current.title}</h3>
+                      <p className="text-sm text-slate-400 mt-1">{current.description}</p>
+                    </div>
+                  )}
+                  {/* CTA call dopo i video */}
+                  <div className="mt-6 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <div className="font-display font-semibold">Pronto al passo successivo?</div>
+                      <p className="text-sm text-slate-400">Prenota una call gratuita con il nostro team.</p>
+                    </div>
+                    <button
+                      onClick={() => { setStep('survey'); document.getElementById('call-box')?.scrollIntoView({ behavior: 'smooth' }); }}
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold whitespace-nowrap hover:shadow-md hover:shadow-cyan-500/30 transition-all"
+                    >
+                      <Calendar className="w-4 h-4" /> Prenota una call
+                    </button>
+                  </div>
+                </div>
+
+                {/* playlist */}
+                <div className="space-y-2 lg:max-h-[34rem] lg:overflow-y-auto pr-1">
+                  {previewLessons.map(({ module, lesson }, idx) => {
+                    const active = lesson.id === activeVideo;
+                    return (
+                      <button
+                        key={lesson.id}
+                        onClick={() => setActiveVideo(lesson.id)}
+                        className={`w-full text-left flex items-center gap-3 rounded-lg border p-3 transition-all ${
+                          active ? 'border-cyan-500/50 bg-cyan-500/10' : 'border-slate-800 bg-slate-900/40 hover:border-cyan-500/30'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-cyan-500/20' : 'bg-slate-800'}`}>
+                          <PlayCircle className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-500'}`} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className={`text-sm font-display font-medium truncate ${active ? 'text-cyan-300' : 'text-white'}`}>{lesson.title}</div>
+                          <div className="text-[0.65rem] font-mono-lab tracking-widest uppercase text-slate-500">M{module.order} · {lesson.duration || '—'}</div>
+                        </div>
+                        {idx === 0 && <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">start</span>}
+                      </button>
+                    );
+                  })}
+                  <Link to={`/course/${COURSE_ID}`} className="block text-center text-xs text-cyan-500 hover:text-cyan-400 font-display pt-2">
+                    Vedi il corso completo →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════ CALL: SURVEY → CALENDLY ═══════════════════ */}
+      {unlocked && (
+        <section id="call-box" className="relative py-20 border-t border-slate-900">
+          <div className="container mx-auto px-4 md:px-8 max-w-3xl">
+            <div className="flex items-center gap-2 mb-4 justify-center">
+              <Calendar className="w-3.5 h-3.5 text-cyan-500" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// prenota la tua call</span>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {step === 'videos' && (
+                <motion.div key="cta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
+                  <h2 className="font-display text-3xl font-semibold tracking-tight mb-3">Hai visto i video? Parliamone.</h2>
+                  <p className="text-slate-400 mb-6">Rispondi a poche domande e scegli un orario per la call gratuita.</p>
+                  <button onClick={() => setStep('survey')} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all">
+                    <Calendar className="w-4 h-4" /> Prenota una call
+                  </button>
+                </motion.div>
+              )}
+
+              {step === 'survey' && (
+                <motion.div key="survey" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
+                  <Survey
+                    answers={surveyAnswers}
+                    setAnswers={setSurveyAnswers}
+                    onComplete={() => setStep('calendly')}
+                  />
+                </motion.div>
+              )}
+
+              {step === 'calendly' && (
+                <motion.div key="calendly" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                  <h2 className="font-display text-2xl font-semibold tracking-tight mb-2 text-center">Scegli data e ora</h2>
+                  <p className="text-slate-400 text-center mb-6 text-sm">Riceverai via email la conferma con il link Google Meet.</p>
+                  <div className="rounded-xl border border-slate-800 overflow-hidden bg-slate-950">
+                    <CalendlyInline
+                      url={CALENDLY_URL}
+                      prefill={(() => {
+                        try { const u = JSON.parse(localStorage.getItem('user') || '{}'); return { name: u.name, email: u.email }; } catch { return {}; }
+                      })()}
+                      answers={Object.values(surveyAnswers)}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </section>
+      )}
+
+      {/* ───── footer minimal ───── */}
+      <footer className="border-t border-slate-900 py-8">
+        <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
+          <img src="/logo.png" alt="Nexora Lab" className="h-7 w-auto opacity-80" />
+          <p className="text-xs text-slate-500">© {new Date().getFullYear()} Nexora Lab · Codex Algo Academy</p>
+          <div className="flex gap-4 text-xs text-slate-500">
+            <Link to="/legal/privacy" className="hover:text-cyan-400">Privacy</Link>
+            <Link to="/legal/termini" className="hover:text-cyan-400">Termini</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+// ════════════════════ FORM ISCRIZIONE INLINE ════════════════════
+const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
+  const [showPw, setShowPw] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [done, setDone] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!form.firstName || !form.email || form.password.length < 8) {
+      setError('Compila tutti i campi (password almeno 8 caratteri).');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(API_ENDPOINTS.register, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          password: form.password,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        // prova login immediato per settare il token (se l'account è già utilizzabile)
+        try {
+          const lr = await fetch(API_ENDPOINTS.login, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: form.email, password: form.password }),
+          });
+          const ld = await lr.json().catch(() => ({}));
+          if (lr.ok && ld.token) {
+            localStorage.setItem('token', ld.token);
+            localStorage.setItem('user', JSON.stringify(ld.user || { name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
+          } else {
+            // login bloccato (es. verifica email): salviamo comunque i dati base per il prefill calendly
+            localStorage.setItem('user', JSON.stringify({ name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
+          }
+        } catch {
+          localStorage.setItem('user', JSON.stringify({ name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
+        }
+        setDone(true);
+        setTimeout(onSuccess, 800);
+      } else {
+        const msg = (data.error || data.message || '').toString();
+        if (msg.toLowerCase().includes('email') && (msg.toLowerCase().includes('esiste') || msg.toLowerCase().includes('already') || msg.toLowerCase().includes('duplicat'))) {
+          setError('Questa email è già registrata. Accedi per continuare.');
+        } else {
+          setError(msg || 'Errore durante l\'iscrizione.');
+        }
+      }
+    } catch {
+      setError('Errore di connessione. Riprova.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-center">
+        <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+        <h3 className="font-display text-xl font-semibold">Iscrizione completata!</h3>
+        <p className="text-sm text-slate-400 mt-1">Sto sbloccando i video…</p>
+      </div>
+    );
+  }
+
+  const input = 'w-full pl-10 pr-3 py-2.5 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20';
+
+  return (
+    <div className="rounded-2xl border border-cyan-500/30 bg-slate-900/60 p-6 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+      <div className="flex items-center gap-2 mb-1">
+        <Lock className="w-3.5 h-3.5 text-cyan-500" />
+        <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// sblocca i video</span>
+      </div>
+      <h3 className="font-display text-xl font-semibold mb-1">Crea il tuo account gratuito</h3>
+      <p className="text-sm text-slate-400 mb-5">Iscriviti e accedi subito ai video. Nessuna carta richiesta.</p>
+
+      <form onSubmit={submit} className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="relative">
+            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input className={input} placeholder="Nome" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
+          </div>
+          <div className="relative">
+            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input className={input} placeholder="Cognome" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
+          </div>
+        </div>
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <input type="email" className={input} placeholder="La tua email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        </div>
+        <div className="relative">
+          <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <input type={showPw ? 'text' : 'password'} className={input + ' pr-10'} placeholder="Password (min 8 caratteri)" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-cyan-500">
+            {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+        </div>
+        {error && <p className="text-sm text-rose-400">{error}</p>}
+        <button type="submit" disabled={loading} className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all disabled:opacity-60">
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Iscrizione…</> : <>Sblocca i video gratis <ArrowRight className="w-4 h-4" /></>}
+        </button>
+        <p className="text-center text-xs text-slate-500">
+          Hai già un account? <Link to="/login" className="text-cyan-500 hover:text-cyan-400">Accedi</Link>
+        </p>
+      </form>
+    </div>
+  );
+};
+
+// ════════════════════ SONDAGGIO ════════════════════
+const QUESTIONS = [
+  { id: 'esperienza', q: 'Qual è il tuo livello nel trading?', opts: ['Principiante', 'Intermedio', 'Avanzato'] },
+  { id: 'algo', q: 'Hai già provato il trading algoritmico?', opts: ['No, mai', 'Un po\'', 'Sì, attivamente'] },
+  { id: 'capitale', q: 'Capitale che vuoi dedicare?', opts: ['< 5k', '5k–20k', '20k–50k', '> 50k'] },
+  { id: 'tempo', q: 'Quanto tempo puoi dedicarci?', opts: ['< 1h/giorno', '1–3h/giorno', '3h+/giorno'] },
+  { id: 'obiettivo', q: 'Cosa vuoi ottenere dalla call?', opts: ['Capire il metodo', 'Valutare l\'academy', 'Supporto su un progetto'] },
+];
+
+const Survey: React.FC<{ answers: Record<string, string>; setAnswers: (a: Record<string, string>) => void; onComplete: () => void }> = ({ answers, setAnswers, onComplete }) => {
+  const [idx, setIdx] = useState(0);
+  const q = QUESTIONS[idx];
+  const total = QUESTIONS.length;
+  const choose = (opt: string) => {
+    const next = { ...answers, [q.id]: opt };
+    setAnswers(next);
+    if (idx < total - 1) setTimeout(() => setIdx(idx + 1), 200);
+    else setTimeout(onComplete, 300);
+  };
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+      <div className="flex items-center justify-between mb-5">
+        <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-slate-500">Domanda {idx + 1} / {total}</span>
+        <div className="flex gap-1">
+          {QUESTIONS.map((_, i) => (
+            <span key={i} className={`h-1.5 w-6 rounded-full ${i <= idx ? 'bg-cyan-500' : 'bg-slate-700'}`} />
+          ))}
+        </div>
+      </div>
+      <h3 className="font-display text-2xl font-semibold tracking-tight mb-6">{q.q}</h3>
+      <div className="grid gap-2.5">
+        {q.opts.map((opt) => {
+          const sel = answers[q.id] === opt;
+          return (
+            <button
+              key={opt}
+              onClick={() => choose(opt)}
+              className={`w-full text-left px-4 py-3.5 rounded-lg border font-display font-medium transition-all flex items-center justify-between ${
+                sel ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-200' : 'border-slate-800 bg-slate-950/40 text-slate-200 hover:border-cyan-500/40'
+              }`}
+            >
+              {opt}
+              <ChevronRight className={`w-4 h-4 ${sel ? 'text-cyan-400' : 'text-slate-600'}`} />
+            </button>
+          );
+        })}
+      </div>
+      {idx > 0 && (
+        <button onClick={() => setIdx(idx - 1)} className="mt-5 text-xs text-slate-500 hover:text-slate-300 font-display">← Indietro</button>
+      )}
+    </div>
+  );
+};
+
+export default LandingCodex;
