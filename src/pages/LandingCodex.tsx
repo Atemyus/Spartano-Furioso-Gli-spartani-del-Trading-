@@ -17,7 +17,7 @@ import { API_ENDPOINTS, API_URL } from '../config/api';
 const COURSE_ID = 'spartan_academy';          // productId del corso Codex
 const FOUNDER_IMG = '/founder.png';           // metti la foto (PNG trasparente) in public/
 const FOUNDER_NAME = 'Il Fondatore';          // nome del fondatore
-const CALENDLY_URL = 'https://calendly.com/INSERISCI-IL-TUO-LINK/discovery-call';
+const CALENDLY_URL = 'https://calendly.com/nexoralab/discovery-call';
 // Quanti video del modulo 2 mostrare (oltre a tutto il modulo 1)
 const MODULE2_PREVIEW = 3;
 // ════════════════════════════════════════════════════════════════
@@ -53,6 +53,7 @@ const LandingCodex: React.FC = () => {
   const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
   const [step, setStep] = useState<'videos' | 'survey' | 'calendly'>('videos');
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
+  const [founderImgOk, setFounderImgOk] = useState(true);
   const videosRef = useRef<HTMLDivElement>(null);
 
   // ====== fetch course content ======
@@ -184,13 +185,24 @@ const LandingCodex: React.FC = () => {
                   }}
                 />
                 {/* foto fondatore */}
-                <img
-                  src={FOUNDER_IMG}
-                  alt={FOUNDER_NAME}
-                  className="relative z-10 w-full h-full object-cover object-top rounded-[2rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
-                  style={{ filter: 'drop-shadow(0 0 40px rgba(56,189,248,0.35)) contrast(1.05) saturate(1.1)' }}
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0.15'; }}
-                />
+                {founderImgOk ? (
+                  <img
+                    src={FOUNDER_IMG}
+                    alt={FOUNDER_NAME}
+                    className="relative z-10 w-full h-full object-cover object-top rounded-[2rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
+                    style={{ filter: 'drop-shadow(0 0 40px rgba(56,189,248,0.35)) contrast(1.05) saturate(1.1)' }}
+                    onError={() => setFounderImgOk(false)}
+                  />
+                ) : (
+                  <div className="relative z-10 w-full h-full rounded-[2rem] flex flex-col items-center justify-center bg-gradient-to-b from-slate-900/80 to-slate-950/90 ring-1 ring-slate-800 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]">
+                    <div className="w-24 h-24 rounded-full bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-4">
+                      <UserIcon className="w-12 h-12 text-cyan-500/60" />
+                    </div>
+                    <p className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-slate-500 text-center px-6">
+                      carica la foto in<br/>public/founder.png
+                    </p>
+                  </div>
+                )}
                 {/* scanlines sopra la persona */}
                 <div
                   className="absolute inset-0 z-20 rounded-[2rem] pointer-events-none mix-blend-overlay opacity-30"
