@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  PlayCircle, Lock, CheckCircle, ArrowRight, Sparkles, TrendingUp, Shield,
-  Cpu, Users, Star, Calendar, ChevronRight, Loader2, Mail, User as UserIcon,
+  PlayCircle, Lock, ArrowRight, Sparkles, TrendingUp, Shield,
+  Cpu, Users, Star, Calendar, Loader2, Mail, User as UserIcon,
   Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap,
 } from 'lucide-react';
 import HologramSphere from '../components/HologramSphere';
@@ -51,12 +50,14 @@ const vimeoNumeric = (raw?: string) => {
 const LandingCodex: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
-  const [unlocked, setUnlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
+  // Sblocco = ha completato la verifica email (il token JWT viene rilasciato solo
+  // dopo /verify-email, mai prima — quindi la sua presenza è il segnale affidabile).
+  const [unlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
   const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
-  const [step, setStep] = useState<'videos' | 'survey' | 'calendly'>('videos');
-  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
+  const [showCalendly, setShowCalendly] = useState<boolean>(false);
   const [founderImgOk, setFounderImgOk] = useState(true);
   const videosRef = useRef<HTMLDivElement>(null);
+  const calendlyRef = useRef<HTMLDivElement>(null);
 
   // ====== fetch course content ======
   useEffect(() => {
@@ -106,17 +107,16 @@ const LandingCodex: React.FC = () => {
 
   const current = previewLessons.find((p) => p.lesson.id === activeVideo)?.lesson;
 
-  // Set di lezioni accessibili gratuitamente (tutti i video del trial)
-  const previewIds = useMemo(() => new Set(previewLessons.map((p) => p.lesson.id)), [previewLessons]);
-
-  // Totali per il riepilogo del programma completo
-  const totals = useMemo(() => {
-    let totLessons = 0;
-    modules.forEach((m) => { totLessons += (m.lessons || []).length; });
-    return { modules: modules.length, lessons: totLessons, free: previewLessons.length };
-  }, [modules, previewLessons]);
-
   const scrollToVideos = () => videosRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  const openCalendly = () => {
+    if (!unlocked) {
+      document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    setShowCalendly(true);
+    setTimeout(() => calendlyRef.current?.scrollIntoView({ behavior: 'smooth' }), 80);
+  };
 
   // ════════ RENDER ════════
   return (
@@ -318,7 +318,7 @@ const LandingCodex: React.FC = () => {
 
               {/* form iscrizione inline */}
               <div id="register-box">
-                <RegisterInline onSuccess={() => { setUnlocked(true); setTimeout(scrollToVideos, 300); }} />
+                <RegisterInline />
               </div>
             </div>
           ) : (
@@ -356,10 +356,10 @@ const LandingCodex: React.FC = () => {
                   <div className="mt-6 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                       <div className="font-display font-semibold">Pronto al passo successivo?</div>
-                      <p className="text-sm text-slate-400">Prenota una call gratuita con il nostro team.</p>
+                      <p className="text-sm text-slate-400">Prenota una call gratuita col fondatore.</p>
                     </div>
                     <button
-                      onClick={() => { setStep('survey'); document.getElementById('call-box')?.scrollIntoView({ behavior: 'smooth' }); }}
+                      onClick={openCalendly}
                       className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold whitespace-nowrap hover:shadow-md hover:shadow-cyan-500/30 transition-all"
                     >
                       <Calendar className="w-4 h-4" /> Prenota una call
@@ -390,13 +390,6 @@ const LandingCodex: React.FC = () => {
                       </button>
                     );
                   })}
-                  <Link to={`/course/${COURSE_ID}`} className="hidden">Legacy</Link>
-                  <button
-                    onClick={() => document.getElementById('programma-completo')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="block w-full text-center text-xs text-cyan-500 hover:text-cyan-400 font-display pt-2"
-                  >
-                    Vedi il programma completo →
-                  </button>
                 </div>
               </div>
             </div>
@@ -404,126 +397,22 @@ const LandingCodex: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══════════════════ PROGRAMMA COMPLETO ═══════════════════ */}
-      <section id="programma-completo" className="relative py-20 border-t border-slate-900">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-4 justify-center">
-            <BookOpen className="w-3.5 h-3.5 text-cyan-500" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// programma completo</span>
-          </div>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
-            Il percorso completo di Codex Algo Academy
-          </h2>
-          <p className="text-center text-slate-400 max-w-2xl mx-auto mb-10">
-            Tutti i moduli e le lezioni che ti porteranno da zero a trader algoritmico professionale.
-            I contenuti contrassegnati come <span className="text-cyan-400">gratis</span> sono i video del trial,
-            già accessibili dopo l'iscrizione; gli altri si sbloccano accordandoti direttamente con il fondatore in call.
-          </p>
-
-          {/* riepilogo numeri */}
-          <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto mb-10">
-            {[
-              { v: String(totals.modules), l: 'Moduli' },
-              { v: String(totals.lessons), l: 'Lezioni' },
-              { v: String(totals.free), l: 'Gratis' },
-            ].map((s, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-3 text-center">
-                <div className="font-display text-2xl font-semibold text-cyan-300">{s.v}</div>
-                <div className="font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase text-slate-500 mt-1">{s.l}</div>
-              </div>
-            ))}
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center py-10">
-              <Loader2 className="w-6 h-6 text-cyan-500 animate-spin" />
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-5 max-w-6xl mx-auto">
-              {[...modules].sort((a, b) => a.order - b.order).map((m) => {
-                const lessons = [...(m.lessons || [])].sort((a, b) => a.order - b.order);
-                const freeInModule = lessons.filter((l) => previewIds.has(l.id)).length;
-                return (
-                  <div key={m.id} className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/30 transition-all">
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-cyan-500">// modulo {m.order}</span>
-                          {freeInModule > 0 && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30 text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">
-                              {freeInModule} gratis
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-display text-lg font-semibold leading-tight">{m.title}</h3>
-                        {m.description && (
-                          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{m.description}</p>
-                        )}
-                      </div>
-                      <div className="shrink-0 w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center font-display text-sm text-cyan-300">
-                        {m.order}
-                      </div>
-                    </div>
-                    <ul className="space-y-1.5">
-                      {lessons.map((l) => {
-                        const isFree = previewIds.has(l.id);
-                        return (
-                          <li
-                            key={l.id}
-                            className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm ${
-                              isFree
-                                ? 'border-cyan-500/30 bg-cyan-500/5'
-                                : 'border-slate-800/80 bg-slate-950/40 opacity-80'
-                            }`}
-                          >
-                            <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isFree ? 'bg-cyan-500/15' : 'bg-slate-800/80'}`}>
-                              {isFree ? (
-                                <PlayCircle className="w-4 h-4 text-cyan-400" />
-                              ) : (
-                                <Lock className="w-3.5 h-3.5 text-slate-500" />
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className={`truncate font-display ${isFree ? 'text-white' : 'text-slate-400'}`}>{l.title}</div>
-                              {l.duration && (
-                                <div className="text-[0.6rem] font-mono-lab tracking-widest uppercase text-slate-500">{l.duration}</div>
-                              )}
-                            </div>
-                            {isFree ? (
-                              <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">gratis</span>
-                            ) : (
-                              <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-slate-500">premium</span>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* CTA call col fondatore */}
-          <div className="mt-12 max-w-3xl mx-auto rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-blue-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden">
+      {/* ═══════════════════ CTA + CALENDLY INLINE ═══════════════════ */}
+      <section id="call-box" ref={calendlyRef} className="relative py-20 border-t border-slate-900">
+        <div className="container mx-auto px-4 md:px-8 max-w-3xl">
+          {/* Riquadro CTA "Prenota una call col fondatore" */}
+          <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-blue-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
             <Sparkles className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
             <h3 className="font-display text-2xl md:text-3xl font-semibold tracking-tight mb-2">
               Vuoi accedere a tutto il percorso?
             </h3>
             <p className="text-slate-400 max-w-xl mx-auto mb-6 text-sm md:text-base">
-              I moduli premium si sbloccano direttamente in call col fondatore. Nessuna pressione,
-              nessun checkout online: solo una chiacchierata per capire se l'academy fa per te.
+              Niente checkout online: il corso completo si sblocca direttamente in call col fondatore.
+              Una chiacchierata gratuita per capire se l'academy fa per te.
             </p>
             <button
-              onClick={() => {
-                if (!unlocked) {
-                  document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' });
-                  return;
-                }
-                setStep('survey');
-                setTimeout(() => document.getElementById('call-box')?.scrollIntoView({ behavior: 'smooth' }), 80);
-              }}
+              onClick={openCalendly}
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all"
             >
               <Calendar className="w-4 h-4" />
@@ -531,58 +420,25 @@ const LandingCodex: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Widget Calendly inline (appare dopo click) */}
+          {unlocked && showCalendly && (
+            <div className="mt-8">
+              <p className="text-slate-400 text-center mb-4 text-sm">
+                Scegli data e ora — riceverai la conferma via email con il link Google Meet.
+              </p>
+              <div className="rounded-xl border border-slate-800 overflow-hidden bg-slate-950">
+                <CalendlyInline
+                  url={CALENDLY_URL}
+                  prefill={(() => {
+                    try { const u = JSON.parse(localStorage.getItem('user') || '{}'); return { name: u.name, email: u.email }; } catch { return {}; }
+                  })()}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </section>
-
-      {/* ═══════════════════ CALL: SURVEY → CALENDLY ═══════════════════ */}
-      {unlocked && (
-        <section id="call-box" className="relative py-20 border-t border-slate-900">
-          <div className="container mx-auto px-4 md:px-8 max-w-3xl">
-            <div className="flex items-center gap-2 mb-4 justify-center">
-              <Calendar className="w-3.5 h-3.5 text-cyan-500" />
-              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// prenota la tua call</span>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {step === 'videos' && (
-                <motion.div key="cta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
-                  <h2 className="font-display text-3xl font-semibold tracking-tight mb-3">Hai visto i video? Parliamone.</h2>
-                  <p className="text-slate-400 mb-6">Rispondi a poche domande e scegli un orario per la call gratuita.</p>
-                  <button onClick={() => setStep('survey')} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all">
-                    <Calendar className="w-4 h-4" /> Prenota una call
-                  </button>
-                </motion.div>
-              )}
-
-              {step === 'survey' && (
-                <motion.div key="survey" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
-                  <Survey
-                    answers={surveyAnswers}
-                    setAnswers={setSurveyAnswers}
-                    onComplete={() => setStep('calendly')}
-                  />
-                </motion.div>
-              )}
-
-              {step === 'calendly' && (
-                <motion.div key="calendly" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                  <h2 className="font-display text-2xl font-semibold tracking-tight mb-2 text-center">Scegli data e ora</h2>
-                  <p className="text-slate-400 text-center mb-6 text-sm">Riceverai via email la conferma con il link Google Meet.</p>
-                  <div className="rounded-xl border border-slate-800 overflow-hidden bg-slate-950">
-                    <CalendlyInline
-                      url={CALENDLY_URL}
-                      prefill={(() => {
-                        try { const u = JSON.parse(localStorage.getItem('user') || '{}'); return { name: u.name, email: u.email }; } catch { return {}; }
-                      })()}
-                      answers={Object.values(surveyAnswers)}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </section>
-      )}
 
       {/* ───── footer minimal ───── */}
       <footer className="border-t border-slate-900 py-8">
@@ -600,12 +456,17 @@ const LandingCodex: React.FC = () => {
 };
 
 // ════════════════════ FORM ISCRIZIONE INLINE ════════════════════
-const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+// L'utente viene creato nel DB e riceve la mail di verifica.
+// Lo sblocco dei video avviene SOLO dopo aver cliccato il link di verifica
+// (che riporta su questa LP grazie al postVerifyRedirect salvato qui sotto).
+const RegisterInline: React.FC = () => {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [done, setDone] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -627,26 +488,14 @@ const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        // prova login immediato per settare il token (se l'account è già utilizzabile)
-        try {
-          const lr = await fetch(API_ENDPOINTS.login, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: form.email, password: form.password }),
-          });
-          const ld = await lr.json().catch(() => ({}));
-          if (lr.ok && ld.token) {
-            localStorage.setItem('token', ld.token);
-            localStorage.setItem('user', JSON.stringify(ld.user || { name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
-          } else {
-            // login bloccato (es. verifica email): salviamo comunque i dati base per il prefill calendly
-            localStorage.setItem('user', JSON.stringify({ name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
-          }
-        } catch {
-          localStorage.setItem('user', JSON.stringify({ name: `${form.firstName} ${form.lastName}`.trim(), email: form.email }));
-        }
-        setDone(true);
-        setTimeout(onSuccess, 800);
+        // Salva email/nome per il prefill Calendly post-verifica
+        localStorage.setItem('user', JSON.stringify({
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+        }));
+        // Dopo la verifica email, la pagina /verify-email rimanda qui
+        localStorage.setItem('postVerifyRedirect', '/lp/codex-algo-academy');
+        setSubmittedEmail(form.email);
       } else {
         const msg = (data.error || data.message || '').toString();
         if (msg.toLowerCase().includes('email') && (msg.toLowerCase().includes('esiste') || msg.toLowerCase().includes('already') || msg.toLowerCase().includes('duplicat'))) {
@@ -662,12 +511,56 @@ const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     }
   };
 
-  if (done) {
+  const resend = async () => {
+    if (!submittedEmail) return;
+    setResending(true);
+    setResendMsg('');
+    try {
+      const r = await fetch(API_ENDPOINTS.resendVerification, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: submittedEmail }),
+      });
+      const d = await r.json().catch(() => ({}));
+      setResendMsg(r.ok ? 'Email reinviata! Controlla la casella.' : (d.error || 'Impossibile reinviare ora.'));
+    } catch {
+      setResendMsg('Errore di connessione.');
+    } finally {
+      setResending(false);
+    }
+  };
+
+  // ── stato "controlla la mail" dopo iscrizione riuscita ──
+  if (submittedEmail) {
     return (
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-center">
-        <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-        <h3 className="font-display text-xl font-semibold">Iscrizione completata!</h3>
-        <p className="text-sm text-slate-400 mt-1">Sto sbloccando i video…</p>
+      <div className="rounded-2xl border border-cyan-500/30 bg-slate-900/60 p-8 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+        <div className="w-16 h-16 rounded-full bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mx-auto mb-4">
+          <Mail className="w-7 h-7 text-cyan-400" />
+        </div>
+        <h3 className="font-display text-2xl font-semibold mb-2">Controlla la tua email</h3>
+        <p className="text-slate-300 text-sm mb-1">
+          Ti abbiamo inviato un link di verifica a:
+        </p>
+        <p className="text-cyan-300 font-mono-lab text-sm mb-5 break-all">{submittedEmail}</p>
+        <p className="text-slate-400 text-sm mb-6">
+          Clicca sul link nella mail per <strong className="text-white">attivare il tuo account</strong> e
+          sbloccare automaticamente i video del trial. Verrai riportato qui in pochi secondi.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <button
+            onClick={resend}
+            disabled={resending}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-800/60 ring-1 ring-slate-700 hover:ring-cyan-500/40 text-sm font-display font-medium text-slate-200 transition-all disabled:opacity-60"
+          >
+            {resending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+            Non l'ho ricevuta — reinvia
+          </button>
+        </div>
+        {resendMsg && <p className="mt-3 text-xs text-slate-400">{resendMsg}</p>}
+        <p className="mt-5 text-[0.7rem] text-slate-500">
+          Controlla anche la cartella <strong className="text-slate-300">spam</strong> / promozioni.
+        </p>
       </div>
     );
   }
@@ -682,7 +575,9 @@ const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// sblocca i video</span>
       </div>
       <h3 className="font-display text-xl font-semibold mb-1">Crea il tuo account gratuito</h3>
-      <p className="text-sm text-slate-400 mb-5">Iscriviti e accedi subito ai video. Nessuna carta richiesta.</p>
+      <p className="text-sm text-slate-400 mb-5">
+        Iscriviti, verifica l'email e i video del trial si sbloccano in automatico. Nessuna carta richiesta.
+      </p>
 
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
@@ -708,66 +603,12 @@ const RegisterInline: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         </div>
         {error && <p className="text-sm text-rose-400">{error}</p>}
         <button type="submit" disabled={loading} className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all disabled:opacity-60">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Iscrizione…</> : <>Sblocca i video gratis <ArrowRight className="w-4 h-4" /></>}
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Iscrizione…</> : <>Iscriviti e ricevi la mail <ArrowRight className="w-4 h-4" /></>}
         </button>
         <p className="text-center text-xs text-slate-500">
           Hai già un account? <Link to="/login" className="text-cyan-500 hover:text-cyan-400">Accedi</Link>
         </p>
       </form>
-    </div>
-  );
-};
-
-// ════════════════════ SONDAGGIO ════════════════════
-const QUESTIONS = [
-  { id: 'esperienza', q: 'Qual è il tuo livello nel trading?', opts: ['Principiante', 'Intermedio', 'Avanzato'] },
-  { id: 'algo', q: 'Hai già provato il trading algoritmico?', opts: ['No, mai', 'Un po\'', 'Sì, attivamente'] },
-  { id: 'capitale', q: 'Capitale che vuoi dedicare?', opts: ['< 5k', '5k–20k', '20k–50k', '> 50k'] },
-  { id: 'tempo', q: 'Quanto tempo puoi dedicarci?', opts: ['< 1h/giorno', '1–3h/giorno', '3h+/giorno'] },
-  { id: 'obiettivo', q: 'Cosa vuoi ottenere dalla call?', opts: ['Capire il metodo', 'Valutare l\'academy', 'Supporto su un progetto'] },
-];
-
-const Survey: React.FC<{ answers: Record<string, string>; setAnswers: (a: Record<string, string>) => void; onComplete: () => void }> = ({ answers, setAnswers, onComplete }) => {
-  const [idx, setIdx] = useState(0);
-  const q = QUESTIONS[idx];
-  const total = QUESTIONS.length;
-  const choose = (opt: string) => {
-    const next = { ...answers, [q.id]: opt };
-    setAnswers(next);
-    if (idx < total - 1) setTimeout(() => setIdx(idx + 1), 200);
-    else setTimeout(onComplete, 300);
-  };
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
-      <div className="flex items-center justify-between mb-5">
-        <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-slate-500">Domanda {idx + 1} / {total}</span>
-        <div className="flex gap-1">
-          {QUESTIONS.map((_, i) => (
-            <span key={i} className={`h-1.5 w-6 rounded-full ${i <= idx ? 'bg-cyan-500' : 'bg-slate-700'}`} />
-          ))}
-        </div>
-      </div>
-      <h3 className="font-display text-2xl font-semibold tracking-tight mb-6">{q.q}</h3>
-      <div className="grid gap-2.5">
-        {q.opts.map((opt) => {
-          const sel = answers[q.id] === opt;
-          return (
-            <button
-              key={opt}
-              onClick={() => choose(opt)}
-              className={`w-full text-left px-4 py-3.5 rounded-lg border font-display font-medium transition-all flex items-center justify-between ${
-                sel ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-200' : 'border-slate-800 bg-slate-950/40 text-slate-200 hover:border-cyan-500/40'
-              }`}
-            >
-              {opt}
-              <ChevronRight className={`w-4 h-4 ${sel ? 'text-cyan-400' : 'text-slate-600'}`} />
-            </button>
-          );
-        })}
-      </div>
-      {idx > 0 && (
-        <button onClick={() => setIdx(idx - 1)} className="mt-5 text-xs text-slate-500 hover:text-slate-300 font-display">← Indietro</button>
-      )}
     </div>
   );
 };

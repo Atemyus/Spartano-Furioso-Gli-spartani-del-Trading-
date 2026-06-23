@@ -10,6 +10,7 @@ const VerifyEmail: React.FC = () => {
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
+  const [redirectTo, setRedirectTo] = useState<string>('/dashboard');
   
   const token = searchParams.get('token');
 
@@ -41,14 +42,20 @@ const VerifyEmail: React.FC = () => {
       if (response.ok) {
         setStatus('success');
         setMessage(data.message || 'Email verificata con successo!');
-        
+
         // Save token and redirect after 3 seconds
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          
+
+          // Se l'utente si era iscritto da una landing page, torniamo lì
+          // (così i video si sbloccano direttamente sulla LP).
+          const redirect = localStorage.getItem('postVerifyRedirect') || '/dashboard';
+          localStorage.removeItem('postVerifyRedirect');
+          setRedirectTo(redirect);
+
           setTimeout(() => {
-            navigate('/dashboard');
+            navigate(redirect);
           }, 3000);
         }
       } else {
@@ -133,13 +140,15 @@ const VerifyEmail: React.FC = () => {
           {status === 'success' && (
             <div className="text-center">
               <p className="text-sm text-gray-400 mb-4">
-                Sarai reindirizzato alla dashboard tra pochi secondi...
+                {redirectTo === '/dashboard'
+                  ? 'Sarai reindirizzato alla dashboard tra pochi secondi...'
+                  : 'Ti riportiamo alla pagina di iscrizione: i video si sbloccheranno automaticamente.'}
               </p>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(redirectTo)}
                 className="text-purple-400 hover:text-purple-300 underline"
               >
-                Vai alla dashboard ora
+                {redirectTo === '/dashboard' ? 'Vai alla dashboard ora' : 'Vai ora'}
               </button>
             </div>
           )}
