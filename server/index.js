@@ -36,6 +36,7 @@ if (process.env.DATABASE_URL.startsWith('file:')) {
 // Routes imports
 import stripeRoutes from './routes/stripe.js';
 import stripeWebhookRoutes from './routes/stripe-webhook.js';
+import calendlyWebhookRoutes from './routes/calendly-webhook.js';
 import adminRoutes from './routes/admin-mongodb.js';
 import authRoutes from './routes/auth.js';
 import productsRoutes from './routes/products.js';
@@ -145,6 +146,7 @@ app.use(cors({
 
 // Webhook routes (must be before body parser for raw body)
 app.use('/webhook/stripe', stripeWebhookRoutes);
+app.use('/webhook/calendly', calendlyWebhookRoutes);
 
 // Body parser for other routes
 app.use(express.json());
