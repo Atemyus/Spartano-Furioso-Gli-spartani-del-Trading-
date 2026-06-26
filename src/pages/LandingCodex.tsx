@@ -324,7 +324,7 @@ const LandingCodex: React.FC = () => {
             /* ───── stato BLOCCATO: teaser + form ───── */
             <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start">
               {/* teaser video bloccati */}
-              <div className="space-y-3 order-2 lg:order-1">
+              <div className="space-y-3 order-2 lg:order-1 min-w-0">
                 {previewLessons.slice(0, 5).map(({ lesson }, idx) => (
                   <div key={lesson.id} className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
                     <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
@@ -343,7 +343,7 @@ const LandingCodex: React.FC = () => {
               </div>
 
               {/* form iscrizione inline — primo su mobile per massimizzare conversione */}
-              <div id="register-box" className="order-1 lg:order-2 scroll-mt-24">
+              <div id="register-box" className="order-1 lg:order-2 scroll-mt-24 min-w-0">
                 <RegisterInline />
               </div>
             </div>
@@ -607,11 +607,11 @@ const RegisterInline: React.FC = () => {
 
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <div className="relative">
+          <div className="relative min-w-0">
             <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input className={input} placeholder="Nome" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
           </div>
-          <div className="relative">
+          <div className="relative min-w-0">
             <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input className={input} placeholder="Cognome" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
           </div>
