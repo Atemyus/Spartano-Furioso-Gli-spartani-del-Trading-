@@ -21,8 +21,10 @@ import {
   Play,
   DollarSign,
   Loader2,
-  Monitor
+  Monitor,
+  Calendar
 } from 'lucide-react';
+import { PRICE_ON_REQUEST, CALL_BOOKING_URL } from '../config/sales';
 
 interface PricingPlan {
   price: number;
@@ -468,6 +470,24 @@ const ProductModal: React.FC<ProductModalProps> = ({
               )}
 
               {/* Pricing Plans */}
+              {PRICE_ON_REQUEST ? (
+                <div className="border border-cyan-500/30 rounded-xl p-6 md:p-8 bg-gradient-to-br from-blue-950/40 to-slate-900/40 text-center">
+                  <Calendar className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+                  <h3 className="text-xl md:text-2xl font-display font-semibold text-white mb-2">Prezzo riservato</h3>
+                  <p className="text-slate-400 text-sm md:text-base mb-6 max-w-md mx-auto">
+                    L'accesso è su misura: niente checkout online. Prenota una call gratuita
+                    col fondatore per scoprire la soluzione e il piano adatti a te.
+                  </p>
+                  <a
+                    href={CALL_BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:scale-105 transition-all"
+                  >
+                    <Calendar className="w-4 h-4" /> Prenota una call
+                  </a>
+                </div>
+              ) : (
               <div>
                 <h3 className={`text-2xl font-display font-semibold mb-6 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -475,7 +495,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <DollarSign className="w-6 h-6 text-cyan-500" />
                   {product.category === 'Formazione' ? 'OPZIONI DI ACQUISTO' : 'PIANI DI ABBONAMENTO'}
                 </h3>
-                
+
                 <div className="space-y-4">
                   {/* Monthly Plan - Hide for Formazione */}
                   {product.category !== 'Formazione' && (product.pricingPlans?.monthly || (typeof product.price === 'object' && product.price.monthly)) && (
@@ -673,6 +693,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   )}
                 </div>
               </div>
+              )}
 
               {/* Platforms Section - Show for Bot, Indicators and Services */}
               {(product.category === 'bot' || product.category === 'indicator' || product.category === 'service' || 

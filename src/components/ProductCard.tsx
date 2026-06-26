@@ -6,6 +6,7 @@ import {
   ArrowRight, Lock, Unlock, Package,
 } from 'lucide-react';
 import { useTrialStatus } from '../hooks/useTrialStatus';
+import { PRICE_ON_REQUEST, CALL_BOOKING_URL, PRICE_ON_REQUEST_LABEL, CALL_CTA_LABEL } from '../config/sales';
 
 interface Product {
   id: string;
@@ -209,21 +210,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => 
       <div className={`mt-auto pt-4 border-t ${dark ? 'border-slate-800' : 'border-slate-200'}`}>
         <div className="flex items-end justify-between gap-3 mb-4">
           <div className="min-w-0">
-            <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim} mb-0.5`}>
-              {product.type === 'subscription' ? 'A partire da' : 'Prezzo'}
-            </div>
-            <div className="flex items-baseline gap-2 flex-wrap">
-              {pricing.original > 0 && pricing.original > pricing.current && (
-                <span className={`text-sm line-through ${textDim}`}>{formatPrice(pricing.original)}</span>
-              )}
-              <span className={`font-display text-2xl font-semibold ${textMain}`}>{formatPrice(pricing.current)}</span>
-              {product.type === 'subscription' && <span className={`text-xs ${textDim}`}>/mese</span>}
-              {product.type === 'one-time' && isFormazione && <span className={`text-xs ${textDim}`}>una tantum</span>}
-            </div>
-            {pricing.discount > 0 && (
-              <span className={`inline-block mt-1.5 px-1.5 py-0.5 rounded text-[0.55rem] font-mono-lab tracking-widest uppercase font-bold ${
-                dark ? 'bg-emerald-500/10 text-emerald-300' : 'bg-emerald-50 text-emerald-700'
-              }`}>−{pricing.discount}%</span>
+            {PRICE_ON_REQUEST ? (
+              <>
+                <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim} mb-0.5`}>
+                  Accesso
+                </div>
+                <div className={`font-display text-xl font-semibold ${textMain}`}>{PRICE_ON_REQUEST_LABEL}</div>
+                <div className={`text-xs ${textDim} mt-0.5`}>su misura, in call</div>
+              </>
+            ) : (
+              <>
+                <div className={`font-mono-lab text-[0.55rem] tracking-widest uppercase ${textDim} mb-0.5`}>
+                  {product.type === 'subscription' ? 'A partire da' : 'Prezzo'}
+                </div>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  {pricing.original > 0 && pricing.original > pricing.current && (
+                    <span className={`text-sm line-through ${textDim}`}>{formatPrice(pricing.original)}</span>
+                  )}
+                  <span className={`font-display text-2xl font-semibold ${textMain}`}>{formatPrice(pricing.current)}</span>
+                  {product.type === 'subscription' && <span className={`text-xs ${textDim}`}>/mese</span>}
+                  {product.type === 'one-time' && isFormazione && <span className={`text-xs ${textDim}`}>una tantum</span>}
+                </div>
+                {pricing.discount > 0 && (
+                  <span className={`inline-block mt-1.5 px-1.5 py-0.5 rounded text-[0.55rem] font-mono-lab tracking-widest uppercase font-bold ${
+                    dark ? 'bg-emerald-500/10 text-emerald-300' : 'bg-emerald-50 text-emerald-700'
+                  }`}>−{pricing.discount}%</span>
+                )}
+              </>
             )}
           </div>
           {product.trial?.available && (
@@ -259,20 +272,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => 
             >
               <Clock className="w-3.5 h-3.5" /> Coming soon
             </button>
+          ) : product.trial?.available && product.status === 'active' && !trialStatus.hasExpired ? (
+            <button
+              onClick={handleStartTrial}
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${primaryBtn}`}
+            >
+              <Unlock className="w-3.5 h-3.5" /> Prova gratis
+            </button>
+          ) : PRICE_ON_REQUEST && !isFormazione && product.status === 'active' ? (
+            <a
+              href={CALL_BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${primaryBtn}`}
+            >
+              <Clock className="w-3.5 h-3.5" /> {CALL_CTA_LABEL}
+            </a>
           ) : product.trial?.available && product.status === 'active' ? (
             <button
               onClick={handleStartTrial}
               className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-display font-semibold transition-all ${primaryBtn}`}
             >
-              {trialStatus.hasExpired ? (
-                <>
-                  <Lock className="w-3.5 h-3.5" /> Acquista ora
-                </>
-              ) : (
-                <>
-                  <Unlock className="w-3.5 h-3.5" /> Prova gratis
-                </>
-              )}
+              <Lock className="w-3.5 h-3.5" /> Acquista ora
             </button>
           ) : product.status === 'active' ? (
             <button
