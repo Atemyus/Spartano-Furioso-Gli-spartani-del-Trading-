@@ -51,8 +51,9 @@ const LandingCodex: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   // Sblocco = ha completato la verifica email (il token JWT viene rilasciato solo
-  // dopo /verify-email, mai prima — quindi la sua presenza è il segnale affidabile).
-  const [unlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
+  // dopo /verify-email, mai prima). Il token viene poi RI-VERIFICato col backend
+  // all'apertura, così un account cancellato/non valido non vede più i video.
+  const [unlocked, setUnlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
   const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
   const [showCalendly, setShowCalendly] = useState<boolean>(false);
   const [founderImgOk, setFounderImgOk] = useState(true);
@@ -72,6 +73,31 @@ const LandingCodex: React.FC = () => {
         console.error('LP: errore caricamento corso', e);
       } finally {
         setLoading(false);
+      }
+    })();
+  }, []);
+
+  // ====== verifica validità token col backend ======
+  // Se l'account è stato cancellato (o il token è scaduto/non valido), il token
+  // resterebbe comunque nel localStorage del dispositivo e mostrerebbe i video.
+  // Qui lo controlliamo col server: se non è valido, puliamo e rimostriamo il form.
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    (async () => {
+      try {
+        const r = await fetch(`${API_URL}/api/auth/verify-token`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!r.ok) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUnlocked(false);
+          setShowCalendly(false);
+          setActiveVideo('');
+        }
+      } catch {
+        /* offline / rete: non tocchiamo lo stato attuale */
       }
     })();
   }, []);
