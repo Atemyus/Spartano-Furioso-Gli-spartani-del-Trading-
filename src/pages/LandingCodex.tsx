@@ -278,14 +278,14 @@ const LandingCodex: React.FC = () => {
       {/* ═══════════════════ VIDEO + GATING ═══════════════════ */}
       <section ref={videosRef} className="relative py-12 lg:py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-4 justify-center">
+          <div className="flex items-center gap-2 mb-3 justify-center">
             <PlayCircle className="w-3.5 h-3.5 text-cyan-500" />
             <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// video gratuiti</span>
           </div>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2 lg:mb-3">
             Guarda i primi moduli, gratis
           </h2>
-          <p className="text-center text-slate-400 max-w-2xl mx-auto mb-12">
+          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6 lg:mb-12">
             Iscriviti al portale per sbloccare <strong className="text-white">tutti i video gratuiti del trial</strong>.
             Dopo averli visti, prenota la tua call.
           </p>
@@ -296,9 +296,9 @@ const LandingCodex: React.FC = () => {
             </div>
           ) : !unlocked ? (
             /* ───── stato BLOCCATO: teaser + form ───── */
-            <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start">
               {/* teaser video bloccati */}
-              <div className="space-y-3">
+              <div className="space-y-3 order-2 lg:order-1">
                 {previewLessons.slice(0, 5).map(({ lesson }, idx) => (
                   <div key={lesson.id} className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
                     <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
@@ -316,14 +316,14 @@ const LandingCodex: React.FC = () => {
                 </p>
               </div>
 
-              {/* form iscrizione inline */}
-              <div id="register-box">
+              {/* form iscrizione inline — primo su mobile per massimizzare conversione */}
+              <div id="register-box" className="order-1 lg:order-2 scroll-mt-24">
                 <RegisterInline />
               </div>
             </div>
           ) : (
             /* ───── stato SBLOCCATO: player + playlist ───── */
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto scroll-mt-24">
               <div className="grid lg:grid-cols-[1fr_22rem] gap-6">
                 {/* player */}
                 <div>
@@ -368,7 +368,7 @@ const LandingCodex: React.FC = () => {
                 </div>
 
                 {/* playlist */}
-                <div className="space-y-2 lg:max-h-[34rem] lg:overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[18rem] overflow-y-auto lg:max-h-[34rem] pr-1">
                   {previewLessons.map(({ module, lesson }, idx) => {
                     const active = lesson.id === activeVideo;
                     return (
