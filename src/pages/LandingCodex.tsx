@@ -146,38 +146,38 @@ const LandingCodex: React.FC = () => {
           detail="high" variant="chart" interactive intensity={0.6}
         />
 
-        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-12 pb-20">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
+        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-6 pb-12 lg:pt-12 lg:pb-20">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             {/* testo */}
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 mb-6">
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 mb-4 lg:mb-6">
                 <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-cyan-300">
                   // Codex Algo Academy
                 </span>
               </div>
-              <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.08] lg:leading-[1.05]">
                 Diventa un <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">trader algoritmico</span> professionale
               </h1>
-              <p className="mt-5 text-lg text-slate-300 max-w-xl leading-relaxed">
+              <p className="mt-4 lg:mt-5 text-base md:text-lg text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Impara a costruire, testare e automatizzare strategie di trading con un metodo
                 strutturato e data-driven. Guarda <strong className="text-white">gratis i primi moduli</strong> e
                 prenota una call con il nostro team.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row flex-wrap gap-3 justify-center lg:justify-start">
                 <button
                   onClick={unlocked ? scrollToVideos : () => document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all"
+                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all"
                 >
                   {unlocked ? <><PlayCircle className="w-5 h-5" /> Guarda i video</> : <>Inizia gratis ora <ArrowRight className="w-5 h-5" /></>}
                 </button>
                 <button onClick={() => document.getElementById('cosa-imparerai')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-slate-900/60 text-slate-200 ring-1 ring-slate-700 hover:ring-cyan-500/40 font-display font-semibold transition-all">
+                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-slate-900/60 text-slate-200 ring-1 ring-slate-700 hover:ring-cyan-500/40 font-display font-semibold transition-all">
                   Scopri il percorso
                 </button>
               </div>
               {/* mini stats */}
-              <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
+              <div className="mt-8 lg:mt-10 grid grid-cols-3 gap-3 sm:gap-4 max-w-md mx-auto lg:mx-0">
                 {[
                   { icon: BookOpen, v: '22', l: 'Moduli' },
                   { icon: Users, v: '500+', l: 'Studenti' },
@@ -194,7 +194,7 @@ const LandingCodex: React.FC = () => {
 
             {/* fondatore con effetti algo */}
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-[20rem] h-[24rem] md:w-[24rem] md:h-[30rem]">
+              <div className="relative w-[13rem] h-[16rem] sm:w-[18rem] sm:h-[22rem] md:w-[24rem] md:h-[30rem]">
                 {/* alone radiale dietro */}
                 <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full" />
                 {/* anello/halo */}
@@ -245,7 +245,7 @@ const LandingCodex: React.FC = () => {
       </section>
 
       {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
-      <section id="cosa-imparerai" className="relative py-20 border-t border-slate-900">
+      <section id="cosa-imparerai" className="relative py-12 lg:py-20 border-t border-slate-900">
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex items-center gap-2 mb-4 justify-center">
             <Cpu className="w-3.5 h-3.5 text-cyan-500" />
@@ -276,7 +276,7 @@ const LandingCodex: React.FC = () => {
       </section>
 
       {/* ═══════════════════ VIDEO + GATING ═══════════════════ */}
-      <section ref={videosRef} className="relative py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black">
+      <section ref={videosRef} className="relative py-12 lg:py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex items-center gap-2 mb-4 justify-center">
             <PlayCircle className="w-3.5 h-3.5 text-cyan-500" />
@@ -398,7 +398,7 @@ const LandingCodex: React.FC = () => {
       </section>
 
       {/* ═══════════════════ CTA + CALENDLY INLINE ═══════════════════ */}
-      <section id="call-box" ref={calendlyRef} className="relative py-20 border-t border-slate-900">
+      <section id="call-box" ref={calendlyRef} className="relative py-12 lg:py-20 border-t border-slate-900">
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
           {/* Riquadro CTA "Prenota una call col fondatore" */}
           <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-blue-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden">
