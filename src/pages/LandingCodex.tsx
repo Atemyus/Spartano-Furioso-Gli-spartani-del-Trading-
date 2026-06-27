@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   PlayCircle, Lock, ArrowRight, Sparkles, TrendingUp, Shield,
   Cpu, Users, Star, Calendar, Loader2, Mail, User as UserIcon,
-  Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap,
+  Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap, ChevronRight,
 } from 'lucide-react';
 import HologramSphere from '../components/HologramSphere';
 import NeonCracks from '../components/NeonCracks';
@@ -59,7 +59,9 @@ const LandingCodex: React.FC = () => {
   // all'apertura, così un account cancellato/non valido non vede più i video.
   const [unlocked, setUnlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
   const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
-  const [showCalendly, setShowCalendly] = useState<boolean>(false);
+  // Flusso call: idle → survey (5 domande) → calendly
+  const [callStep, setCallStep] = useState<'idle' | 'survey' | 'calendly'>('idle');
+  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
   const [founderImgOk, setFounderImgOk] = useState(true);
   const videosRef = useRef<HTMLDivElement>(null);
   const calendlyRef = useRef<HTMLDivElement>(null);
@@ -97,7 +99,7 @@ const LandingCodex: React.FC = () => {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setUnlocked(false);
-          setShowCalendly(false);
+          setCallStep('idle');
           setActiveVideo('');
         }
       } catch {
@@ -147,7 +149,8 @@ const LandingCodex: React.FC = () => {
       document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    setShowCalendly(true);
+    // Avvia il sondaggio; al termine si passa al calendario.
+    if (callStep === 'idle') setCallStep('survey');
     setTimeout(() => calendlyRef.current?.scrollIntoView({ behavior: 'smooth' }), 80);
   };
 
@@ -386,19 +389,6 @@ const LandingCodex: React.FC = () => {
                       <p className="text-sm text-slate-400 mt-1">{current.description}</p>
                     </div>
                   )}
-                  {/* CTA call dopo i video */}
-                  <div className="mt-6 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
-                      <div className="font-display font-semibold">Pronto al passo successivo?</div>
-                      <p className="text-sm text-slate-400">Prenota una call gratuita col fondatore.</p>
-                    </div>
-                    <button
-                      onClick={openCalendly}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold whitespace-nowrap hover:shadow-md hover:shadow-cyan-500/30 transition-all"
-                    >
-                      <Calendar className="w-4 h-4" /> Prenota una call
-                    </button>
-                  </div>
                 </div>
 
                 {/* playlist */}
@@ -455,8 +445,22 @@ const LandingCodex: React.FC = () => {
             </button>
           </div>
 
-          {/* Widget Calendly inline (appare dopo click) */}
-          {videosVisible && showCalendly && (
+          {/* Sondaggio (5 domande) prima del calendario */}
+          {videosVisible && callStep === 'survey' && (
+            <div className="mt-8">
+              <Survey
+                answers={surveyAnswers}
+                setAnswers={setSurveyAnswers}
+                onComplete={() => {
+                  setCallStep('calendly');
+                  setTimeout(() => calendlyRef.current?.scrollIntoView({ behavior: 'smooth' }), 80);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Widget Calendly inline (dopo il sondaggio) */}
+          {videosVisible && callStep === 'calendly' && (
             <div className="mt-8">
               <p className="text-slate-400 text-center mb-4 text-sm">
                 Scegli data e ora — riceverai la conferma via email con il link Google Meet.
@@ -467,6 +471,7 @@ const LandingCodex: React.FC = () => {
                   prefill={(() => {
                     try { const u = JSON.parse(localStorage.getItem('user') || '{}'); return { name: u.name, email: u.email }; } catch { return {}; }
                   })()}
+                  answers={Object.values(surveyAnswers)}
                 />
               </div>
             </div>
@@ -643,6 +648,60 @@ const RegisterInline: React.FC = () => {
           Hai già un account? <Link to="/login" className="text-cyan-500 hover:text-cyan-400">Accedi</Link>
         </p>
       </form>
+    </div>
+  );
+};
+
+// ════════════════════ SONDAGGIO ════════════════════
+const QUESTIONS = [
+  { id: 'esperienza', q: 'Qual è il tuo livello nel trading?', opts: ['Principiante', 'Intermedio', 'Avanzato'] },
+  { id: 'algo', q: 'Hai già provato il trading algoritmico?', opts: ['No, mai', 'Un po\'', 'Sì, attivamente'] },
+  { id: 'capitale', q: 'Capitale che vuoi dedicare?', opts: ['< 5k', '5k–20k', '20k–50k', '> 50k'] },
+  { id: 'tempo', q: 'Quanto tempo puoi dedicarci?', opts: ['< 1h/giorno', '1–3h/giorno', '3h+/giorno'] },
+  { id: 'obiettivo', q: 'Cosa vuoi ottenere dalla call?', opts: ['Capire il metodo', 'Valutare l\'academy', 'Supporto su un progetto'] },
+];
+
+const Survey: React.FC<{ answers: Record<string, string>; setAnswers: (a: Record<string, string>) => void; onComplete: () => void }> = ({ answers, setAnswers, onComplete }) => {
+  const [idx, setIdx] = useState(0);
+  const q = QUESTIONS[idx];
+  const total = QUESTIONS.length;
+  const choose = (opt: string) => {
+    const next = { ...answers, [q.id]: opt };
+    setAnswers(next);
+    if (idx < total - 1) setTimeout(() => setIdx(idx + 1), 200);
+    else setTimeout(onComplete, 300);
+  };
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+      <div className="flex items-center justify-between mb-5">
+        <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-slate-500">Domanda {idx + 1} / {total}</span>
+        <div className="flex gap-1">
+          {QUESTIONS.map((_, i) => (
+            <span key={i} className={`h-1.5 w-6 rounded-full ${i <= idx ? 'bg-cyan-500' : 'bg-slate-700'}`} />
+          ))}
+        </div>
+      </div>
+      <h3 className="font-display text-xl sm:text-2xl font-semibold tracking-tight mb-6">{q.q}</h3>
+      <div className="grid gap-2.5">
+        {q.opts.map((opt) => {
+          const sel = answers[q.id] === opt;
+          return (
+            <button
+              key={opt}
+              onClick={() => choose(opt)}
+              className={`w-full text-left px-4 py-3.5 rounded-lg border font-display font-medium transition-all flex items-center justify-between ${
+                sel ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-200' : 'border-slate-800 bg-slate-950/40 text-slate-200 hover:border-cyan-500/40'
+              }`}
+            >
+              {opt}
+              <ChevronRight className={`w-4 h-4 ${sel ? 'text-cyan-400' : 'text-slate-600'}`} />
+            </button>
+          );
+        })}
+      </div>
+      {idx > 0 && (
+        <button onClick={() => setIdx(idx - 1)} className="mt-5 text-xs text-slate-500 hover:text-slate-300 font-display">← Indietro</button>
+      )}
     </div>
   );
 };
