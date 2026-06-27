@@ -19,6 +19,10 @@ const FOUNDER_NAME = 'Il Fondatore';          // nome del fondatore
 const CALENDLY_URL = 'https://calendly.com/nexoralab/discovery-call';
 // Quanti video del modulo 2 mostrare (oltre a tutto il modulo 1)
 const MODULE2_PREVIEW = 3;
+// Se false: i video sono visibili SUBITO senza iscrizione (meno attrito,
+// la conversione è la prenotazione della call). Se true: serve iscriversi
+// e verificare la mail per sbloccare i video.
+const REQUIRE_REGISTRATION = false;
 // ════════════════════════════════════════════════════════════════
 
 interface Lesson {
@@ -124,19 +128,22 @@ const LandingCodex: React.FC = () => {
     return out;
   }, [modules]);
 
-  // Imposta il primo video come attivo quando sblocchi
+  // Imposta il primo video come attivo quando i video diventano visibili
   useEffect(() => {
-    if (unlocked && !activeVideo && previewLessons.length) {
+    if ((!REQUIRE_REGISTRATION || unlocked) && !activeVideo && previewLessons.length) {
       setActiveVideo(previewLessons[0].lesson.id);
     }
   }, [unlocked, previewLessons, activeVideo]);
 
   const current = previewLessons.find((p) => p.lesson.id === activeVideo)?.lesson;
 
+  // Video visibili se: iscrizione non richiesta, oppure utente sbloccato.
+  const videosVisible = !REQUIRE_REGISTRATION || unlocked;
+
   const scrollToVideos = () => videosRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   const openCalendly = () => {
-    if (!unlocked) {
+    if (REQUIRE_REGISTRATION && !unlocked) {
       document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
@@ -192,10 +199,10 @@ const LandingCodex: React.FC = () => {
               </p>
               <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row flex-wrap gap-3 justify-center lg:justify-start">
                 <button
-                  onClick={unlocked ? scrollToVideos : () => document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={videosVisible ? scrollToVideos : () => document.getElementById('register-box')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold shadow-lg shadow-blue-500/30 hover:shadow-cyan-500/40 transition-all"
                 >
-                  {unlocked ? <><PlayCircle className="w-5 h-5" /> Guarda i video</> : <>Inizia gratis ora <ArrowRight className="w-5 h-5" /></>}
+                  {videosVisible ? <><PlayCircle className="w-5 h-5" /> Guarda i video gratis</> : <>Inizia gratis ora <ArrowRight className="w-5 h-5" /></>}
                 </button>
                 <button onClick={() => document.getElementById('cosa-imparerai')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-slate-900/60 text-slate-200 ring-1 ring-slate-700 hover:ring-cyan-500/40 font-display font-semibold transition-all">
@@ -312,15 +319,16 @@ const LandingCodex: React.FC = () => {
             Guarda i primi moduli, gratis
           </h2>
           <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6 lg:mb-12">
-            Iscriviti al portale per sbloccare <strong className="text-white">tutti i video gratuiti del trial</strong>.
-            Dopo averli visti, prenota la tua call.
+            {videosVisible
+              ? <>Guarda <strong className="text-white">gratis</strong> i video, poi prenota una call col fondatore.</>
+              : <>Iscriviti al portale per sbloccare <strong className="text-white">tutti i video gratuiti del trial</strong>. Dopo averli visti, prenota la tua call.</>}
           </p>
 
           {loading ? (
             <div className="flex justify-center py-16">
               <Loader2 className="w-7 h-7 text-cyan-500 animate-spin" />
             </div>
-          ) : !unlocked ? (
+          ) : !videosVisible ? (
             /* ───── stato BLOCCATO: teaser + form ───── */
             <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start">
               {/* teaser video bloccati */}
@@ -442,13 +450,13 @@ const LandingCodex: React.FC = () => {
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all"
             >
               <Calendar className="w-4 h-4" />
-              {unlocked ? 'Prenota una call col fondatore' : 'Iscriviti e prenota una call'}
+              {videosVisible ? 'Prenota una call col fondatore' : 'Iscriviti e prenota una call'}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* Widget Calendly inline (appare dopo click) */}
-          {unlocked && showCalendly && (
+          {videosVisible && showCalendly && (
             <div className="mt-8">
               <p className="text-slate-400 text-center mb-4 text-sm">
                 Scegli data e ora — riceverai la conferma via email con il link Google Meet.
