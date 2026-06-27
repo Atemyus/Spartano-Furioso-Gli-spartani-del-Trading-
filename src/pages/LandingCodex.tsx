@@ -8,6 +8,7 @@ import {
 import HologramSphere from '../components/HologramSphere';
 import NeonCracks from '../components/NeonCracks';
 import CalendlyInline from '../components/CalendlyInline';
+import FormattedDescription from '../components/FormattedDescription';
 import { API_ENDPOINTS, API_URL } from '../config/api';
 
 // ════════════════════════════════════════════════════════════════
@@ -385,8 +386,12 @@ const LandingCodex: React.FC = () => {
                   </div>
                   {current && (
                     <div className="mt-4">
-                      <h3 className="font-display text-xl font-semibold">{current.title}</h3>
-                      <p className="text-sm text-slate-400 mt-1">{current.description}</p>
+                      <h3 className="font-display text-lg sm:text-xl font-semibold mb-3">{current.title}</h3>
+                      {current.description && (
+                        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5">
+                          <FormattedDescription text={current.description} dark={true} />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
