@@ -6,6 +6,74 @@ import { authenticateAdmin } from '../middleware/auth.js';
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// ════════════════════════════════════════════════════════════════
+// LEAD da landing page (NON richiede registrazione/account)
+// Cattura l'email di un visitatore freddo, la salva tra gli iscritti
+// (visibile in admin) e invia la guida PDF bonus via email.
+// ════════════════════════════════════════════════════════════════
+const GUIDE_URL = 'https://nexoralab.solutions/guida-codex-algo-academy.pdf';
+
+router.post('/lead', async (req, res) => {
+  try {
+    const { email, source = 'lp-codex' } = req.body;
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Email non valida' });
+    }
+    const lower = email.toLowerCase().trim();
+
+    // Salva/aggiorna il lead nella tabella newsletter (no account richiesto)
+    const existing = await prisma.newsletter.findUnique({ where: { email: lower } });
+    if (existing) {
+      await prisma.newsletter.update({
+        where: { email: lower },
+        data: { status: 'ACTIVE', subscribedAt: new Date(), unsubscribedAt: null, source },
+      });
+    } else {
+      await prisma.newsletter.create({
+        data: { email: lower, source, status: 'ACTIVE' },
+      });
+    }
+
+    // Invia la guida PDF bonus (link di download). Non blocca la risposta.
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0f172a">
+        <div style="background:linear-gradient(135deg,#0b1220,#05070d);padding:28px 24px;border-radius:14px 14px 0 0;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">NEXORA<span style="color:#22d3ee">LAB</span></div>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 14px 14px;padding:26px 24px">
+          <h2 style="margin:0 0 10px;font-size:20px">🎁 Ecco la tua guida gratuita!</h2>
+          <p style="font-size:14px;line-height:1.6;color:#475569">
+            Grazie per esserti iscritto. Come promesso, ecco la guida
+            <strong>"Trading Algoritmico: la panoramica per partire"</strong>.
+          </p>
+          <p style="text-align:center;margin:24px 0">
+            <a href="${GUIDE_URL}" style="display:inline-block;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;font-weight:700;font-size:14px;padding:13px 30px;border-radius:10px;text-decoration:none">
+              📄 Scarica la guida (PDF)
+            </a>
+          </p>
+          <p style="font-size:14px;line-height:1.6;color:#475569">
+            Intanto su Nexora Lab hai già sbloccato <strong>tutti i video gratuiti</strong>.
+            Quando vuoi, prenota una <strong>call gratuita col fondatore</strong> per capire se l'academy fa per te.
+          </p>
+          <p style="text-align:center;margin:20px 0 0">
+            <a href="https://nexoralab.solutions/lp/codex-algo-academy" style="color:#06b6d4;font-weight:600;font-size:14px;text-decoration:none">
+              → Torna ai video e prenota la call
+            </a>
+          </p>
+        </div>
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:16px">© Nexora Lab · Codex Algo Academy</p>
+      </div>`;
+    sendRawEmail(lower, '🎁 La tua guida gratuita — Codex Algo Academy', html)
+      .then(() => console.log('📧 Guida inviata a:', lower))
+      .catch((e) => console.warn('⚠️ Invio guida fallito (email non configurata?):', e.message));
+
+    res.json({ success: true, message: 'Lead registrato. Guida in arrivo via email.' });
+  } catch (error) {
+    console.error('Errore lead LP:', error);
+    res.status(500).json({ error: 'Errore durante la registrazione del lead' });
+  }
+});
+
 // Iscriviti alla newsletter
 router.post('/subscribe', async (req, res) => {
   try {

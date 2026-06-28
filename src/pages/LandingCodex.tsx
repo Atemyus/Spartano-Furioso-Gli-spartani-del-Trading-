@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   PlayCircle, Lock, ArrowRight, Sparkles, TrendingUp, Shield,
   Cpu, Users, Star, Calendar, Loader2, Mail, User as UserIcon,
-  Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap, ChevronRight,
+  Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap, ChevronRight, CheckCircle,
 } from 'lucide-react';
 import HologramSphere from '../components/HologramSphere';
 import NeonCracks from '../components/NeonCracks';
@@ -60,12 +60,22 @@ const LandingCodex: React.FC = () => {
   // all'apertura, così un account cancellato/non valido non vede più i video.
   const [unlocked, setUnlocked] = useState<boolean>(() => !!localStorage.getItem('token'));
   const [activeVideo, setActiveVideo] = useState<string>(''); // lessonId in riproduzione
+  // Gate email: il 1° video è libero; lasciando l'email si sbloccano tutti gli altri.
+  // leadDone = ha già lasciato l'email (o è un utente con token).
+  const [leadDone, setLeadDone] = useState<boolean>(() => !!localStorage.getItem('lp_lead') || !!localStorage.getItem('token'));
   // Flusso call: idle → survey (5 domande) → calendly
   const [callStep, setCallStep] = useState<'idle' | 'survey' | 'calendly'>('idle');
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
   const [founderImgOk, setFounderImgOk] = useState(true);
+  const [guideSent, setGuideSent] = useState(false);
   const videosRef = useRef<HTMLDivElement>(null);
   const calendlyRef = useRef<HTMLDivElement>(null);
+  const leadRef = useRef<HTMLDivElement>(null);
+
+  const handleLeadDone = () => {
+    setLeadDone(true);
+    setGuideSent(true);
+  };
 
   // ====== fetch course content ======
   useEffect(() => {
@@ -362,6 +372,14 @@ const LandingCodex: React.FC = () => {
           ) : (
             /* ───── stato SBLOCCATO: player + playlist ───── */
             <div className="max-w-6xl mx-auto scroll-mt-24">
+              {guideSent && (
+                <div className="mb-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <p className="text-sm text-emerald-100">
+                    <strong>Tutti i video sbloccati!</strong> Ti abbiamo inviato la guida PDF gratuita via email (controlla anche lo spam).
+                  </p>
+                </div>
+              )}
               <div className="grid lg:grid-cols-[1fr_22rem] gap-6">
                 {/* player */}
                 <div>
@@ -394,28 +412,45 @@ const LandingCodex: React.FC = () => {
                       )}
                     </div>
                   )}
+
+                  {/* Gate email: 1° video libero, gli altri si sbloccano con l'email */}
+                  {!leadDone && (
+                    <div ref={leadRef} className="mt-6 scroll-mt-24">
+                      <LeadGate onDone={handleLeadDone} />
+                    </div>
+                  )}
                 </div>
 
                 {/* playlist */}
                 <div className="space-y-2 max-h-[18rem] overflow-y-auto lg:max-h-[34rem] pr-1">
                   {previewLessons.map(({ module, lesson }, idx) => {
                     const active = lesson.id === activeVideo;
+                    const locked = !leadDone && idx > 0; // 1° libero, gli altri richiedono email
                     return (
                       <button
                         key={lesson.id}
-                        onClick={() => setActiveVideo(lesson.id)}
+                        onClick={() => {
+                          if (locked) {
+                            leadRef.current?.scrollIntoView({ behavior: 'smooth' });
+                            return;
+                          }
+                          setActiveVideo(lesson.id);
+                        }}
                         className={`w-full text-left flex items-center gap-3 rounded-lg border p-3 transition-all ${
                           active ? 'border-cyan-500/50 bg-cyan-500/10' : 'border-slate-800 bg-slate-900/40 hover:border-cyan-500/30'
-                        }`}
+                        } ${locked ? 'opacity-70' : ''}`}
                       >
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-cyan-500/20' : 'bg-slate-800'}`}>
-                          <PlayCircle className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-500'}`} />
+                          {locked
+                            ? <Lock className="w-3.5 h-3.5 text-slate-500" />
+                            : <PlayCircle className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-500'}`} />}
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className={`text-sm font-display font-medium truncate ${active ? 'text-cyan-300' : 'text-white'}`}>{lesson.title}</div>
                           <div className="text-[0.65rem] font-mono-lab tracking-widest uppercase text-slate-500">M{module.order} · {lesson.duration || '—'}</div>
                         </div>
-                        {idx === 0 && <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">start</span>}
+                        {idx === 0 && <span className="text-[0.55rem] font-mono-lab uppercase tracking-widest text-emerald-400">gratis</span>}
+                        {locked && <Lock className="w-3.5 h-3.5 text-slate-600 shrink-0" />}
                       </button>
                     );
                   })}
@@ -653,6 +688,86 @@ const RegisterInline: React.FC = () => {
           Hai già un account? <Link to="/login" className="text-cyan-500 hover:text-cyan-400">Accedi</Link>
         </p>
       </form>
+    </div>
+  );
+};
+
+// ════════════════════ GATE EMAIL (lead magnet) ════════════════════
+// Cattura la sola email: sblocca tutti i video e fa inviare la guida PDF.
+// Salva il lead nel pannello admin (endpoint /api/newsletter/lead, no account).
+const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!email.includes('@') || email.length < 5) {
+      setError('Inserisci un\'email valida.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const r = await fetch(`${API_URL}/api/newsletter/lead`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), source: 'lp-codex' }),
+      });
+      if (r.ok) {
+        localStorage.setItem('lp_lead', email.trim());
+        // salva l'email per il prefill del Calendly
+        try {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          localStorage.setItem('user', JSON.stringify({ ...u, email: email.trim() }));
+        } catch { localStorage.setItem('user', JSON.stringify({ email: email.trim() })); }
+        onDone(email.trim());
+      } else {
+        const d = await r.json().catch(() => ({}));
+        setError(d.error || 'Qualcosa è andato storto. Riprova.');
+      }
+    } catch {
+      setError('Errore di connessione. Riprova.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-blue-950/50 to-slate-900/50 p-6 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent" />
+      <div className="flex items-center gap-2 mb-1">
+        <Lock className="w-3.5 h-3.5 text-cyan-400" />
+        <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-400">// sblocca tutti i video</span>
+      </div>
+      <h3 className="font-display text-xl font-semibold mb-1">Continua a guardare — è gratis</h3>
+      <p className="text-sm text-slate-400 mb-4">
+        Inserisci la tua email per <strong className="text-white">sbloccare tutti i video</strong> e ricevere
+        la <strong className="text-white">guida PDF gratuita</strong>. Niente password, niente carta.
+      </p>
+      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2.5">
+        <div className="relative flex-1 min-w-0">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="La tua email"
+            className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold whitespace-nowrap hover:shadow-md hover:shadow-cyan-500/30 transition-all disabled:opacity-60"
+        >
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sblocco…</> : <>Sblocca + guida gratis <ArrowRight className="w-4 h-4" /></>}
+        </button>
+      </form>
+      {error && <p className="text-sm text-rose-400 mt-2">{error}</p>}
+      <p className="text-[0.7rem] text-slate-500 mt-3">
+        Ti invieremo solo contenuti utili. Niente spam, cancellazione in un click.
+      </p>
     </div>
   );
 };
