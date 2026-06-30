@@ -402,6 +402,13 @@ const LandingCodex: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  {/* Gate email SUBITO sotto il video — 1° video libero, gli altri con l'email */}
+                  {!leadDone && (
+                    <div ref={leadRef} className="mt-4 scroll-mt-24">
+                      <LeadGate onDone={handleLeadDone} />
+                    </div>
+                  )}
+
                   {current && (
                     <div className="mt-4">
                       <h3 className="font-display text-lg sm:text-xl font-semibold mb-3">{current.title}</h3>
@@ -410,13 +417,6 @@ const LandingCodex: React.FC = () => {
                           <FormattedDescription text={current.description} dark={true} />
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* Gate email: 1° video libero, gli altri si sbloccano con l'email */}
-                  {!leadDone && (
-                    <div ref={leadRef} className="mt-6 scroll-mt-24">
-                      <LeadGate onDone={handleLeadDone} />
                     </div>
                   )}
                 </div>
@@ -734,16 +734,18 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
   };
 
   return (
-    <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-blue-950/50 to-slate-900/50 p-6 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent" />
-      <div className="flex items-center gap-2 mb-1">
-        <Lock className="w-3.5 h-3.5 text-cyan-400" />
-        <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-400">// sblocca tutti i video</span>
+    <div className="rounded-2xl border-2 border-cyan-500/60 bg-gradient-to-br from-blue-950/70 to-slate-900/60 p-6 sm:p-7 relative overflow-hidden ring-2 ring-cyan-500/30 shadow-xl shadow-cyan-500/20">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 ring-1 ring-cyan-500/40 mb-3">
+        <Lock className="w-3.5 h-3.5 text-cyan-300" />
+        <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-cyan-200">Hai visto l'anteprima</span>
       </div>
-      <h3 className="font-display text-xl font-semibold mb-1">Continua a guardare — è gratis</h3>
-      <p className="text-sm text-slate-400 mb-4">
-        Inserisci la tua email per <strong className="text-white">sbloccare tutti i video</strong> e ricevere
-        la <strong className="text-white">guida PDF gratuita</strong>. Niente password, niente carta.
+      <h3 className="font-display text-2xl sm:text-3xl font-bold mb-2 leading-tight">
+        🔓 Sblocca <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">tutti i video</span> gratis
+      </h3>
+      <p className="text-sm sm:text-base text-slate-300 mb-4">
+        Lascia la tua email e accedi <strong className="text-white">subito</strong> a tutti i video del percorso
+        + ricevi la <strong className="text-white">guida PDF gratuita</strong>. Niente password, niente carta.
       </p>
       <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2.5">
         <div className="relative flex-1 min-w-0">
