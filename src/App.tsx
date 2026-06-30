@@ -56,6 +56,7 @@ import VimeoTest from './pages/VimeoTest';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Unsubscribe from './pages/Unsubscribe';
 import LandingCodex from './pages/LandingCodex';
+import LandingRanger from './pages/LandingRanger';
 // Admin components
 import AdminLogin from './components/admin/Login';
 import AdminDashboard from './components/admin/Dashboard';
@@ -184,6 +185,7 @@ function AppContent() {
         <Route path="/affiliazione" element={<Affiliazione />} />
         {/* Landing pages (sponsorizzate) */}
         <Route path="/lp/codex-algo-academy" element={<LandingCodex />} />
+        <Route path="/lp/ranger-prop-pass" element={<LandingRanger />} />
         {/* Legali */}
         <Route path="/legal/privacy" element={<Privacy />} />
         <Route path="/legal/termini" element={<Termini />} />

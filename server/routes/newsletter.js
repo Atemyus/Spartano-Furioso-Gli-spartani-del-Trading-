@@ -9,9 +9,35 @@ const prisma = new PrismaClient();
 // ════════════════════════════════════════════════════════════════
 // LEAD da landing page (NON richiede registrazione/account)
 // Cattura l'email di un visitatore freddo, la salva tra gli iscritti
-// (visibile in admin) e invia la guida PDF bonus via email.
+// (visibile in admin) e invia la guida PDF bonus giusta in base al source.
 // ════════════════════════════════════════════════════════════════
-const GUIDE_URL = 'https://nexoralab.solutions/guida-codex-algo-academy.pdf';
+const SITE = 'https://nexoralab.solutions';
+
+// Configurazione guide per ogni landing page (source → guida + email)
+const LEAD_GUIDES = {
+  'lp-codex': {
+    accent: '#06b6d4', grad: 'linear-gradient(90deg,#2563eb,#06b6d4)',
+    brandHtml: 'NEXORA<span style="color:#22d3ee">LAB</span>',
+    guideUrl: `${SITE}/guida-codex-algo-academy.pdf`,
+    guideName: 'Trading Algoritmico: la panoramica per partire',
+    subject: '🎁 La tua guida gratuita — Codex Algo Academy',
+    backUrl: `${SITE}/lp/codex-algo-academy`,
+    backText: '→ Torna ai video e prenota la call',
+    extra: 'Intanto su Nexora Lab hai già sbloccato <strong>tutti i video gratuiti</strong>. Quando vuoi, prenota una <strong>call gratuita col fondatore</strong>.',
+    footer: '© Nexora Lab · Codex Algo Academy',
+  },
+  'lp-ranger': {
+    accent: '#10b981', grad: 'linear-gradient(90deg,#059669,#10b981)',
+    brandHtml: 'RANGER<span style="color:#34d399"> PROP PASS</span>',
+    guideUrl: `${SITE}/guida-ranger-prop-pass.pdf`,
+    guideName: 'I 5 errori che ti fanno fallire le challenge prop firm',
+    subject: '🎯 La tua guida gratuita — Ranger Prop Pass',
+    backUrl: `${SITE}/lp/ranger-prop-pass`,
+    backText: '→ Prenota la tua call col team',
+    extra: 'Quando vuoi, prenota una <strong>call gratuita col team</strong>: capiamo la tua situazione e ti spieghiamo come gestiamo la challenge per te.',
+    footer: '© Nexora Lab · Ranger Signals Hub',
+  },
+};
 
 router.post('/lead', async (req, res) => {
   try {
@@ -20,6 +46,7 @@ router.post('/lead', async (req, res) => {
       return res.status(400).json({ error: 'Email non valida' });
     }
     const lower = email.toLowerCase().trim();
+    const g = LEAD_GUIDES[source] || LEAD_GUIDES['lp-codex'];
 
     // Salva/aggiorna il lead nella tabella newsletter (no account richiesto)
     const existing = await prisma.newsletter.findUnique({ where: { email: lower } });
@@ -38,33 +65,27 @@ router.post('/lead', async (req, res) => {
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0f172a">
         <div style="background:linear-gradient(135deg,#0b1220,#05070d);padding:28px 24px;border-radius:14px 14px 0 0;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">NEXORA<span style="color:#22d3ee">LAB</span></div>
+          <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">${g.brandHtml}</div>
         </div>
         <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 14px 14px;padding:26px 24px">
           <h2 style="margin:0 0 10px;font-size:20px">🎁 Ecco la tua guida gratuita!</h2>
           <p style="font-size:14px;line-height:1.6;color:#475569">
-            Grazie per esserti iscritto. Come promesso, ecco la guida
-            <strong>"Trading Algoritmico: la panoramica per partire"</strong>.
+            Grazie! Come promesso, ecco la guida <strong>"${g.guideName}"</strong>.
           </p>
           <p style="text-align:center;margin:24px 0">
-            <a href="${GUIDE_URL}" style="display:inline-block;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;font-weight:700;font-size:14px;padding:13px 30px;border-radius:10px;text-decoration:none">
+            <a href="${g.guideUrl}" style="display:inline-block;background:${g.grad};color:#fff;font-weight:700;font-size:14px;padding:13px 30px;border-radius:10px;text-decoration:none">
               📄 Scarica la guida (PDF)
             </a>
           </p>
-          <p style="font-size:14px;line-height:1.6;color:#475569">
-            Intanto su Nexora Lab hai già sbloccato <strong>tutti i video gratuiti</strong>.
-            Quando vuoi, prenota una <strong>call gratuita col fondatore</strong> per capire se l'academy fa per te.
-          </p>
+          <p style="font-size:14px;line-height:1.6;color:#475569">${g.extra}</p>
           <p style="text-align:center;margin:20px 0 0">
-            <a href="https://nexoralab.solutions/lp/codex-algo-academy" style="color:#06b6d4;font-weight:600;font-size:14px;text-decoration:none">
-              → Torna ai video e prenota la call
-            </a>
+            <a href="${g.backUrl}" style="color:${g.accent};font-weight:600;font-size:14px;text-decoration:none">${g.backText}</a>
           </p>
         </div>
-        <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:16px">© Nexora Lab · Codex Algo Academy</p>
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:16px">${g.footer}</p>
       </div>`;
-    sendRawEmail(lower, '🎁 La tua guida gratuita — Codex Algo Academy', html)
-      .then(() => console.log('📧 Guida inviata a:', lower))
+    sendRawEmail(lower, g.subject, html)
+      .then(() => console.log('📧 Guida inviata a:', lower, '(' + source + ')'))
       .catch((e) => console.warn('⚠️ Invio guida fallito (email non configurata?):', e.message));
 
     res.json({ success: true, message: 'Lead registrato. Guida in arrivo via email.' });
