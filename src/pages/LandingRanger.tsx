@@ -5,7 +5,6 @@ import {
   Mail, Loader2, Users, Zap, AlertTriangle, MessageCircle, ChevronDown,
   GraduationCap, BarChart3, Headphones, RefreshCw, Award,
 } from 'lucide-react';
-import HologramSphere from '../components/HologramSphere';
 import NeonCracks from '../components/NeonCracks';
 import CalendlyInline from '../components/CalendlyInline';
 import { API_URL } from '../config/api';
@@ -93,11 +92,9 @@ const LandingRanger: React.FC = () => {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-black to-black" />
         <NeonCracks className="absolute inset-0" density="medium" intensity={0.6} interactive />
-        <HologramSphere className="absolute top-0 right-0 w-[40rem] h-[40rem] opacity-50 hidden lg:block"
-          detail="high" variant="globe" interactive intensity={0.5} />
-
         <div className="container mx-auto px-4 md:px-8 relative z-10 pt-8 pb-14 lg:pt-14 lg:pb-20">
-          <div className="max-w-3xl mx-auto text-center lg:text-left lg:mx-0">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div className="text-center lg:text-left order-2 lg:order-1">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 mb-5">
               <Crosshair className="w-3.5 h-3.5 text-emerald-400" />
               <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-emerald-300">// Ranger Prop Pass</span>
@@ -132,6 +129,12 @@ const LandingRanger: React.FC = () => {
                   <div className="font-mono-lab text-[0.55rem] tracking-[0.15em] uppercase text-slate-400">{s.l}</div>
                 </div>
               ))}
+            </div>
+            </div>
+
+            {/* Emblema Ranger animato */}
+            <div className="order-1 lg:order-2 flex justify-center">
+              <RangerEmblem />
             </div>
           </div>
         </div>
@@ -390,6 +393,55 @@ const LandingRanger: React.FC = () => {
     </div>
   );
 };
+
+// ════════════════════ EMBLEMA RANGER ANIMATO (SVG/CSS) ════════════════════
+// Ricostruzione animata del logo Ranger Signals Hub: mirino che ruota,
+// glow pulsante, candele al centro. Nitido a ogni risoluzione.
+const Candle: React.FC<{ color: string; body: string; wickTop: string; wickBot: string }> = ({ color, body, wickTop, wickBot }) => (
+  <div className="flex flex-col items-center">
+    <div className={`w-[3px] ${wickTop} ${color}`} />
+    <div className={`w-3 sm:w-3.5 ${body} rounded-sm ${color}`} />
+    <div className={`w-[3px] ${wickBot} ${color}`} />
+  </div>
+);
+
+const RangerEmblem: React.FC = () => (
+  <div className="relative w-60 h-60 sm:w-72 sm:h-72 md:w-80 md:h-80 select-none">
+    {/* glow pulsante dietro */}
+    <div className="absolute inset-0 rounded-[2rem] bg-emerald-500/25 blur-3xl animate-pulse" />
+    {/* card */}
+    <div className="relative w-full h-full rounded-[2rem] overflow-hidden ring-1 ring-emerald-500/30 bg-gradient-to-br from-slate-900 via-emerald-950/50 to-slate-950 flex flex-col shadow-2xl shadow-emerald-500/10">
+      {/* griglia tech */}
+      <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
+      {/* area mirino + candele */}
+      <div className="relative flex-1">
+        {/* mirino rotante */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg viewBox="0 0 200 200" className="w-[78%] h-[78%] animate-[spin_22s_linear_infinite]" style={{ filter: 'drop-shadow(0 0 6px rgba(16,185,129,0.4))' }}>
+            <circle cx="100" cy="100" r="66" fill="none" stroke="#e7ece5" strokeWidth="5" />
+            <line x1="100" y1="6" x2="100" y2="42" stroke="#e7ece5" strokeWidth="5" strokeLinecap="round" />
+            <line x1="100" y1="158" x2="100" y2="194" stroke="#e7ece5" strokeWidth="5" strokeLinecap="round" />
+            <line x1="6" y1="100" x2="42" y2="100" stroke="#e7ece5" strokeWidth="5" strokeLinecap="round" />
+            <line x1="158" y1="100" x2="194" y2="100" stroke="#e7ece5" strokeWidth="5" strokeLinecap="round" />
+          </svg>
+        </div>
+        {/* candele statiche, centrate dentro il mirino */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex items-end gap-1.5">
+            <Candle color="bg-emerald-400" body="h-7" wickTop="h-3" wickBot="h-2" />
+            <Candle color="bg-rose-500" body="h-11" wickTop="h-2" wickBot="h-3" />
+            <Candle color="bg-emerald-400" body="h-14" wickTop="h-2" wickBot="h-2" />
+          </div>
+        </div>
+      </div>
+      {/* testo */}
+      <div className="relative pb-6 text-center">
+        <div className="font-display font-extrabold tracking-wide text-white text-base sm:text-xl leading-none">RANGER SIGNALS</div>
+        <div className="font-display font-extrabold tracking-[0.2em] text-amber-400 text-base sm:text-xl leading-none mt-1.5">HUB</div>
+      </div>
+    </div>
+  </div>
+);
 
 // ════════════════════ LEAD MAGNET FORM (solo email) ════════════════════
 const RangerLeadForm: React.FC = () => {
