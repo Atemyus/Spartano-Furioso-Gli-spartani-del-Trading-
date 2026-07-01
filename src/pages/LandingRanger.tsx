@@ -37,7 +37,7 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { icon: Target, t: 'Gestione fino al funding', d: 'Il team opera la tua challenge con un metodo strutturato.' },
+  { icon: Target, t: 'Challenge + account funded', d: 'Il team opera la challenge e può gestire anche il conto funded.' },
   { icon: Shield, t: 'Controllo del rischio', d: 'Money management rigoroso e disciplina ferrea.' },
   { icon: MessageCircle, t: 'Accesso VIP Ranger Signals', d: 'I segnali premium del team inclusi.' },
   { icon: GraduationCap, t: 'Ranger Learning Hub', d: 'Accesso ai contenuti formativi inclusi.' },
@@ -55,6 +55,7 @@ const TIERS = [
 ];
 
 const FAQS = [
+  { q: 'Gestite anche l\'account funded dopo la challenge?', a: 'Sì. Oltre a farti superare la challenge, possiamo gestire anche il tuo account funded, così continui a operare con lo stesso approccio professionale sul capitale reale. Il modello e le condizioni si definiscono insieme in base alla tua situazione di partenza — ne parliamo in call o in chat.' },
   { q: 'È legale farsi gestire la challenge?', a: 'Il servizio consiste in una gestione operativa professionale del tuo account challenge. Ti consigliamo sempre di verificare i termini specifici della prop firm scelta. Il team opera con un approccio disciplinato e trasparente.' },
   { q: 'E se la challenge non viene superata?', a: 'Non promettiamo né garantiamo il funding: nessun servizio serio può farlo. Quello che offriamo è la gestione professionale, disciplinata e strutturata che massimizza le probabilità di successo, eliminando gli errori di esecuzione che fanno fallire la maggior parte dei trader.' },
   { q: 'Come gestite il mio account in sicurezza?', a: 'Le credenziali vengono fornite in modo sicuro e il team le usa esclusivamente per operare la challenge. Tutti i dettagli vengono concordati al momento dell\'attivazione, nel contatto diretto col team.' },
@@ -107,7 +108,7 @@ const LandingRanger: React.FC = () => {
             </h1>
             <p className="mt-5 text-base md:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               Un team professionale gestisce la tua challenge prop firm con disciplina ferrea, controllo del rischio
-              ed esecuzione strutturata — <strong className="text-white">fino al funding</strong>.
+              ed esecuzione strutturata — <strong className="text-white">dalla challenge al conto funded</strong>.
               Perché il problema non è la strategia: è l'esecuzione.
             </p>
             <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -184,6 +185,31 @@ const LandingRanger: React.FC = () => {
                 <p className="text-sm md:text-base text-slate-200">{s}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ OLTRE LA CHALLENGE (funded) ═══════════ */}
+      <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
+        <div className="container mx-auto px-4 md:px-8 max-w-4xl">
+          <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/20 to-slate-900/50 p-6 md:p-10 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 mb-4">
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-amber-300">// oltre la challenge</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3">
+              Non ci fermiamo al funding.
+            </h2>
+            <p className="text-slate-300 max-w-2xl mx-auto text-sm md:text-base mb-6">
+              Superata la challenge, possiamo gestire <strong className="text-white">anche il tuo account funded</strong>:
+              continui a operare con la stessa disciplina ed esecuzione professionale, questa volta sul capitale reale
+              della prop firm. Il modello si definisce insieme, in base alla tua situazione di partenza.
+            </p>
+            <button onClick={openCalendly}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 text-slate-900 font-display font-bold hover:shadow-md hover:shadow-amber-500/30 transition-all">
+              <Calendar className="w-4 h-4" /> Parlane in una call gratuita
+            </button>
           </div>
         </div>
       </section>
