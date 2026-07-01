@@ -92,48 +92,56 @@ const LandingRanger: React.FC = () => {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-black to-black" />
         <NeonCracks className="absolute inset-0" density="medium" intensity={0.6} interactive />
-        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-8 pb-14 lg:pt-14 lg:pb-20">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="text-center lg:text-left order-2 lg:order-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 mb-5">
-              <Crosshair className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-emerald-300">// Ranger Prop Pass</span>
-            </div>
-            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.08]">
-              Continui a bruciare le challenge?{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent">La superiamo noi per te.</span>
-            </h1>
-            <p className="mt-5 text-base md:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Un team professionale gestisce la tua challenge prop firm con disciplina ferrea, controllo del rischio
-              ed esecuzione strutturata — <strong className="text-white">dalla challenge al conto funded</strong>.
-              Perché il problema non è la strategia: è l'esecuzione.
-            </p>
-            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <button onClick={openCalendly}
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-display font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 transition-all">
-                <Calendar className="w-5 h-5" /> Prenota una call gratuita
-              </button>
-              <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-lg bg-slate-900/60 text-slate-200 ring-1 ring-slate-700 hover:ring-emerald-500/40 font-display font-semibold transition-all">
-                <MessageCircle className="w-5 h-5" /> Parla su Telegram
-              </a>
-            </div>
-            <div className="mt-9 grid grid-cols-3 gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0">
-              {[
-                { icon: Shield, l: 'Rischio controllato' },
-                { icon: Target, l: 'Team dedicato' },
-                { icon: Award, l: 'Fino al funding' },
-              ].map((s, i) => (
-                <div key={i} className="rounded-xl border border-emerald-900/40 bg-emerald-950/20 p-3 text-center">
-                  <s.icon className="w-5 h-5 text-emerald-400 mx-auto mb-1.5" />
-                  <div className="font-mono-lab text-[0.55rem] tracking-[0.15em] uppercase text-slate-400">{s.l}</div>
+        <div className="container mx-auto px-4 md:px-8 relative z-10 pt-5 pb-10 lg:pt-12 lg:pb-16">
+          <div className="grid lg:grid-cols-[1fr_minmax(0,24rem)] gap-8 lg:gap-12 items-center">
+            {/* testo + contatti: SEMPRE per primi (lead-first) */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 mb-3">
+                <Crosshair className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-emerald-300">// Ranger Prop Pass</span>
+              </div>
+              <h1 className="font-display text-[1.7rem] leading-[1.12] sm:text-4xl md:text-5xl font-bold tracking-tight sm:leading-[1.08]">
+                Continui a bruciare le challenge?{' '}
+                <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent">La superiamo noi per te.</span>
+              </h1>
+              <p className="mt-2.5 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                Team professionale, disciplina ferrea, rischio controllato — <strong className="text-white">dalla
+                challenge al conto funded</strong>. Il problema non è la strategia: è l'esecuzione.
+              </p>
+
+              {/* ── CARD CONTATTI: subito visibile, zero scroll ── */}
+              <div className="mt-4 rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/70 to-slate-900/70 p-4 sm:p-5 ring-1 ring-emerald-500/25 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-left">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Mail className="w-3.5 h-3.5 text-emerald-300" />
+                  <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-emerald-200">Guida gratuita via email</span>
                 </div>
-              ))}
-            </div>
+                <p className="font-display font-bold text-base sm:text-lg leading-snug mb-3">
+                  🎯 "I 5 errori che ti fanno fallire le challenge" — ricevila subito
+                </p>
+                <LeadEmailForm />
+                <div className="mt-3 pt-3 border-t border-emerald-900/60 flex flex-col sm:flex-row gap-2">
+                  <button onClick={openCalendly}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-emerald-500/30 transition-all">
+                    <Calendar className="w-4 h-4" /> Prenota una call gratuita
+                  </button>
+                  <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-slate-900/70 text-slate-200 ring-1 ring-slate-700 hover:ring-emerald-500/40 text-sm font-display font-semibold transition-all">
+                    <MessageCircle className="w-4 h-4" /> Telegram diretto
+                  </a>
+                </div>
+              </div>
+
+              {/* trust chips compatte */}
+              <div className="mt-3.5 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1.5 font-mono-lab text-[0.6rem] tracking-[0.15em] uppercase text-slate-400">
+                <span className="inline-flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-emerald-400" /> Rischio controllato</span>
+                <span className="inline-flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-emerald-400" /> Team dedicato</span>
+                <span className="inline-flex items-center gap-1.5"><Award className="w-3.5 h-3.5 text-emerald-400" /> Fino al funded</span>
+              </div>
             </div>
 
-            {/* Emblema Ranger animato */}
-            <div className="order-1 lg:order-2 flex justify-center">
+            {/* Emblema Ranger animato — solo desktop, per non spingere giù i contatti su mobile */}
+            <div className="hidden lg:flex justify-center">
               <RangerEmblem />
             </div>
           </div>
@@ -379,8 +387,8 @@ const LandingRanger: React.FC = () => {
         </div>
       </section>
 
-      {/* footer */}
-      <footer className="border-t border-emerald-900/30 py-8">
+      {/* footer (padding extra in basso su mobile per la barra fissa) */}
+      <footer className="border-t border-emerald-900/30 pt-8 pb-24 lg:pb-8">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
           <img src="/logo.png" alt="Nexora Lab" className="h-7 w-auto opacity-80" />
           <p className="text-xs text-slate-500">© {new Date().getFullYear()} Nexora Lab · Ranger Signals Hub</p>
@@ -390,6 +398,22 @@ const LandingRanger: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* ── barra contatti FISSA su mobile: lead sempre a un tap ── */}
+      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-black/90 backdrop-blur-md border-t border-emerald-900/50 px-3 py-2.5">
+        <div className="flex gap-2">
+          <button
+            onClick={() => leadRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-slate-900 ring-1 ring-emerald-700/60 text-emerald-200 text-sm font-display font-semibold">
+            <Mail className="w-4 h-4" /> Guida gratis
+          </button>
+          <button
+            onClick={openCalendly}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold shadow-lg shadow-emerald-500/20">
+            <Calendar className="w-4 h-4" /> Call gratuita
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -443,8 +467,10 @@ const RangerEmblem: React.FC = () => (
   </div>
 );
 
-// ════════════════════ LEAD MAGNET FORM (solo email) ════════════════════
-const RangerLeadForm: React.FC = () => {
+// ════════════════════ FORM EMAIL RIUTILIZZABILE (solo email) ════════════════════
+// Usato sia nella card contatti dell'hero sia nella sezione lead magnet.
+// Salva il lead (source lp-ranger) e fa partire l'invio della guida PDF.
+const LeadEmailForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -469,32 +495,20 @@ const RangerLeadForm: React.FC = () => {
 
   if (done) {
     return (
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 text-center">
-        <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-        <h3 className="font-display text-xl font-semibold mb-1">Guida in arrivo! 📩</h3>
-        <p className="text-sm text-slate-400">Controlla la tua email (anche lo spam) — ti abbiamo inviato la guida gratuita.</p>
+      <div className="flex items-center gap-2.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3">
+        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+        <p className="text-sm text-emerald-100"><strong>Guida in arrivo!</strong> Controlla la tua email (anche lo spam).</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/40 mb-3">
-        <Mail className="w-3.5 h-3.5 text-emerald-300" />
-        <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-emerald-200">Guida gratuita</span>
-      </div>
-      <h3 className="font-display text-2xl font-bold mb-2 leading-tight">
-        🎯 I 5 errori che ti fanno <span className="text-emerald-400">fallire le challenge</span>
-      </h3>
-      <p className="text-sm sm:text-base text-slate-300 mb-4">
-        Scarica gratis la guida e scopri perché il problema non è la tua strategia. Te la inviamo subito via email.
-      </p>
-      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2.5">
+    <>
+      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1 min-w-0">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="La tua email"
-            className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
+            className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/70 border border-slate-800 text-white text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" />
         </div>
         <button type="submit" disabled={loading}
           className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-display font-semibold whitespace-nowrap hover:shadow-md hover:shadow-emerald-500/30 transition-all disabled:opacity-60">
@@ -502,9 +516,27 @@ const RangerLeadForm: React.FC = () => {
         </button>
       </form>
       {error && <p className="text-sm text-rose-400 mt-2">{error}</p>}
-      <p className="text-[0.7rem] text-slate-500 mt-3">Niente spam, cancellazione in un click.</p>
-    </div>
+    </>
   );
 };
+
+// ════════════════════ LEAD MAGNET (sezione di metà pagina) ════════════════════
+const RangerLeadForm: React.FC = () => (
+  <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
+    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/40 mb-3">
+      <Mail className="w-3.5 h-3.5 text-emerald-300" />
+      <span className="font-mono-lab text-[0.65rem] tracking-[0.25em] uppercase text-emerald-200">Guida gratuita</span>
+    </div>
+    <h3 className="font-display text-2xl font-bold mb-2 leading-tight">
+      🎯 I 5 errori che ti fanno <span className="text-emerald-400">fallire le challenge</span>
+    </h3>
+    <p className="text-sm sm:text-base text-slate-300 mb-4">
+      Scarica gratis la guida e scopri perché il problema non è la tua strategia. Te la inviamo subito via email.
+    </p>
+    <LeadEmailForm />
+    <p className="text-[0.7rem] text-slate-500 mt-3">Niente spam, cancellazione in un click.</p>
+  </div>
+);
 
 export default LandingRanger;
