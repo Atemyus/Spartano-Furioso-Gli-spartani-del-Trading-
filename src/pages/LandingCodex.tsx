@@ -781,22 +781,33 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
 // Metti gli screenshot in public/testimonials/ con questi nomi (t1.jpg … t5.jpg).
 // Se un file manca, la sua polaroid sparisce da sola; se mancano tutti,
 // l'intera sezione non viene mostrata (così si può deployare prima delle foto).
-const TESTIMONIALS = [
-  { src: '/testimonials/t1.jpg', caption: '"Solo 20 giorni di corso.. incredibile"', rot: '-rotate-3', off: 'lg:translate-y-3' },
-  { src: '/testimonials/t2.jpg', caption: 'Nuovi studenti ogni settimana', rot: 'rotate-2', off: 'lg:-translate-y-2' },
-  { src: '/testimonials/t3.jpg', caption: 'Due challenge da 100k superate 😎', rot: '-rotate-2', off: 'lg:translate-y-5' },
-  { src: '/testimonials/t4.jpg', caption: 'Sistemi SQX live su conti reali', rot: 'rotate-3', off: 'lg:-translate-y-1' },
-  { src: '/testimonials/t5.jpg', caption: '"Spiegazioni chiare e dirette"', rot: '-rotate-1', off: 'lg:translate-y-2' },
+const TESTIMONIALS: { src: string; caption: string; rot: string; off: string; wide?: boolean }[] = [
+  { src: '/testimonials/recensione-1.jpg', caption: '"Solo 20 giorni di corso.. incredibile"', rot: '-rotate-3', off: 'lg:translate-y-3' },
+  { src: '/testimonials/recensione-8.jpg', caption: '"Miglior investimento della mia vita"', rot: 'rotate-2', off: 'lg:-translate-y-2' },
+  { src: '/testimonials/recensione-3.jpg', caption: 'Due challenge da 100k superate 😎', rot: '-rotate-2', off: 'lg:translate-y-5' },
+  { src: '/testimonials/recensione-9.jpg', caption: 'Conto funded da 100.000$ operativo', rot: 'rotate-1', off: 'lg:-translate-y-1', wide: true },
+  { src: '/testimonials/recensione-11.jpg', caption: '"Il tuo corso mi ha fatto voltare pagina"', rot: 'rotate-3', off: 'lg:translate-y-2' },
+  { src: '/testimonials/recensione-4.jpg', caption: 'Sistemi SQX live su conti reali', rot: '-rotate-1', off: 'lg:-translate-y-3' },
+  { src: '/testimonials/recensione-10.jpg', caption: 'Primo payout richiesto 💸', rot: '-rotate-2', off: 'lg:translate-y-4', wide: true },
+  { src: '/testimonials/recensione-6.jpg', caption: 'Prop da 50k passata col metodo', rot: 'rotate-2', off: 'lg:-translate-y-2' },
+  { src: '/testimonials/recensione-13.jpg', caption: '"Non saprò mai ringraziarti abbastanza"', rot: '-rotate-3', off: 'lg:translate-y-1' },
+  { src: '/testimonials/recensione-7.jpg', caption: '200 strategie generate sul gold', rot: 'rotate-1', off: 'lg:translate-y-3' },
+  { src: '/testimonials/recensione-12.jpg', caption: 'Risultati condivisi ogni giorno', rot: '-rotate-2', off: 'lg:-translate-y-1' },
+  { src: '/testimonials/recensione-2.jpg', caption: 'Nuovi studenti ogni settimana', rot: 'rotate-3', off: 'lg:translate-y-2' },
+  { src: '/testimonials/recensione-14.jpg', caption: 'Programma Acceleration · profit share', rot: '-rotate-1', off: 'lg:-translate-y-3' },
+  { src: '/testimonials/recensione-5.jpg', caption: '"Spiegazioni chiare e dirette"', rot: 'rotate-2', off: 'lg:translate-y-4' },
 ];
 
-const Polaroid: React.FC<{ src: string; caption: string; rot: string; off: string; onFail: () => void; onZoom: (src: string) => void }> =
-  ({ src, caption, rot, off, onFail, onZoom }) => {
+const Polaroid: React.FC<{ src: string; caption: string; rot: string; off: string; wide?: boolean; onFail: () => void; onZoom: (src: string) => void }> =
+  ({ src, caption, rot, off, wide, onFail, onZoom }) => {
     const [ok, setOk] = useState(true);
     if (!ok) return null;
     return (
       <button
         onClick={() => onZoom(src)}
-        className={`relative shrink-0 w-44 sm:w-48 lg:w-52 snap-center bg-[#f7f3ea] rounded-[3px] p-2 pb-2.5 shadow-[0_14px_34px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:rotate-0 hover:scale-[1.05] hover:z-10 ${rot} ${off}`}
+        className={`relative shrink-0 snap-center bg-[#f7f3ea] rounded-[3px] p-2 pb-2.5 shadow-[0_14px_34px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:rotate-0 hover:scale-[1.05] hover:z-10 ${
+          wide ? 'w-64 sm:w-72 lg:w-80' : 'w-44 sm:w-48 lg:w-52'
+        } ${rot} ${off}`}
         aria-label="Ingrandisci testimonianza"
       >
         {/* scotch */}
@@ -806,7 +817,9 @@ const Polaroid: React.FC<{ src: string; caption: string; rot: string; off: strin
           alt={caption}
           loading="lazy"
           onError={() => { setOk(false); onFail(); }}
-          className="w-full h-60 sm:h-64 lg:h-72 object-cover object-top rounded-[2px] bg-slate-200"
+          className={`w-full object-cover object-top rounded-[2px] bg-slate-200 ${
+            wide ? 'h-40 sm:h-44 lg:h-48' : 'h-60 sm:h-64 lg:h-72'
+          }`}
         />
         <p className="mt-2 text-center font-display italic text-[0.72rem] leading-snug text-slate-700">{caption}</p>
       </button>
