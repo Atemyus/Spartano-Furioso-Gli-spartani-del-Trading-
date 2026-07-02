@@ -461,6 +461,9 @@ const LandingCodex: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
+      <TestimonialsWall />
+
       {/* ═══════════════════ CTA + CALENDLY INLINE ═══════════════════ */}
       <section id="call-box" ref={calendlyRef} className="relative py-12 lg:py-20 border-t border-slate-900">
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
@@ -771,6 +774,92 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
         Ti invieremo solo contenuti utili. Niente spam, cancellazione in un click.
       </p>
     </div>
+  );
+};
+
+// ════════════════════ TESTIMONIANZE — polaroid "attaccate al muro" ════════════════════
+// Metti gli screenshot in public/testimonials/ con questi nomi (t1.jpg … t5.jpg).
+// Se un file manca, la sua polaroid sparisce da sola; se mancano tutti,
+// l'intera sezione non viene mostrata (così si può deployare prima delle foto).
+const TESTIMONIALS = [
+  { src: '/testimonials/t1.jpg', caption: '"Solo 20 giorni di corso.. incredibile"', rot: '-rotate-3', off: 'lg:translate-y-3' },
+  { src: '/testimonials/t2.jpg', caption: 'Nuovi studenti ogni settimana', rot: 'rotate-2', off: 'lg:-translate-y-2' },
+  { src: '/testimonials/t3.jpg', caption: 'Due challenge da 100k superate 😎', rot: '-rotate-2', off: 'lg:translate-y-5' },
+  { src: '/testimonials/t4.jpg', caption: 'Sistemi SQX live su conti reali', rot: 'rotate-3', off: 'lg:-translate-y-1' },
+  { src: '/testimonials/t5.jpg', caption: '"Spiegazioni chiare e dirette"', rot: '-rotate-1', off: 'lg:translate-y-2' },
+];
+
+const Polaroid: React.FC<{ src: string; caption: string; rot: string; off: string; onFail: () => void; onZoom: (src: string) => void }> =
+  ({ src, caption, rot, off, onFail, onZoom }) => {
+    const [ok, setOk] = useState(true);
+    if (!ok) return null;
+    return (
+      <button
+        onClick={() => onZoom(src)}
+        className={`relative shrink-0 w-44 sm:w-48 lg:w-52 snap-center bg-[#f7f3ea] rounded-[3px] p-2 pb-2.5 shadow-[0_14px_34px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:rotate-0 hover:scale-[1.05] hover:z-10 ${rot} ${off}`}
+        aria-label="Ingrandisci testimonianza"
+      >
+        {/* scotch */}
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 -rotate-6 w-16 h-5 bg-amber-50/70 border border-white/50 shadow-sm rounded-[1px]" />
+        <img
+          src={src}
+          alt={caption}
+          loading="lazy"
+          onError={() => { setOk(false); onFail(); }}
+          className="w-full h-60 sm:h-64 lg:h-72 object-cover object-top rounded-[2px] bg-slate-200"
+        />
+        <p className="mt-2 text-center font-display italic text-[0.72rem] leading-snug text-slate-700">{caption}</p>
+      </button>
+    );
+  };
+
+const TestimonialsWall: React.FC = () => {
+  const [failed, setFailed] = useState(0);
+  const [zoom, setZoom] = useState<string | null>(null);
+  if (failed >= TESTIMONIALS.length) return null;
+
+  return (
+    <section className="relative py-12 lg:py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black overflow-hidden">
+      {/* texture muro */}
+      <div
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
+        style={{ backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)', backgroundSize: '30px 30px' }}
+      />
+      <div className="container mx-auto px-4 md:px-8 relative">
+        <div className="flex items-center gap-2 mb-3 justify-center">
+          <Users className="w-3.5 h-3.5 text-cyan-500" />
+          <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// dicono di noi</span>
+        </div>
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
+          Messaggi <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">reali</span> degli studenti
+        </h2>
+        <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-8 lg:mb-12">
+          Direttamente dalle chat: risultati, challenge superate e feedback sul metodo. Tocca una foto per ingrandirla.
+        </p>
+
+        {/* muro di polaroid: scroll orizzontale su mobile, collage su desktop */}
+        <div className="flex gap-5 lg:gap-7 overflow-x-auto lg:overflow-visible lg:flex-wrap lg:justify-center pb-6 lg:pb-2 px-2 snap-x">
+          {TESTIMONIALS.map((t) => (
+            <Polaroid key={t.src} {...t} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
+          ))}
+        </div>
+
+        <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
+          Messaggi reali di studenti del percorso. I risultati individuali variano e non costituiscono garanzia di rendimento.
+        </p>
+      </div>
+
+      {/* lightbox */}
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+          onClick={() => setZoom(null)}
+        >
+          <img src={zoom} alt="Testimonianza" className="max-h-[92vh] max-w-full rounded-xl ring-1 ring-slate-700 shadow-2xl" />
+          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-900/80 ring-1 ring-slate-700 text-white text-xl leading-none" aria-label="Chiudi">×</button>
+        </div>
+      )}
+    </section>
   );
 };
 
