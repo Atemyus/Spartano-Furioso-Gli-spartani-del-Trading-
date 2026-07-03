@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 .env
 *.mp4
+!public/vtestimonials/*.mp4
 *.zip
 server/uploads/
 public/videos/

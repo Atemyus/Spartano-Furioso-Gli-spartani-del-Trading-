@@ -298,6 +298,9 @@ const LandingCodex: React.FC = () => {
       {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
       <TestimonialsWall />
 
+      {/* ═══════════════════ VIDEO TESTIMONIANZE ═══════════════════ */}
+      <VideoTestimonials />
+
       {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
       <section id="cosa-imparerai" className="relative py-12 lg:py-20 border-t border-slate-900">
         <div className="container mx-auto px-4 md:px-8">
@@ -1092,6 +1095,78 @@ const TestimonialsWall: React.FC = () => {
           <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-900/80 ring-1 ring-slate-700 text-white text-xl leading-none" aria-label="Chiudi">×</button>
         </div>
       )}
+    </section>
+  );
+};
+
+// ════════════════════ VIDEO TESTIMONIANZE ════════════════════
+// Video in public/vtestimonials/ (compressi) con poster jpg. Stile polaroid
+// coordinato col muro delle recensioni. preload=none: scaricano solo al play.
+const VIDEO_TESTIMONIALS: { src: string; poster: string; caption: string; portrait?: boolean; rot: string }[] = [
+  { src: '/vtestimonials/risultati-2.mp4', poster: '/vtestimonials/risultati-2.jpg', caption: 'La community: risultati e reazioni in chat', portrait: true, rot: '-rotate-1' },
+  { src: '/vtestimonials/axi-1.mp4', poster: '/vtestimonials/axi-1.jpg', caption: 'Dentro Axi Select: Edge Score 95 · fase Acceleration', rot: 'rotate-1' },
+  { src: '/vtestimonials/risultati-1.mp4', poster: '/vtestimonials/risultati-1.jpg', caption: 'Risultati Darwinex commentati dal vivo', portrait: true, rot: 'rotate-2' },
+  { src: '/vtestimonials/axi-2.mp4', poster: '/vtestimonials/axi-2.jpg', caption: 'Un secondo conto Axi Select: progressione live', rot: '-rotate-2' },
+  { src: '/vtestimonials/relax.mp4', poster: '/vtestimonials/relax.jpg', caption: 'Il sistema lavora anche quando stacchi', portrait: true, rot: 'rotate-1' },
+];
+
+const VideoPolaroid: React.FC<{ src: string; poster: string; caption: string; portrait?: boolean; rot: string; onFail: () => void }> =
+  ({ src, poster, caption, portrait, rot, onFail }) => {
+    const [ok, setOk] = useState(true);
+    if (!ok) return null;
+    return (
+      <div className={`relative shrink-0 snap-center bg-[#f7f3ea] rounded-[3px] p-2 pb-2.5 shadow-[0_14px_34px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:rotate-0 hover:z-10 ${
+        portrait ? 'w-52 sm:w-56' : 'w-[19rem] sm:w-[24rem] lg:w-[26rem]'
+      } ${rot}`}>
+        {/* scotch */}
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 -rotate-6 w-16 h-5 bg-amber-50/70 border border-white/50 shadow-sm rounded-[1px] z-10" />
+        <video
+          controls
+          preload="none"
+          poster={poster}
+          playsInline
+          onError={() => { setOk(false); onFail(); }}
+          className={`w-full rounded-[2px] bg-slate-950 object-cover ${portrait ? 'aspect-[9/16]' : ''}`}
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+        <p className="mt-2 text-center font-display italic text-[0.72rem] leading-snug text-slate-700">{caption}</p>
+      </div>
+    );
+  };
+
+const VideoTestimonials: React.FC = () => {
+  const [failed, setFailed] = useState(0);
+  if (failed >= VIDEO_TESTIMONIALS.length) return null;
+
+  return (
+    <section className="relative py-12 lg:py-20 border-t border-slate-900 overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
+        style={{ backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)', backgroundSize: '30px 30px' }}
+      />
+      <div className="container mx-auto px-4 md:px-8 relative">
+        <div className="flex items-center gap-2 mb-3 justify-center">
+          <PlayCircle className="w-3.5 h-3.5 text-cyan-500" />
+          <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// video testimonianze</span>
+        </div>
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
+          Le prove, <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">anche in video</span>
+        </h2>
+        <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-8 lg:mb-12">
+          Conti reali, dashboard dal vivo e la community in azione. Premi play.
+        </p>
+
+        <div className="flex gap-5 lg:gap-7 overflow-x-auto lg:overflow-visible lg:flex-wrap lg:justify-center items-start pb-6 lg:pb-2 px-2 snap-x">
+          {VIDEO_TESTIMONIALS.map((v) => (
+            <VideoPolaroid key={v.src} {...v} onFail={() => setFailed((f) => f + 1)} />
+          ))}
+        </div>
+
+        <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
+          Registrazioni reali. I risultati individuali variano e non costituiscono garanzia di rendimento.
+        </p>
+      </div>
     </section>
   );
 };
