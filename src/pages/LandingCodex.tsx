@@ -68,7 +68,6 @@ const LandingCodex: React.FC = () => {
   const [callStep, setCallStep] = useState<'idle' | 'survey' | 'calendly'>('idle');
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
   const [founderImgOk, setFounderImgOk] = useState(true);
-  const [founder2Ok, setFounder2Ok] = useState(true);
   const [guideSent, setGuideSent] = useState(false);
   const videosRef = useRef<HTMLDivElement>(null);
   const calendlyRef = useRef<HTMLDivElement>(null);
@@ -241,45 +240,9 @@ const LandingCodex: React.FC = () => {
               </div>
             </div>
 
-            {/* fondatore con effetti algo — doppio ritratto */}
-            <div className="relative flex items-end justify-center lg:justify-end gap-3 sm:gap-4">
-              {/* ritratto secondario a SINISTRA — reveal lento da sinistra */}
-              {founder2Ok && (
-                <ScrollReveal direction="left" distance={60} duration={1.4} delay={0.25} threshold={0.2} className="relative shrink-0">
-                  <div className="relative w-[8rem] h-[11rem] sm:w-[12rem] sm:h-[16rem] md:w-[16rem] md:h-[21rem] -rotate-2 mb-3 md:mb-6">
-                    {/* alone radiale dietro */}
-                    <div className="absolute inset-0 bg-cyan-500/15 blur-[60px] rounded-full" />
-                    {/* anello/halo */}
-                    <div className="absolute inset-3 rounded-[1.6rem] ring-1 ring-cyan-500/25" />
-                    {/* griglia tech */}
-                    <div
-                      className="absolute inset-0 opacity-[0.12] rounded-[1.6rem]"
-                      style={{
-                        backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)',
-                        backgroundSize: '24px 24px',
-                      }}
-                    />
-                    <img
-                      src="/founder2.png"
-                      alt={FOUNDER_NAME}
-                      className="relative z-10 w-full h-full object-cover object-top rounded-[1.6rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
-                      style={{ filter: 'drop-shadow(0 0 32px rgba(56,189,248,0.3)) contrast(1.05) saturate(1.08)' }}
-                      onError={() => setFounder2Ok(false)}
-                    />
-                    {/* scanlines */}
-                    <div
-                      className="absolute inset-0 z-20 rounded-[1.6rem] pointer-events-none mix-blend-overlay opacity-30"
-                      style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(56,189,248,0.25) 0px, rgba(56,189,248,0.25) 1px, transparent 1px, transparent 4px)' }}
-                    />
-                    {/* mini badge */}
-                    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-30 px-2.5 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md ring-1 ring-cyan-500/30 whitespace-nowrap">
-                      <div className="font-mono-lab text-[0.5rem] tracking-[0.2em] uppercase text-cyan-400">// codex academy</div>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              )}
-
-              <div className="relative shrink-0 w-[13rem] h-[16rem] sm:w-[18rem] sm:h-[22rem] md:w-[24rem] md:h-[30rem]">
+            {/* fondatore con effetti algo */}
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative w-[13rem] h-[16rem] sm:w-[18rem] sm:h-[22rem] md:w-[24rem] md:h-[30rem]">
                 {/* alone radiale dietro */}
                 <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full" />
                 {/* anello/halo */}
@@ -852,6 +815,7 @@ const ProofCard: React.FC<{ src: string; caption: string; onFail: () => void; on
 
 const DarwinexProof: React.FC = () => {
   const [failed, setFailed] = useState(0);
+  const [founder2Ok, setFounder2Ok] = useState(true);
   const [zoom, setZoom] = useState<string | null>(null);
   if (failed >= PROOFS.length) return null;
 
@@ -878,10 +842,49 @@ const DarwinexProof: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-          {PROOFS.map((p) => (
-            <ProofCard key={p.src} {...p} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
-          ))}
+        {/* screenshot a sinistra + ritratto fondatore a DESTRA */}
+        <div className={`max-w-6xl mx-auto grid gap-8 items-center ${founder2Ok ? 'lg:grid-cols-[1fr_auto]' : ''}`}>
+          <div className="grid gap-5 min-w-0">
+            {PROOFS.map((p) => (
+              <ProofCard key={p.src} {...p} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
+            ))}
+          </div>
+
+          {founder2Ok && (
+            <ScrollReveal direction="left" distance={60} duration={1.4} delay={0.2} threshold={0.2} className="justify-self-center">
+              <div className="relative w-[13rem] h-[17rem] sm:w-[15rem] sm:h-[19.5rem] md:w-[17rem] md:h-[22rem] rotate-2">
+                {/* alone radiale dietro */}
+                <div className="absolute inset-0 bg-cyan-500/15 blur-[60px] rounded-full" />
+                {/* anello/halo */}
+                <div className="absolute inset-3 rounded-[1.6rem] ring-1 ring-cyan-500/25" />
+                {/* griglia tech */}
+                <div
+                  className="absolute inset-0 opacity-[0.12] rounded-[1.6rem]"
+                  style={{
+                    backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                  }}
+                />
+                <img
+                  src="/founder2.png"
+                  alt={FOUNDER_NAME}
+                  className="relative z-10 w-full h-full object-cover object-top rounded-[1.6rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
+                  style={{ filter: 'drop-shadow(0 0 32px rgba(56,189,248,0.3)) contrast(1.05) saturate(1.08)' }}
+                  onError={() => setFounder2Ok(false)}
+                />
+                {/* scanlines */}
+                <div
+                  className="absolute inset-0 z-20 rounded-[1.6rem] pointer-events-none mix-blend-overlay opacity-30"
+                  style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(56,189,248,0.25) 0px, rgba(56,189,248,0.25) 1px, transparent 1px, transparent 4px)' }}
+                />
+                {/* badge */}
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-lg bg-slate-900/80 backdrop-blur-md ring-1 ring-cyan-500/30 whitespace-nowrap text-center">
+                  <div className="font-display font-semibold text-xs">{FOUNDER_NAME}</div>
+                  <div className="font-mono-lab text-[0.5rem] tracking-[0.2em] uppercase text-cyan-400">// darwinex zero · live</div>
+                </div>
+              </div>
+            </ScrollReveal>
+          )}
         </div>
 
         <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
