@@ -129,9 +129,9 @@ const LandingRanger: React.FC = () => {
               </p>
 
               {/* ── CARD CONTATTI: subito visibile, zero scroll ── */}
-              <div className="mt-4 rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/70 to-slate-900/70 p-4 sm:p-5 ring-1 ring-emerald-500/25 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-left">
+              <div className="mt-4 rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/70 to-slate-900/70 p-4 sm:p-5 ring-1 ring-emerald-500/25 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-center sm:text-left">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-1.5">
                   <Mail className="w-3.5 h-3.5 text-emerald-300" />
                   <span className="font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase text-emerald-200">Guida gratuita via email</span>
                 </div>
@@ -211,7 +211,7 @@ const LandingRanger: React.FC = () => {
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {PROBLEMS.map((p, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 flex gap-4">
+              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center shrink-0">
                   <p.icon className="w-5 h-5 text-amber-400" />
                 </div>
@@ -342,7 +342,7 @@ const LandingRanger: React.FC = () => {
 
           <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {TIERS.map((t, i) => (
-              <div key={i} className={`relative rounded-2xl border p-6 flex flex-col ${
+              <div key={i} className={`relative rounded-2xl border p-6 flex flex-col text-center md:text-left ${
                 t.popular ? 'border-emerald-500/60 bg-emerald-950/30 ring-1 ring-emerald-500/30' : 'border-slate-800 bg-slate-900/40'
               }`}>
                 {t.popular && (
@@ -694,7 +694,7 @@ const RangerWall: React.FC = () => {
 
 // ════════════════════ LEAD MAGNET (sezione di metà pagina) ════════════════════
 const RangerLeadForm: React.FC = () => (
-  <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+  <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-center sm:text-left">
     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/40 mb-3">
       <Mail className="w-3.5 h-3.5 text-emerald-300" />
