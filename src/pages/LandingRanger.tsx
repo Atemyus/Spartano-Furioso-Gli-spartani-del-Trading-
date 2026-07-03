@@ -281,6 +281,9 @@ const LandingRanger: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══════════ PROVE DAL CAMPO (polaroid al muro) ═══════════ */}
+      <RangerWall />
+
       {/* ═══════════ COSA INCLUDE ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8">
@@ -599,6 +602,93 @@ const LeadEmailForm: React.FC = () => {
       </form>
       {error && <p className="text-sm text-rose-400 mt-2">{error}</p>}
     </>
+  );
+};
+
+// ════════════════════ PROVE DAL CAMPO — polaroid "attaccate al muro" ════════════════════
+// Screenshot in public/testimonials/recensione_ranger1..9.jpg. Ogni polaroid
+// sparisce se il file manca; se mancano tutte, l'intera sezione si nasconde.
+const RANGER_TESTIMONIALS: { src: string; caption: string; rot: string; off: string; wide?: boolean }[] = [
+  { src: '/testimonials/recensione_ranger1.jpg', caption: 'FTMO Challenge superata ✔', rot: '-rotate-2', off: 'lg:translate-y-3' },
+  { src: '/testimonials/recensione_ranger4.jpg', caption: 'FundingPips: reward da 3.023$ · 32.597$ totali 💸', rot: 'rotate-2', off: 'lg:-translate-y-2' },
+  { src: '/testimonials/recensione_ranger7.jpg', caption: 'Lucid Trading: payout da 6.206$ 🏆', rot: '-rotate-1', off: 'lg:translate-y-2', wide: true },
+  { src: '/testimonials/recensione_ranger2.jpg', caption: 'FTMO Verification completata: si va al funding', rot: 'rotate-1', off: 'lg:translate-y-4' },
+  { src: '/testimonials/recensione_ranger5.jpg', caption: 'Conto FundingPips a 103.575$ · profit split 80%', rot: '-rotate-2', off: 'lg:-translate-y-1', wide: true },
+  { src: '/testimonials/recensione_ranger8.jpg', caption: 'Nuovo account FundingPips attivato', rot: 'rotate-2', off: 'lg:translate-y-1' },
+  { src: '/testimonials/recensione_ranger3.jpg', caption: 'Un\'altra FTMO Challenge passata (2026)', rot: '-rotate-3', off: 'lg:-translate-y-2' },
+  { src: '/testimonials/recensione_ranger9.jpg', caption: 'GOAT Funded: payout certificato', rot: 'rotate-1', off: 'lg:translate-y-3' },
+  { src: '/testimonials/recensione_ranger6.jpg', caption: 'FTMO Verification: un altro conto al funding', rot: '-rotate-1', off: 'lg:-translate-y-3' },
+];
+
+const RangerPolaroid: React.FC<{ src: string; caption: string; rot: string; off: string; wide?: boolean; onFail: () => void; onZoom: (s: string) => void }> =
+  ({ src, caption, rot, off, wide, onFail, onZoom }) => {
+    const [ok, setOk] = useState(true);
+    if (!ok) return null;
+    return (
+      <button
+        onClick={() => onZoom(src)}
+        className={`relative shrink-0 snap-center bg-[#f7f3ea] rounded-[3px] p-2 pb-2.5 shadow-[0_14px_34px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:rotate-0 hover:scale-[1.04] hover:z-10 ${
+          wide ? 'w-72 sm:w-80' : 'w-52 sm:w-56'
+        } ${rot} ${off}`}
+        aria-label="Ingrandisci"
+      >
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 -rotate-6 w-16 h-5 bg-amber-50/70 border border-white/50 shadow-sm rounded-[1px] z-10" />
+        <img
+          src={src}
+          alt={caption}
+          loading="lazy"
+          onError={() => { setOk(false); onFail(); }}
+          className="w-full h-auto rounded-[2px] bg-slate-200"
+        />
+        <p className="mt-2 text-center font-display italic text-[0.72rem] leading-snug text-slate-700">{caption}</p>
+      </button>
+    );
+  };
+
+const RangerWall: React.FC = () => {
+  const [failed, setFailed] = useState(0);
+  const [zoom, setZoom] = useState<string | null>(null);
+  if (failed >= RANGER_TESTIMONIALS.length) return null;
+
+  return (
+    <section className="relative py-12 lg:py-20 border-t border-emerald-900/30 bg-gradient-to-b from-emerald-950/10 to-black overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
+        style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}
+      />
+      <div className="container mx-auto px-4 md:px-8 relative">
+        <div className="flex items-center gap-2 mb-3 justify-center">
+          <Award className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// prove dal campo</span>
+        </div>
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
+          Challenge superate, <span className="text-emerald-400">payout reali</span>
+        </h2>
+        <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-8 lg:mb-12">
+          FTMO, FundingPips, Lucid, GOAT: certificati e ricompense direttamente dal campo. Tocca una foto per ingrandirla.
+        </p>
+
+        <div className="flex gap-5 lg:gap-7 overflow-x-auto lg:overflow-visible lg:flex-wrap lg:justify-center items-start pb-6 lg:pb-2 px-2 snap-x">
+          {RANGER_TESTIMONIALS.map((t) => (
+            <RangerPolaroid key={t.src} {...t} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
+          ))}
+        </div>
+
+        <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
+          Risultati reali. Le performance passate non costituiscono garanzia di risultati futuri.
+        </p>
+      </div>
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+          onClick={() => setZoom(null)}
+        >
+          <img src={zoom} alt="Prova" className="max-h-[92vh] max-w-full rounded-xl ring-1 ring-slate-700 shadow-2xl" />
+          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-900/80 ring-1 ring-slate-700 text-white text-xl leading-none" aria-label="Chiudi">×</button>
+        </div>
+      )}
+    </section>
   );
 };
 
