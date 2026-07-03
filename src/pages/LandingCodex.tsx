@@ -9,6 +9,7 @@ import HologramSphere from '../components/HologramSphere';
 import NeonCracks from '../components/NeonCracks';
 import CalendlyInline from '../components/CalendlyInline';
 import FormattedDescription from '../components/FormattedDescription';
+import ScrollReveal from '../components/ScrollReveal';
 import { API_ENDPOINTS, API_URL } from '../config/api';
 
 // ════════════════════════════════════════════════════════════════
@@ -67,6 +68,7 @@ const LandingCodex: React.FC = () => {
   const [callStep, setCallStep] = useState<'idle' | 'survey' | 'calendly'>('idle');
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string>>({});
   const [founderImgOk, setFounderImgOk] = useState(true);
+  const [founder2Ok, setFounder2Ok] = useState(true);
   const [guideSent, setGuideSent] = useState(false);
   const videosRef = useRef<HTMLDivElement>(null);
   const calendlyRef = useRef<HTMLDivElement>(null);
@@ -239,9 +241,45 @@ const LandingCodex: React.FC = () => {
               </div>
             </div>
 
-            {/* fondatore con effetti algo */}
-            <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-[13rem] h-[16rem] sm:w-[18rem] sm:h-[22rem] md:w-[24rem] md:h-[30rem]">
+            {/* fondatore con effetti algo — doppio ritratto */}
+            <div className="relative flex items-end justify-center lg:justify-end gap-3 sm:gap-4">
+              {/* ritratto secondario a SINISTRA — reveal lento da sinistra */}
+              {founder2Ok && (
+                <ScrollReveal direction="left" distance={60} duration={1.4} delay={0.25} threshold={0.2} className="relative shrink-0">
+                  <div className="relative w-[8rem] h-[11rem] sm:w-[12rem] sm:h-[16rem] md:w-[16rem] md:h-[21rem] -rotate-2 mb-3 md:mb-6">
+                    {/* alone radiale dietro */}
+                    <div className="absolute inset-0 bg-cyan-500/15 blur-[60px] rounded-full" />
+                    {/* anello/halo */}
+                    <div className="absolute inset-3 rounded-[1.6rem] ring-1 ring-cyan-500/25" />
+                    {/* griglia tech */}
+                    <div
+                      className="absolute inset-0 opacity-[0.12] rounded-[1.6rem]"
+                      style={{
+                        backgroundImage: 'linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px)',
+                        backgroundSize: '24px 24px',
+                      }}
+                    />
+                    <img
+                      src="/founder2.png"
+                      alt={FOUNDER_NAME}
+                      className="relative z-10 w-full h-full object-cover object-top rounded-[1.6rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]"
+                      style={{ filter: 'drop-shadow(0 0 32px rgba(56,189,248,0.3)) contrast(1.05) saturate(1.08)' }}
+                      onError={() => setFounder2Ok(false)}
+                    />
+                    {/* scanlines */}
+                    <div
+                      className="absolute inset-0 z-20 rounded-[1.6rem] pointer-events-none mix-blend-overlay opacity-30"
+                      style={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(56,189,248,0.25) 0px, rgba(56,189,248,0.25) 1px, transparent 1px, transparent 4px)' }}
+                    />
+                    {/* mini badge */}
+                    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-30 px-2.5 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md ring-1 ring-cyan-500/30 whitespace-nowrap">
+                      <div className="font-mono-lab text-[0.5rem] tracking-[0.2em] uppercase text-cyan-400">// codex academy</div>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              )}
+
+              <div className="relative shrink-0 w-[13rem] h-[16rem] sm:w-[18rem] sm:h-[22rem] md:w-[24rem] md:h-[30rem]">
                 {/* alone radiale dietro */}
                 <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full" />
                 {/* anello/halo */}
@@ -290,6 +328,12 @@ const LandingCodex: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════ TRACK RECORD DEL FONDATORE (Darwinex Zero) ═══════════════════ */}
+      <DarwinexProof />
+
+      {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
+      <TestimonialsWall />
 
       {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
       <section id="cosa-imparerai" className="relative py-12 lg:py-20 border-t border-slate-900">
@@ -460,9 +504,6 @@ const LandingCodex: React.FC = () => {
           )}
         </div>
       </section>
-
-      {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
-      <TestimonialsWall />
 
       {/* ═══════════════════ CTA + CALENDLY INLINE ═══════════════════ */}
       <section id="call-box" ref={calendlyRef} className="relative py-12 lg:py-20 border-t border-slate-900">
@@ -774,6 +815,90 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
         Ti invieremo solo contenuti utili. Niente spam, cancellazione in un click.
       </p>
     </div>
+  );
+};
+
+// ════════════════════ TRACK RECORD FONDATORE — Darwinex Zero ════════════════════
+// Metti gli screenshot in public/proof/ con questi nomi. Se mancano, la sezione
+// si nasconde da sola (deploy sicuro anche prima dell'upload).
+const PROOFS = [
+  { src: '/proof/darwinex-1.jpg', caption: 'DarwinIA: 100.000€ di allocazione attuale · 370.000€ totali ricevuti' },
+  { src: '/proof/darwinex-2.jpg', caption: 'DARWIN UBJS: +29,78% dall\'inizio · 230.000€ in gestione · DarwinIA GOLD' },
+];
+
+const ProofCard: React.FC<{ src: string; caption: string; onFail: () => void; onZoom: (s: string) => void }> = ({ src, caption, onFail, onZoom }) => {
+  const [ok, setOk] = useState(true);
+  if (!ok) return null;
+  return (
+    <button
+      onClick={() => onZoom(src)}
+      className="group relative rounded-2xl overflow-hidden ring-1 ring-cyan-500/30 bg-slate-950 shadow-xl shadow-cyan-500/10 hover:ring-cyan-400/60 hover:scale-[1.015] transition-all text-left"
+      aria-label="Ingrandisci screenshot"
+    >
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent z-10" />
+      <img
+        src={src}
+        alt={caption}
+        loading="lazy"
+        onError={() => { setOk(false); onFail(); }}
+        className="w-full object-cover"
+      />
+      <div className="px-4 py-3 bg-slate-900/80 border-t border-slate-800">
+        <p className="text-xs sm:text-sm text-slate-300">{caption}</p>
+      </div>
+    </button>
+  );
+};
+
+const DarwinexProof: React.FC = () => {
+  const [failed, setFailed] = useState(0);
+  const [zoom, setZoom] = useState<string | null>(null);
+  if (failed >= PROOFS.length) return null;
+
+  return (
+    <section className="relative py-12 lg:py-20 border-t border-slate-900">
+      <div className="container mx-auto px-4 md:px-8">
+        <div className="flex items-center gap-2 mb-3 justify-center">
+          <TrendingUp className="w-3.5 h-3.5 text-cyan-500" />
+          <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// track record verificato</span>
+        </div>
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
+          Il fondatore ci mette <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">la faccia e i numeri</span>
+        </h2>
+        <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6">
+          Risultati pubblici su Darwinex Zero: lo stesso metodo che impari nel corso, applicato dal vivo.
+        </p>
+
+        {/* chips riepilogo */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {['🏆 DarwinIA GOLD', '💶 100.000€ di allocazione attuale', '📈 +29,78% dall\'inizio'].map((c) => (
+            <span key={c} className="px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 font-mono-lab text-[0.65rem] tracking-widest uppercase text-cyan-200">
+              {c}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+          {PROOFS.map((p) => (
+            <ProofCard key={p.src} {...p} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
+          ))}
+        </div>
+
+        <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
+          Dati dalla piattaforma Darwinex Zero. I rendimenti passati non costituiscono garanzia di risultati futuri.
+        </p>
+      </div>
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+          onClick={() => setZoom(null)}
+        >
+          <img src={zoom} alt="Screenshot Darwinex" className="max-h-[92vh] max-w-full rounded-xl ring-1 ring-slate-700 shadow-2xl" />
+          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-900/80 ring-1 ring-slate-700 text-white text-xl leading-none" aria-label="Chiudi">×</button>
+        </div>
+      )}
+    </section>
   );
 };
 
