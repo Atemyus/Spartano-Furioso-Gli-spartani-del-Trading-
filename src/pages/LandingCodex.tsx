@@ -788,8 +788,8 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
 // Metti gli screenshot in public/proof/ con questi nomi. Se mancano, la sezione
 // si nasconde da sola (deploy sicuro anche prima dell'upload).
 const PROOFS = [
-  { src: '/proof/darwinex-1.jpg', caption: 'DarwinIA: 100.000€ di allocazione attuale · 370.000€ totali ricevuti' },
-  { src: '/proof/darwinex-2.jpg', caption: 'DARWIN UBJS: +29,78% dall\'inizio · 230.000€ in gestione · DarwinIA GOLD' },
+  { src: '/proof/darwinex-1.jpg', caption: 'Darwinex Zero: 100.000€ di allocazione attuale · 370.000€ totali ricevuti' },
+  { src: '/proof/darwinex-2.jpg', caption: 'DARWIN UBJS: +29,78% dall\'inizio · 230.000€ in gestione · Darwinex Zero GOLD' },
 ];
 
 const ProofCard: React.FC<{ src: string; caption: string; onFail: () => void; onZoom: (s: string) => void }> = ({ src, caption, onFail, onZoom }) => {
@@ -887,7 +887,7 @@ const DarwinexProof: React.FC = () => {
 
         {/* chips riepilogo */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {['🏆 DarwinIA GOLD', '💶 100.000€ di allocazione attuale', '📈 +29,78% dall\'inizio'].map((c) => (
+          {['🏆 Darwinex Zero GOLD', '💶 100.000€ di allocazione attuale', '📈 +29,78% dall\'inizio'].map((c) => (
             <span key={c} className="px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 font-mono-lab text-[0.65rem] tracking-widest uppercase text-cyan-200">
               {c}
             </span>
