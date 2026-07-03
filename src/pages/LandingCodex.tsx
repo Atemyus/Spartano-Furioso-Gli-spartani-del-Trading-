@@ -1103,6 +1103,8 @@ const TestimonialsWall: React.FC = () => {
 // Video in public/vtestimonials/ (compressi) con poster jpg. Stile polaroid
 // coordinato col muro delle recensioni. preload=none: scaricano solo al play.
 const VIDEO_TESTIMONIALS: { src: string; poster: string; caption: string; portrait?: boolean; rot: string }[] = [
+  { src: '/vtestimonials/studente-1.mp4', poster: '/vtestimonials/studente-1.jpg', caption: 'La testimonianza di un corsista — parole sue', portrait: true, rot: '-rotate-2' },
+  { src: '/vtestimonials/studente-2.mp4', poster: '/vtestimonials/studente-2.jpg', caption: 'Dalla teoria ai bot live: l\'esperienza di uno studente', portrait: true, rot: 'rotate-1' },
   { src: '/vtestimonials/risultati-2.mp4', poster: '/vtestimonials/risultati-2.jpg', caption: 'La community: risultati e reazioni in chat', portrait: true, rot: '-rotate-1' },
   { src: '/vtestimonials/axi-1.mp4', poster: '/vtestimonials/axi-1.jpg', caption: 'Dentro Axi Select: Edge Score 95 · fase Acceleration', rot: 'rotate-1' },
   { src: '/vtestimonials/risultati-1.mp4', poster: '/vtestimonials/risultati-1.jpg', caption: 'Risultati Darwinex commentati dal vivo', portrait: true, rot: 'rotate-2' },
