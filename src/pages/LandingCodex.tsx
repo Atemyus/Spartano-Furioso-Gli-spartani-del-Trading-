@@ -813,6 +813,55 @@ const ProofCard: React.FC<{ src: string; caption: string; onFail: () => void; on
   );
 };
 
+// Citazione chiave della storia: viene "battuta a macchina" in stile terminale
+// quando entra nel viewport, con cursore lampeggiante.
+const STORY_QUOTE = 'Il giorno in cui ho scritto il mio primo algoritmo ho smesso di perdere per colpa delle emozioni. Il codice non ha paura. Non ha avidità. Esegue il piano, sempre.';
+
+const TypeQuote: React.FC = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    // rispetta prefers-reduced-motion: testo subito completo
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setN(STORY_QUOTE.length);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { setStarted(true); io.disconnect(); }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    // fallback: se l'observer non scatta, parti comunque dopo 3s
+    const fb = setTimeout(() => setStarted(true), 3000);
+    return () => { io.disconnect(); clearTimeout(fb); };
+  }, []);
+
+  useEffect(() => {
+    if (!started || n >= STORY_QUOTE.length) return;
+    const t = setTimeout(() => setN((v) => v + 1), 24);
+    return () => clearTimeout(t);
+  }, [started, n]);
+
+  return (
+    <div ref={ref} className="border-l-2 border-cyan-500 bg-cyan-500/5 rounded-r-lg px-4 py-3 min-h-[5.5rem] sm:min-h-[4.5rem]">
+      <p className="font-mono-lab text-[0.8rem] sm:text-sm text-cyan-200 leading-relaxed">
+        "{STORY_QUOTE.slice(0, n)}
+        {n < STORY_QUOTE.length
+          ? <span className="inline-block w-2 h-4 bg-cyan-400 ml-0.5 align-middle animate-pulse" />
+          : '"'}
+      </p>
+    </div>
+  );
+};
+
 const DarwinexProof: React.FC = () => {
   const [failed, setFailed] = useState(0);
   const [founder2Ok, setFounder2Ok] = useState(true);
@@ -842,13 +891,49 @@ const DarwinexProof: React.FC = () => {
           ))}
         </div>
 
-        {/* screenshot a sinistra + ritratto fondatore a DESTRA */}
-        <div className={`max-w-6xl mx-auto grid gap-8 items-center ${founder2Ok ? 'lg:grid-cols-[1fr_auto]' : ''}`}>
-          <div className="grid gap-5 min-w-0">
-            {PROOFS.map((p) => (
-              <ProofCard key={p.src} {...p} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
-            ))}
-          </div>
+        {/* storia del fondatore (terminale) + ritratto a DESTRA */}
+        <div className={`max-w-6xl mx-auto grid gap-8 lg:gap-10 items-center mb-10 ${founder2Ok ? 'lg:grid-cols-[1fr_auto]' : ''}`}>
+          <ScrollReveal direction="up" distance={32} duration={0.9} className="min-w-0">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/80 overflow-hidden shadow-xl shadow-cyan-500/5">
+              {/* barra finestra terminale */}
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-900/90 border-b border-slate-800">
+                <span className="w-3 h-3 rounded-full bg-rose-500/80" />
+                <span className="w-3 h-3 rounded-full bg-amber-400/80" />
+                <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                <span className="ml-3 font-mono-lab text-[0.65rem] tracking-widest text-slate-500 uppercase">~/codex/chi-sono</span>
+              </div>
+              <div className="p-5 sm:p-7 space-y-4 text-sm sm:text-[0.95rem] leading-relaxed text-slate-300">
+                <p>
+                  <strong className="text-white">Sono Daniel, 32 anni.</strong> Ho perso migliaia di euro
+                  prima di capire che il problema ero io.
+                </p>
+                <p>
+                  Ho iniziato a fare trading a 20 anni: cinque anni di analisi tecnica, libri, grafici.
+                  Le mie analisi erano spesso corrette — eppure continuavo a perdere. Il problema non era
+                  la strategia: era <strong className="text-white">l'esecuzione</strong>. Quando i soldi
+                  sono in gioco il cervello smette di ragionare: paura, avidità e FOMO mi sabotavano ogni
+                  singola operazione.
+                </p>
+                <p>
+                  Chiudevo i trade in profitto troppo presto. Tenevo quelli in perdita troppo a lungo.
+                  Aprivo posizioni sull'impulso di una notizia. Il classico trader retail che svuota il
+                  conto, lentamente.
+                </p>
+                <TypeQuote />
+                <p>
+                  Ci ho messo <strong className="text-white">5 anni</strong> a imparare tutto da solo:
+                  costruire algoritmi robusti, fare backtest seri, ottimizzare senza overfittare. In
+                  questo corso ho condensato tutto — eliminando gli errori e le strade sbagliate che ho
+                  pagato di tasca mia.
+                </p>
+                <p>
+                  Oggi i miei bot operano <strong className="text-white">24 ore su 24 su Forex, Futures e
+                  Crypto</strong>. Ogni settimana analizzo le performance, ottimizzo, aggiungo strategie.
+                  Non è più trading: <span className="text-cyan-300 font-semibold">è un sistema</span>.
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
 
           {founder2Ok && (
             <ScrollReveal direction="left" distance={60} duration={1.4} delay={0.2} threshold={0.2} className="justify-self-center">
@@ -885,6 +970,13 @@ const DarwinexProof: React.FC = () => {
               </div>
             </ScrollReveal>
           )}
+        </div>
+
+        {/* screenshot Darwinex sotto la storia */}
+        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+          {PROOFS.map((p) => (
+            <ProofCard key={p.src} {...p} onFail={() => setFailed((f) => f + 1)} onZoom={setZoom} />
+          ))}
         </div>
 
         <p className="text-center text-[0.65rem] text-slate-600 mt-5 max-w-xl mx-auto">
