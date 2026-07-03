@@ -292,46 +292,6 @@ const LandingCodex: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══════════════════ TRACK RECORD DEL FONDATORE (Darwinex Zero) ═══════════════════ */}
-      <DarwinexProof />
-
-      {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
-      <TestimonialsWall />
-
-      {/* ═══════════════════ VIDEO TESTIMONIANZE ═══════════════════ */}
-      <VideoTestimonials />
-
-      {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
-      <section id="cosa-imparerai" className="relative py-12 lg:py-20 border-t border-slate-900">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-4 justify-center">
-            <Cpu className="w-3.5 h-3.5 text-cyan-500" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// cosa imparerai</span>
-          </div>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-12">
-            Dal backtest alla strategia in produzione
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            {[
-              { icon: Cpu, t: 'Generazione automatica', d: 'Crea strategie con il generatore genetico e filtri logici di mercato.' },
-              { icon: Shield, t: 'Risk management', d: 'Position sizing dinamico, Monte Carlo, gestione multi-strategy.' },
-              { icon: TrendingUp, t: 'Validazione robusta', d: 'Out-of-sample, walk-forward, stress test per strategie solide.' },
-              { icon: Zap, t: 'Automazione', d: 'Workflow completo in StrategyQuant e integrazione MT4/MT5.' },
-              { icon: Trophy, t: 'Mentalità quant', d: 'Disciplina operativa, approccio data-driven, gestione del drawdown.' },
-              { icon: Users, t: 'Community & support', d: 'Gruppo privato, sessioni live e mentorship sui tuoi progetti.' },
-            ].map((c, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/40 transition-all">
-                <div className="w-9 h-9 rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-3">
-                  <c.icon className="w-4 h-4 text-cyan-500" />
-                </div>
-                <h3 className="font-display font-semibold">{c.t}</h3>
-                <p className="text-sm text-slate-400 mt-1">{c.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════════════ VIDEO + GATING ═══════════════════ */}
       <section ref={videosRef} className="relative py-12 lg:py-20 border-t border-slate-900 bg-gradient-to-b from-blue-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8">
@@ -471,6 +431,55 @@ const LandingCodex: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══════════════════ TRACK RECORD DEL FONDATORE (Darwinex Zero) ═══════════════════ */}
+      <DarwinexProof />
+
+      {/* ═══════════════════ TESTIMONIANZE (polaroid al muro) ═══════════════════ */}
+      <TestimonialsWall />
+
+      {/* ═══════════════════ VIDEO TESTIMONIANZE ═══════════════════ */}
+      <VideoTestimonials />
+
+      {/* ═══════════════════ COSA IMPARERAI ═══════════════════ */}
+      <section id="cosa-imparerai" className="relative py-12 lg:py-20 border-t border-slate-900">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex items-center gap-2 mb-4 justify-center">
+            <Cpu className="w-3.5 h-3.5 text-cyan-500" />
+            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// cosa imparerai</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-center tracking-tight mb-12">
+            Dal backtest alla strategia in produzione
+          </h2>
+          <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {[
+              { icon: Cpu, t: 'Generazione automatica', d: 'Crea strategie con il generatore genetico e filtri logici di mercato.' },
+              { icon: Shield, t: 'Risk management', d: 'Position sizing dinamico, Monte Carlo, gestione multi-strategy.' },
+              { icon: TrendingUp, t: 'Validazione robusta', d: 'Out-of-sample, walk-forward, stress test per strategie solide.' },
+              { icon: Zap, t: 'Automazione', d: 'Workflow completo in StrategyQuant e integrazione MT4/MT5.' },
+              { icon: Trophy, t: 'Mentalità quant', d: 'Disciplina operativa, approccio data-driven, gestione del drawdown.' },
+              { icon: Users, t: 'Community & support', d: 'Gruppo privato, sessioni live e mentorship sui tuoi progetti.' },
+            ].map((c, i) => (
+              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/40 transition-all">
+                <div className="w-9 h-9 rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-3">
+                  <c.icon className="w-4 h-4 text-cyan-500" />
+                </div>
+                <h3 className="font-display font-semibold">{c.t}</h3>
+                <p className="text-sm text-slate-400 mt-1">{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ SECONDA CATTURA EMAIL (dopo tutte le prove) ═══════════════════ */}
+      {!leadDone && (
+        <section className="relative py-12 lg:py-16 border-t border-slate-900">
+          <div className="container mx-auto px-4 md:px-8 max-w-2xl">
+            <LeadGate onDone={handleLeadDone} />
+          </div>
+        </section>
+      )}
+
       {/* ═══════════════════ CTA + CALENDLY INLINE ═══════════════════ */}
       <section id="call-box" ref={calendlyRef} className="relative py-12 lg:py-20 border-t border-slate-900">
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
@@ -529,8 +538,8 @@ const LandingCodex: React.FC = () => {
         </div>
       </section>
 
-      {/* ───── footer minimal ───── */}
-      <footer className="border-t border-slate-900 py-8">
+      {/* ───── footer minimal (padding extra su mobile per la barra fissa) ───── */}
+      <footer className="border-t border-slate-900 pt-8 pb-24 lg:pb-8">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
           <img src="/logo.png" alt="Nexora Lab" className="h-7 w-auto opacity-80" />
           <p className="text-xs text-slate-500">© {new Date().getFullYear()} Nexora Lab · Codex Algo Academy</p>
@@ -540,6 +549,22 @@ const LandingCodex: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* ── barra contatti FISSA su mobile: conversione sempre a un tap ── */}
+      <div className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-black/90 backdrop-blur-md border-t border-slate-800 px-3 py-2.5">
+        <div className="flex gap-2">
+          <button
+            onClick={scrollToVideos}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-slate-900 ring-1 ring-cyan-700/60 text-cyan-200 text-sm font-display font-semibold">
+            <PlayCircle className="w-4 h-4" /> Video gratis
+          </button>
+          <button
+            onClick={openCalendly}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold shadow-lg shadow-cyan-500/20">
+            <Calendar className="w-4 h-4" /> Call gratuita
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
