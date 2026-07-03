@@ -343,7 +343,7 @@ const LandingCodex: React.FC = () => {
             /* ───── stato SBLOCCATO: player + playlist ───── */
             <div className="max-w-6xl mx-auto scroll-mt-24">
               {guideSent && (
-                <div className="mb-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-center gap-3">
+                <div className="mb-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
                   <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
                   <p className="text-sm text-emerald-100">
                     <strong>Tutti i video sbloccati!</strong> Ti abbiamo inviato la guida PDF gratuita via email (controlla anche lo spam).
@@ -381,7 +381,7 @@ const LandingCodex: React.FC = () => {
 
                   {current && (
                     <div className="mt-4">
-                      <h3 className="font-display text-lg sm:text-xl font-semibold mb-3">{current.title}</h3>
+                      <h3 className="font-display text-lg sm:text-xl font-semibold mb-3 text-center sm:text-left">{current.title}</h3>
                       {current.description && (
                         <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5">
                           <FormattedDescription text={current.description} dark={true} />
@@ -459,8 +459,8 @@ const LandingCodex: React.FC = () => {
               { icon: Trophy, t: 'Mentalità quant', d: 'Disciplina operativa, approccio data-driven, gestione del drawdown.' },
               { icon: Users, t: 'Community & support', d: 'Gruppo privato, sessioni live e mentorship sui tuoi progetti.' },
             ].map((c, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/40 transition-all">
-                <div className="w-9 h-9 rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-3">
+              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-cyan-500/40 transition-all text-center sm:text-left">
+                <div className="w-9 h-9 rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center mb-3 mx-auto sm:mx-0">
                   <c.icon className="w-4 h-4 text-cyan-500" />
                 </div>
                 <h3 className="font-display font-semibold">{c.t}</h3>
@@ -769,7 +769,7 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
   };
 
   return (
-    <div className="rounded-2xl border-2 border-cyan-500/60 bg-gradient-to-br from-blue-950/70 to-slate-900/60 p-6 sm:p-7 relative overflow-hidden ring-2 ring-cyan-500/30 shadow-xl shadow-cyan-500/20">
+    <div className="rounded-2xl border-2 border-cyan-500/60 bg-gradient-to-br from-blue-950/70 to-slate-900/60 p-6 sm:p-7 relative overflow-hidden ring-2 ring-cyan-500/30 shadow-xl shadow-cyan-500/20 text-center sm:text-left">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 ring-1 ring-cyan-500/40 mb-3">
         <Lock className="w-3.5 h-3.5 text-cyan-300" />
