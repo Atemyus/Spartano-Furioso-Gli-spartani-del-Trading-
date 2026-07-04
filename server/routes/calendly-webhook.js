@@ -151,8 +151,20 @@ router.post(
           (answersBlock ? `\n<b>Risposte sondaggio</b>\n${answersBlock}` : '');
       }
 
-      // Invia ai 2 destinatari Telegram
-      const results = await notifyTelegram(message, { disablePreview: true });
+      // Smistamento destinatari: le call che arrivano dalla LP Ranger
+      // (utm_source=ranger-prop-pass) vanno SOLO ai chat ID elencati in
+      // TELEGRAM_CHAT_IDS_RANGER (se configurata). Tutte le altre call
+      // continuano ad andare ai destinatari globali TELEGRAM_CHAT_IDS.
+      const rangerIds = (process.env.TELEGRAM_CHAT_IDS_RANGER || '')
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      const isRangerBooking = utmSource === 'ranger-prop-pass';
+
+      const results = await notifyTelegram(message, {
+        disablePreview: true,
+        ...(isRangerBooking && rangerIds.length > 0 ? { chatIds: rangerIds } : {}),
+      });
 
       // Rispondi 200 a Calendly (importante: timeout breve, altrimenti riprova)
       res.json({ received: true, telegram: results });

@@ -6,6 +6,9 @@
  *   TELEGRAM_BOT_TOKEN     → token del bot (BotFather)
  *   TELEGRAM_CHAT_IDS      → chat ID separati da virgola (es. "12345,67890")
  *
+ * options.chatIds permette di sovrascrivere i destinatari per una singola
+ * notifica (es. le call della LP Ranger vanno solo ad alcuni chat ID).
+ *
  * Se manca anche solo una variabile, le funzioni fanno no-op e loggano warning
  * (cosi' il backend continua a funzionare anche senza Telegram configurato).
  */
@@ -36,7 +39,13 @@ export async function notifyTelegram(text, options = {}) {
   const url = `${TELEGRAM_API}/bot${cfg.token}/sendMessage`;
   const results = [];
 
-  for (const chatId of cfg.ids) {
+  // Destinatari: override per-notifica se fornito, altrimenti quelli globali
+  const targetIds =
+    Array.isArray(options.chatIds) && options.chatIds.length > 0
+      ? options.chatIds
+      : cfg.ids;
+
+  for (const chatId of targetIds) {
     try {
       const res = await fetch(url, {
         method: 'POST',
