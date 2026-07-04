@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield, Target, Crosshair, TrendingUp, CheckCircle, ArrowRight, Calendar,
@@ -7,8 +7,50 @@ import {
   Building2, Wallet,
 } from 'lucide-react';
 import NeonCracks from '../components/NeonCracks';
+import ScrollReveal from '../components/ScrollReveal';
 import CalendlyInline from '../components/CalendlyInline';
 import { API_URL } from '../config/api';
+
+// ════════════════════ EFFETTI VISIVI (keyframes locali alla LP) ════════════════════
+const RangerFX: React.FC = () => (
+  <style>{`
+    @keyframes rgrSweep { to { transform: rotate(360deg); } }
+    @keyframes rgrShine {
+      0% { transform: translateX(-140%) skewX(-20deg); }
+      55%, 100% { transform: translateX(260%) skewX(-20deg); }
+    }
+    @keyframes rgrCardGlow {
+      0%, 100% { box-shadow: 0 0 22px rgba(16,185,129,0.10); }
+      50% { box-shadow: 0 0 46px rgba(16,185,129,0.30); }
+    }
+    @keyframes rgrCardGlowAmber {
+      0%, 100% { box-shadow: 0 0 22px rgba(245,158,11,0.08); }
+      50% { box-shadow: 0 0 44px rgba(245,158,11,0.22); }
+    }
+    @keyframes rgrTierGlow {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.35), 0 0 20px rgba(16,185,129,0.12); }
+      50% { box-shadow: 0 0 0 1px rgba(16,185,129,0.7), 0 0 42px rgba(16,185,129,0.32); }
+    }
+    @keyframes rgrTextShift {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .rgr-shine { position: relative; overflow: hidden; }
+    .rgr-shine::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 45%;
+      transform: translateX(-140%) skewX(-20deg); pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      animation: rgrShine 3.2s ease-in-out infinite;
+    }
+    .rgr-card-glow { animation: rgrCardGlow 3.6s ease-in-out infinite; }
+    .rgr-card-glow-amber { animation: rgrCardGlowAmber 3.6s ease-in-out infinite; }
+    .rgr-tier-glow { animation: rgrTierGlow 3s ease-in-out infinite; }
+    .rgr-text-gradient { background-size: 200% auto; animation: rgrTextShift 4s linear infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .rgr-shine::after, .rgr-card-glow, .rgr-card-glow-amber, .rgr-tier-glow, .rgr-text-gradient { animation: none; }
+    }
+  `}</style>
+);
 
 // ════════════════════════════════════════════════════════════════
 // CONFIG — modifica questi valori
@@ -96,6 +138,7 @@ const LandingRanger: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      <RangerFX />
       {/* top bar */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-black/70 border-b border-emerald-900/40">
         <div className="container mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
@@ -123,7 +166,7 @@ const LandingRanger: React.FC = () => {
               </div>
               <h1 className="font-display text-[1.7rem] leading-[1.12] sm:text-4xl md:text-5xl font-bold tracking-tight sm:leading-[1.08]">
                 Continui a bruciare le challenge?{' '}
-                <span className="bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent">La superiamo noi per te.</span>
+                <span className="bg-gradient-to-r from-emerald-400 via-amber-300 to-emerald-400 bg-clip-text text-transparent rgr-text-gradient">La superiamo noi per te.</span>
               </h1>
               <p className="mt-2.5 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                 Team professionale, disciplina ferrea, rischio controllato — <strong className="text-white">dalla
@@ -131,7 +174,7 @@ const LandingRanger: React.FC = () => {
               </p>
 
               {/* ── CARD CONTATTI: subito visibile, zero scroll ── */}
-              <div className="mt-4 rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/70 to-slate-900/70 p-4 sm:p-5 ring-1 ring-emerald-500/25 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-center sm:text-left">
+              <div className="mt-4 rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/70 to-slate-900/70 p-4 sm:p-5 ring-1 ring-emerald-500/25 relative overflow-hidden text-center sm:text-left rgr-card-glow">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-1.5">
                   <Mail className="w-3.5 h-3.5 text-emerald-300" />
@@ -143,7 +186,7 @@ const LandingRanger: React.FC = () => {
                 <LeadEmailForm />
                 <div className="mt-3 pt-3 border-t border-emerald-900/60 flex flex-col sm:flex-row gap-2">
                   <button onClick={openCalendly}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-emerald-500/30 transition-all">
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-emerald-500/30 transition-all rgr-shine">
                     <Calendar className="w-4 h-4" /> Prenota una call gratuita
                   </button>
                   <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer"
@@ -172,26 +215,30 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ COSA SONO LE PROP FIRM (educazione traffico freddo) ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <Building2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// prop firm in 60 secondi</span>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
-            Operare con <span className="text-emerald-400">100.000$</span> senza averli sul conto
-          </h2>
-          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
-            Se non conosci le prop firm, ecco come funzionano in tre passaggi:
-          </p>
+          <ScrollReveal>
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// prop firm in 60 secondi</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+              Operare con <span className="text-emerald-400">100.000$</span> senza averli sul conto
+            </h2>
+            <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
+              Se non conosci le prop firm, ecco come funzionano in tre passaggi:
+            </p>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {PROP_EXPLAINER.map((p, i) => (
-              <div key={i} className="relative rounded-2xl border border-slate-800 bg-slate-900/40 p-6 text-center sm:text-left">
-                <span className="absolute top-4 right-4 font-display text-3xl font-bold text-emerald-900/80">{i + 1}</span>
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mb-3 mx-auto sm:mx-0">
-                  <p.icon className="w-5 h-5 text-emerald-400" />
+              <ScrollReveal key={i} delay={i * 0.12} className="h-full">
+                <div className="group relative h-full rounded-2xl border border-slate-800 bg-slate-900/40 p-6 text-center sm:text-left transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-500/15">
+                  <span className="absolute top-4 right-4 font-display text-3xl font-bold text-emerald-900/80 transition-colors group-hover:text-emerald-600/80">{i + 1}</span>
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mb-3 mx-auto sm:mx-0 transition-transform duration-300 group-hover:scale-110 group-hover:ring-emerald-400/60">
+                    <p.icon className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <h3 className="font-display font-semibold">{p.t}</h3>
+                  <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">{p.d}</p>
                 </div>
-                <h3 className="font-display font-semibold">{p.t}</h3>
-                <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">{p.d}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -200,28 +247,32 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ IL PROBLEMA ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-amber-400">// il vero problema</span>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
-            Non è la strategia. È l'<span className="text-emerald-400">esecuzione</span>.
-          </h2>
-          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
-            Molti trader hanno strategie valide, eppure falliscono le challenge. I 6 motivi sono sempre gli stessi
-            — e sono tutti di <strong className="text-white">esecuzione</strong>, non di analisi:
-          </p>
+          <ScrollReveal>
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-amber-400">// il vero problema</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+              Non è la strategia. È l'<span className="text-emerald-400">esecuzione</span>.
+            </h2>
+            <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
+              Molti trader hanno strategie valide, eppure falliscono le challenge. I 6 motivi sono sempre gli stessi
+              — e sono tutti di <strong className="text-white">esecuzione</strong>, non di analisi:
+            </p>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {PROBLEMS.map((p, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left">
-                <div className="w-10 h-10 rounded-lg bg-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center shrink-0">
-                  <p.icon className="w-5 h-5 text-amber-400" />
+              <ScrollReveal key={i} delay={(i % 3) * 0.1} className="h-full">
+                <div className="group h-full rounded-xl border border-slate-800 bg-slate-900/40 p-5 flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left transition-all duration-300 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10">
+                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 ring-1 ring-amber-500/30 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                    <p.icon className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-semibold">{p.t}</h3>
+                    <p className="text-sm text-slate-400 mt-1">{p.d}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-display font-semibold">{p.t}</h3>
-                  <p className="text-sm text-slate-400 mt-1">{p.d}</p>
-                </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -230,25 +281,31 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ LA SOLUZIONE (come funziona) ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30 bg-gradient-to-b from-emerald-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// come funziona</span>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
-            Affidi l'esecuzione a chi lo fa di mestiere
-          </h2>
-          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto -mt-6 mb-10">
-            Le 6 fasi ufficiali del servizio — dal primo contatto all'account finanziato.
-            Pensato sia per chi è alle prime esperienze con le prop firm, sia per i trader esperti.
-          </p>
-          <div className="max-w-2xl mx-auto space-y-3">
+          <ScrollReveal>
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <Shield className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// come funziona</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
+              Affidi l'esecuzione a chi lo fa di mestiere
+            </h2>
+            <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto -mt-6 mb-10">
+              Le 6 fasi ufficiali del servizio — dal primo contatto all'account finanziato.
+              Pensato sia per chi è alle prime esperienze con le prop firm, sia per i trader esperti.
+            </p>
+          </ScrollReveal>
+          <div className="relative max-w-2xl mx-auto space-y-3">
+            {/* linea di collegamento verticale luminosa dietro i numeri */}
+            <div className="absolute left-[2.15rem] top-6 bottom-6 w-px bg-gradient-to-b from-emerald-500/0 via-emerald-500/40 to-emerald-500/0 pointer-events-none" />
             {STEPS.map((s, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center shrink-0 font-display font-bold text-sm">
-                  {i + 1}
+              <ScrollReveal key={i} delay={i * 0.08} direction={i % 2 === 0 ? 'right' : 'left'} distance={22}>
+                <div className="group relative flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/40 p-4 transition-all duration-300 hover:border-emerald-500/50 hover:bg-slate-900/70">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center shrink-0 font-display font-bold text-sm shadow-lg shadow-emerald-500/30 transition-transform duration-300 group-hover:scale-110">
+                    {i + 1}
+                  </div>
+                  <p className="text-sm md:text-base text-slate-200">{s}</p>
                 </div>
-                <p className="text-sm md:text-base text-slate-200">{s}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
           <p className="text-center text-xs text-slate-500 mt-6 max-w-xl mx-auto">
@@ -261,7 +318,8 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ OLTRE LA CHALLENGE (funded) ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8 max-w-4xl">
-          <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/20 to-slate-900/50 p-6 md:p-10 text-center relative overflow-hidden">
+          <ScrollReveal>
+          <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/20 to-slate-900/50 p-6 md:p-10 text-center relative overflow-hidden rgr-card-glow-amber">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 mb-4">
               <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
@@ -276,10 +334,11 @@ const LandingRanger: React.FC = () => {
               della prop firm. Il modello si definisce insieme, in base alla tua situazione di partenza.
             </p>
             <button onClick={openCalendly}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 text-slate-900 font-display font-bold hover:shadow-md hover:shadow-amber-500/30 transition-all">
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 text-slate-900 font-display font-bold hover:shadow-md hover:shadow-amber-500/30 transition-all rgr-shine">
               <Calendar className="w-4 h-4" /> Parlane in una call gratuita
             </button>
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -289,26 +348,30 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ COSA INCLUDE ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// cosa include</span>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
-            Molto più di una semplice gestione
-          </h2>
-          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
-            Ranger Signals Hub è un ecosistema completo dedicato alla crescita del trader: col Prop Pass
-            entri in tutto — segnali, formazione, copy trading e supporto.
-          </p>
+          <ScrollReveal>
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// cosa include</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+              Molto più di una semplice gestione
+            </h2>
+            <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-10">
+              Ranger Signals Hub è un ecosistema completo dedicato alla crescita del trader: col Prop Pass
+              entri in tutto — segnali, formazione, copy trading e supporto.
+            </p>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {FEATURES.map((f, i) => (
-              <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-emerald-500/40 transition-all text-center sm:text-left">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mb-3 mx-auto sm:mx-0">
-                  <f.icon className="w-4 h-4 text-emerald-400" />
+              <ScrollReveal key={i} delay={(i % 3) * 0.09} className="h-full">
+                <div className="group h-full rounded-xl border border-slate-800 bg-slate-900/40 p-5 transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10 text-center sm:text-left">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mb-3 mx-auto sm:mx-0 transition-transform duration-300 group-hover:scale-110 group-hover:ring-emerald-400/60">
+                    <f.icon className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <h3 className="font-display font-semibold text-sm">{f.t}</h3>
+                  <p className="text-sm text-slate-400 mt-1">{f.d}</p>
                 </div>
-                <h3 className="font-display font-semibold text-sm">{f.t}</h3>
-                <p className="text-sm text-slate-400 mt-1">{f.d}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -317,16 +380,18 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ I TIER (prezzo riservato) ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30 bg-gradient-to-b from-emerald-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <Target className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// i pacchetti</span>
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
-            Scegli il tuo livello
-          </h2>
-          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6">
-            Il prezzo lo vediamo insieme in call o in chat, in base alla prop firm e alla challenge scelta.
-          </p>
+          <ScrollReveal>
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <Target className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// i pacchetti</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-3">
+              Scegli il tuo livello
+            </h2>
+            <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6">
+              Il prezzo lo vediamo insieme in call o in chat, in base alla prop firm e alla challenge scelta.
+            </p>
+          </ScrollReveal>
 
           {/* perché Bullwaves (dalla brochure ufficiale) */}
           <div className="max-w-3xl mx-auto mb-10 rounded-xl border border-emerald-500/25 bg-emerald-950/20 px-5 py-4">
@@ -344,8 +409,9 @@ const LandingRanger: React.FC = () => {
 
           <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {TIERS.map((t, i) => (
-              <div key={i} className={`relative rounded-2xl border p-6 flex flex-col text-center md:text-left ${
-                t.popular ? 'border-emerald-500/60 bg-emerald-950/30 ring-1 ring-emerald-500/30' : 'border-slate-800 bg-slate-900/40'
+              <ScrollReveal key={i} delay={i * 0.12} className="h-full">
+              <div className={`relative h-full rounded-2xl border p-6 flex flex-col text-center md:text-left transition-transform duration-300 hover:-translate-y-1.5 ${
+                t.popular ? 'border-emerald-500/60 bg-emerald-950/30 rgr-tier-glow' : 'border-slate-800 bg-slate-900/40 hover:border-emerald-500/40'
               }`}>
                 {t.popular && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-[0.6rem] font-mono-lab uppercase tracking-widest font-bold">
@@ -360,13 +426,14 @@ const LandingRanger: React.FC = () => {
                   <div className="font-display text-xl font-semibold text-emerald-300 mb-4">Riservato</div>
                   <button onClick={openCalendly}
                     className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-lg font-display font-semibold transition-all ${
-                      t.popular ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:shadow-md hover:shadow-emerald-500/30'
+                      t.popular ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:shadow-md hover:shadow-emerald-500/30 rgr-shine'
                                 : 'bg-slate-800/60 text-slate-200 ring-1 ring-slate-700 hover:ring-emerald-500/40'
                     }`}>
                     Scopri in call <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
+              </ScrollReveal>
             ))}
           </div>
           <p className="text-center text-xs text-slate-500 mt-6 max-w-2xl mx-auto">
@@ -378,22 +445,26 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ PERCHÉ FUNZIONA ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
-            Tre pilastri. <span className="text-emerald-400">Zero improvvisazione.</span>
-          </h2>
+          <ScrollReveal>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
+              Tre pilastri. <span className="text-emerald-400">Zero improvvisazione.</span>
+            </h2>
+          </ScrollReveal>
           <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {[
               { icon: Shield, t: 'Disciplina', d: 'Regole ferree, nessuna decisione emotiva sotto pressione.' },
               { icon: Crosshair, t: 'Struttura', d: 'Un sistema operativo definito, non scelte improvvisate.' },
               { icon: Target, t: 'Esecuzione', d: 'L\'abilità che separa chi passa da chi fallisce.' },
             ].map((p, i) => (
-              <div key={i} className="rounded-2xl border border-emerald-900/40 bg-emerald-950/20 p-6 text-center">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mx-auto mb-4">
-                  <p.icon className="w-6 h-6 text-emerald-400" />
+              <ScrollReveal key={i} delay={i * 0.12} className="h-full">
+                <div className="group h-full rounded-2xl border border-emerald-900/40 bg-emerald-950/20 p-6 text-center transition-all duration-300 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30 flex items-center justify-center mx-auto mb-4 animate-float" style={{ animationDelay: `${i * 0.45}s` }}>
+                    <p.icon className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="font-display text-lg font-bold mb-1">{p.t}</h3>
+                  <p className="text-sm text-slate-400">{p.d}</p>
                 </div>
-                <h3 className="font-display text-lg font-bold mb-1">{p.t}</h3>
-                <p className="text-sm text-slate-400">{p.d}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -402,16 +473,20 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ LEAD MAGNET (guida gratis) ═══════════ */}
       <section ref={leadRef} className="relative py-12 lg:py-20 border-t border-emerald-900/30 bg-gradient-to-b from-emerald-950/10 to-black">
         <div className="container mx-auto px-4 md:px-8 max-w-2xl">
-          <RangerLeadForm />
+          <ScrollReveal>
+            <RangerLeadForm />
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ═══════════ FAQ ═══════════ */}
       <section className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
-            Domande frequenti
-          </h2>
+          <ScrollReveal>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-10">
+              Domande frequenti
+            </h2>
+          </ScrollReveal>
           <div className="space-y-3">
             {FAQS.map((f, i) => (
               <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/40 overflow-hidden">
@@ -432,9 +507,16 @@ const LandingRanger: React.FC = () => {
       {/* ═══════════ CTA + CALENDLY ═══════════ */}
       <section ref={callRef} className="relative py-12 lg:py-20 border-t border-emerald-900/30">
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
-          <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden">
+          <ScrollReveal>
+          <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-slate-900/40 p-6 md:p-8 text-center relative overflow-hidden rgr-card-glow">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
-            <Crosshair className="w-6 h-6 text-emerald-400 mx-auto mb-3" />
+            <div className="relative w-12 h-12 mx-auto mb-3">
+              <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping" style={{ animationDuration: '2.4s' }} />
+              <span className="absolute inset-1.5 rounded-full bg-emerald-500/10 animate-ping" style={{ animationDuration: '2.4s', animationDelay: '0.5s' }} />
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Crosshair className="w-6 h-6 text-emerald-400" />
+              </span>
+            </div>
             <h3 className="font-display text-2xl md:text-3xl font-semibold tracking-tight mb-2">
               Pronto a far gestire la tua prossima challenge?
             </h3>
@@ -444,7 +526,7 @@ const LandingRanger: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button onClick={openCalendly}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-display font-semibold hover:shadow-md hover:shadow-emerald-500/30 transition-all">
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-display font-semibold hover:shadow-md hover:shadow-emerald-500/30 transition-all rgr-shine">
                 <Calendar className="w-4 h-4" /> Prenota una call
               </button>
               <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer"
@@ -457,6 +539,7 @@ const LandingRanger: React.FC = () => {
               <a href={`mailto:${EMAIL_CONTACT}`} className="text-emerald-400 hover:text-emerald-300">{EMAIL_CONTACT}</a>
             </p>
           </div>
+          </ScrollReveal>
 
           {showCalendly && (
             <div className="mt-8">
@@ -496,7 +579,7 @@ const LandingRanger: React.FC = () => {
           </button>
           <button
             onClick={openCalendly}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold shadow-lg shadow-emerald-500/20">
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-display font-semibold shadow-lg shadow-emerald-500/20 rgr-shine">
             <Calendar className="w-4 h-4" /> Call gratuita
           </button>
         </div>
@@ -526,6 +609,24 @@ const RangerEmblem: React.FC = () => (
       <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '26px 26px' }} />
       {/* area mirino + candele */}
       <div className="relative flex-1">
+        {/* sweep radar: fascio conico che ruota dentro il mirino */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-[66%] h-[66%]">
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: 'conic-gradient(from 0deg, rgba(16,185,129,0.4), rgba(16,185,129,0.12) 55deg, transparent 75deg, transparent 360deg)',
+                animation: 'rgrSweep 4.5s linear infinite',
+              }}
+            />
+            {/* anelli radar concentrici */}
+            <div className="absolute inset-[12%] rounded-full border border-emerald-500/25" />
+            <div className="absolute inset-[30%] rounded-full border border-emerald-500/20" />
+            {/* blip che pulsano */}
+            <span className="absolute top-[22%] right-[28%] w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping" style={{ animationDuration: '2.4s' }} />
+            <span className="absolute bottom-[26%] left-[24%] w-1.5 h-1.5 rounded-full bg-amber-300 animate-ping" style={{ animationDuration: '3.1s', animationDelay: '0.9s' }} />
+          </div>
+        </div>
         {/* mirino rotante */}
         <div className="absolute inset-0 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-[78%] h-[78%] animate-[spin_22s_linear_infinite]" style={{ filter: 'drop-shadow(0 0 6px rgba(16,185,129,0.4))' }}>
@@ -607,6 +708,49 @@ const LeadEmailForm: React.FC = () => {
   );
 };
 
+// ════════════════════ CONTATORE ANIMATO ════════════════════
+// Conta da 0 al valore quando entra nel viewport (fallback timer per sicurezza).
+const CountUp: React.FC<{ end: number; suffix?: string; duration?: number }> = ({ end, suffix = '', duration = 1.8 }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [val, setVal] = useState(0);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const start = () => {
+      if (started.current) return;
+      started.current = true;
+      const t0 = performance.now();
+      const tick = (t: number) => {
+        const p = Math.min((t - t0) / (duration * 1000), 1);
+        const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+        setVal(Math.round(end * eased));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const el = ref.current;
+    let io: IntersectionObserver | null = null;
+    if (el && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        (entries) => { if (entries.some(e => e.isIntersecting)) { start(); io?.disconnect(); } },
+        { threshold: 0.4 }
+      );
+      io.observe(el);
+    }
+    const fallback = setTimeout(start, 3000);
+    return () => { io?.disconnect(); clearTimeout(fallback); };
+  }, [end, duration]);
+
+  return <span ref={ref}>{val.toLocaleString('it-IT')}{suffix}</span>;
+};
+
+// Numeri reali presi dagli screenshot del muro (captions qui sotto)
+const WALL_STATS = [
+  { end: 103575, suffix: '$', label: 'Conto FundingPips raggiunto' },
+  { end: 32597, suffix: '$', label: 'Ricompense FundingPips totali' },
+  { end: 6206, suffix: '$', label: 'Payout singolo Lucid Trading' },
+];
+
 // ════════════════════ PROVE DAL CAMPO — polaroid "attaccate al muro" ════════════════════
 // Screenshot in public/testimonials/recensione_ranger1..9.jpg. Ogni polaroid
 // sparisce se il file manca; se mancano tutte, l'intera sezione si nasconde.
@@ -659,16 +803,32 @@ const RangerWall: React.FC = () => {
         style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}
       />
       <div className="container mx-auto px-4 md:px-8 relative">
-        <div className="flex items-center gap-2 mb-3 justify-center">
-          <Award className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// prove dal campo</span>
-        </div>
-        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
-          Challenge superate, <span className="text-emerald-400">payout reali</span>
-        </h2>
-        <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-8 lg:mb-12">
-          FTMO, FundingPips, Lucid, GOAT: certificati e ricompense direttamente dal campo. Tocca una foto per ingrandirla.
-        </p>
+        <ScrollReveal>
+          <div className="flex items-center gap-2 mb-3 justify-center">
+            <Award className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-emerald-400">// prove dal campo</span>
+          </div>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-center tracking-tight mb-2">
+            Challenge superate, <span className="text-emerald-400">payout reali</span>
+          </h2>
+          <p className="text-center text-sm md:text-base text-slate-400 max-w-2xl mx-auto mb-6 lg:mb-8">
+            FTMO, FundingPips, Lucid, GOAT: certificati e ricompense direttamente dal campo. Tocca una foto per ingrandirla.
+          </p>
+        </ScrollReveal>
+
+        {/* contatori animati coi numeri reali degli screenshot */}
+        <ScrollReveal delay={0.1}>
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto mb-8 lg:mb-12">
+            {WALL_STATS.map((s) => (
+              <div key={s.label} className="rounded-xl border border-emerald-500/25 bg-emerald-950/20 px-2 py-4 sm:px-4 sm:py-5 text-center">
+                <div className="font-display text-lg sm:text-2xl md:text-3xl font-bold text-emerald-300 tabular-nums">
+                  <CountUp end={s.end} suffix={s.suffix} />
+                </div>
+                <div className="mt-1 font-mono-lab text-[0.5rem] sm:text-[0.6rem] tracking-[0.12em] uppercase text-slate-400 leading-snug">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
 
         <div className="flex gap-5 lg:gap-7 overflow-x-auto lg:overflow-visible lg:flex-wrap lg:justify-center items-start pb-6 lg:pb-2 px-2 snap-x">
           {RANGER_TESTIMONIALS.map((t) => (
@@ -696,7 +856,7 @@ const RangerWall: React.FC = () => {
 
 // ════════════════════ LEAD MAGNET (sezione di metà pagina) ════════════════════
 const RangerLeadForm: React.FC = () => (
-  <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden text-center sm:text-left">
+  <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-950/50 to-slate-900/50 p-6 sm:p-7 ring-1 ring-emerald-500/20 relative overflow-hidden text-center sm:text-left rgr-card-glow">
     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500" />
     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/40 mb-3">
       <Mail className="w-3.5 h-3.5 text-emerald-300" />
