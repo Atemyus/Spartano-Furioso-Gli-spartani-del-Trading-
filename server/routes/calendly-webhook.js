@@ -108,6 +108,13 @@ router.post(
       const joinUrl = pickJoinUrl(scheduledEvent);
       const calendlyEventUrl = payload.uri || scheduledEvent.uri || '';
 
+      // Fonte della prenotazione: utm_source aggiunto al link Calendly dalla
+      // landing page (es. "ranger-prop-pass" dalla LP Ranger). Se assente,
+      // la call arriva dal link standard (LP Codex / discovery-call diretta).
+      const utmSource = payload.tracking?.utm_source || '';
+      const sourceLabel =
+        utmSource === 'ranger-prop-pass' ? '🎯 Ranger Prop Pass' : utmSource;
+
       // Risposte alle domande personalizzate (se ce ne sono)
       const questionsAndAnswers = Array.isArray(payload.questions_and_answers)
         ? payload.questions_and_answers
@@ -138,6 +145,7 @@ router.post(
             ? ` → ${escapeHtml(new Date(endTime).toLocaleTimeString('it-IT', { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit' }))}\n`
             : '\n') +
           `📌 <i>${escapeHtml(eventName)}</i>\n` +
+          (sourceLabel ? `📍 Fonte: <b>${escapeHtml(sourceLabel)}</b>\n` : '') +
           (joinUrl ? `\n🔗 <a href="${joinUrl}">Entra nella call</a>\n` : '') +
           (calendlyEventUrl ? `🗓 <a href="${calendlyEventUrl}">Apri su Calendly</a>\n` : '') +
           (answersBlock ? `\n<b>Risposte sondaggio</b>\n${answersBlock}` : '');

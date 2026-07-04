@@ -13,9 +13,11 @@ import { API_URL } from '../config/api';
 // ════════════════════════════════════════════════════════════════
 // CONFIG — modifica questi valori
 // ════════════════════════════════════════════════════════════════
-// Crea su Calendly un evento dedicato "Ranger Prop Pass" e incolla qui il link.
-// Il webhook Telegram già configurato notificherà automaticamente queste call.
-const CALENDLY_URL = 'https://calendly.com/nexoralab/ranger-prop-pass';
+// Piano Calendly Free = 1 solo evento attivo: riusiamo la discovery-call
+// con utm_source per distinguere su Telegram le call che arrivano da Ranger.
+// Se in futuro passi a Calendly Standard, crea l'evento "ranger-prop-pass"
+// e sostituisci l'URL qui sotto.
+const CALENDLY_URL = 'https://calendly.com/nexoralab/discovery-call?utm_source=ranger-prop-pass';
 const TELEGRAM_URL = 'https://t.me/BayekTrader';
 const EMAIL_CONTACT = 'bayektrader@gmail.com';
 // ════════════════════════════════════════════════════════════════
