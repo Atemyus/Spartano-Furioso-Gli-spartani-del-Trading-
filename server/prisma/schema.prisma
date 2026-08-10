@@ -58,6 +58,7 @@ model Newsletter {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   email       String   @unique
   name        String?
+  phone       String?
   status      String   @default("ACTIVE") // ACTIVE, UNSUBSCRIBED
   source      String   @default("footer") // footer, popup, landing
   subscribedAt DateTime @default(now())

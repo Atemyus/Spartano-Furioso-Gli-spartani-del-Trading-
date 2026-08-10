@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   PlayCircle, Lock, ArrowRight, Sparkles, TrendingUp, Shield,
-  Cpu, Users, Star, Calendar, Loader2, Mail, User as UserIcon,
+  Cpu, Users, Star, Calendar, Loader2, Mail, Phone, User as UserIcon,
   Lock as LockIcon, Eye, EyeOff, BookOpen, Trophy, Zap, ChevronRight, CheckCircle,
 } from 'lucide-react';
 import HologramSphere from '../components/HologramSphere';
@@ -732,6 +732,7 @@ const RegisterInline: React.FC = () => {
 // Salva il lead nel pannello admin (endpoint /api/newsletter/lead, no account).
 const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => {
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -742,12 +743,17 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
       setError('Inserisci un\'email valida.');
       return;
     }
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 8 || phoneDigits.length > 15) {
+      setError('Inserisci un numero di cellulare valido.');
+      return;
+    }
     setLoading(true);
     try {
       const r = await fetch(`${API_URL}/api/newsletter/lead`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), source: 'lp-codex' }),
+        body: JSON.stringify({ email: email.trim(), phone: phone.trim(), source: 'lp-codex' }),
       });
       if (r.ok) {
         localStorage.setItem('lp_lead', email.trim());
@@ -779,19 +785,34 @@ const LeadGate: React.FC<{ onDone: (email: string) => void }> = ({ onDone }) => 
         🔓 Sblocca <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">tutti i video</span> gratis
       </h3>
       <p className="text-sm sm:text-base text-slate-300 mb-4">
-        Lascia la tua email e accedi <strong className="text-white">subito</strong> a tutti i video del percorso
+        Lascia email e cellulare e accedi <strong className="text-white">subito</strong> a tutti i video del percorso
         + ricevi la <strong className="text-white">guida PDF gratuita</strong>. Niente password, niente carta.
       </p>
-      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2.5">
-        <div className="relative flex-1 min-w-0">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="La tua email"
-            className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
-          />
+      <form onSubmit={submit} className="flex flex-col gap-2.5">
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          <div className="relative flex-1 min-w-0">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="La tua email"
+              autoComplete="email"
+              className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+            />
+          </div>
+          <div className="relative flex-1 min-w-0">
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Il tuo cellulare"
+              autoComplete="tel"
+              inputMode="tel"
+              className="w-full pl-10 pr-3 py-3 rounded-lg bg-slate-950/60 border border-slate-800 text-white text-sm focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+            />
+          </div>
         </div>
         <button
           type="submit"

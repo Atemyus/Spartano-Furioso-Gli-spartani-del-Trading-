@@ -5,6 +5,7 @@ interface Subscriber {
   id: string;
   email: string;
   name?: string;
+  phone?: string;
   status: string;
   source: string;
   subscribedAt: string;
@@ -324,6 +325,7 @@ const NewsletterManagement: React.FC = () => {
                     <tr className="border-b border-gray-700">
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Email</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Nome</th>
+                      <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Telefono</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Stato</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Fonte</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Data Iscrizione</th>
@@ -332,13 +334,13 @@ const NewsletterManagement: React.FC = () => {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-8 text-gray-400">
+                        <td colSpan={6} className="text-center py-8 text-gray-400">
                           Caricamento...
                         </td>
                       </tr>
                     ) : subscribers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-8 text-gray-400">
+                        <td colSpan={6} className="text-center py-8 text-gray-400">
                           Nessun iscritto trovato
                         </td>
                       </tr>
@@ -347,6 +349,11 @@ const NewsletterManagement: React.FC = () => {
                         <tr key={sub.id} className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors">
                           <td className="py-4 px-4 text-white">{sub.email}</td>
                           <td className="py-4 px-4 text-gray-300">{sub.name || '-'}</td>
+                          <td className="py-4 px-4 text-gray-300">
+                            {sub.phone ? (
+                              <a href={`tel:${sub.phone.replace(/ /g, '')}`} className="hover:text-cyan-400">{sub.phone}</a>
+                            ) : '-'}
+                          </td>
                           <td className="py-4 px-4">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                               sub.status === 'ACTIVE' 

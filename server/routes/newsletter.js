@@ -41,23 +41,36 @@ const LEAD_GUIDES = {
 
 router.post('/lead', async (req, res) => {
   try {
-    const { email, source = 'lp-codex' } = req.body;
+    const { email, source = 'lp-codex', phone } = req.body;
     if (!email || !email.includes('@')) {
       return res.status(400).json({ error: 'Email non valida' });
     }
     const lower = email.toLowerCase().trim();
     const g = LEAD_GUIDES[source] || LEAD_GUIDES['lp-codex'];
 
+    // Telefono opzionale lato API: tenuti solo cifre, spazi e prefisso +
+    const cleanPhone =
+      typeof phone === 'string' && phone.trim()
+        ? phone.replace(/[^\d+ ]/g, '').trim().slice(0, 20)
+        : null;
+
     // Salva/aggiorna il lead nella tabella newsletter (no account richiesto)
     const existing = await prisma.newsletter.findUnique({ where: { email: lower } });
     if (existing) {
       await prisma.newsletter.update({
         where: { email: lower },
-        data: { status: 'ACTIVE', subscribedAt: new Date(), unsubscribedAt: null, source },
+        data: {
+          status: 'ACTIVE',
+          subscribedAt: new Date(),
+          unsubscribedAt: null,
+          source,
+          // non cancellare un numero già salvato se stavolta non è stato fornito
+          ...(cleanPhone ? { phone: cleanPhone } : {}),
+        },
       });
     } else {
       await prisma.newsletter.create({
-        data: { email: lower, source, status: 'ACTIVE' },
+        data: { email: lower, source, status: 'ACTIVE', phone: cleanPhone },
       });
     }
 
