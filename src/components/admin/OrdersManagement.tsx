@@ -69,9 +69,14 @@ export default function OrdersManagement() {
     fetchStats();
   }, []);
 
+  const authHeader = (): Record<string, string> => {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+    return { Authorization: `Bearer ${token}` };
+  };
+
   const fetchOrders = async () => {
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/orders');
+      const response = await fetch('https://api.nexoralab.solutions/api/orders', { headers: authHeader() });
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
@@ -92,10 +97,11 @@ export default function OrdersManagement() {
     if (!selectedOrder) return;
 
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/orders/${selectedOrder.id}/confirm`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/orders/${selectedOrder.id}/confirm`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeader()
         },
         body: JSON.stringify({
           telegramLink,
@@ -122,10 +128,11 @@ export default function OrdersManagement() {
     if (!confirm('Sei sicuro di voler annullare questo ordine?')) return;
 
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/orders/${orderId}/cancel`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/orders/${orderId}/cancel`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeader()
         },
         body: JSON.stringify({
           reason: 'Annullato da admin'
@@ -143,7 +150,7 @@ export default function OrdersManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/orders/stats');
+      const response = await fetch('https://api.nexoralab.solutions/api/orders/stats', { headers: authHeader() });
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -197,9 +204,9 @@ export default function OrdersManagement() {
       case 'confirmed':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'cancelled':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-blue-500" />;
       case 'pending':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-cyan-500" />;
       default:
         return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
@@ -210,9 +217,9 @@ export default function OrdersManagement() {
       case 'confirmed':
         return 'bg-green-100 text-green-800';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-blue-100 text-blue-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-cyan-100 text-cyan-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -292,7 +299,7 @@ export default function OrdersManagement() {
                 <p className="text-sm text-gray-600">Pagamenti Falliti</p>
                 <p className="text-2xl font-bold">{stats.failedPayments}</p>
               </div>
-              <XCircle className="h-8 w-8 text-red-600" />
+              <XCircle className="h-8 w-8 text-blue-600" />
             </div>
           </div>
         </div>
@@ -329,7 +336,7 @@ export default function OrdersManagement() {
           onClick={() => setFilter('pending')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'pending'
-              ? 'bg-yellow-600 text-white'
+              ? 'bg-cyan-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -349,7 +356,7 @@ export default function OrdersManagement() {
           onClick={() => setFilter('cancelled')}
           className={`px-4 py-2 rounded-lg transition-colors ${
             filter === 'cancelled'
-              ? 'bg-red-600 text-white'
+              ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -456,7 +463,7 @@ export default function OrdersManagement() {
                                 💰 PayPal
                               </span>
                             ) : order.paymentProvider === 'crypto-nowpayments' || order.paymentProvider === 'crypto' ? (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sky-100 text-sky-800">
                                 ₿ Crypto
                                 {order.metadata?.payCurrency && (
                                   <span className="ml-1 text-[10px]">
@@ -480,16 +487,48 @@ export default function OrdersManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {(order.paymentIntent || order.subscription) && (
-                        <a
-                          href={`https://dashboard.stripe.com/${order.mode === 'subscription' ? 'subscriptions' : 'payments'}/${order.subscription || order.paymentIntent}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-700 text-sm font-medium"
-                        >
-                          Vedi su Stripe →
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {order.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleConfirmOrder(order)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700 transition-colors"
+                              title="Conferma ordine e invia credenziali"
+                            >
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Conferma
+                            </button>
+                            <button
+                              onClick={() => cancelOrder(order.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors"
+                              title="Annulla ordine"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              Annulla
+                            </button>
+                          </>
+                        )}
+                        {order.status === 'confirmed' && (
+                          <button
+                            onClick={() => cancelOrder(order.id)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                            title="Annulla ordine"
+                          >
+                            <XCircle className="w-3.5 h-3.5" />
+                            Annulla
+                          </button>
+                        )}
+                        {(order.paymentIntent || order.subscription) && (
+                          <a
+                            href={`https://dashboard.stripe.com/${order.mode === 'subscription' ? 'subscriptions' : 'payments'}/${order.subscription || order.paymentIntent}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                          >
+                            Stripe →
+                          </a>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -501,13 +540,86 @@ export default function OrdersManagement() {
 
       {/* Error messages */}
       {filteredOrders.some(o => o.error) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h4 className="font-semibold text-red-800 mb-2">Errori nei pagamenti:</h4>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-800 mb-2">Errori nei pagamenti:</h4>
           {filteredOrders.filter(o => o.error).map(order => (
-            <div key={order.id} className="text-sm text-red-600 mb-1">
+            <div key={order.id} className="text-sm text-blue-600 mb-1">
               {new Date(order.createdAt).toLocaleString('it-IT')}: {order.error}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal di conferma ordine */}
+      {showConfirmModal && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                Conferma ordine
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedOrder.productName || 'Prodotto'} · {selectedOrder.customerEmail}
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Confermando l'ordine verrà inviata al cliente un'email con le credenziali
+                di accesso. Puoi personalizzare i link qui sotto (opzionale).
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link Telegram</label>
+                <input
+                  type="text"
+                  value={telegramLink}
+                  onChange={(e) => setTelegramLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="https://t.me/..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link Vimeo / Corso</label>
+                <input
+                  type="text"
+                  value={vimeoLink}
+                  onChange={(e) => setVimeoLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="https://vimeo.com/..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password Vimeo (opzionale)</label>
+                <input
+                  type="text"
+                  value={vimeoPassword}
+                  onChange={(e) => setVimeoPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-green-500"
+                  placeholder="Password di accesso"
+                />
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={confirmOrder}
+                className="px-4 py-2 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Conferma e invia
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

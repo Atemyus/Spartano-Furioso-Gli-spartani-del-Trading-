@@ -18,12 +18,13 @@ router.get('/config', (req, res) => {
 // Create checkout session for one-time payment or subscription
 router.post('/create-checkout-session', async (req, res) => {
   try {
-    const { 
-      priceId, 
-      productName, 
-      amount, 
+    const {
+      priceId,
+      productName,
+      amount,
       currency = 'eur',
       interval, // 'month', 'year', or 'one-time'
+      paymentMethod, // 'card' (default) | 'klarna'
       successUrl = `${process.env.FRONTEND_URL}/success`,
       cancelUrl = `${process.env.FRONTEND_URL}/cancel`,
       customerEmail,
@@ -32,15 +33,24 @@ router.post('/create-checkout-session', async (req, res) => {
 
     // Determina se è un abbonamento o pagamento singolo
     const isSubscription = interval && interval !== 'one-time';
-    
+    const useKlarna = paymentMethod === 'klarna';
+
+    // Klarna supporta solo pagamenti one-time, non subscription ricorrenti
+    if (useKlarna && isSubscription) {
+      return res.status(400).json({
+        error: 'Klarna è disponibile solo per pagamenti unici, non per abbonamenti ricorrenti.'
+      });
+    }
+
     const sessionConfig = {
-      payment_method_types: ['card'],
+      payment_method_types: useKlarna ? ['klarna'] : ['card'],
       mode: isSubscription ? 'subscription' : 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: {
         ...metadata,
-        interval: interval || 'one-time'
+        interval: interval || 'one-time',
+        paymentMethod: useKlarna ? 'klarna' : 'card',
       },
     };
 

@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { sendEmail, sendOrderConfirmation } from '../services/emailService.js';
-import db from '../database/index.js';
+import db from '../database/orders.js';
 
 dotenv.config();
 
@@ -92,7 +92,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const currency = session.currency.toUpperCase();
         
         // Salva l'ordine nel database con status 'pending' (attesa conferma admin)
-        const order = db.createOrder({
+        const order = await db.createOrder({
           orderNumber: `ORD-ST-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           paymentProvider: 'stripe',
           paymentId: session.payment_intent || session.id,

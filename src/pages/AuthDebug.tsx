@@ -29,7 +29,7 @@ const AuthDebug: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/auth/verify-token', {
+      const response = await fetch('https://api.nexoralab.solutions/api/auth/verify-token', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,21 +65,21 @@ const AuthDebug: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gray-900/50 border border-red-800/50 rounded-2xl p-8">
+        <div className="bg-gray-900/50 border border-blue-800/50 rounded-2xl p-8">
           <h1 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-            <Shield className="w-8 h-8 text-yellow-500" />
+            <Shield className="w-8 h-8 text-cyan-500" />
             Auth Debug Panel
           </h1>
 
           {/* Server Status */}
           <div className="mb-8 p-4 bg-black/50 rounded-lg">
-            <h2 className="text-xl font-bold text-yellow-500 mb-3">🔐 Stato Server</h2>
+            <h2 className="text-xl font-bold text-cyan-500 mb-3">🔐 Stato Server</h2>
             <p className="text-white font-mono">{serverCheck || 'Checking...'}</p>
           </div>
 
           {/* LocalStorage Content */}
           <div className="mb-8 p-4 bg-black/50 rounded-lg">
-            <h2 className="text-xl font-bold text-yellow-500 mb-3">📦 LocalStorage</h2>
+            <h2 className="text-xl font-bold text-cyan-500 mb-3">📦 LocalStorage</h2>
             
             <div className="space-y-3">
               <div>
@@ -112,7 +112,7 @@ const AuthDebug: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={clearAuth}
-              className="px-6 py-3 bg-yellow-600 hover:bg-yellow-500 rounded-lg font-bold text-white flex items-center justify-center gap-2"
+              className="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg font-bold text-white flex items-center justify-center gap-2"
             >
               <Trash2 className="w-5 h-5" />
               Cancella Auth
@@ -120,7 +120,7 @@ const AuthDebug: React.FC = () => {
 
             <button
               onClick={clearAll}
-              className="px-6 py-3 bg-red-600 hover:bg-red-500 rounded-lg font-bold text-white flex items-center justify-center gap-2"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold text-white flex items-center justify-center gap-2"
             >
               <Trash2 className="w-5 h-5" />
               Cancella TUTTO

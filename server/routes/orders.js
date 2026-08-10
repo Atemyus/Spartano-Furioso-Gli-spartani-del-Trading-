@@ -1,13 +1,14 @@
 import express from 'express';
-import db from '../database/index.js';
+import { authenticateAdmin } from '../middleware/auth.js';
+import db from '../database/orders.js';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
 
 const router = express.Router();
 
 // Get all orders (Admin only)
-router.get('/', async (req, res) => {
+router.get('/', authenticateAdmin, async (req, res) => {
   try {
-    const orders = db.getAllOrders();
+    const orders = await db.getAllOrders();
     res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -15,10 +16,84 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single order by ID
-router.get('/:id', async (req, res) => {
+// ATTENZIONE: le route "statiche" (/stats, /status/...) DEVONO stare prima
+// di /:id, altrimenti Express le interpreta come un id e restituisce 404.
+
+// Get orders statistics
+router.get('/stats', authenticateAdmin, async (req, res) => {
   try {
-    const order = db.getOrderById(req.params.id);
+    const allOrders = await db.getAllOrders();
+
+    const totalOrders = allOrders.length;
+    const totalRevenue = allOrders
+      .filter(order => order.status === 'confirmed' || order.paymentStatus === 'paid')
+      .reduce((sum, order) => sum + (order.amount || 0), 0);
+
+    const subscriptions = allOrders.filter(order => order.mode === 'subscription').length;
+    const oneTimePayments = allOrders.filter(order => order.mode === 'payment').length;
+    const failedPayments = allOrders.filter(order => order.status === 'cancelled' || order.paymentStatus === 'failed').length;
+
+    const revenueByMonth = {};
+    allOrders.forEach(order => {
+      if (order.status === 'confirmed' || order.paymentStatus === 'paid') {
+        const date = new Date(order.createdAt);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        revenueByMonth[monthKey] = (revenueByMonth[monthKey] || 0) + (order.amount || 0);
+      }
+    });
+
+    const revenueByProduct = {};
+    allOrders.forEach(order => {
+      if (order.status === 'confirmed' || order.paymentStatus === 'paid') {
+        const productName = order.productName || 'Unknown';
+        revenueByProduct[productName] = (revenueByProduct[productName] || 0) + (order.amount || 0);
+      }
+    });
+
+    res.json({
+      totalOrders,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      subscriptions,
+      oneTimePayments,
+      failedPayments,
+      revenueByMonth,
+      revenueByProduct
+    });
+  } catch (error) {
+    console.error('Error fetching orders stats:', error);
+    res.status(500).json({ error: 'Errore nel calcolo delle statistiche' });
+  }
+});
+
+// Get pending orders count
+router.get('/stats/pending-count', authenticateAdmin, async (req, res) => {
+  try {
+    const allOrders = await db.getAllOrders();
+    const pendingCount = allOrders.filter(order => order.status === 'pending').length;
+    res.json({ count: pendingCount });
+  } catch (error) {
+    console.error('Error fetching pending count:', error);
+    res.status(500).json({ error: 'Errore nel conteggio degli ordini' });
+  }
+});
+
+// Get orders by status
+router.get('/status/:status', authenticateAdmin, async (req, res) => {
+  try {
+    const { status } = req.params;
+    const allOrders = await db.getAllOrders();
+    const filteredOrders = allOrders.filter(order => order.status === status);
+    res.json(filteredOrders);
+  } catch (error) {
+    console.error('Error fetching orders by status:', error);
+    res.status(500).json({ error: 'Errore nel recupero degli ordini' });
+  }
+});
+
+// Get single order by ID
+router.get('/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const order = await db.getOrderById(req.params.id);
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
     }
@@ -30,12 +105,12 @@ router.get('/:id', async (req, res) => {
 });
 
 // Confirm order (Admin only) - Sends Vimeo credentials and Telegram link
-router.post('/:id/confirm', async (req, res) => {
+router.post('/:id/confirm', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { telegramLink, vimeoLink, vimeoPassword } = req.body;
     
-    const order = db.getOrderById(id);
+    const order = await db.getOrderById(id);
     
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
@@ -46,7 +121,7 @@ router.post('/:id/confirm', async (req, res) => {
     }
     
     // Update order status
-    const updatedOrder = db.updateOrder(id, { 
+    const updatedOrder = await db.updateOrder(id, { 
       status: 'confirmed',
       confirmedAt: new Date().toISOString(),
       accessDetails: {
@@ -95,18 +170,18 @@ router.post('/:id/confirm', async (req, res) => {
 });
 
 // Cancel/Reject order (Admin only)
-router.post('/:id/cancel', async (req, res) => {
+router.post('/:id/cancel', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
     
-    const order = db.getOrderById(id);
+    const order = await db.getOrderById(id);
     
     if (!order) {
       return res.status(404).json({ error: 'Ordine non trovato' });
     }
     
-    const updatedOrder = db.updateOrder(id, { 
+    const updatedOrder = await db.updateOrder(id, { 
       status: 'cancelled',
       cancelledAt: new Date().toISOString(),
       cancellationReason: reason || 'Annullato dall\'amministratore'
@@ -143,80 +218,6 @@ router.post('/:id/cancel', async (req, res) => {
   } catch (error) {
     console.error('Error cancelling order:', error);
     res.status(500).json({ error: 'Errore nell\'annullamento dell\'ordine' });
-  }
-});
-
-// Get orders by status
-router.get('/status/:status', async (req, res) => {
-  try {
-    const { status } = req.params;
-    const allOrders = db.getAllOrders();
-    const filteredOrders = allOrders.filter(order => order.status === status);
-    res.json(filteredOrders);
-  } catch (error) {
-    console.error('Error fetching orders by status:', error);
-    res.status(500).json({ error: 'Errore nel recupero degli ordini' });
-  }
-});
-
-// Get orders statistics
-router.get('/stats', async (req, res) => {
-  try {
-    const allOrders = db.getAllOrders();
-    
-    // Calculate statistics
-    const totalOrders = allOrders.length;
-    const totalRevenue = allOrders
-      .filter(order => order.status === 'confirmed' || order.paymentStatus === 'paid')
-      .reduce((sum, order) => sum + (order.amount || 0), 0);
-    
-    const subscriptions = allOrders.filter(order => order.mode === 'subscription').length;
-    const oneTimePayments = allOrders.filter(order => order.mode === 'payment').length;
-    const failedPayments = allOrders.filter(order => order.status === 'cancelled' || order.paymentStatus === 'failed').length;
-    
-    // Revenue by month
-    const revenueByMonth = {};
-    allOrders.forEach(order => {
-      if (order.status === 'confirmed' || order.paymentStatus === 'paid') {
-        const date = new Date(order.createdAt);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        revenueByMonth[monthKey] = (revenueByMonth[monthKey] || 0) + (order.amount || 0);
-      }
-    });
-    
-    // Revenue by product
-    const revenueByProduct = {};
-    allOrders.forEach(order => {
-      if (order.status === 'confirmed' || order.paymentStatus === 'paid') {
-        const productName = order.productName || 'Unknown';
-        revenueByProduct[productName] = (revenueByProduct[productName] || 0) + (order.amount || 0);
-      }
-    });
-    
-    res.json({
-      totalOrders,
-      totalRevenue: Math.round(totalRevenue * 100) / 100, // Round to 2 decimals
-      subscriptions,
-      oneTimePayments,
-      failedPayments,
-      revenueByMonth,
-      revenueByProduct
-    });
-  } catch (error) {
-    console.error('Error fetching orders stats:', error);
-    res.status(500).json({ error: 'Errore nel calcolo delle statistiche' });
-  }
-});
-
-// Get pending orders count
-router.get('/stats/pending-count', async (req, res) => {
-  try {
-    const allOrders = db.getAllOrders();
-    const pendingCount = allOrders.filter(order => order.status === 'pending').length;
-    res.json({ count: pendingCount });
-  } catch (error) {
-    console.error('Error fetching pending count:', error);
-    res.status(500).json({ error: 'Errore nel conteggio degli ordini' });
   }
 });
 

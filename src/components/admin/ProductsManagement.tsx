@@ -190,39 +190,16 @@ const ProductsManagement: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Migrazione automatica quando i prodotti sono caricati
-  useEffect(() => {
-    const migrateIfNeeded = async () => {
-      const migrated = localStorage.getItem('products_migrated');
-      if (!migrated && products.length > 0) {
-        const inactiveProducts = products.filter(p => p.active === false);
-        if (inactiveProducts.length > 0) {
-          console.log(`Attivando ${inactiveProducts.length} prodotti...`);
-          try {
-            const token = localStorage.getItem('adminToken');
-            await fetch('https://api.spartanofurioso.com/api/admin/products/migrate-active', {
-              method: 'POST',
-              headers: { 'Authorization': `Bearer ${token}` }
-            });
-            localStorage.setItem('products_migrated', 'true');
-            await fetchProducts();
-          } catch (e) {
-            console.error('Errore:', e);
-          }
-        } else {
-          localStorage.setItem('products_migrated', 'true');
-        }
-      }
-    };
-
-    migrateIfNeeded();
-  }, [products]);
+  // NOTA: rimossa la "migrazione automatica" che impostava active=true su TUTTI
+  // i prodotti all'apertura del pannello. Riattivava i prodotti nascosti
+  // dall'admin facendoli riapparire sul sito. Lo stato attivo/nascosto è ora
+  // gestito solo manualmente tramite il toggle Attiva/Nascondi.
 
   // ============= API FUNCTIONS =============
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/products', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/products', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -252,7 +229,7 @@ const ProductsManagement: React.FC = () => {
 
   const loadProductPlatforms = async (productId: string) => {
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/${productId}/config`);
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/${productId}/config`);
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.config.platforms) {
@@ -269,7 +246,7 @@ const ProductsManagement: React.FC = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/${selectedProduct.id}/platforms`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/${selectedProduct.id}/platforms`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -338,7 +315,7 @@ const ProductsManagement: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       const productData = prepareProductData(formData);
 
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/products', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -378,7 +355,7 @@ const ProductsManagement: React.FC = () => {
 
       console.log('Dati da salvare (update):', updatePayload);
 
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${selectedProduct.id}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/products/${selectedProduct.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -407,7 +384,7 @@ const ProductsManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -440,7 +417,7 @@ const ProductsManagement: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       const newActive = !currentActive;
 
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/products/${productId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -453,7 +430,7 @@ const ProductsManagement: React.FC = () => {
         await fetchProducts();
         // Mostra notifica di successo
         const action = newActive ? 'attivato' : 'disattivato';
-        const visibility = newActive ? 'VISIBILE nell\'arsenale spartano' : 'NASCOSTO dall\'arsenale spartano';
+        const visibility = newActive ? 'VISIBILE nel catalogo' : 'NASCOSTO dal catalogo';
         alert(`✅ Prodotto ${action} con successo!\n\n${visibility}`);
         console.log(`Prodotto ${productId} aggiornato: active ${currentActive} -> ${newActive}`);
       } else {
@@ -802,7 +779,7 @@ const ProductsManagement: React.FC = () => {
                     {product.type === 'subscription' ? 'Abbonamento' : 'Pagamento singolo'}
                   </span>
                   {product.popular && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
                       ⭐ Popolare
                     </span>
                   )}
@@ -812,7 +789,7 @@ const ProductsManagement: React.FC = () => {
                     </span>
                   )}
                   {!product.active && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       Inattivo
                     </span>
                   )}
@@ -884,7 +861,7 @@ const ProductsManagement: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleDeleteProduct(product.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   title="Elimina"
                 >
                   <Trash2 className="w-5 h-5" />
@@ -1284,7 +1261,7 @@ const ProductsManagement: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => removeFeature(index)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -1317,7 +1294,7 @@ const ProductsManagement: React.FC = () => {
                   type="checkbox"
                   checked={formData.popular}
                   onChange={(e) => setFormData({ ...formData, popular: e.target.checked })}
-                  className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                  className="rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
                 />
                 <span className="text-sm font-medium text-gray-700">⭐ Prodotto popolare (evidenziato)</span>
               </label>
@@ -1490,7 +1467,7 @@ const ProductsManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-500">Stato</label>
                 <p className="mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    selectedProduct.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedProduct.active ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
                   }`}>
                     {selectedProduct.active ? 'Attivo' : 'Inattivo'}
                   </span>
@@ -1529,7 +1506,7 @@ const ProductsManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-500">Sconto</label>
                   <p className="mt-1">
                     <span className="line-through text-gray-500">{formatPrice(selectedProduct.originalPrice, selectedProduct.currency)}</span>
-                    <span className="ml-2 text-red-600 font-semibold">-{Math.round(((selectedProduct.originalPrice - selectedProduct.price) / selectedProduct.originalPrice) * 100)}%</span>
+                    <span className="ml-2 text-blue-600 font-semibold">-{Math.round(((selectedProduct.originalPrice - selectedProduct.price) / selectedProduct.originalPrice) * 100)}%</span>
                   </p>
                 </div>
               )}

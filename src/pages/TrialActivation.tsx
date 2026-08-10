@@ -152,7 +152,7 @@ const TrialActivation: React.FC = () => {
         },
         body: JSON.stringify({ 
           productId: product.id,
-          trialDays: product.trialDays || 7
+          trialDays: product.trialDays || 11
         })
       });
       
@@ -171,7 +171,7 @@ const TrialActivation: React.FC = () => {
         }
         
         // Mostra messaggio di successo
-        alert(`Trial attivato con successo! Hai ${product.trialDays || 7} giorni di accesso completo.`);
+        alert(`Trial attivato con successo! Hai ${product.trialDays || 11} giorni di accesso completo.`);
         
         // Reindirizza dopo 2 secondi
         setTimeout(() => {
@@ -199,7 +199,7 @@ const TrialActivation: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
       console.log('📥 Inizio download per prodotto:', product.id);
 
@@ -259,7 +259,7 @@ const TrialActivation: React.FC = () => {
           ? 'bg-gradient-to-b from-black via-gray-950 to-black'
           : 'bg-gradient-to-b from-white via-gray-50 to-white'
       }`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
       </div>
     );
   }
@@ -272,11 +272,11 @@ const TrialActivation: React.FC = () => {
           : 'bg-gradient-to-b from-white via-gray-50 to-white'
       }`}>
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className={`text-2xl font-bold mb-2 ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>Prodotto non trovato</h2>
-          <Link to="/products" className="text-yellow-500 hover:text-yellow-400">
+          <Link to="/products" className="text-cyan-500 hover:text-cyan-400">
             Torna ai prodotti
           </Link>
         </div>
@@ -289,23 +289,23 @@ const TrialActivation: React.FC = () => {
     return (
       <div className={`min-h-screen transition-colors duration-500 ${
         theme === 'dark'
-          ? 'bg-gradient-to-b from-black via-red-950/20 to-black'
-          : 'bg-gradient-to-b from-white via-red-50/40 to-white'
+          ? 'bg-gradient-to-b from-black via-blue-950/20 to-black'
+          : 'bg-gradient-to-b from-white via-blue-50/40 to-white'
       }`}>
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-red-900/20 border-2 border-red-500 rounded-2xl p-8 text-center">
-              <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse" />
-              <h1 className={`text-4xl font-black mb-4 ${
+            <div className="bg-blue-900/20 border-2 border-blue-500 rounded-2xl p-8 text-center">
+              <AlertCircle className="w-20 h-20 text-blue-500 mx-auto mb-6 animate-pulse" />
+              <h1 className={`text-4xl font-display font-semibold mb-4 ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
                 TRIAL SCADUTO
               </h1>
               <p className="text-xl text-gray-300 mb-8">
-                Il tuo periodo di prova per <span className="text-yellow-500 font-bold">{product.name}</span> è terminato.
+                Il tuo periodo di prova per <span className="text-cyan-500 font-bold">{product.name}</span> è terminato.
               </p>
               
-              <div className="bg-black/50 border border-red-900/30 rounded-xl p-6 mb-8">
+              <div className="bg-black/50 border border-slate-800 rounded-xl p-6 mb-8">
                 <div className="grid grid-cols-2 gap-4 text-left">
                   <div>
                     <span className="text-gray-400 text-sm">Iniziato il</span>
@@ -315,7 +315,7 @@ const TrialActivation: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-gray-400 text-sm">Terminato il</span>
-                    <p className="text-red-400 font-bold">
+                    <p className="text-blue-400 font-bold">
                       {new Date(trialData.endDate).toLocaleDateString('it-IT')}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ const TrialActivation: React.FC = () => {
               <div className="space-y-4">
                 <Link
                   to={(product.category === 'course' || product.category === 'Formazione') ? `/course/${productId}` : `/products`}
-                  className="block w-full px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105"
+                  className="block w-full px-8 py-4 bg-gradient-to-r from-cyan-600 to-sky-600 rounded-xl font-bold text-white hover:from-cyan-500 hover:to-sky-500 transition-all duration-300 transform hover:scale-105"
                 >
                   <div className="flex items-center justify-center gap-3">
                     <Rocket className="w-6 h-6" />
@@ -343,7 +343,7 @@ const TrialActivation: React.FC = () => {
             </div>
             
             {/* Product benefits reminder */}
-            <div className="mt-8 bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+            <div className="mt-8 bg-slate-900/60 border border-gray-800 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">
                 🎯 Perché acquistare {product.name}?
               </h3>
@@ -351,13 +351,13 @@ const TrialActivation: React.FC = () => {
                 {product.metrics?.winRate && (
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Win Rate del {product.metrics.winRate}%</span>
+                    <span>Win Rate del {pct(product.metrics.winRate)}</span>
                   </li>
                 )}
                 {product.metrics?.avgProfit && (
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Profitto medio del {product.metrics.avgProfit}%</span>
+                    <span>Profitto medio del {pctSigned(product.metrics.avgProfit)}</span>
                   </li>
                 )}
                 <li className="flex items-center gap-2">
@@ -380,51 +380,61 @@ const TrialActivation: React.FC = () => {
     );
   }
 
+  const dark = theme === 'dark';
+  const bg = dark ? 'bg-black' : 'bg-slate-50';
+
+  // Normalizza valori % (DB puo' avere "72", "72%", "+18.7%", ecc.)
+  const pct = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.endsWith('%') || /[a-zA-Z]/.test(s)) return s; // gia' formattato o "N/A"
+    const n = parseFloat(s.replace(',', '.'));
+    return Number.isNaN(n) ? '' : `${n}%`;
+  };
+  const pctSigned = (raw: any): string => {
+    if (raw == null || raw === '') return '';
+    const s = String(raw).trim();
+    if (s.startsWith('+') || s.startsWith('-')) return pct(s);
+    const n = parseFloat(s.replace('%', '').replace(',', '.'));
+    if (Number.isNaN(n)) return pct(s);
+    const sign = n > 0 ? '+' : '';
+    return `${sign}${n}%`;
+  };
+  const headerBg = dark ? 'bg-black/70 border-slate-800/80' : 'bg-white/70 border-slate-200';
+  const textMain = dark ? 'text-white' : 'text-slate-900';
+  const textDim = dark ? 'text-slate-500' : 'text-slate-500';
+  const secondaryBtn = dark
+    ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40'
+    : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50';
+
   return (
-    <div className={`min-h-screen transition-colors duration-500 ${
-      theme === 'dark'
-        ? 'bg-gradient-to-b from-black via-gray-950 to-black'
-        : 'bg-gradient-to-b from-white via-gray-50 to-white'
-    }`}>
-      {/* Header */}
-      <div className={`backdrop-blur-sm border-b ${
-        theme === 'dark'
-          ? 'bg-black/50 border-red-900/30'
-          : 'bg-white/50 border-red-200'
-      }`}>
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <button 
-              onClick={() => navigate(-1)}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-all ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 border-yellow-500/50 text-yellow-400 hover:text-yellow-300 hover:bg-gray-900/70 hover:border-yellow-400'
-                  : 'bg-white border-yellow-400/50 text-yellow-600 hover:text-yellow-700 hover:border-yellow-500'
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="font-bold">Indietro</span>
-            </button>
-            
-            <div className="flex items-center gap-3">
-              <Shield className="w-10 h-10 text-yellow-500" />
-              <h1 className="text-2xl font-black">
-                <span className="text-red-600">TRIAL</span>
-                <span className={`ml-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>ACTIVATION</span>
-              </h1>
-            </div>
+    <div className={`min-h-screen ${bg}`}>
+      {/* Topbar */}
+      <header className={`sticky top-0 z-30 backdrop-blur-md border-b ${headerBg}`}>
+        <div className="container mx-auto px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+          <button onClick={() => navigate(-1)} className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-display font-semibold transition-all ${secondaryBtn}`}>
+            <ArrowLeft className="w-3.5 h-3.5" /> Indietro
+          </button>
+          <div className="text-center hidden md:block">
+            <div className={`font-mono-lab text-[0.65rem] tracking-[0.3em] uppercase ${textDim}`}>// Nexora Lab</div>
+            <div className={`font-display text-sm font-semibold ${textMain}`}>Attivazione prova gratuita</div>
+          </div>
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-display font-semibold ${
+            dark ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/30' : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/30'
+          }`}>
+            <Shield className="w-3.5 h-3.5" /> {product.trialDays || 60}g gratis
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Product Header */}
-          <div className="bg-gray-900/50 border border-red-900/30 rounded-2xl p-8 mb-8">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-8 mb-8">
             <div className="flex flex-col md:flex-row items-start gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-3xl font-black text-white">{product.name}</h2>
+                  <h2 className="text-3xl font-display font-semibold text-white">{product.name}</h2>
                   {trialActivated && (
                     <span className="px-3 py-1 bg-green-600 rounded-full text-white text-sm font-bold flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
@@ -439,7 +449,7 @@ const TrialActivation: React.FC = () => {
                 <div className="bg-black/30 rounded-xl p-4 mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-gray-400">Durata Trial:</span>
-                    <span className="text-2xl font-black text-yellow-500">{product.trialDays || 60} GIORNI</span>
+                    <span className="text-2xl font-display font-semibold text-cyan-500">{product.trialDays || 60} GIORNI</span>
                   </div>
                   <div className="flex items-center gap-2 text-green-400 text-sm">
                     <CheckCircle className="w-4 h-4" />
@@ -456,7 +466,7 @@ const TrialActivation: React.FC = () => {
                           <Trophy className="w-5 h-5 text-green-500" />
                           <span className="text-gray-400 text-sm">Win Rate</span>
                         </div>
-                        <div className="text-2xl font-black text-white">{product.metrics.winRate}%</div>
+                        <div className="text-2xl font-display font-semibold text-white">{pct(product.metrics.winRate)}</div>
                       </div>
                     )}
                     {product.metrics.avgProfit && (
@@ -465,7 +475,7 @@ const TrialActivation: React.FC = () => {
                           <Star className="w-5 h-5 text-blue-500" />
                           <span className="text-gray-400 text-sm">Profit Medio</span>
                         </div>
-                        <div className="text-2xl font-black text-white">+{product.metrics.avgProfit}%</div>
+                        <div className="text-2xl font-display font-semibold text-white">{pctSigned(product.metrics.avgProfit)}</div>
                       </div>
                     )}
                   </div>
@@ -476,7 +486,7 @@ const TrialActivation: React.FC = () => {
                   {!trialActivated ? (
                     <button
                       onClick={activateTrial}
-                      className="flex-1 py-4 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                      className="flex-1 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                     >
                       <Rocket className="w-6 h-6" />
                       ATTIVA TRIAL {product.trialDays || 60} GIORNI
@@ -532,7 +542,7 @@ const TrialActivation: React.FC = () => {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">Categoria:</span>
-                    <span className="text-yellow-500 font-bold">{product.category}</span>
+                    <span className="text-cyan-500 font-bold">{product.category}</span>
                   </div>
                 </div>
               </div>
@@ -545,9 +555,9 @@ const TrialActivation: React.FC = () => {
             <div className="space-y-8">
               {/* Features */}
               {product.features && product.features.length > 0 && (
-                <div className="bg-gray-900/50 border border-red-900/30 rounded-xl p-6">
-                  <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
-                    <Zap className="w-6 h-6 text-yellow-500" />
+                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+                  <h3 className="text-xl font-display font-semibold text-white mb-4 flex items-center gap-2">
+                    <Zap className="w-6 h-6 text-cyan-500" />
                     FUNZIONALITÀ
                   </h3>
                   <ul className="space-y-3">
@@ -563,15 +573,15 @@ const TrialActivation: React.FC = () => {
 
               {/* Requirements */}
               {product.requirements && product.requirements.length > 0 && (
-                <div className="bg-gray-900/50 border border-yellow-900/30 rounded-xl p-6">
-                  <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-6 h-6 text-yellow-500" />
+                <div className="bg-slate-900/60 border border-cyan-900/30 rounded-xl p-6">
+                  <h3 className="text-xl font-display font-semibold text-white mb-4 flex items-center gap-2">
+                    <AlertCircle className="w-6 h-6 text-cyan-500" />
                     REQUISITI
                   </h3>
                   <ul className="space-y-3">
                     {product.requirements.map((req, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <FileText className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <FileText className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
                         <span className="text-gray-300">{req}</span>
                       </li>
                     ))}
@@ -581,8 +591,8 @@ const TrialActivation: React.FC = () => {
 
               {/* Platforms - Use dynamic config if available, fallback to product.platforms */}
               {((config?.platforms && config.platforms.length > 0) || (product.platforms && product.platforms.length > 0)) && (
-                <div className="bg-gray-900/50 border border-blue-900/30 rounded-xl p-6">
-                  <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
+                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+                  <h3 className="text-xl font-display font-semibold text-white mb-4 flex items-center gap-2">
                     <Shield className="w-6 h-6 text-blue-500" />
                     PIATTAFORME SUPPORTATE
                   </h3>
@@ -601,55 +611,53 @@ const TrialActivation: React.FC = () => {
             </div>
 
             {/* Telegram & Support */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Telegram Links */}
-              <div className="bg-gradient-to-r from-blue-950/50 to-cyan-950/50 border-2 border-blue-500/50 rounded-xl p-6">
-                <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
-                  <MessageCircle className="w-6 h-6 text-blue-500" />
-                  SUPPORTO TELEGRAM
-                </h3>
-                
-                <div className="space-y-4">
+              <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <MessageCircle className="w-3.5 h-3.5 text-cyan-500" />
+                  <h3 className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">// supporto telegram</h3>
+                </div>
+
+                <div className="space-y-3">
                   {/* Canale Annunci */}
                   <a
                     href={TELEGRAM_CHANNEL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block bg-black/30 border border-blue-800 rounded-lg p-4 hover:bg-blue-900/20 transition-all group"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 p-4 hover:border-cyan-500/40 transition-all group"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                          <MessageCircle className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-bold">Canale Ufficiale</h4>
-                          <p className="text-gray-400 text-sm">Annunci e aggiornamenti</p>
-                        </div>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-cyan-500/10 ring-1 ring-cyan-500/30">
+                        <MessageCircle className="w-4 h-4 text-cyan-500" />
                       </div>
-                      <ExternalLink className="w-5 h-5 text-gray-500 group-hover:text-blue-400" />
+                      <div className="min-w-0">
+                        <h4 className="font-display font-semibold text-sm text-white">Canale Ufficiale</h4>
+                        <p className="text-xs text-slate-400">Annunci e aggiornamenti</p>
+                      </div>
                     </div>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 shrink-0" />
                   </a>
 
                   {/* Gruppo Supporto - Bloccato per Trial */}
-                  <div className="block bg-black/30 border border-gray-700 rounded-lg p-4 opacity-50 cursor-not-allowed relative">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                          <Users className="w-6 h-6 text-gray-500" />
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/30 p-4 opacity-70">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-slate-800">
+                          <Users className="w-4 h-4 text-slate-500" />
                         </div>
-                        <div>
-                          <h4 className="text-gray-400 font-bold">Gruppo Community</h4>
-                          <p className="text-gray-500 text-sm">Supporto e discussioni</p>
+                        <div className="min-w-0">
+                          <h4 className="font-display font-semibold text-sm text-slate-400">Gruppo Community</h4>
+                          <p className="text-xs text-slate-500">Supporto e discussioni</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Lock className="w-5 h-5 text-yellow-500" />
-                        <span className="text-yellow-500 text-xs font-bold">PREMIUM</span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Lock className="w-3.5 h-3.5 text-cyan-500" />
+                        <span className="font-mono-lab text-[0.55rem] tracking-widest uppercase font-bold text-cyan-500">Premium</span>
                       </div>
                     </div>
-                    <div className="mt-3 p-2 bg-yellow-900/20 border border-yellow-700/30 rounded text-xs text-yellow-400 text-center">
-                      💎 Disponibile dopo l'acquisto del prodotto
+                    <div className="mt-3 rounded-lg bg-cyan-500/5 ring-1 ring-cyan-500/20 px-3 py-2 text-xs text-cyan-300 text-center">
+                      Disponibile dopo l'acquisto del prodotto
                     </div>
                   </div>
 
@@ -658,30 +666,29 @@ const TrialActivation: React.FC = () => {
                     href={TELEGRAM_CONTACT}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/30 border border-yellow-700/30 rounded-xl p-6 hover:border-yellow-500/50 transition-all group"
+                    className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 hover:border-cyan-500/60 transition-all group"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center group-hover:bg-yellow-600/30 transition-colors">
-                        <Key className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-white font-bold">Richiedi Licenza</h4>
-                        <p className="text-gray-400 text-sm">Contatta @catiscrazy per la licenza 60 giorni</p>
-                      </div>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br from-blue-500 to-cyan-500">
+                      <Key className="w-4 h-4 text-white" />
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-display font-semibold text-sm text-white">Richiedi Licenza</h4>
+                      <p className="text-xs text-slate-400">Contatta @catiscrazy per la licenza 60 giorni</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 shrink-0" />
                   </a>
                 </div>
               </div>
 
               {/* Instructions */}
-              <div className="bg-gray-900/50 border border-purple-900/30 rounded-xl p-6">
-                <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
-                  <BookOpen className="w-6 h-6 text-purple-500" />
+              <div className="bg-slate-900/60 border border-cyan-700/30 rounded-xl p-6">
+                <h3 className="text-xl font-display font-semibold text-white mb-4 flex items-center gap-2">
+                  <BookOpen className="w-6 h-6 text-cyan-500" />
                   COME INIZIARE
                 </h3>
                 <ol className="space-y-4">
                   <li className="flex gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
                       1
                     </div>
                     <div>
@@ -690,7 +697,7 @@ const TrialActivation: React.FC = () => {
                     </div>
                   </li>
                   <li className="flex gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
                       2
                     </div>
                     <div>
@@ -699,7 +706,7 @@ const TrialActivation: React.FC = () => {
                     </div>
                   </li>
                   <li className="flex gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
                       3
                     </div>
                     <div>
@@ -708,7 +715,7 @@ const TrialActivation: React.FC = () => {
                     </div>
                   </li>
                   <li className="flex gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold">
                       4
                     </div>
                     <div>
@@ -720,9 +727,9 @@ const TrialActivation: React.FC = () => {
               </div>
 
               {/* Important Notice */}
-              <div className="bg-red-950/30 border border-red-800 rounded-xl p-6">
+              <div className="bg-blue-950/30 border border-blue-800 rounded-xl p-6">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+                  <AlertCircle className="w-6 h-6 text-blue-500 flex-shrink-0" />
                   <div>
                     <h4 className="text-white font-bold mb-2">Informazioni Importanti</h4>
                     <ul className="space-y-2 text-gray-300 text-sm">

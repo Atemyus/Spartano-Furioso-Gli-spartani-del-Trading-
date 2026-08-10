@@ -109,8 +109,8 @@ const Success: React.FC = () => {
 
           {status === 'error' && (
             <>
-              <div className="w-20 h-20 mx-auto mb-6 bg-red-900/20 rounded-full flex items-center justify-center">
-                <XCircle className="w-10 h-10 text-red-500" />
+              <div className="w-20 h-20 mx-auto mb-6 bg-blue-900/20 rounded-full flex items-center justify-center">
+                <XCircle className="w-10 h-10 text-blue-500" />
               </div>
               <h1 className="text-2xl font-bold text-white mb-3">
                 Errore nel Pagamento
@@ -119,11 +119,11 @@ const Success: React.FC = () => {
                 {message}
               </p>
 
-              <div className="bg-red-900/20 border border-red-800/30 rounded-xl p-4 mb-6">
-                <p className="text-red-400 text-sm">
+              <div className="bg-blue-900/20 border border-blue-800/30 rounded-xl p-4 mb-6">
+                <p className="text-blue-400 text-sm">
                   Se hai bisogno di assistenza, contatta il nostro supporto fornendo il codice sessione:
                 </p>
-                <p className="text-red-300 font-mono text-xs mt-2 break-all">
+                <p className="text-blue-300 font-mono text-xs mt-2 break-all">
                   {sessionId || 'N/A'}
                 </p>
               </div>
@@ -152,8 +152,8 @@ const Success: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-500">
             Hai domande? Contattaci a{' '}
-            <a href="mailto:support@spartantrading.com" className="text-purple-400 hover:text-purple-300">
-              support@spartantrading.com
+            <a href="mailto:support@nexoralab.solutions" className="text-purple-400 hover:text-purple-300">
+              support@nexoralab.solutions
             </a>
           </p>
         </div>

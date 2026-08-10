@@ -1,218 +1,85 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { sendOrderConfirmation, sendVimeoAccessInstructions } from '../services/emailService.js';
-import db from '../database/index.js';
+import db from '../database/orders.js';
 
 dotenv.config();
 
 const router = express.Router();
 
 // ============================================
-// PAYPAL INTEGRATION
+// PAYMENTS HEALTH / DIAGNOSTICS
 // ============================================
 
 /**
- * Crea un ordine PayPal
- * POST /api/payments/paypal/create-order
+ * Diagnostica generale dei provider di pagamento
+ * GET /api/payments/health
  */
-router.post('/paypal/create-order', async (req, res) => {
-  try {
-    const { amount, currency = 'EUR', productName, productId, customerEmail } = req.body;
-
-    if (!amount || !productName) {
-      return res.status(400).json({ error: 'Amount e productName sono richiesti' });
-    }
-
-    // PayPal REST API - Crea ordine
-    const paypalClientId = process.env.PAYPAL_CLIENT_ID;
-    const paypalSecret = process.env.PAYPAL_SECRET;
-    const paypalEnv = process.env.PAYPAL_ENV || 'sandbox'; // 'sandbox' o 'live'
-    
-    if (!paypalClientId || !paypalSecret) {
-      return res.status(500).json({ 
-        error: 'PayPal non configurato. Aggiungi PAYPAL_CLIENT_ID e PAYPAL_SECRET nel file .env' 
-      });
-    }
-
-    const paypalApiUrl = paypalEnv === 'live' 
-      ? 'https://api-m.paypal.com'
-      : 'https://api-m.sandbox.paypal.com';
-
-    // Ottieni access token
-    const auth = Buffer.from(`${paypalClientId}:${paypalSecret}`).toString('base64');
-    const tokenResponse = await fetch(`${paypalApiUrl}/v1/oauth2/token`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
+router.get('/health', (req, res) => {
+  const base = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    providers: {
+      stripe: {
+        configured: !!process.env.STRIPE_SECRET_KEY,
+        webhookConfigured: !!process.env.STRIPE_WEBHOOK_SECRET,
+        publishableKey: !!process.env.STRIPE_PUBLISHABLE_KEY,
+        webhookUrl: `${base}/api/stripe/webhook`,
       },
-      body: 'grant_type=client_credentials'
-    });
-
-    if (!tokenResponse.ok) {
-      throw new Error('Errore autenticazione PayPal');
-    }
-
-    const { access_token } = await tokenResponse.json();
-
-    // Crea ordine PayPal
-    const orderResponse = await fetch(`${paypalApiUrl}/v2/checkout/orders`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Content-Type': 'application/json'
+      crypto: {
+        provider: 'NOWPayments',
+        configured: !!process.env.NOWPAYMENTS_API_KEY,
+        ipnSecretConfigured: !!process.env.NOWPAYMENTS_IPN_SECRET,
+        webhookUrl: `${base}/api/payments/crypto/webhook`,
+        diagnostic: `${base}/api/payments/crypto/webhook/info`,
       },
-      body: JSON.stringify({
-        intent: 'CAPTURE',
-        purchase_units: [{
-          description: productName,
-          amount: {
-            currency_code: currency,
-            value: amount.toFixed(2)
-          },
-          custom_id: productId // ID prodotto per riferimento futuro
-        }],
-        application_context: {
-          return_url: `${process.env.FRONTEND_URL}/payment-success?provider=paypal&product=${productId}`,
-          cancel_url: `${process.env.FRONTEND_URL}/payment-cancel?provider=paypal`
-        }
-      })
-    });
-
-    if (!orderResponse.ok) {
-      const errorData = await orderResponse.json();
-      console.error('Errore creazione ordine PayPal:', errorData);
-      throw new Error('Errore creazione ordine PayPal');
-    }
-
-    const orderData = await orderResponse.json();
-    
-    console.log('✅ Ordine PayPal creato:', orderData.id);
-
-    // Trova il link di approvazione
-    const approveLink = orderData.links?.find(link => link.rel === 'approve')?.href;
-
-    res.json({
-      success: true,
-      orderId: orderData.id,
-      approveUrl: approveLink,
-      orderData
-    });
-
-  } catch (error) {
-    console.error('Errore PayPal create-order:', error);
-    res.status(500).json({ 
-      error: error.message || 'Errore nella creazione dell\'ordine PayPal' 
-    });
-  }
+    },
+    notes: [
+      'Tutti i webhook accettano solo richieste POST.',
+      'I valori "configured" indicano solo se la variabile e\' presente, non se e\' valida.',
+      'Per testare un provider, usa il diagnostic URL o invia un pagamento di prova.',
+    ],
+  });
 });
 
 /**
- * Cattura il pagamento PayPal dopo l'approvazione
- * POST /api/payments/paypal/capture-order
+ * Diagnostica specifica del webhook NOWPayments (apribile da browser)
+ * GET /api/payments/crypto/webhook/info
  */
-router.post('/paypal/capture-order', async (req, res) => {
-  try {
-    const { orderId, customerEmail, productId, productName } = req.body;
-
-    if (!orderId) {
-      return res.status(400).json({ error: 'orderId richiesto' });
-    }
-
-    const paypalClientId = process.env.PAYPAL_CLIENT_ID;
-    const paypalSecret = process.env.PAYPAL_SECRET;
-    const paypalEnv = process.env.PAYPAL_ENV || 'sandbox';
-
-    const paypalApiUrl = paypalEnv === 'live' 
-      ? 'https://api-m.paypal.com'
-      : 'https://api-m.sandbox.paypal.com';
-
-    // Ottieni access token
-    const auth = Buffer.from(`${paypalClientId}:${paypalSecret}`).toString('base64');
-    const tokenResponse = await fetch(`${paypalApiUrl}/v1/oauth2/token`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'grant_type=client_credentials'
-    });
-
-    const { access_token } = await tokenResponse.json();
-
-    // Cattura il pagamento
-    const captureResponse = await fetch(`${paypalApiUrl}/v2/checkout/orders/${orderId}/capture`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!captureResponse.ok) {
-      const errorData = await captureResponse.json();
-      console.error('Errore cattura pagamento PayPal:', errorData);
-      throw new Error('Errore cattura pagamento');
-    }
-
-    const captureData = await captureResponse.json();
-    
-    console.log('✅ Pagamento PayPal catturato:', captureData.id);
-
-    const purchaseUnit = captureData.purchase_units?.[0];
-    const amount = parseFloat(purchaseUnit?.amount?.value || '0');
-    const currency = purchaseUnit?.amount?.currency_code || 'EUR';
-    const customerName = captureData.payer?.name?.given_name || 'Studente';
-
-    // Salva l'ordine nel database con status 'pending' (attesa conferma admin)
-    const order = db.createOrder({
-      orderNumber: `ORD-PP-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-      paymentProvider: 'paypal',
-      paymentId: captureData.id,
-      customerEmail,
-      customerName,
-      productId,
-      productName: productName || 'Corso Completo',
-      amount,
-      currency,
-      status: 'pending', // Attende conferma admin
-      paymentStatus: 'paid',
-      metadata: {
-        paypalOrderId: orderId,
-        payerEmail: captureData.payer?.email_address
-      }
-    });
-
-    console.log('💾 Ordine salvato nel database:', order.orderNumber);
-
-    // Invia email di conferma ordine (NON le credenziali Vimeo - arriveranno dopo conferma admin)
-    if (customerEmail) {
-      await sendOrderConfirmation({
-        customerName,
-        customerEmail,
-        orderNumber: order.orderNumber,
-        productName: productName || 'Corso Completo',
-        amount,
-        currency,
-        date: new Date(),
-        isPending: true // Indica che l'ordine è in attesa di conferma
-      });
-    }
-
-    res.json({
-      success: true,
-      orderNumber: order.orderNumber,
-      orderId: order.id,
-      status: 'pending',
-      message: 'Ordine ricevuto! Riceverai le credenziali di accesso dopo la conferma.'
-    });
-
-  } catch (error) {
-    console.error('Errore PayPal capture-order:', error);
-    res.status(500).json({ 
-      error: error.message || 'Errore nella cattura del pagamento PayPal' 
-    });
-  }
+router.get('/crypto/webhook/info', (req, res) => {
+  const base = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+  const apiKeyOk = !!process.env.NOWPAYMENTS_API_KEY;
+  const ipnSecretOk = !!process.env.NOWPAYMENTS_IPN_SECRET;
+  const allOk = apiKeyOk && ipnSecretOk;
+  res.json({
+    endpoint: `${base}/api/payments/crypto/webhook`,
+    methodAccepted: 'POST only',
+    expectedHeaders: ['x-nowpayments-sig (HMAC-SHA512 del body con IPN_SECRET)'],
+    serverStatus: 'online',
+    nowpaymentsConfig: {
+      apiKeyConfigured: apiKeyOk,
+      ipnSecretConfigured: ipnSecretOk,
+      ready: allOk,
+    },
+    nextSteps: allOk
+      ? [
+          'Webhook pronto. Configurato correttamente.',
+          'Verifica che su NOWPayments dashboard l\'IPN Callback URL sia impostato all\'endpoint qui sopra.',
+          'Per un test reale: invia un IPN di prova dal dashboard NOWPayments o effettua un acquisto crypto.',
+        ]
+      : [
+          !apiKeyOk && 'Mancante NOWPAYMENTS_API_KEY su Railway',
+          !ipnSecretOk && 'Mancante NOWPAYMENTS_IPN_SECRET su Railway (i webhook senza firma non verranno validati)',
+          'Aggiungi le variabili e fai redeploy del backend',
+        ].filter(Boolean),
+    howToTest: {
+      browserGetOnWebhook: 'Restituisce "Cannot GET" -> NORMALE, il webhook accetta solo POST',
+      curlPost: `curl -X POST ${base}/api/payments/crypto/webhook -H "Content-Type: application/json" -d '{"payment_status":"finished","payment_id":"test"}'`,
+      nowpaymentsTestIpn: 'Sul dashboard NOWPayments: Settings -> IPN Settings -> Send test IPN',
+    },
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ============================================
@@ -346,7 +213,7 @@ router.post('/crypto/webhook', async (req, res) => {
         const currency = (payment.price_currency || 'EUR').toUpperCase();
 
         // Salva l'ordine nel database con status 'pending'
-        const order = db.createOrder({
+        const order = await db.createOrder({
           orderNumber: `ORD-CR-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           paymentProvider: 'crypto-nowpayments',
           paymentId: payment.payment_id.toString(),

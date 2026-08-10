@@ -9,29 +9,31 @@ const Podcast = () => {
       theme === 'light' ? 'bg-gradient-to-b from-white via-gray-50 to-white' : 'bg-black'
     }`}>
       <div className="container mx-auto px-4 py-16">
-        <h1 className="text-5xl font-black mb-8 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
-          PODCAST SPARTANO
+        <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Podcast</span>
+        <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+          theme === 'light' ? 'text-slate-900' : 'text-white'
+        }`}>
+          Nexora Lab <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">Podcast</span>
         </h1>
-        <p className={`mb-8 ${
-          theme === 'light' ? 'text-gray-600' : 'text-gray-300'
-        }`}>Episodi settimanali con i migliori trader e analisti</p>
+        <p className={`mb-8 text-lg max-w-2xl ${
+          theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+        }`}>Conversazioni settimanali con trader, creator, fondatori. Storie operative, errori reali e lezioni applicabili.</p>
         <div className="space-y-6">
           {[1,2,3,4].map(i => (
             <div key={i} className={`rounded-lg p-6 flex items-center gap-6 ${
               theme === 'light'
                 ? 'bg-white border-2 border-gray-200 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30'
             }`}>
-              <Mic className="w-12 h-12 text-yellow-500" />
+              <Mic className="w-10 h-10 text-cyan-400" />
               <div className="flex-1">
-                <h3 className={`text-xl font-bold mb-2 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>Episodio {i}: Trading Spartano</h3>
-                <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Durata: 45 min</p>
+                <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// EP {String(i).padStart(2,'0')}</span>
+                <h3 className={`font-display text-xl font-semibold mt-1 mb-1 tracking-tight ${
+                  theme === 'light' ? 'text-slate-900' : 'text-white'
+                }`}>Inside the Lab — Conversazione {i}</h3>
+                <p className={`text-sm ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>Durata 45 min</p>
               </div>
-              <button className={`px-4 py-2 text-white rounded-lg transition-all hover:scale-105 ${
-                theme === 'light' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-600 hover:bg-red-700'
-              }`}>Ascolta</button>
+              <button className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-display font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-blue-500/20">Ascolta →</button>
             </div>
           ))}
         </div>

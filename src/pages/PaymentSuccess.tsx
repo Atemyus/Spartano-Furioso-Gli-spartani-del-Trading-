@@ -61,8 +61,8 @@ const PaymentSuccess: React.FC = () => {
               <p className="text-xl text-gray-300 mb-4">
                 Grazie per il tuo acquisto!
               </p>
-              <div className="bg-yellow-900/30 border-2 border-yellow-600/50 rounded-xl p-6 max-w-xl mx-auto">
-                <p className="text-yellow-200 font-semibold mb-2">
+              <div className="bg-cyan-900/30 border-2 border-cyan-600/50 rounded-xl p-6 max-w-xl mx-auto">
+                <p className="text-cyan-200 font-semibold mb-2">
                   ⏳ Il tuo ordine è in fase di verifica
                 </p>
                 <p className="text-gray-300 text-sm">

@@ -20,7 +20,8 @@ import {
   Sparkles
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
-import { getProductById } from '../data/products';
+import FormattedDescription from '../components/FormattedDescription';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Lesson {
   id: string;
@@ -55,6 +56,8 @@ interface CourseContent {
 }
 
 const CourseViewer: React.FC = () => {
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -96,7 +99,7 @@ const CourseViewer: React.FC = () => {
   const loadCourseContent = async () => {
     try {
       console.log('Loading course content for:', courseId);
-      const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
+      const response = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/content`);
       console.log('Response status:', response.status);
       
       if (response.ok) {
@@ -118,35 +121,10 @@ const CourseViewer: React.FC = () => {
       }
     } catch (error) {
       console.error('Error loading course content:', error);
-      // Fallback to static data for now
-      const courseData = getProductById(courseId || '');
-      if (courseData && courseData.courseModules) {
-        const fallbackContent: CourseContent = {
-          id: courseData.id,
-          name: courseData.name,
-          modules: courseData.courseModules.map((m, idx) => ({
-            ...m,
-            lessons: m.lessons || [
-              {
-                id: `lesson_${idx}_1`,
-                title: `Lezione ${idx + 1}.1`,
-                description: 'Contenuto della lezione',
-                duration: '20min',
-                vimeoId: '123456789', // Placeholder
-                order: 1,
-                isTrialContent: m.isTrialContent
-              }
-            ]
-          }))
-        };
-        setCourseContent(fallbackContent);
-        if (fallbackContent.modules.length > 0) {
-          setCurrentModule(fallbackContent.modules[0]);
-          if (fallbackContent.modules[0].lessons.length > 0) {
-            setCurrentLesson(fallbackContent.modules[0].lessons[0]);
-          }
-        }
-      }
+      // Nessun fallback a contenuti statici: mostrare lezioni placeholder
+      // (es. vimeoId fittizio "123456789") mascherava le modifiche reali
+      // fatte dall'admin. In caso di errore lasciamo il contenuto vuoto così
+      // l'interfaccia mostra lo stato corretto invece di dati finti.
     } finally {
       setLoading(false);
     }
@@ -156,7 +134,7 @@ const CourseViewer: React.FC = () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
+        const response = await fetch(`https://api.nexoralab.solutions/api/trials/check/${courseId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -174,7 +152,7 @@ const CourseViewer: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (token && user.id) {
       try {
-        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress/${user.id}`, {
+        const response = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/progress/${user.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -193,7 +171,7 @@ const CourseViewer: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (token && user.id) {
       try {
-        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress`, {
+        const response = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/progress`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -333,7 +311,7 @@ const CourseViewer: React.FC = () => {
     return (
       <AnimatedPage>
         <div className="min-h-screen bg-black flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
         </div>
       </AnimatedPage>
     );
@@ -345,7 +323,7 @@ const CourseViewer: React.FC = () => {
         <div className="min-h-screen bg-black flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-4">Corso non trovato</h1>
-            <Link to="/dashboard" className="text-purple-400 hover:text-purple-300">
+            <Link to="/dashboard" className="text-cyan-400 hover:text-cyan-300">
               Torna alla Dashboard
             </Link>
           </div>
@@ -362,22 +340,22 @@ const CourseViewer: React.FC = () => {
           <div className="h-full flex flex-col">
             {/* Sidebar Header */}
             <div className="p-4 border-b border-gray-800">
-              <Link 
+              <Link
                 to="/dashboard"
-                className="flex items-center gap-2 text-purple-400 hover:text-purple-300 mb-4"
+                className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 mb-4 font-display text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Dashboard</span>
+                <span>Dashboard</span>
               </Link>
-              <h2 className="text-lg font-bold text-white">{courseContent.name}</h2>
-              <div className="mt-2">
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-gray-400">Progresso</span>
-                  <span className="text-purple-400 font-bold">{progress}%</span>
+              <h2 className="text-lg font-display font-semibold text-white tracking-tight">{courseContent.name}</h2>
+              <div className="mt-3">
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="font-mono-lab tracking-widest uppercase text-slate-500">// progresso</span>
+                  <span className="text-cyan-400 font-display font-semibold">{progress}%</span>
                 </div>
-                <div className="w-full bg-gray-800 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
+                <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-cyan-400 h-1.5 rounded-full transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -394,7 +372,7 @@ const CourseViewer: React.FC = () => {
                   <div key={module.id} className="mb-6">
                     <div className={`flex items-start gap-3 mb-3 ${isLocked ? 'opacity-50' : ''}`}>
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isActive ? 'bg-purple-600' : 'bg-gray-800'
+                        isActive ? 'bg-cyan-600' : 'bg-gray-800'
                       }`}>
                         {isLocked ? (
                           <Lock className="w-4 h-4 text-gray-400" />
@@ -422,7 +400,7 @@ const CourseViewer: React.FC = () => {
                             disabled={isLessonLocked}
                             className={`w-full text-left p-2 rounded-lg transition-colors ${
                               isCurrentLesson 
-                                ? 'bg-purple-900/30 border border-purple-600' 
+                                ? 'bg-cyan-900/30 border border-cyan-600' 
                                 : isLessonLocked
                                 ? 'opacity-50 cursor-not-allowed'
                                 : 'hover:bg-gray-800'
@@ -453,11 +431,11 @@ const CourseViewer: React.FC = () => {
             {/* Trial Notice */}
             {isTrialUser && (
               <div className="p-4 border-t border-gray-800">
-                <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-lg p-3">
+                <div className="bg-gradient-to-r from-cyan-900/20 to-blue-900/20 rounded-lg p-3">
                   <p className="text-sm text-white mb-2">🔒 Contenuto Trial Limitato</p>
                   <button
                     onClick={() => navigate(`/course/${courseId}`)}
-                    className="w-full px-3 py-2 bg-purple-600 rounded-lg text-sm font-bold text-white hover:bg-purple-500 transition-colors"
+                    className="w-full px-3 py-2 bg-cyan-600 rounded-lg text-sm font-bold text-white hover:bg-cyan-500 transition-colors"
                   >
                     Sblocca Corso Completo
                   </button>
@@ -524,7 +502,7 @@ const CourseViewer: React.FC = () => {
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"
+                          className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"
                         />
                         <motion.p 
                           initial={{ y: 10, opacity: 0 }}
@@ -537,43 +515,71 @@ const CourseViewer: React.FC = () => {
                     </motion.div>
                   )}
                   
-                  {/* Video Player - Supports both MP4 and Vimeo */}
-                  {(currentLesson as any).videoUrl ? (
-                    <video
-                      ref={playerRef as any}
-                      controls
-                      className="w-full h-full bg-black"
-                      style={{ border: 0 }}
-                    >
-                      <source src={`https://api.spartanofurioso.com${(currentLesson as any).videoUrl}`} type="video/mp4" />
-                      Il tuo browser non supporta il tag video.
-                    </video>
-                  ) : currentLesson.vimeoId && currentLesson.vimeoId !== '123456789' ? (
-                    <iframe
-                      ref={playerRef}
-                      src={`https://player.vimeo.com/video/${currentLesson.vimeoId}`}
-                      className="w-full h-full"
-                      style={{ border: 0 }}
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                      title={currentLesson.title}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                      <div className="text-center p-8">
-                        <PlayCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Video Non Disponibile</h3>
-                        <p className="text-gray-400 mb-4">
-                          Il video per questa lezione non è ancora stato caricato.
+                  {/* Video Player - Vimeo ha priorita' sul MP4 se entrambi presenti.
+                      Estrae l'ID numerico dal vimeoId anche se l'admin ha incollato l'URL completo. */}
+                  {(() => {
+                    const rawVimeo = (currentLesson.vimeoId || '').toString().trim();
+                    // Pattern accettati:
+                    //  - "123456789"
+                    //  - "https://vimeo.com/123456789"
+                    //  - "https://vimeo.com/123456789/HASH"
+                    //  - "vimeo.com/123456789?h=hash"
+                    const m = rawVimeo.match(/(\d{6,})/);
+                    const vimeoNumericId = m ? m[1] : '';
+                    const hasValidVimeo = !!vimeoNumericId && vimeoNumericId !== '123456789';
+                    const videoUrl = (currentLesson as any).videoUrl as string | undefined;
+
+                    if (hasValidVimeo) {
+                      return (
+                        <iframe
+                          ref={playerRef}
+                          src={`https://player.vimeo.com/video/${vimeoNumericId}`}
+                          className="w-full h-full"
+                          style={{ border: 0 }}
+                          allow="autoplay; fullscreen; picture-in-picture"
+                          allowFullScreen
+                          title={currentLesson.title}
+                        />
+                      );
+                    }
+                    if (videoUrl) {
+                      return (
+                        <video
+                          ref={playerRef as any}
+                          controls
+                          className="w-full h-full bg-black"
+                          style={{ border: 0 }}
+                        >
+                          <source src={`https://api.nexoralab.solutions${videoUrl}`} type="video/mp4" />
+                          Il tuo browser non supporta il tag video.
+                        </video>
+                      );
+                    }
+                    return null;
+                  })() || (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-950">
+                      <div className="text-center p-8 max-w-md">
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-500/30 flex items-center justify-center">
+                          <PlayCircle className="w-8 h-8 text-cyan-400" />
+                        </div>
+                        <p className="font-mono-lab text-[0.65rem] tracking-[0.3em] uppercase text-cyan-500 mb-2">
+                          // video in arrivo
                         </p>
-                        <p className="text-sm text-gray-500">
-                          ID Vimeo: {currentLesson.vimeoId || 'Non configurato'}
+                        <h3 className="font-display text-xl font-semibold text-white mb-2">
+                          Video non ancora caricato
+                        </h3>
+                        <p className="text-sm text-slate-400 mb-5">
+                          La lezione esiste ma il video non è stato collegato. Puoi associare un video Vimeo o caricare un MP4 dal pannello admin.
                         </p>
-                        {currentLesson.vimeoId === '123456789' && (
-                          <p className="text-xs text-yellow-400 mt-2">
-                            Questo è un ID di esempio. Aggiorna dal pannello admin.
-                          </p>
-                        )}
+                        <Link
+                          to="/admin/dashboard"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-display font-semibold hover:shadow-md hover:shadow-cyan-500/30 transition-all"
+                        >
+                          Carica video da admin →
+                        </Link>
+                        <p className="mt-4 font-mono-lab text-[0.6rem] tracking-widest text-slate-600">
+                          ID lezione: {currentLesson.id}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -607,14 +613,14 @@ const CourseViewer: React.FC = () => {
                       </motion.span>
                     )}
                   </motion.h2>
-                  <motion.p 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-gray-400 mb-4 whitespace-pre-line"
+                    className="mb-4"
                   >
-                    {currentLesson.description}
-                  </motion.p>
+                    <FormattedDescription text={currentLesson.description} dark={dark} />
+                  </motion.div>
 
                   {/* Download Button - Only for lesson 4 of module 1 */}
                   {currentLesson.downloadButton?.enabled && (
@@ -626,8 +632,14 @@ const CourseViewer: React.FC = () => {
                     >
                       {currentLesson.downloadButton.fileUrl ? (
                         <a
-                          href={`https://api.spartanofurioso.com/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`}
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                          href={
+                            currentLesson.downloadButton.fileUrl.startsWith('http')
+                              ? currentLesson.downloadButton.fileUrl
+                              : `https://api.nexoralab.solutions/api/download/${currentLesson.downloadButton.fileUrl.split('/').pop()}?name=${encodeURIComponent(currentLesson.downloadButton.fileName || 'download')}`
+                          }
+                          target={currentLesson.downloadButton.fileUrl.startsWith('http') ? '_blank' : undefined}
+                          rel={currentLesson.downloadButton.fileUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-sky-500 hover:from-cyan-600 hover:to-sky-600 text-black font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -701,7 +713,7 @@ const CourseViewer: React.FC = () => {
                           transition={{ duration: 1, delay: i * 0.1 }}
                           className="absolute"
                         >
-                          <Sparkles className="w-6 h-6 text-yellow-400" />
+                          <Sparkles className="w-6 h-6 text-cyan-400" />
                         </motion.div>
                       ))}
                     </motion.div>
@@ -716,7 +728,7 @@ const CourseViewer: React.FC = () => {
                   className={`flex-1 px-6 py-3 rounded-lg font-bold text-white transition-all duration-300 flex items-center justify-center gap-2 ${
                     completedLessons.has(currentLesson.id)
                       ? 'bg-gray-700 border-2 border-gray-600 cursor-not-allowed opacity-50'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 hover:from-purple-500 hover:to-pink-500 hover:border-purple-300'
+                      : 'bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-cyan-400 hover:from-blue-500 hover:to-cyan-400 hover:border-cyan-300'
                   }`}
                 >
                   <CheckCircle className="w-5 h-5" />
@@ -744,7 +756,7 @@ const CourseViewer: React.FC = () => {
               <div className="mt-8 grid md:grid-cols-3 gap-4">
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
                   <div className="flex items-center gap-3 mb-2">
-                    <Award className="w-5 h-5 text-yellow-500" />
+                    <Award className="w-5 h-5 text-cyan-500" />
                     <h3 className="font-bold text-white">Certificato</h3>
                   </div>
                   <p className="text-sm text-gray-400">Completa il corso per ottenere il certificato</p>
@@ -760,7 +772,7 @@ const CourseViewer: React.FC = () => {
                 
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
                   <div className="flex items-center gap-3 mb-2">
-                    <Zap className="w-5 h-5 text-purple-500" />
+                    <Zap className="w-5 h-5 text-cyan-500" />
                     <h3 className="font-bold text-white">Supporto</h3>
                   </div>
                   <p className="text-sm text-gray-400">Assistenza dedicata per ogni dubbio</p>

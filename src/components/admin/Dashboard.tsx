@@ -59,7 +59,7 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/stats', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/stats', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -111,7 +111,9 @@ const AdminDashboard: React.FC = () => {
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
-          <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
+          <div className="bg-slate-900 rounded-lg px-2.5 py-1 shadow-sm ring-1 ring-slate-800/10">
+            <img src="/logo.png" alt="Nexora Lab" className="h-7 w-auto" />
+          </div>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden"
@@ -146,7 +148,7 @@ const AdminDashboard: React.FC = () => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
@@ -213,8 +215,8 @@ const AdminDashboard: React.FC = () => {
                       <p className="text-sm text-gray-600 mb-1">Nuovi Utenti (30gg)</p>
                       <p className="text-2xl font-bold text-gray-800">{stats.users.newThisMonth}</p>
                     </div>
-                    <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-yellow-600" />
+                    <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-cyan-600" />
                     </div>
                   </div>
                 </div>

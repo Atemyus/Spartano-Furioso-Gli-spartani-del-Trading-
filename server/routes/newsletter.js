@@ -1,22 +1,112 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import nodemailer from 'nodemailer';
+import { sendEmail, sendRawEmail } from '../services/emailService.js';
+import { authenticateAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Configurazione email transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+// ════════════════════════════════════════════════════════════════
+// LEAD da landing page (NON richiede registrazione/account)
+// Cattura l'email di un visitatore freddo, la salva tra gli iscritti
+// (visibile in admin) e invia la guida PDF bonus giusta in base al source.
+// ════════════════════════════════════════════════════════════════
+const SITE = 'https://nexoralab.solutions';
+
+// Configurazione guide per ogni landing page (source → guida + email)
+const LEAD_GUIDES = {
+  'lp-codex': {
+    accent: '#06b6d4', grad: 'linear-gradient(90deg,#2563eb,#06b6d4)',
+    brandHtml: 'NEXORA<span style="color:#22d3ee">LAB</span>',
+    guideUrl: `${SITE}/guida-codex-algo-academy.pdf`,
+    guideName: 'Trading Algoritmico: la panoramica per partire',
+    subject: '🎁 La tua guida gratuita — Codex Algo Academy',
+    backUrl: `${SITE}/lp/codex-algo-academy`,
+    backText: '→ Torna ai video e prenota la call',
+    extra: 'Intanto su Nexora Lab hai già sbloccato <strong>tutti i video gratuiti</strong>. Quando vuoi, prenota una <strong>call gratuita col fondatore</strong>.',
+    footer: '© Nexora Lab · Codex Algo Academy',
+  },
+  'lp-ranger': {
+    accent: '#10b981', grad: 'linear-gradient(90deg,#059669,#10b981)',
+    brandHtml: 'RANGER<span style="color:#34d399"> PROP PASS</span>',
+    guideUrl: `${SITE}/guida-ranger-prop-pass.pdf`,
+    guideName: 'I 5 errori che ti fanno fallire le challenge prop firm',
+    subject: '🎯 La tua guida gratuita — Ranger Prop Pass',
+    backUrl: `${SITE}/lp/ranger-prop-pass`,
+    backText: '→ Prenota la tua call col team',
+    extra: 'Quando vuoi, prenota una <strong>call gratuita col team</strong>: capiamo la tua situazione e ti spieghiamo come gestiamo la challenge per te.',
+    footer: '© Nexora Lab · Ranger Signals Hub',
+  },
 };
+
+router.post('/lead', async (req, res) => {
+  try {
+    const { email, source = 'lp-codex', phone } = req.body;
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Email non valida' });
+    }
+    const lower = email.toLowerCase().trim();
+    const g = LEAD_GUIDES[source] || LEAD_GUIDES['lp-codex'];
+
+    // Telefono opzionale lato API: tenuti solo cifre, spazi e prefisso +
+    const cleanPhone =
+      typeof phone === 'string' && phone.trim()
+        ? phone.replace(/[^\d+ ]/g, '').trim().slice(0, 20)
+        : null;
+
+    // Salva/aggiorna il lead nella tabella newsletter (no account richiesto)
+    const existing = await prisma.newsletter.findUnique({ where: { email: lower } });
+    if (existing) {
+      await prisma.newsletter.update({
+        where: { email: lower },
+        data: {
+          status: 'ACTIVE',
+          subscribedAt: new Date(),
+          unsubscribedAt: null,
+          source,
+          // non cancellare un numero già salvato se stavolta non è stato fornito
+          ...(cleanPhone ? { phone: cleanPhone } : {}),
+        },
+      });
+    } else {
+      await prisma.newsletter.create({
+        data: { email: lower, source, status: 'ACTIVE', phone: cleanPhone },
+      });
+    }
+
+    // Invia la guida PDF bonus (link di download). Non blocca la risposta.
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#0f172a">
+        <div style="background:linear-gradient(135deg,#0b1220,#05070d);padding:28px 24px;border-radius:14px 14px 0 0;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">${g.brandHtml}</div>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 14px 14px;padding:26px 24px">
+          <h2 style="margin:0 0 10px;font-size:20px">🎁 Ecco la tua guida gratuita!</h2>
+          <p style="font-size:14px;line-height:1.6;color:#475569">
+            Grazie! Come promesso, ecco la guida <strong>"${g.guideName}"</strong>.
+          </p>
+          <p style="text-align:center;margin:24px 0">
+            <a href="${g.guideUrl}" style="display:inline-block;background:${g.grad};color:#fff;font-weight:700;font-size:14px;padding:13px 30px;border-radius:10px;text-decoration:none">
+              📄 Scarica la guida (PDF)
+            </a>
+          </p>
+          <p style="font-size:14px;line-height:1.6;color:#475569">${g.extra}</p>
+          <p style="text-align:center;margin:20px 0 0">
+            <a href="${g.backUrl}" style="color:${g.accent};font-weight:600;font-size:14px;text-decoration:none">${g.backText}</a>
+          </p>
+        </div>
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin-top:16px">${g.footer}</p>
+      </div>`;
+    sendRawEmail(lower, g.subject, html)
+      .then(() => console.log('📧 Guida inviata a:', lower, '(' + source + ')'))
+      .catch((e) => console.warn('⚠️ Invio guida fallito (email non configurata?):', e.message));
+
+    res.json({ success: true, message: 'Lead registrato. Guida in arrivo via email.' });
+  } catch (error) {
+    console.error('Errore lead LP:', error);
+    res.status(500).json({ error: 'Errore durante la registrazione del lead' });
+  }
+});
 
 // Iscriviti alla newsletter
 router.post('/subscribe', async (req, res) => {
@@ -133,7 +223,7 @@ router.post('/unsubscribe', async (req, res) => {
 });
 
 // Admin: Get tutti gli iscritti
-router.get('/admin/subscribers', async (req, res) => {
+router.get('/admin/subscribers', authenticateAdmin, async (req, res) => {
   try {
     console.log('📧 Fetching subscribers...');
     const { status, search, page = 1, limit = 50 } = req.query;
@@ -178,7 +268,7 @@ router.get('/admin/subscribers', async (req, res) => {
 });
 
 // Admin: Get statistiche newsletter
-router.get('/admin/stats', async (req, res) => {
+router.get('/admin/stats', authenticateAdmin, async (req, res) => {
   try {
     console.log('📊 Fetching newsletter stats...');
     
@@ -234,7 +324,7 @@ router.get('/admin/stats', async (req, res) => {
 });
 
 // Admin: Crea messaggio newsletter
-router.post('/admin/messages', async (req, res) => {
+router.post('/admin/messages', authenticateAdmin, async (req, res) => {
   try {
     const { subject, content, type, scheduledFor } = req.body;
 
@@ -256,7 +346,7 @@ router.post('/admin/messages', async (req, res) => {
 });
 
 // Admin: Get messaggi newsletter
-router.get('/admin/messages', async (req, res) => {
+router.get('/admin/messages', authenticateAdmin, async (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
 
@@ -286,7 +376,7 @@ router.get('/admin/messages', async (req, res) => {
 });
 
 // Admin: Invia messaggio newsletter
-router.post('/admin/messages/:id/send', async (req, res) => {
+router.post('/admin/messages/:id/send', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -307,21 +397,19 @@ router.post('/admin/messages/:id/send', async (req, res) => {
       return res.status(400).json({ error: 'Nessun iscritto attivo trovato' });
     }
 
-    // Invia email a tutti gli iscritti
-    const transporter = createTransporter();
+    // Invia email a tutti gli iscritti tramite il servizio unificato (Resend/SMTP)
     let sentCount = 0;
 
     for (const subscriber of subscribers) {
-      try {
-        await transporter.sendMail({
-          from: `"Spartano Furioso" <${process.env.EMAIL_USER}>`,
-          to: subscriber.email,
-          subject: message.subject,
-          html: buildEmailHTML(message.content, subscriber.email)
-        });
+      const result = await sendRawEmail(
+        subscriber.email,
+        message.subject,
+        buildEmailHTML(message.content, subscriber.email)
+      );
+      if (result?.success) {
         sentCount++;
-      } catch (error) {
-        console.error(`Errore invio a ${subscriber.email}:`, error);
+      } else {
+        console.error(`Errore invio a ${subscriber.email}:`, result?.error);
       }
     }
 
@@ -346,7 +434,7 @@ router.post('/admin/messages/:id/send', async (req, res) => {
 });
 
 // Admin: Elimina messaggio
-router.delete('/admin/messages/:id', async (req, res) => {
+router.delete('/admin/messages/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -362,7 +450,7 @@ router.delete('/admin/messages/:id', async (req, res) => {
 });
 
 // Admin: Aggiorna messaggio
-router.put('/admin/messages/:id', async (req, res) => {
+router.put('/admin/messages/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { subject, content, type, scheduledFor, status } = req.body;
@@ -385,106 +473,54 @@ router.put('/admin/messages/:id', async (req, res) => {
   }
 });
 
-// Funzione per inviare email di benvenuto
+// Funzione per inviare email di benvenuto newsletter.
+// Usa il servizio email unificato (Resend o SMTP) invece di un transporter
+// separato: così la mail arriva davvero anche se è configurato solo Resend.
 async function sendWelcomeEmail(email, name) {
   try {
-    const transporter = createTransporter();
-
-    const emailHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #DC2626 0%, #7F1D1D 100%); padding: 40px 20px; text-align: center; border-radius: 10px 10px 0 0; }
-          .logo { font-size: 32px; font-weight: bold; color: #FCD34D; }
-          .content { background-color: #1F2937; padding: 30px; border-radius: 0 0 10px 10px; }
-          .button { display: inline-block; background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
-          .footer { text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">⚔️ SPARTANO FURIOSO ⚔️</div>
-            <h1 style="margin: 10px 0 0 0;">BENVENUTO NELLA FALANGE!</h1>
-          </div>
-          <div class="content">
-            <h2>Ciao ${name || 'Guerriero'}! 🛡️</h2>
-            <p>Hai fatto la scelta giusta unendoti alla Falange di Spartano Furioso!</p>
-            
-            <p>Da oggi riceverai:</p>
-            <ul>
-              <li>📊 Segnali di trading esclusivi</li>
-              <li>💰 Strategie vincenti per massimizzare i profitti</li>
-              <li>🎯 Analisi di mercato approfondite</li>
-              <li>🔥 Offerte speciali riservate ai membri</li>
-              <li>📚 Contenuti formativi di alto livello</li>
-            </ul>
-            
-            <div style="text-align: center;">
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/products" class="button">
-                SCOPRI I NOSTRI PRODOTTI
-              </a>
-            </div>
-            
-            <p style="margin-top: 30px;">Preparati a dominare i mercati con la disciplina spartana! 💪</p>
-            
-            <p style="color: #FCD34D; font-style: italic; text-align: center; margin-top: 30px;">
-              "Μολὼν λαβέ - Vieni a prenderli"<br>
-              - Re Leonida I di Sparta -
-            </p>
-          </div>
-          <div class="footer">
-            <p>Hai ricevuto questa email perché ti sei iscritto alla newsletter di Spartano Furioso.</p>
-            <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/unsubscribe?email=${email}" style="color: #9CA3AF;">Disiscriviti</a></p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-
-    await transporter.sendMail({
-      from: `"Spartano Furioso" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: '⚔️ Benvenuto nella Falange, Guerriero! 🛡️',
-      html: emailHTML
-    });
+    const result = await sendEmail(email, 'newsletterWelcome', { userName: name });
+    if (!result?.success) {
+      console.warn('⚠️ Email benvenuto newsletter non inviata:', result?.error);
+    }
   } catch (error) {
-    console.error('Errore invio email benvenuto:', error);
+    console.error('Errore invio email benvenuto newsletter:', error);
   }
 }
 
-// Funzione per costruire HTML email con link disiscrizione
+// Funzione per costruire HTML email newsletter con link disiscrizione (brand Nexora Lab)
 function buildEmailHTML(content, email) {
+  const site = process.env.FRONTEND_URL || 'https://nexoralab.solutions';
   return `
     <!DOCTYPE html>
-    <html>
+    <html lang="it">
     <head>
-      <style>
-        body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #DC2626 0%, #7F1D1D 100%); padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }
-        .logo { font-size: 28px; font-weight: bold; color: #FCD34D; }
-        .content { background-color: #1F2937; padding: 30px; border-radius: 0 0 10px 10px; }
-        .footer { text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px; }
-        a { color: #FCD34D; }
-      </style>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <div class="logo">⚔️ SPARTANO FURIOSO ⚔️</div>
-        </div>
-        <div class="content">
-          ${content}
-        </div>
-        <div class="footer">
-          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/unsubscribe?email=${email}" style="color: #9CA3AF;">Disiscriviti dalla newsletter</a></p>
-          <p>© 2025 Spartano Furioso Trading. Tutti i diritti riservati.</p>
-        </div>
-      </div>
+    <body style="margin:0;padding:0;background:#f1f5f9;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+        <tr><td align="center">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(2,6,23,0.08);">
+            <tr>
+              <td style="background:linear-gradient(135deg,#0b1e3f 0%,#1e3a8a 55%,#0ea5e9 140%);padding:30px 40px;text-align:center;">
+                <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:26px;font-weight:800;color:#ffffff;">Nexora<span style="color:#38bdf8;">Lab</span></div>
+                <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;color:#7dd3fc;margin-top:6px;">LAB BRIEF</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:36px 40px;font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;line-height:1.65;font-size:16px;">
+                ${content}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 40px;background:#0b1e3f;text-align:center;font-family:Arial,sans-serif;color:#94a3b8;font-size:12px;line-height:1.7;">
+                © ${new Date().getFullYear()} Nexora Lab — Trading &amp; Creator economy<br>
+                <a href="${site}/unsubscribe?email=${encodeURIComponent(email)}" style="color:#38bdf8;text-decoration:none;">Disiscriviti dalla newsletter</a>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+      </table>
     </body>
     </html>
   `;

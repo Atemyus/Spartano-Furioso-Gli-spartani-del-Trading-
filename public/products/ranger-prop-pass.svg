@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#0b1e3f"/>
+      <stop offset="55%" stop-color="#050b18"/>
+      <stop offset="100%" stop-color="#020610"/>
+    </radialGradient>
+    <linearGradient id="brand" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(56,189,248,0.06)" stroke-width="1"/>
+    </pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="strongGlow"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect width="1200" height="1200" fill="url(#grid)"/>
+
+  <!-- Subtle horizontal accent lines -->
+  <line x1="0" y1="200" x2="1200" y2="200" stroke="rgba(56,189,248,0.10)" stroke-width="1"/>
+  <line x1="0" y1="900" x2="1200" y2="900" stroke="rgba(56,189,248,0.10)" stroke-width="1"/>
+
+  <!-- Crosshair / target (centerpiece) -->
+  <g transform="translate(600,520)">
+    <!-- soft halo behind -->
+    <circle cx="0" cy="0" r="240" fill="rgba(37,99,235,0.18)" filter="url(#strongGlow)"/>
+    <circle cx="0" cy="0" r="180" fill="rgba(56,189,248,0.12)" filter="url(#glow)"/>
+
+    <!-- outer ring -->
+    <circle cx="0" cy="0" r="260" fill="none" stroke="url(#brand)" stroke-width="6"/>
+    <!-- inner ring -->
+    <circle cx="0" cy="0" r="200" fill="none" stroke="rgba(56,189,248,0.55)" stroke-width="2"/>
+
+    <!-- crosshair arms (gaps near center) -->
+    <line x1="-360" y1="0" x2="-220" y2="0" stroke="url(#brand)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="220" y1="0" x2="360" y2="0" stroke="url(#brand)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="-360" x2="0" y2="-220" stroke="url(#brand)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="220" x2="0" y2="360" stroke="url(#brand)" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- center dot -->
+    <circle cx="0" cy="0" r="6" fill="#38bdf8"/>
+
+    <!-- 3 candlesticks inside the target -->
+    <!-- candle 1: green (bullish) -->
+    <line x1="-90" y1="-110" x2="-90" y2="80" stroke="#10b981" stroke-width="3"/>
+    <rect x="-110" y="-70" width="40" height="100" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+
+    <!-- candle 2: red (bearish, shorter) -->
+    <line x1="0" y1="-50" x2="0" y2="110" stroke="#f43f5e" stroke-width="3"/>
+    <rect x="-20" y="-20" width="40" height="80" fill="#f43f5e" stroke="#f43f5e" stroke-width="2"/>
+
+    <!-- candle 3: green (taller, bullish) -->
+    <line x1="90" y1="-130" x2="90" y2="100" stroke="#10b981" stroke-width="3"/>
+    <rect x="70" y="-100" width="40" height="160" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+  </g>
+
+  <!-- Subtle hex pattern stripes left/right -->
+  <g opacity="0.15">
+    <polyline points="60,400 120,420 120,500 60,520 60,400" fill="none" stroke="#38bdf8" stroke-width="1"/>
+    <polyline points="60,540 120,560 120,640 60,660 60,540" fill="none" stroke="#38bdf8" stroke-width="1"/>
+    <polyline points="1140,400 1080,420 1080,500 1140,520 1140,400" fill="none" stroke="#38bdf8" stroke-width="1"/>
+    <polyline points="1140,540 1080,560 1080,640 1140,660 1140,540" fill="none" stroke="#38bdf8" stroke-width="1"/>
+  </g>
+
+  <!-- Top tag -->
+  <text x="600" y="120" text-anchor="middle"
+        font-family="JetBrains Mono, monospace" font-size="22"
+        letter-spacing="9" fill="#38bdf8" font-weight="500">
+    // PROP FIRM SERVICE
+  </text>
+
+  <!-- Title -->
+  <text x="600" y="930" text-anchor="middle"
+        font-family="Space Grotesk, Inter, sans-serif" font-weight="700" font-size="84"
+        fill="#ffffff" letter-spacing="-2">RANGER PROP PASS</text>
+
+  <!-- Tagline -->
+  <text x="600" y="1000" text-anchor="middle"
+        font-family="Space Grotesk, Inter, sans-serif" font-size="32" font-weight="400"
+        fill="rgba(255,255,255,0.65)">Discipline · Structure · Execution</text>
+
+  <!-- Bottom divider line + brand mark -->
+  <line x1="450" y1="1070" x2="750" y2="1070" stroke="rgba(56,189,248,0.4)" stroke-width="1"/>
+  <text x="600" y="1115" text-anchor="middle"
+        font-family="JetBrains Mono, monospace" font-size="20" letter-spacing="8"
+        fill="rgba(255,255,255,0.5)" font-weight="500">POWERED BY NEXORA LAB</text>
+</svg>

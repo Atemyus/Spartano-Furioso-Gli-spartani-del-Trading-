@@ -53,7 +53,7 @@ const UsersManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('https://api.spartanofurioso.com/api/admin/users', {
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -85,7 +85,9 @@ const UsersManagement: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('https://api.spartanofurioso.com/api/auth/register', {
+      // Usa l'endpoint admin (rispetta ruolo/stato/email verificata);
+      // /api/auth/register li ignorerebbe forzando user pending non verificato.
+      const response = await fetch('https://api.nexoralab.solutions/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,9 +100,13 @@ const UsersManagement: React.FC = () => {
         await fetchUsers();
         setIsCreateModalOpen(false);
         resetForm();
+      } else {
+        const err = await response.json().catch(() => ({}));
+        alert(err.error || 'Errore durante la creazione dell\'utente');
       }
     } catch (error) {
       console.error('Error creating user:', error);
+      alert('Errore di connessione durante la creazione dell\'utente');
     }
   };
 
@@ -110,7 +116,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${selectedUser.id}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +145,7 @@ const UsersManagement: React.FC = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -157,7 +163,7 @@ const UsersManagement: React.FC = () => {
   const handleSuspendUser = async (userId: string) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`https://api.spartanofurioso.com/api/admin/users/${userId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/admin/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +368,7 @@ const UsersManagement: React.FC = () => {
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       user.status === 'active' ? 'bg-green-100 text-green-800' :
                       user.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                      'bg-red-100 text-red-800'
+                      'bg-blue-100 text-blue-800'
                     }`}>
                       {user.status === 'active' ? <CheckCircle className="w-3 h-3 mr-1" /> :
                        user.status === 'suspended' ? <Ban className="w-3 h-3 mr-1" /> : null}
@@ -394,7 +400,7 @@ const UsersManagement: React.FC = () => {
                       {user.status === 'active' && (
                         <button
                           onClick={() => handleSuspendUser(user.id)}
-                          className="text-yellow-600 hover:text-yellow-900"
+                          className="text-cyan-600 hover:text-cyan-900"
                           title="Sospendi"
                         >
                           <Ban className="w-5 h-5" />
@@ -402,7 +408,7 @@ const UsersManagement: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleDeleteUser(user.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-blue-600 hover:text-blue-900"
                         title="Elimina"
                       >
                         <Trash2 className="w-5 h-5" />

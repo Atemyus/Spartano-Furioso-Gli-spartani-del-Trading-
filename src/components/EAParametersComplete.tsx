@@ -37,14 +37,14 @@ const iconMap: { [key: string]: React.ReactNode } = {
 };
 
 const colorMap: { [key: string]: string } = {
-  yellow: 'text-yellow-500',
+  yellow: 'text-cyan-500',
   green: 'text-green-500',
   blue: 'text-blue-500',
-  red: 'text-red-500',
+  red: 'text-blue-500',
   purple: 'text-purple-500',
-  orange: 'text-orange-500',
+  orange: 'text-sky-500',
   cyan: 'text-cyan-500',
-  pink: 'text-pink-500',
+  pink: 'text-indigo-500',
   indigo: 'text-indigo-500',
   teal: 'text-teal-500',
   violet: 'text-violet-500',

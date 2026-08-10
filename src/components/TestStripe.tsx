@@ -10,7 +10,7 @@ const TestStripe = () => {
     setResult(null);
     
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/config');
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/config');
       const data = await response.json();
       
       if (data.publishableKey && data.publishableKey !== 'pk_test_your_stripe_publishable_key') {
@@ -39,7 +39,7 @@ const TestStripe = () => {
     setResult(null);
     
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,16 +110,16 @@ const TestStripe = () => {
 
         {result && (
           <div className={`p-4 rounded-lg ${
-            result.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+            result.success ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'
           }`}>
             <div className="flex items-start gap-2">
               {result.success ? (
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
               ) : (
-                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <XCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
               )}
               <p className={`text-sm whitespace-pre-line ${
-                result.success ? 'text-green-800' : 'text-red-800'
+                result.success ? 'text-green-800' : 'text-blue-800'
               }`}>
                 {result.message}
               </p>

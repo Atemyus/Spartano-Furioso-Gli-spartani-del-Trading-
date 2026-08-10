@@ -4,7 +4,7 @@
  */
 
 // Usa l'API di produzione come default
-export const API_URL = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
 export const API_ENDPOINTS = {
   // Auth

@@ -9,6 +9,6 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "env": {
-    "VITE_API_URL": "https://api.spartanofurioso.com"
+    "VITE_API_URL": "https://api.nexoralab.solutions"
   }
 }

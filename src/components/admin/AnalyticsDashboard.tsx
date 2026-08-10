@@ -11,7 +11,7 @@ import {
   Calendar
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
 interface AnalyticsStats {
   totalPageViews: number;
@@ -35,7 +35,10 @@ const AnalyticsDashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_URL}/api/analytics/stats?days=${days}`);
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+      const response = await fetch(`${API_URL}/api/analytics/stats?days=${days}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error('Failed to fetch analytics');
       const data = await response.json();
       setStats(data);
@@ -74,11 +77,11 @@ const AnalyticsDashboard = () => {
 
   if (error) {
     return (
-      <div className="bg-red-900/30 border-2 border-red-600/50 rounded-xl p-6 text-center">
-        <p className="text-red-200">{error}</p>
+      <div className="bg-blue-900/30 border-2 border-blue-600/50 rounded-xl p-6 text-center">
+        <p className="text-blue-200">{error}</p>
         <button
           onClick={fetchStats}
-          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition"
+          className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition"
         >
           Riprova
         </button>
@@ -156,9 +159,9 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Media Pageviews */}
-        <div className="bg-gradient-to-br from-orange-900/30 to-orange-800/30 border-2 border-orange-600/50 rounded-xl p-6">
+        <div className="bg-gradient-to-br from-sky-900/30 to-sky-800/30 border-2 border-sky-600/50 rounded-xl p-6">
           <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="w-8 h-8 text-orange-400" />
+            <TrendingUp className="w-8 h-8 text-sky-400" />
             <span className="text-xs text-gray-400">MEDIA</span>
           </div>
           <div className="text-3xl font-black text-white mb-1">
@@ -281,7 +284,7 @@ const AnalyticsDashboard = () => {
                     <div className="text-sm text-white mb-1">{browser}</div>
                     <div className="bg-gray-800 rounded-full h-2 overflow-hidden">
                       <div 
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all duration-500"
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 h-full transition-all duration-500"
                         style={{ width: `${(count / stats.totalPageViews) * 100}%` }}
                       />
                     </div>

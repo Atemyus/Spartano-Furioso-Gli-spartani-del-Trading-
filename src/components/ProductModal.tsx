@@ -1,8 +1,11 @@
 ﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useProductConfig } from '../hooks/useProductConfig';
 import { useTheme } from '../contexts/ThemeContext';
+import Portal from './Portal';
 import PaymentOptionsModal from './PaymentOptionsModal';
+import FormattedDescription from './FormattedDescription';
 import { 
   X, 
   Shield, 
@@ -18,8 +21,10 @@ import {
   Play,
   DollarSign,
   Loader2,
-  Monitor
+  Monitor,
+  Calendar
 } from 'lucide-react';
+import { PRICE_ON_REQUEST, CALL_BOOKING_URL } from '../config/sales';
 
 interface PricingPlan {
   price: number;
@@ -100,13 +105,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
   // Load dynamic product configuration (platforms, etc.)
   const { config, loading: configLoading } = useProductConfig(product?.id);
 
-  if (!isOpen || !product) return null;
-
-  // Debug: log product data
-  console.log('ProductModal - Full product data:', product);
-  console.log('ProductModal - pricingPlans:', product.pricingPlans);
-  console.log('ProductModal - requirements:', product.requirements);
-  console.log('ProductModal - platforms:', product.platforms);
+  // NB: niente early return su !isOpen — AnimatePresence (sotto)
+  // gestisce mount/unmount animato del modale tramite isOpen.
+  // Il check su !product e' fatto nel render (isOpen && product).
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Gratis';
@@ -133,7 +134,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
     // Prima controlla se ha già un trial attivo
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/trial-status/${product.id}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/trial-status/${product.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -231,28 +232,46 @@ const ProductModal: React.FC<ProductModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <>
+    <Portal>
+    <AnimatePresence>
+    {isOpen && product && (
+    <motion.div
+      key="product-modal-wrap"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+    >
       {/* Backdrop */}
-      <div 
-        className={`absolute inset-0 backdrop-blur-sm ${
-          theme === 'dark' ? 'bg-black/80' : 'bg-gray-900/50'
+      <div
+        className={`absolute inset-0 backdrop-blur-md ${
+          theme === 'dark' ? 'bg-black/80' : 'bg-slate-900/60'
         }`}
         onClick={onClose}
       ></div>
 
       {/* Modal */}
-      <div className={`relative w-full max-w-6xl max-h-[90vh] border-2 border-red-800 rounded-3xl overflow-hidden ${
-        theme === 'dark'
-          ? 'bg-gradient-to-b from-gray-900 to-black'
-          : 'bg-gradient-to-b from-white to-gray-50'
-      }`}>
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 16, scale: 0.97 }}
+        transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-6xl max-h-[90vh] border rounded-2xl overflow-hidden shadow-2xl ${
+          theme === 'dark'
+            ? 'bg-slate-900/95 border-slate-800'
+            : 'bg-white border-slate-200'
+        }`}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className={`absolute top-6 right-6 z-10 w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-red-900/50 hover:border-red-600 transition-all duration-300 ${
+          className={`absolute top-6 right-6 z-10 w-10 h-10 border rounded-lg flex items-center justify-center hover:bg-blue-900/50 hover:border-blue-600 transition-all duration-300 ${
             theme === 'dark'
-              ? 'bg-black/50 border-red-800/50'
-              : 'bg-white border-red-200'
+              ? 'bg-black/50 border-blue-800/50'
+              : 'bg-white border-blue-200'
           }`}
         >
           <X className={`w-5 h-5 ${
@@ -266,7 +285,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
           {(error || success) && (
             <div className={`p-4 m-4 rounded-lg border ${
               error 
-                ? 'bg-red-900/20 border-red-600 text-red-400' 
+                ? 'bg-blue-900/20 border-blue-600 text-blue-400' 
                 : 'bg-green-900/20 border-green-600 text-green-400'
             }`}>
               <div className="flex items-center gap-3">
@@ -288,30 +307,30 @@ const ProductModal: React.FC<ProductModalProps> = ({
           {/* Header */}
           <div className={`relative p-8 border-b ${
             theme === 'dark'
-              ? 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 border-red-800/30'
-              : 'bg-gradient-to-r from-red-50/80 via-white/80 to-red-50/80 border-red-200'
+              ? 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 border-blue-800/30'
+              : 'bg-gradient-to-r from-blue-50/80 via-white/80 to-blue-50/80 border-blue-200'
           }`}>
             <div className="flex items-start gap-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-red-600 rounded-2xl flex items-center justify-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
                 <Shield className="w-10 h-10 text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className={`text-4xl font-black ${
+                  <h2 className={`text-4xl font-display font-semibold ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>{product.name}</h2>
                   {product.badge && (
-                    <span className="px-3 py-1 bg-gradient-to-r from-red-600 to-orange-600 text-white text-sm font-bold rounded-full">
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-sky-600 text-white text-sm font-bold rounded-full">
                       {product.badge}
                     </span>
                   )}
                 </div>
-                <p className={`text-lg mb-4 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                }`}>{product.description}</p>
+                <div className="mb-4">
+                  <FormattedDescription text={product.description} dark={theme === 'dark'} />
+                </div>
                 
-                {/* Quick Stats */}
-                {product.performance && (
+                {/* Quick Stats — non mostrate per i corsi */}
+                {product.performance && product.category !== 'Formazione' && product.category !== 'course' && (
                   <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-green-400" />
@@ -320,7 +339,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       }`}>Win Rate: {product.performance.winRate}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Award className="w-5 h-5 text-yellow-400" />
+                      <Award className="w-5 h-5 text-cyan-400" />
                       <span className={`font-bold ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>Avg Profit: {product.performance.avgProfit}</span>
@@ -342,18 +361,18 @@ const ProductModal: React.FC<ProductModalProps> = ({
             <div className="space-y-8">
               {/* Features */}
               <div>
-                <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
+                <h3 className={`text-2xl font-display font-semibold mb-6 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <Zap className="w-6 h-6 text-yellow-500" />
+                  <Zap className="w-6 h-6 text-cyan-500" />
                   CARATTERISTICHE PRINCIPALI
                 </h3>
                 <div className="space-y-3">
                   {product.features.map((feature, index) => (
-                    <div key={index} className={`flex items-start gap-3 p-3 border rounded-lg hover:border-yellow-500/30 transition-colors ${
+                    <div key={index} className={`flex items-start gap-3 p-3 border rounded-lg hover:border-cyan-500/30 transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/30 border-red-900/20'
-                        : 'bg-white border-red-200'
+                        ? 'bg-black/30 border-blue-900/20'
+                        : 'bg-white border-blue-200'
                     }`}>
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                       <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{feature}</span>
@@ -365,10 +384,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
               {/* Requirements */}
               {product.requirements && product.requirements.length > 0 && (
                 <div>
-                  <h3 className={`text-xl font-black mb-4 flex items-center gap-2 ${
+                  <h3 className={`text-xl font-display font-semibold mb-4 flex items-center gap-2 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    <AlertCircle className="w-5 h-5 text-red-500" />
+                    <AlertCircle className="w-5 h-5 text-blue-500" />
                     REQUISITI
                   </h3>
                   <div className="space-y-2">
@@ -376,7 +395,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <div key={index} className={`flex items-center gap-3 ${
                         theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                       }`}>
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span>{req}</span>
                       </div>
                     ))}
@@ -387,7 +406,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
               {/* Platforms - Use dynamic config if available */}
               {((config?.platforms && config.platforms.length > 0) || (product.platforms && product.platforms.length > 0)) && (
                 <div>
-                  <h3 className={`text-xl font-black mb-4 flex items-center gap-2 ${
+                  <h3 className={`text-xl font-display font-semibold mb-4 flex items-center gap-2 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     <Cpu className="w-5 h-5 text-blue-500" />
@@ -397,8 +416,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     {(config?.platforms || product.platforms || []).map((platform, index) => (
                       <span key={index} className={`px-4 py-2 border border-blue-500/30 rounded-lg font-semibold ${
                         theme === 'dark'
-                          ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 text-white'
-                          : 'bg-gradient-to-r from-blue-50 to-purple-50 text-gray-900'
+                          ? 'bg-gradient-to-r from-blue-900/20 to-cyan-900/20 text-white'
+                          : 'bg-gradient-to-r from-blue-50 to-cyan-50 text-gray-900'
                       }`}>
                         {platform}
                       </span>
@@ -422,7 +441,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <Clock className="w-6 h-6 text-green-400" />
                     </div>
                     <div>
-                      <h3 className={`text-xl font-black ${
+                      <h3 className={`text-xl font-display font-semibold ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>PROVA GRATUITA</h3>
                       <p className="text-green-400 font-bold">{product.trial.days} GIORNI - NESSUNA CARTA RICHIESTA</p>
@@ -442,7 +461,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   
                   <button
                     onClick={handleStartTrial}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 border-2 border-green-400 rounded-xl font-black text-white text-lg hover:from-green-500 hover:to-emerald-500 hover:border-green-300 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group"
+                    className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 border-2 border-green-400 rounded-xl font-display font-semibold text-white text-lg hover:from-green-500 hover:to-emerald-500 hover:border-green-300 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group"
                   >
                     <Play className="w-5 h-5 group-hover:scale-125 transition-transform" />
                     INIZIA LA PROVA GRATUITA
@@ -451,21 +470,39 @@ const ProductModal: React.FC<ProductModalProps> = ({
               )}
 
               {/* Pricing Plans */}
+              {PRICE_ON_REQUEST ? (
+                <div className="border border-cyan-500/30 rounded-xl p-6 md:p-8 bg-gradient-to-br from-blue-950/40 to-slate-900/40 text-center">
+                  <Calendar className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+                  <h3 className="text-xl md:text-2xl font-display font-semibold text-white mb-2">Prezzo riservato</h3>
+                  <p className="text-slate-400 text-sm md:text-base mb-6 max-w-md mx-auto">
+                    L'accesso è su misura: niente checkout online. Prenota una call gratuita
+                    col fondatore per scoprire la soluzione e il piano adatti a te.
+                  </p>
+                  <a
+                    href={CALL_BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold hover:scale-105 transition-all"
+                  >
+                    <Calendar className="w-4 h-4" /> Prenota una call
+                  </a>
+                </div>
+              ) : (
               <div>
-                <h3 className={`text-2xl font-black mb-6 flex items-center gap-2 ${
+                <h3 className={`text-2xl font-display font-semibold mb-6 flex items-center gap-2 ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
-                  <DollarSign className="w-6 h-6 text-yellow-500" />
+                  <DollarSign className="w-6 h-6 text-cyan-500" />
                   {product.category === 'Formazione' ? 'OPZIONI DI ACQUISTO' : 'PIANI DI ABBONAMENTO'}
                 </h3>
-                
+
                 <div className="space-y-4">
                   {/* Monthly Plan - Hide for Formazione */}
                   {product.category !== 'Formazione' && (product.pricingPlans?.monthly || (typeof product.price === 'object' && product.price.monthly)) && (
-                    <div className={`border rounded-xl p-5 hover:border-yellow-500/50 transition-colors ${
+                    <div className={`border rounded-xl p-5 hover:border-cyan-500/50 transition-colors ${
                       theme === 'dark'
-                        ? 'bg-black/30 border-red-900/30'
-                        : 'bg-white border-red-200'
+                        ? 'bg-black/30 border-blue-900/30'
+                        : 'bg-white border-blue-200'
                     }`}>
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -477,7 +514,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           }`}>Fatturazione mensile</p>
                         </div>
                         <div className="text-right">
-                          <div className={`text-2xl font-black ${
+                          <div className={`text-2xl font-display font-semibold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>
                             {formatPrice(product.pricingPlans?.monthly?.price || (typeof product.price === 'object' ? product.price.monthly : product.price) || 0)}
@@ -493,7 +530,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('monthly')}
                         disabled={loadingPurchase === 'monthly'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border border-red-800/50 rounded-lg font-bold text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border border-blue-800/50 rounded-lg font-bold text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'monthly' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -510,12 +547,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {product.category !== 'Formazione' && (product.pricingPlans?.yearly || (typeof product.price === 'object' && product.price.yearly)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-yellow-950/20 to-orange-950/20 border-yellow-500/50'
-                        : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-cyan-950/20 to-sky-950/20 border-cyan-500/50'
+                        : 'bg-gradient-to-br from-cyan-50 to-sky-50 border-cyan-400 shadow-lg'
                     }`}>
                       {product.pricingPlans?.yearly?.savings && (
                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-xs font-black rounded-full">
+                          <span className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-sky-500 text-black text-xs font-display font-semibold rounded-full">
                             {product.pricingPlans.yearly.savings}
                           </span>
                         </div>
@@ -525,10 +562,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           <h4 className={`text-lg font-bold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>ANNUALE</h4>
-                          <p className="text-sm text-yellow-400 font-semibold">Più popolare - Miglior valore</p>
+                          <p className="text-sm text-cyan-400 font-semibold">Più popolare - Miglior valore</p>
                         </div>
                         <div className="text-right">
-                          <div className={`text-2xl font-black ${
+                          <div className={`text-2xl font-display font-semibold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>
                             {formatPrice(product.pricingPlans?.yearly?.price || (typeof product.price === 'object' ? product.price.yearly : 0) || 0)}
@@ -544,7 +581,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('yearly')}
                         disabled={loadingPurchase === 'yearly'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-cyan-600 to-sky-600 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-sky-500 hover:border-cyan-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'yearly' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -561,12 +598,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {product.category !== 'Formazione' && (product.pricingPlans?.lifetime || (typeof product.price === 'object' && product.price.lifetime)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-red-950/30 to-purple-950/30 border-red-500/50'
-                        : 'bg-gradient-to-br from-red-50 to-purple-50 border-red-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border-blue-500/50'
+                        : 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-400 shadow-lg'
                     }`}>
                       {product.pricingPlans?.lifetime?.savings && (
                         <div className="absolute -top-3 right-4">
-                          <span className="px-3 py-1 bg-gradient-to-r from-red-600 to-purple-600 text-white text-xs font-black rounded-full">
+                          <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-display font-semibold rounded-full">
                             {product.pricingPlans.lifetime.savings}
                           </span>
                         </div>
@@ -576,10 +613,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           <h4 className={`text-lg font-bold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>LIFETIME</h4>
-                          <p className="text-sm text-red-400 font-semibold">Accesso a vita - Nessun rinnovo</p>
+                          <p className="text-sm text-blue-400 font-semibold">Accesso a vita - Nessun rinnovo</p>
                         </div>
                         <div className="text-right">
-                          <div className={`text-2xl font-black ${
+                          <div className={`text-2xl font-display font-semibold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>
                             {formatPrice(product.pricingPlans?.lifetime?.price || (typeof product.price === 'object' ? product.price.lifetime : 0) || 0)}
@@ -595,7 +632,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('lifetime')}
                         disabled={loadingPurchase === 'lifetime'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-purple-600 border-2 border-red-400 rounded-lg font-bold text-white hover:from-red-500 hover:to-purple-500 hover:border-red-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-blue-400 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-400 hover:border-blue-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'lifetime' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -615,18 +652,18 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   {(product.category === 'Formazione' || (product.type === 'one-time' && product.pricingPlans?.oneTime)) && (
                     <div className={`border-2 rounded-xl p-5 relative ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-br from-purple-950/30 to-pink-950/30 border-purple-500/50'
-                        : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-400 shadow-lg'
+                        ? 'bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border-cyan-500/50'
+                        : 'bg-gradient-to-br from-blue-50 to-cyan-50 border-cyan-400 shadow-lg'
                     }`}>
                       <div className="flex items-center justify-between mb-3">
                         <div>
                           <h4 className={`text-lg font-bold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>PAGAMENTO UNICO</h4>
-                          <p className="text-sm text-purple-400 font-semibold">Accesso completo al corso</p>
+                          <p className="text-sm text-cyan-400 font-semibold">Accesso completo al corso</p>
                         </div>
                         <div className="text-right">
-                          <div className={`text-2xl font-black ${
+                          <div className={`text-2xl font-display font-semibold ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>
                             {formatPrice(product.pricingPlans?.oneTime?.price || 
@@ -642,7 +679,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       <button
                         onClick={() => handlePurchase('lifetime')}
                         disabled={loadingPurchase === 'lifetime'}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 rounded-lg font-bold text-white hover:from-purple-500 hover:to-pink-500 hover:border-purple-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 border-2 border-cyan-400 rounded-lg font-bold text-white hover:from-blue-500 hover:to-cyan-400 hover:border-cyan-300 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {loadingPurchase === 'lifetime' ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -656,6 +693,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   )}
                 </div>
               </div>
+              )}
 
               {/* Platforms Section - Show for Bot, Indicators and Services */}
               {(product.category === 'bot' || product.category === 'indicator' || product.category === 'service' || 
@@ -663,16 +701,16 @@ const ProductModal: React.FC<ProductModalProps> = ({
                (config?.platforms || product.platforms) && 
                ((config?.platforms && config.platforms.length > 0) || 
                 (product.platforms && product.platforms.length > 0)) && (
-                <div className="bg-gradient-to-r from-purple-950/20 via-pink-950/20 to-purple-950/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+                <div className="bg-gradient-to-r from-cyan-950/15 via-blue-950/15 to-cyan-950/15 border border-cyan-500/30 rounded-xl p-6 mb-6">
                   <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <Monitor className="w-5 h-5 text-purple-400" />
+                    <Monitor className="w-5 h-5 text-cyan-400" />
                     PIATTAFORME SUPPORTATE
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {(config?.platforms || product.platforms || []).map((platform, index) => (
                       <span 
                         key={index}
-                        className="px-3 py-1 bg-purple-900/30 border border-purple-700 rounded-lg text-purple-300 text-sm font-medium"
+                        className="px-3 py-1 bg-cyan-900/20 border border-cyan-700/40 rounded-lg text-cyan-300 text-sm font-medium"
                       >
                         {platform}
                       </span>
@@ -682,10 +720,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
               )}
 
               {/* Guarantees */}
-              <div className="bg-gradient-to-r from-blue-950/20 via-purple-950/20 to-blue-950/20 border border-blue-500/30 rounded-xl p-6">
+              <div className="bg-gradient-to-r from-blue-950/15 via-cyan-950/15 to-blue-950/15 border border-blue-500/30 rounded-xl p-6">
                 <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-400" />
-                  GARANZIE SPARTANE
+                  LE NOSTRE GARANZIE
                 </h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-2 text-gray-300">
@@ -709,9 +747,14 @@ const ProductModal: React.FC<ProductModalProps> = ({
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Payment Options Modal */}
+      </motion.div>
+    </motion.div>
+    )}
+    </AnimatePresence>
+    </Portal>
+
+    {/* Payment Options Modal — vive fuori dall'AnimatePresence, ha il proprio animator */}
+    {product && (
       <PaymentOptionsModal
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
@@ -729,7 +772,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                      'course'}
         plan={selectedPlan}
       />
-    </div>
+    )}
+    </>
   );
 };
 

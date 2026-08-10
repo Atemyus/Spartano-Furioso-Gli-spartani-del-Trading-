@@ -48,14 +48,17 @@ const Calcolatori = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
-            CALCOLATORI TRADING
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Tools</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Strumenti essenziali per calcolare rischio, profitto e dimensionamento delle posizioni. 
-            Prendi decisioni informate con precisione matematica.
+            Calcolatori <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">trading</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Tool essenziali per dimensionamento, rischio e profitti. Calcoli puliti, veloci,
+            usati da chi opera ogni giorno.
           </p>
         </div>
 
@@ -64,10 +67,10 @@ const Calcolatori = () => {
           {calculators.map((calc, i) => (
             <div key={i} className={`rounded-xl p-6 transition-all duration-300 group ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-lg'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
-              <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-yellow-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <calc.icon className="w-8 h-8 text-white" />
               </div>
               <h3 className={`text-2xl font-bold mb-3 ${
@@ -81,17 +84,13 @@ const Calcolatori = () => {
                   <div key={j} className={`text-sm flex items-center gap-2 ${
                     theme === 'light' ? 'text-gray-600' : 'text-gray-500'
                   }`}>
-                    <div className="w-1 h-1 bg-yellow-500 rounded-full"></div>
+                    <div className="w-1 h-1 bg-cyan-500 rounded-full"></div>
                     {field}
                   </div>
                 ))}
               </div>
-              <button className={`w-full py-3 text-white rounded-lg font-bold transition-all hover:scale-105 border-2 ${
-                theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border-transparent'
-              }`}>
-                USA CALCOLATORE
+              <button className="w-full py-3 text-white rounded-lg font-display font-semibold tracking-wide transition-all duration-300 hover:-translate-y-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/20 hover:shadow-cyan-500/40">
+                Apri il calcolatore →
               </button>
             </div>
           ))}
@@ -101,21 +100,22 @@ const Calcolatori = () => {
         <div className={`mt-16 rounded-2xl p-8 ${
           theme === 'light'
             ? 'bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-200'
-            : 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border border-red-800/30'
+            : 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border border-blue-800/30'
         }`}>
-          <h2 className={`text-2xl font-black mb-4 text-center ${
-            theme === 'light' ? 'text-gray-800' : 'text-white'
-          }`}>Perché Usare i Calcolatori?</h2>
+          <h2 className={`font-display text-2xl md:text-3xl font-semibold mb-6 text-center tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
+          }`}>Perché usare questi tool</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: "Precisione", desc: "Elimina errori di calcolo manuale" },
-              { title: "Velocità", desc: "Risultati istantanei per decisioni rapide" },
-              { title: "Professionalità", desc: "Strumenti usati dai trader pro" }
+              { title: 'Precisione', desc: 'Elimina errori di calcolo manuale' },
+              { title: 'Velocità', desc: 'Risultati istantanei per decisioni rapide' },
+              { title: 'Standard pro', desc: 'Tool usati da trader e fund manager' }
             ].map((item, i) => (
               <div key={i} className="text-center">
-                <h4 className="text-lg font-bold text-yellow-500 mb-2">{item.title}</h4>
+                <span className="font-mono-lab text-xs text-cyan-500 tracking-widest uppercase">// 0{i + 1}</span>
+                <h4 className={`font-display text-lg font-semibold mt-1 mb-1 ${theme === 'light' ? 'text-slate-900' : 'text-white'}`}>{item.title}</h4>
                 <p className={`text-sm ${
-                  theme === 'light' ? 'text-gray-600' : 'text-gray-400'
+                  theme === 'light' ? 'text-slate-600' : 'text-slate-400'
                 }`}>{item.desc}</p>
               </div>
             ))}

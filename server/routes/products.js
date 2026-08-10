@@ -255,50 +255,40 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update product platforms (temporarily without auth for testing)
+// Update product platforms -> salva su MongoDB (Prisma) così le piattaforme
+// modificate dall'admin compaiono subito sul sito pubblico.
 router.patch('/:productId/platforms', async (req, res) => {
   try {
     const { productId } = req.params;
     const { platforms } = req.body;
-    
+
     console.log('Updating platforms for product:', productId);
     console.log('Received platforms:', platforms);
-    
+
     if (!platforms || !Array.isArray(platforms)) {
       return res.status(400).json({ error: 'Invalid platforms data' });
     }
-    
-    const configs = await loadProductConfigs();
-    
-    // Initialize product config if it doesn't exist
-    if (!configs.products[productId]) {
-      configs.products[productId] = {
-        platforms: [],
-        requirements: {},
-        features: {}
-      };
-    }
-    
-    // Update platforms
-    configs.products[productId].platforms = platforms;
-    
-    // Save updated configs
-    console.log('Saving configs for product:', productId);
-    const saved = await saveProductConfigs(configs);
-    console.log('Save result:', saved);
-    
-    if (saved) {
-      console.log('Platforms updated successfully for:', productId);
-      res.json({ 
-        success: true, 
-        message: 'Platforms updated successfully',
-        platforms 
-      });
-    } else {
-      console.log('Failed to save platforms for:', productId);
-      res.status(500).json({ error: 'Failed to save platforms' });
-    }
+
+    // productId può essere il business id (es. "spartan_fury_bot") oppure
+    // l'ObjectId Mongo: proviamo entrambi.
+    const isObjectId = /^[a-f\d]{24}$/i.test(productId);
+    const where = isObjectId ? { id: productId } : { productId };
+
+    const updated = await prisma.product.update({
+      where,
+      data: { platforms }
+    });
+
+    console.log('Platforms updated successfully for:', productId);
+    res.json({
+      success: true,
+      message: 'Platforms updated successfully',
+      platforms: updated.platforms
+    });
   } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Product not found' });
+    }
     console.error('Error updating platforms:', error);
     res.status(500).json({ error: 'Failed to update platforms' });
   }

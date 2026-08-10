@@ -34,7 +34,7 @@ export const useTrialStatus = (productId: string): TrialStatus => {
           return;
         }
 
-        const response = await fetch(`https://api.spartanofurioso.com/api/products/trial-status/${productId}`, {
+        const response = await fetch(`https://api.nexoralab.solutions/api/products/trial-status/${productId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

@@ -157,35 +157,24 @@ const Login: React.FC = () => {
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'light' ? 'bg-red-200/20' : 'bg-red-900/10'
+          theme === 'light' ? 'bg-blue-200/20' : 'bg-blue-900/10'
         }`}></div>
         <div className={`absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'light' ? 'bg-yellow-200/20' : 'bg-yellow-900/10'
+          theme === 'light' ? 'bg-cyan-200/20' : 'bg-cyan-900/10'
         }`}></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-0 group">
-            <div className="relative flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
-              <div className="absolute inset-0 bg-red-500/30 blur-xl rounded-full animate-pulse" style={{ transform: 'translateX(60px)' }}></div>
-              <img 
-                src="/logo.png" 
-                alt="Spartano Furioso Logo" 
-                className="w-28 h-24 md:w-40 md:h-32 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]"
-                style={{ transform: 'translateX(60px)' }}
+          <Link to="/" className="inline-block group">
+            <div className="relative transform group-hover:scale-[1.03] transition-transform duration-300">
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full"></div>
+              <img
+                src="/logo.png"
+                alt="Nexora Lab"
+                className="relative z-10 h-16 md:h-20 w-auto mx-auto object-contain"
               />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black">
-                <span className="bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                  SPARTANO
-                </span>
-                <span className={`ml-2 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>FURIOSO</span>
-              </h1>
             </div>
           </Link>
         </div>
@@ -194,26 +183,26 @@ const Login: React.FC = () => {
         <div className={`backdrop-blur-sm border-2 rounded-2xl p-8 ${
           theme === 'light'
             ? 'bg-white/80 border-gray-200'
-            : 'bg-gray-900/50 border-red-800/50'
+            : 'bg-gray-900/50 border-blue-800/50'
         }`}>
           <div className="text-center mb-8">
             <h2 className={`text-2xl font-black mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>BENTORNATO GUERRIERO</h2>
-            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Accedi al tuo account spartano</p>
+            }`}>BENTORNATO IN NEXORA LAB</h2>
+            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Accedi al tuo account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Server Error Message */}
             {serverError && (
-              <div className="p-4 bg-red-900/20 border border-red-600/50 rounded-lg flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="p-4 bg-blue-900/20 border border-blue-600/50 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-red-400 text-sm font-medium">{serverError}</p>
+                  <p className="text-blue-400 text-sm font-medium">{serverError}</p>
                   {needsVerification && (
                     <Link 
                       to="/register" 
-                      className="text-yellow-500 hover:text-yellow-400 text-sm underline mt-2 inline-block"
+                      className="text-cyan-500 hover:text-cyan-400 text-sm underline mt-2 inline-block"
                     >
                       Reinvia email di verifica
                     </Link>
@@ -239,10 +228,10 @@ const Login: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                  placeholder="guerriero@sparta.com"
+                  placeholder="tu@email.it"
                   required
                 />
                 <Mail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -250,7 +239,7 @@ const Login: React.FC = () => {
                 }`} />
               </div>
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                <p className="mt-1 text-sm text-blue-500">{errors.email}</p>
               )}
             </div>
 
@@ -271,8 +260,8 @@ const Login: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
                   placeholder="••••••••"
                   required
@@ -284,14 +273,14 @@ const Login: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-colors ${
-                    theme === 'light' ? 'text-gray-400 hover:text-yellow-600' : 'text-gray-500 hover:text-yellow-500'
+                    theme === 'light' ? 'text-gray-400 hover:text-cyan-600' : 'text-gray-500 hover:text-cyan-500'
                   }`}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                <p className="mt-1 text-sm text-blue-500">{errors.password}</p>
               )}
             </div>
 
@@ -302,10 +291,10 @@ const Login: React.FC = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className={`w-4 h-4 border-2 rounded text-yellow-500 focus:ring-yellow-500 cursor-pointer ${
+                  className={`w-4 h-4 border-2 rounded text-cyan-500 focus:ring-cyan-500 cursor-pointer ${
                     theme === 'light'
                       ? 'bg-white border-gray-300'
-                      : 'bg-black/50 border-red-900/50'
+                      : 'bg-black/50 border-blue-900/50'
                   }`}
                 />
                 <span className={`ml-2 text-sm ${
@@ -315,7 +304,7 @@ const Login: React.FC = () => {
               <Link
                 to="/forgot-password"
                 className={`text-sm transition-colors ${
-                  theme === 'light' ? 'text-yellow-600 hover:text-yellow-700' : 'text-yellow-500 hover:text-yellow-400'
+                  theme === 'light' ? 'text-cyan-600 hover:text-cyan-700' : 'text-cyan-500 hover:text-cyan-400'
                 }`}
               >
                 Password dimenticata?
@@ -328,8 +317,8 @@ const Login: React.FC = () => {
               disabled={loading}
               className={`w-full py-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 hover:shadow-xl ${
                 theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white hover:from-yellow-400 hover:to-yellow-500 border-2 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 text-white hover:from-red-500 hover:to-red-700'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-400 hover:to-cyan-500 border-2 border-cyan-700 shadow-md'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-500 hover:to-blue-700'
               }`}
             >
               {loading ? (
@@ -350,7 +339,7 @@ const Login: React.FC = () => {
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t" style={{
-                borderColor: theme === 'light' ? 'rgba(209, 213, 219, 0.3)' : 'rgba(127, 29, 29, 0.3)'
+                borderColor: theme === 'light' ? 'rgba(209, 213, 219, 0.3)' : 'rgba(30, 58, 138, 0.3)'
               }}></div>
             </div>
             <div className="relative flex justify-center text-sm">
@@ -370,11 +359,11 @@ const Login: React.FC = () => {
               className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all duration-300 group hover:scale-105 active:scale-95 hover:shadow-xl ${
                 theme === 'light'
                   ? 'bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-600 hover:to-gray-700 border-2 border-gray-900 shadow-md'
-                  : 'bg-gradient-to-r from-yellow-600 to-yellow-800 text-white hover:from-yellow-500 hover:to-yellow-700'
+                  : 'bg-gradient-to-r from-cyan-600 to-cyan-800 text-white hover:from-cyan-500 hover:to-cyan-700'
               }`}
             >
               <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-              UNISCITI ALLA FALANGE
+              UNISCITI A NEXORA LAB
             </Link>
           </div>
         </div>
@@ -383,12 +372,12 @@ const Login: React.FC = () => {
         <div className="mt-8 text-center">
           <div className="flex justify-center gap-6 text-sm">
             <Link to="/terms" className={`text-sm transition-colors ${
-              theme === 'light' ? 'text-gray-500 hover:text-yellow-600' : 'text-gray-500 hover:text-yellow-500'
+              theme === 'light' ? 'text-gray-500 hover:text-cyan-600' : 'text-gray-500 hover:text-cyan-500'
             }`}>
               Termini di Servizio
             </Link>
             <Link to="/privacy" className={`text-sm transition-colors ${
-              theme === 'light' ? 'text-gray-500 hover:text-yellow-600' : 'text-gray-500 hover:text-yellow-500'
+              theme === 'light' ? 'text-gray-500 hover:text-cyan-600' : 'text-gray-500 hover:text-cyan-500'
             }`}>
               Privacy Policy
             </Link>

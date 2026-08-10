@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background rounded square -->
+  <rect width="64" height="64" rx="14" fill="#0b1e3f"/>
+
+  <!-- Atom orbit (cyan ellipses crossed) -->
+  <g stroke="#38bdf8" stroke-width="2" fill="none" opacity="0.85">
+    <ellipse cx="32" cy="32" rx="22" ry="9" transform="rotate(-30 32 32)"/>
+    <ellipse cx="32" cy="32" rx="22" ry="9" transform="rotate(30 32 32)"/>
+  </g>
+
+  <!-- Orbit dots -->
+  <circle cx="48" cy="20" r="2.6" fill="#38bdf8"/>
+  <circle cx="16" cy="44" r="2.6" fill="#38bdf8"/>
+  <circle cx="50" cy="40" r="2.2" fill="#1e3a8a"/>
+
+  <!-- NL monogram -->
+  <g fill="#e2e8f0">
+    <!-- N -->
+    <path d="M16 22 L16 46 L20 46 L20 30 L30 46 L33 46 L33 22 L29 22 L29 38 L19 22 Z"/>
+    <!-- L (with cyan accent on bottom bar) -->
+    <path d="M36 22 L40 22 L40 42 L46 42 L46 46 L36 46 Z" fill="#38bdf8"/>
+  </g>
+
+  <!-- Tiny beaker dot, like in main logo -->
+  <g>
+    <path d="M28 49 L28 52 L26 56 L34 56 L32 52 L32 49 Z" fill="#38bdf8" opacity="0.9"/>
+    <rect x="28.5" y="53" width="3" height="2" fill="#7dd3fc"/>
+  </g>
+</svg>

@@ -24,7 +24,7 @@ export const useProductConfig = (productId: string | undefined) => {
     const loadConfig = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://api.spartanofurioso.com/api/products/${productId}/config`);
+        const response = await fetch(`https://api.nexoralab.solutions/api/products/${productId}/config`);
         
         if (response.ok) {
           const data = await response.json();

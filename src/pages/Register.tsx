@@ -207,7 +207,7 @@ const Register: React.FC = () => {
 
   const strength = passwordStrength(formData.password);
   const strengthText = ['', 'Molto Debole', 'Debole', 'Media', 'Forte', 'Molto Forte'][strength];
-  const strengthColor = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'][strength];
+  const strengthColor = ['', 'bg-blue-500', 'bg-sky-500', 'bg-cyan-500', 'bg-lime-500', 'bg-green-500'][strength];
 
   return (
     <AnimatedPage>
@@ -219,35 +219,24 @@ const Register: React.FC = () => {
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'light' ? 'bg-red-200/20' : 'bg-red-900/10'
+          theme === 'light' ? 'bg-blue-200/20' : 'bg-blue-900/10'
         }`}></div>
         <div className={`absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'light' ? 'bg-yellow-200/20' : 'bg-yellow-900/10'
+          theme === 'light' ? 'bg-cyan-200/20' : 'bg-cyan-900/10'
         }`}></div>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-0 group">
-            <div className="relative flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
-              <div className="absolute inset-0 bg-red-500/30 blur-xl rounded-full animate-pulse" style={{ transform: 'translateX(60px)' }}></div>
-              <img 
-                src="/logo.png" 
-                alt="Spartano Furioso Logo" 
-                className="w-28 h-24 md:w-40 md:h-32 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]"
-                style={{ transform: 'translateX(60px)' }}
+          <Link to="/" className="inline-block group">
+            <div className="relative transform group-hover:scale-[1.03] transition-transform duration-300">
+              <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full"></div>
+              <img
+                src="/logo.png"
+                alt="Nexora Lab"
+                className="relative z-10 h-16 md:h-20 w-auto mx-auto object-contain"
               />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black">
-                <span className="bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                  SPARTANO
-                </span>
-                <span className={`ml-2 ${
-                  theme === 'light' ? 'text-gray-800' : 'text-white'
-                }`}>FURIOSO</span>
-              </h1>
             </div>
           </Link>
         </div>
@@ -256,13 +245,13 @@ const Register: React.FC = () => {
         <div className={`backdrop-blur-sm border-2 rounded-2xl p-8 ${
           theme === 'light'
             ? 'bg-white/80 border-gray-200'
-            : 'bg-gray-900/50 border-red-800/50'
+            : 'bg-gray-900/50 border-blue-800/50'
         }`}>
           <div className="text-center mb-8">
             <h2 className={`text-2xl font-black mb-2 ${
               theme === 'light' ? 'text-gray-800' : 'text-white'
-            }`}>UNISCITI ALLA FALANGE</h2>
-            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Diventa un guerriero del trading</p>
+            }`}>UNISCITI A NEXORA LAB</h2>
+            <p className={theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>Crea il tuo account e inizia subito</p>
           </div>
 
           {/* Success Message */}
@@ -286,9 +275,9 @@ const Register: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Server Error */}
             {serverError && (
-              <div className="p-4 bg-red-900/20 border border-red-600/50 rounded-lg flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-red-400 text-sm">{serverError}</p>
+              <div className="p-4 bg-blue-900/20 border border-blue-600/50 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <p className="text-blue-400 text-sm">{serverError}</p>
               </div>
             )}
             
@@ -310,10 +299,10 @@ const Register: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                    placeholder="Leonida"
+                    placeholder="Mario"
                     required
                   />
                   <User className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -337,10 +326,10 @@ const Register: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
-                    placeholder="Di Sparta"
+                    placeholder="Rossi"
                     required
                   />
                   <User className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -367,12 +356,12 @@ const Register: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   } ${
-                    errors.email ? 'border-red-500' : ''
+                    errors.email ? 'border-blue-500' : ''
                   }`}
-                  placeholder="guerriero@sparta.com"
+                  placeholder="tu@email.it"
                   required
                 />
                 <Mail className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -380,14 +369,14 @@ const Register: React.FC = () => {
                 }`} />
               </div>
               {errors.email && (
-                <div className="mt-1 text-sm text-red-500">
+                <div className="mt-1 text-sm text-blue-500">
                   <p className="flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.email}
                   </p>
                   {errors.email.includes('già registrata') && (
                     <p className="mt-1 text-gray-400">
-                      <Link to="/login" className="text-yellow-500 hover:text-yellow-400 underline">
+                      <Link to="/login" className="text-cyan-500 hover:text-cyan-400 underline">
                         Vai al login
                       </Link>
                     </p>
@@ -413,8 +402,8 @@ const Register: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
                   placeholder="Minimo 8 caratteri"
                   required
@@ -426,7 +415,7 @@ const Register: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-colors ${
-                    theme === 'light' ? 'text-gray-400 hover:text-yellow-600' : 'text-gray-500 hover:text-yellow-500'
+                    theme === 'light' ? 'text-gray-400 hover:text-cyan-600' : 'text-gray-500 hover:text-cyan-500'
                   }`}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -444,7 +433,7 @@ const Register: React.FC = () => {
                       ></div>
                     ))}
                   </div>
-                  <p className={`text-xs ${strength < 3 ? 'text-red-400' : 'text-green-400'}`}>
+                  <p className={`text-xs ${strength < 3 ? 'text-blue-400' : 'text-green-400'}`}>
                     Forza password: {strengthText}
                   </p>
                 </div>
@@ -468,8 +457,8 @@ const Register: React.FC = () => {
                     theme === 'light' ? 'gray-400' : 'gray-500'
                   } ${
                     theme === 'light'
-                      ? 'bg-white border-gray-300 text-gray-800 focus:border-yellow-600'
-                      : 'bg-black/50 border-red-900/50 text-white focus:border-yellow-500'
+                      ? 'bg-white border-gray-300 text-gray-800 focus:border-cyan-600'
+                      : 'bg-black/50 border-blue-900/50 text-white focus:border-cyan-500'
                   }`}
                   placeholder="Ripeti la password"
                   required
@@ -482,7 +471,7 @@ const Register: React.FC = () => {
                 )}
               </div>
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+                <p className="mt-1 text-sm text-blue-500">{errors.confirmPassword}</p>
               )}
             </div>
 
@@ -494,31 +483,31 @@ const Register: React.FC = () => {
                   name="acceptTerms"
                   checked={formData.acceptTerms}
                   onChange={handleChange}
-                  className={`w-4 h-4 mt-0.5 border-2 rounded text-yellow-500 focus:ring-yellow-500 ${
+                  className={`w-4 h-4 mt-0.5 border-2 rounded text-cyan-500 focus:ring-cyan-500 ${
                     theme === 'light'
                       ? 'bg-white border-gray-300'
-                      : 'bg-black/50 border-red-900/50'
+                      : 'bg-black/50 border-blue-900/50'
                   }`}
                 />
                 <span className={`ml-2 text-sm ${
                   theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                 }`}>
                   Accetto i{' '}
-                  <Link to="/terms" className={`text-yellow-500 hover:text-yellow-400 ${
-                    theme === 'light' ? 'text-yellow-600 hover:text-yellow-700' : ''
+                  <Link to="/terms" className={`text-cyan-500 hover:text-cyan-400 ${
+                    theme === 'light' ? 'text-cyan-600 hover:text-cyan-700' : ''
                   }`}>
                     Termini di Servizio
                   </Link>{' '}
                   e la{' '}
-                  <Link to="/privacy" className={`text-yellow-500 hover:text-yellow-400 ${
-                    theme === 'light' ? 'text-yellow-600 hover:text-yellow-700' : ''
+                  <Link to="/privacy" className={`text-cyan-500 hover:text-cyan-400 ${
+                    theme === 'light' ? 'text-cyan-600 hover:text-cyan-700' : ''
                   }`}>
                     Privacy Policy
                   </Link>
                 </span>
               </label>
               {errors.acceptTerms && (
-                <p className="mt-1 text-sm text-red-500">{errors.acceptTerms}</p>
+                <p className="mt-1 text-sm text-blue-500">{errors.acceptTerms}</p>
               )}
             </div>
 
@@ -528,8 +517,8 @@ const Register: React.FC = () => {
               disabled={loading || !formData.acceptTerms}
               className={`w-full py-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 hover:shadow-xl ${
                 theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white hover:from-yellow-400 hover:to-yellow-500 border-2 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 text-white hover:from-red-500 hover:to-red-700'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white hover:from-cyan-400 hover:to-cyan-500 border-2 border-cyan-700 shadow-md'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-500 hover:to-blue-700'
               }`}
             >
               {loading ? (
@@ -540,7 +529,7 @@ const Register: React.FC = () => {
               ) : (
                 <>
                   <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  <span>DIVENTA SPARTANO</span>
+                  <span>CREA ACCOUNT</span>
                 </>
               )}
             </button>
@@ -553,7 +542,7 @@ const Register: React.FC = () => {
             }`}>
               Hai già un account?{' '}
               <Link to="/login" className={`font-bold ${
-                theme === 'light' ? 'text-yellow-600 hover:text-yellow-700' : 'text-yellow-500 hover:text-yellow-400'
+                theme === 'light' ? 'text-cyan-600 hover:text-cyan-700' : 'text-cyan-500 hover:text-cyan-400'
               }`}>
                 Accedi
               </Link>

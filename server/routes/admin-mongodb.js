@@ -1,7 +1,8 @@
 import express from 'express';
 import { authenticateAdmin } from '../middleware/auth.js';
-import mongoose from 'mongoose';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { seedRangerPropPass } from '../scripts/seedRangerPropPass.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -9,59 +10,136 @@ const prisma = new PrismaClient();
 // Protect all admin routes
 router.use(authenticateAdmin);
 
-// User Schema (semplificato per admin)
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  role: { type: String, default: 'user' },
-  status: { type: String, default: 'active' },
-  isActive: { type: Boolean, default: true },
-  emailVerified: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+// One-shot seed: inserisce/aggiorna i 3 prodotti Ranger Prop Pass
+router.post('/seed/ranger-prop-pass', async (_req, res) => {
+  try {
+    const result = await seedRangerPropPass(prisma);
+    res.json({ success: true, ...result });
+  } catch (e) {
+    console.error('Error seeding ranger prop pass:', e);
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
-const User = mongoose.model('User', userSchema);
+// One-shot fix per il corso Academy:
+//  - rinomina il prodotto con productId='spartan_academy' in 'Codex Algo Academy'
+//  - aggiorna trialDays da 7 a 11
+//  - aggiorna anche tutti i Trial esistenti che hanno il vecchio nome
+//    snapshotato (la dashboard utente legge productName dal trial, non
+//    dal prodotto live)
+// Idempotente: se gia' corretto, non cambia nulla.
+router.post('/fix/course-academy', async (_req, res) => {
+  try {
+    const NEW_NAME = 'Codex Algo Academy';
+    const NEW_TRIAL_DAYS = 11;
+    const changes = [];
 
-// Newsletter Schema
-const newsletterSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
-  status: { type: String, default: 'ACTIVE' },
-  createdAt: { type: Date, default: Date.now }
+    const candidates = await prisma.product.findMany({
+      where: {
+        OR: [
+          { productId: 'spartan_academy' },
+          { AND: [
+              { OR: [{ category: 'course' }, { category: 'Formazione' }] },
+              { name: { contains: 'Spartan', mode: 'insensitive' } },
+          ]},
+        ],
+      },
+    });
+
+    const productIdsToFix = candidates.map((p) => p.productId);
+
+    // 1) Rinomina i prodotti
+    for (const p of candidates) {
+      const updates = {};
+      if (p.name !== NEW_NAME) updates.name = NEW_NAME;
+      if (p.trialDays !== NEW_TRIAL_DAYS) updates.trialDays = NEW_TRIAL_DAYS;
+      if (Object.keys(updates).length === 0) {
+        changes.push({ kind: 'product', productId: p.productId, oldName: p.name, status: 'unchanged' });
+        continue;
+      }
+      await prisma.product.update({ where: { id: p.id }, data: updates });
+      changes.push({
+        kind: 'product',
+        productId: p.productId,
+        oldName: p.name,
+        newName: updates.name || p.name,
+        oldTrialDays: p.trialDays,
+        newTrialDays: updates.trialDays ?? p.trialDays,
+        status: 'updated',
+      });
+    }
+
+    // 2) Aggiorna i Trial snapshotati col vecchio nome
+    // Match: stesso productId oppure productName che contiene "Spartan"
+    const trialUpdate = await prisma.trial.updateMany({
+      where: {
+        OR: [
+          { productId: { in: productIdsToFix } },
+          { productName: { contains: 'Spartan', mode: 'insensitive' } },
+        ],
+        NOT: { productName: NEW_NAME },
+      },
+      data: { productName: NEW_NAME },
+    });
+    changes.push({ kind: 'trials', updated: trialUpdate.count });
+
+    // 3) Aggiorna anche eventuali ordini snapshotati col vecchio nome
+    try {
+      const orderUpdate = await prisma.order.updateMany({
+        where: {
+          OR: [
+            { productId: { in: productIdsToFix } },
+            { productName: { contains: 'Spartan', mode: 'insensitive' } },
+          ],
+          NOT: { productName: NEW_NAME },
+        },
+        data: { productName: NEW_NAME },
+      });
+      changes.push({ kind: 'orders', updated: orderUpdate.count });
+    } catch (_e) {
+      // Order model potrebbe avere productName opzionale o struttura diversa: ignora
+      changes.push({ kind: 'orders', updated: 0, note: 'skipped' });
+    }
+
+    res.json({ success: true, found: candidates.length, changes });
+  } catch (e) {
+    console.error('Error fixing course academy:', e);
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
-
-const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
 // Dashboard statistics
 router.get('/stats', async (req, res) => {
   try {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
-    // Conta utenti da MongoDB
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({
-      isActive: true, 
-      emailVerified: true
+
+    // Tutto via Prisma (fonte univoca con il resto del sistema). I conteggi
+    // Mongoose precedenti potevano restituire 0 se la connessione Mongoose
+    // non veniva inizializzata.
+    const totalUsers = await prisma.user.count();
+    const activeUsers = await prisma.user.count({
+      where: { isActive: true, emailVerified: true }
     });
-    const newUsersThisMonth = await User.countDocuments({
-      createdAt: { $gte: thirtyDaysAgo }
+    const newUsersThisMonth = await prisma.user.count({
+      where: { createdAt: { gte: thirtyDaysAgo } }
     });
-    
-    // Conta newsletter subscribers da MongoDB
-    const newsletterSubscribers = await Newsletter.countDocuments({
-      status: 'ACTIVE'
+
+    const newsletterSubscribers = await prisma.newsletter.count({
+      where: { status: 'ACTIVE' }
     });
-    
-    // Utenti recenti (ultimi 5)
-    const recentUsers = await User.find({})
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('id name email createdAt role status');
-    
-    // Statistiche prodotti da Prisma
+
+    const recentUsers = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      select: {
+        id: true, name: true, email: true, role: true, status: true, createdAt: true
+      }
+    });
+
     const totalProducts = await prisma.product.count();
     const activeProducts = await prisma.product.count({ where: { active: true } });
-    
+
     res.json({
       success: true,
       stats: {
@@ -82,121 +160,173 @@ router.get('/stats', async (req, res) => {
     });
   } catch (error) {
     console.error('Admin stats error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
 
 // Get all users
+// Helper: valida un ObjectId di Mongo (24 hex)
+const isObjectId = (id) => typeof id === 'string' && /^[a-f\d]{24}$/i.test(id);
+
+const userSelect = {
+  id: true, name: true, email: true, role: true, status: true,
+  isActive: true, emailVerified: true, lastLogin: true, createdAt: true
+};
+
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find({})
-      .sort({ createdAt: -1 })
-      .select('id name email role status isActive emailVerified createdAt');
-    
-    res.json({
-      success: true,
-      users
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: userSelect
     });
+    res.json({ success: true, users });
   } catch (error) {
     console.error('Admin users error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Get user by ID
 router.get('/users/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .select('id name email role status isActive emailVerified createdAt');
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      user
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: userSelect
     });
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'Utente non trovato' });
+    }
+    res.json({ success: true, user });
   } catch (error) {
     console.error('Admin get user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Update user
+// Create user (admin) — rispetta ruolo e stato impostati nel pannello.
+// /api/auth/register imposta sempre status=pending + role=USER e ignora i
+// campi admin, quindi servono creazioni dirette tramite Prisma.
+router.post('/users', async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      role = 'USER',
+      status = 'active',
+      isActive = true,
+      emailVerified = true
+    } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email e password sono obbligatorie' });
+    }
+    if (String(password).length < 6) {
+      return res.status(400).json({ success: false, error: 'Password troppo corta (min. 6 caratteri)' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'Un utente con questa email esiste già' });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email: normalizedEmail,
+        password: hashed,
+        name: name || null,
+        role: String(role).toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER',
+        status,
+        isActive: Boolean(isActive),
+        emailVerified: Boolean(emailVerified)
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Utente creato con successo',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+        isActive: user.isActive,
+        emailVerified: user.emailVerified,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Admin create user error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.put('/users/:id', async (req, res) => {
   try {
     const { name, email, role, status, isActive, emailVerified } = req.body;
     
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { 
-        name, 
-        email, 
-        role, 
-        status, 
-        isActive, 
-        emailVerified,
-        updatedAt: new Date()
-      },
-      { new: true }
-    );
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      user,
-      message: 'Utente aggiornato con successo'
-    });
+
+    const data = {};
+    if (name !== undefined) data.name = name;
+    if (email !== undefined) data.email = String(email).toLowerCase().trim();
+    if (role !== undefined) data.role = String(role).toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER';
+    if (status !== undefined) data.status = status;
+    if (isActive !== undefined) data.isActive = Boolean(isActive);
+    if (emailVerified !== undefined) data.emailVerified = Boolean(emailVerified);
+
+    try {
+      const user = await prisma.user.update({
+        where: { id: req.params.id },
+        data,
+        select: userSelect
+      });
+      res.json({ success: true, user, message: 'Utente aggiornato con successo' });
+    } catch (e) {
+      if (e.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Utente non trovato' });
+      }
+      throw e;
+    }
   } catch (error) {
     console.error('Admin update user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // Delete user
 router.delete('/users/:id', async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Utente non trovato' 
-      });
+    if (!isObjectId(req.params.id)) {
+      // Caso tipico: frontend manda "undefined" perché l'utente mostrato non
+      // ha un id valido. Rispondiamo 400 chiaro senza crash 500.
+      return res.status(400).json({ success: false, error: 'ID utente non valido' });
     }
-    
-    res.json({
-      success: true,
-      message: 'Utente eliminato con successo'
-    });
+    try {
+      await prisma.user.delete({ where: { id: req.params.id } });
+      res.json({ success: true, message: 'Utente eliminato con successo' });
+    } catch (e) {
+      if (e.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Utente non trovato' });
+      }
+      throw e;
+    }
   } catch (error) {
     console.error('Admin delete user error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -486,19 +616,13 @@ router.delete('/products/:id', async (req, res) => {
 // Get newsletter subscribers
 router.get('/newsletter', async (req, res) => {
   try {
-    const subscribers = await Newsletter.find({})
-      .sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      subscribers
+    const subscribers = await prisma.newsletter.findMany({
+      orderBy: { createdAt: 'desc' }
     });
+    res.json({ success: true, subscribers });
   } catch (error) {
     console.error('Admin newsletter error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

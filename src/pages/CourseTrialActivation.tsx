@@ -107,7 +107,7 @@ const CourseTrialActivation: React.FC = () => {
     
     try {
       console.log('CourseTrialActivation: Fetching course with ID:', courseId);
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/${courseId}`);
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/${courseId}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -123,7 +123,7 @@ const CourseTrialActivation: React.FC = () => {
         
         // Carica i moduli REALI dal database
         try {
-          const modulesResponse = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
+          const modulesResponse = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/content`);
           if (modulesResponse.ok) {
             const modulesData = await modulesResponse.json();
             console.log('CourseTrialActivation: Real modules loaded from database:', modulesData);
@@ -145,7 +145,7 @@ const CourseTrialActivation: React.FC = () => {
           data.courseModules = [
             {
               id: 'mod1',
-              title: 'Introduzione al Trading Spartano',
+              title: 'Introduzione al Trading Professionale',
               description: 'Le basi filosofiche e tecniche del trading professionale',
               order: 1,
               isTrialContent: true,
@@ -153,7 +153,7 @@ const CourseTrialActivation: React.FC = () => {
               lessons: [
                 {
                   id: 'les1',
-                  title: 'Benvenuto nell\'Accademia Spartana',
+                  title: 'Benvenuto in Nexora Academy',
                   description: 'Presentazione del corso e del metodo',
                   duration: '15:30',
                   isTrialContent: true,
@@ -161,7 +161,7 @@ const CourseTrialActivation: React.FC = () => {
                 },
                 {
                   id: 'les2',
-                  title: 'La Mentalità del Guerriero Trader',
+                  title: 'La Mentalità del Trader Professionista',
                   description: 'Psicologia del trading e gestione emotiva',
                   duration: '45:00',
                   isTrialContent: true,
@@ -187,7 +187,7 @@ const CourseTrialActivation: React.FC = () => {
               lessons: [
                 {
                   id: 'les4',
-                  title: 'I Pattern Spartani',
+                  title: 'I Pattern Vincenti',
                   description: 'Riconoscere i pattern ad alta probabilità',
                   duration: '60:00',
                   isTrialContent: true,
@@ -206,7 +206,7 @@ const CourseTrialActivation: React.FC = () => {
             {
               id: 'mod3',
               title: 'Risk Management Militare',
-              description: 'Proteggere il capitale come uno scudo spartano',
+              description: 'Proteggere il capitale con metodo e rigore',
               order: 3,
               isTrialContent: true,
               duration: '5 ore',
@@ -231,7 +231,7 @@ const CourseTrialActivation: React.FC = () => {
             },
             {
               id: 'mod4',
-              title: 'Strategie di Trading Spartane',
+              title: 'Strategie di Trading Avanzate',
               description: 'Le strategie proprietarie dell\'accademia',
               order: 4,
               isTrialContent: false,
@@ -273,7 +273,7 @@ const CourseTrialActivation: React.FC = () => {
 
   const checkTrialStatus = async () => {
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/check/${courseId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -308,7 +308,7 @@ const CourseTrialActivation: React.FC = () => {
     
     setActivating(true);
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/trials/start', {
+      const response = await fetch('https://api.nexoralab.solutions/api/trials/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ const CourseTrialActivation: React.FC = () => {
         theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
       }`}>
         <div className="text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className={`text-2xl font-bold mb-2 ${
             theme === 'dark' ? 'text-white' : 'text-black'
           }`}>Errore</h2>
@@ -369,7 +369,7 @@ const CourseTrialActivation: React.FC = () => {
           }`}>{error}</p>
           <button 
             onClick={() => navigate('/products')}
-            className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg"
+            className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-lg"
           >
             Torna ai prodotti
           </button>
@@ -384,7 +384,7 @@ const CourseTrialActivation: React.FC = () => {
         theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
       }`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
           <p className={`text-sm ${
             theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
           }`}>
@@ -401,7 +401,7 @@ const CourseTrialActivation: React.FC = () => {
         theme === 'dark' ? 'bg-gradient-to-b from-black via-gray-950 to-black' : 'bg-white'
       }`}>
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className={`text-2xl font-bold mb-2 ${
             theme === 'dark' ? 'text-white' : 'text-black'
           }`}>Corso non trovato</h2>
@@ -427,7 +427,7 @@ const CourseTrialActivation: React.FC = () => {
     }`}>
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-indigo-600/10" />
         
         <div className="container mx-auto px-4 py-12 relative">
           <div className="max-w-6xl mx-auto">
@@ -451,11 +451,11 @@ const CourseTrialActivation: React.FC = () => {
             {!trialActivated ? (
               <div className={`border-2 rounded-2xl p-8 mb-12 ${
                 theme === 'dark'
-                  ? 'bg-gradient-to-b from-gray-900 to-black border-yellow-500/30'
-                  : 'bg-white border-yellow-400/50 shadow-xl'
+                  ? 'bg-gradient-to-b from-gray-900 to-black border-cyan-500/30'
+                  : 'bg-white border-cyan-400/50 shadow-xl'
               }`}>
                 <div className="text-center">
-                  <Gift className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                  <Gift className="w-16 h-16 text-cyan-500 mx-auto mb-4" />
                   
                   <h2 className={`text-3xl font-black mb-4 ${
                     theme === 'dark' ? 'text-white' : 'text-black'
@@ -525,7 +525,7 @@ const CourseTrialActivation: React.FC = () => {
                     className={`px-12 py-5 rounded-xl font-black text-white text-lg transition-all duration-300 transform hover:scale-105 ${
                       activating 
                         ? 'bg-gray-600 cursor-not-allowed' 
-                        : 'bg-gradient-to-r from-yellow-600 to-red-600 hover:from-yellow-500 hover:to-red-500'
+                        : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500'
                     }`}
                   >
                     {activating ? (
@@ -594,7 +594,7 @@ const CourseTrialActivation: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
                         <span className="text-xl font-bold text-white">{index + 1}</span>
                       </div>
                       <div>
@@ -664,7 +664,7 @@ const CourseTrialActivation: React.FC = () => {
                   
                   <button
                     onClick={() => navigate(`/course/${courseId}`)}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-bold text-white hover:from-purple-500 hover:to-pink-500 transition-all duration-300 inline-flex items-center gap-2"
+                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-bold text-white hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 inline-flex items-center gap-2"
                   >
                     Scopri il Corso Completo
                     <ChevronRight className="w-5 h-5" />
@@ -684,7 +684,7 @@ const CourseTrialActivation: React.FC = () => {
                   <div className="text-sm text-gray-400">Studenti</div>
                 </div>
                 <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                  <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
+                  <Star className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
                   <div className="text-2xl font-bold text-white">
                     {course.metrics?.avgRating || 4.8}/5
                   </div>

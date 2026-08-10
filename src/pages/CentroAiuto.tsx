@@ -16,13 +16,16 @@ const CentroAiuto = () => {
     }`}>
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-clip-text text-transparent">
-            CENTRO AIUTO
-          </h1>
-          <p className={`text-xl max-w-3xl mx-auto ${
-            theme === 'light' ? 'text-gray-600' : 'text-gray-300'
+          <span className="font-mono-lab text-xs text-cyan-400 tracking-[0.3em] uppercase">// Help</span>
+          <h1 className={`font-display text-5xl md:text-6xl font-bold mt-2 mb-4 tracking-tight ${
+            theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Trova risposte rapide, guide dettagliate e supporto immediato. Siamo qui per aiutarti.
+            Centro <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">aiuto</span>
+          </h1>
+          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${
+            theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+          }`}>
+            Risposte rapide, guide approfondite e supporto diretto. Tutto quello che ti serve per partire e operare nel lab.
           </p>
         </div>
 
@@ -35,8 +38,8 @@ const CentroAiuto = () => {
               placeholder="Cerca una guida o una domanda..." 
               className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl focus:outline-none transition-all ${
                 theme === 'light'
-                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-yellow-600'
-                  : 'bg-gray-900 border-red-800/30 text-white placeholder-gray-500 focus:border-yellow-500'
+                  ? 'bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-cyan-600'
+                  : 'bg-gray-900 border-blue-800/30 text-white placeholder-gray-500 focus:border-cyan-500'
               }`}
             />
           </div>
@@ -47,11 +50,11 @@ const CentroAiuto = () => {
           {categories.map((cat, i) => (
             <div key={i} className={`rounded-xl p-8 transition-all duration-300 ${
               theme === 'light'
-                ? 'bg-white border-2 border-gray-200 hover:border-yellow-600 shadow-lg'
-                : 'bg-gradient-to-b from-gray-900 to-black border border-red-800/30 hover:border-yellow-500/50'
+                ? 'bg-white border-2 border-gray-200 hover:border-cyan-600 shadow-lg'
+                : 'bg-gradient-to-b from-gray-900 to-black border border-blue-800/30 hover:border-cyan-500/50'
             }`}>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-red-600 to-yellow-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <cat.icon className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -67,10 +70,10 @@ const CentroAiuto = () => {
                 {cat.topics.map((topic, j) => (
                   <li key={j} className={`cursor-pointer transition-colors flex items-center gap-2 ${
                     theme === 'light'
-                      ? 'text-gray-600 hover:text-yellow-600'
-                      : 'text-gray-400 hover:text-yellow-500'
+                      ? 'text-gray-600 hover:text-cyan-600'
+                      : 'text-gray-400 hover:text-cyan-500'
                   }`}>
-                    <div className="w-1 h-1 bg-yellow-500 rounded-full"></div>
+                    <div className="w-1 h-1 bg-cyan-500 rounded-full"></div>
                     {topic}
                   </li>
                 ))}
@@ -83,7 +86,7 @@ const CentroAiuto = () => {
         <div className={`rounded-2xl p-8 ${
           theme === 'light'
             ? 'bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-200'
-            : 'bg-gradient-to-r from-red-950/50 via-black/50 to-red-950/50 backdrop-blur-sm border border-red-800/30'
+            : 'bg-gradient-to-r from-blue-950/50 via-black/50 to-blue-950/50 backdrop-blur-sm border border-blue-800/30'
         }`}>
           <h2 className={`text-3xl font-black mb-8 text-center ${
             theme === 'light' ? 'text-gray-800' : 'text-white'
@@ -92,7 +95,7 @@ const CentroAiuto = () => {
             <div className={`rounded-xl p-6 text-center ${
               theme === 'light' ? 'bg-white border border-gray-200' : 'bg-black/30'
             }`}>
-              <MessageCircle className="w-10 h-10 text-yellow-500 mx-auto mb-3" />
+              <MessageCircle className="w-10 h-10 text-cyan-500 mx-auto mb-3" />
               <h4 className={`text-lg font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>Live Chat</h4>
@@ -101,8 +104,8 @@ const CentroAiuto = () => {
               }`}>Risposta in 2 minuti</p>
               <button className={`px-4 py-2 text-white rounded-lg font-bold hover:scale-105 transition-transform border-2 ${
                 theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 border-transparent'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 border-cyan-700 shadow-md'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-800 border-transparent'
               }`}>
                 Apri Chat
               </button>
@@ -110,7 +113,7 @@ const CentroAiuto = () => {
             <div className={`rounded-xl p-6 text-center ${
               theme === 'light' ? 'bg-white border border-gray-200' : 'bg-black/30'
             }`}>
-              <Mail className="w-10 h-10 text-yellow-500 mx-auto mb-3" />
+              <Mail className="w-10 h-10 text-cyan-500 mx-auto mb-3" />
               <h4 className={`text-lg font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>Email</h4>
@@ -119,8 +122,8 @@ const CentroAiuto = () => {
               }`}>Risposta in 24h</p>
               <button className={`px-4 py-2 text-white rounded-lg font-bold hover:scale-105 transition-transform border-2 ${
                 theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 border-transparent'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 border-cyan-700 shadow-md'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-800 border-transparent'
               }`}>
                 Invia Email
               </button>
@@ -128,7 +131,7 @@ const CentroAiuto = () => {
             <div className={`rounded-xl p-6 text-center ${
               theme === 'light' ? 'bg-white border border-gray-200' : 'bg-black/30'
             }`}>
-              <Phone className="w-10 h-10 text-yellow-500 mx-auto mb-3" />
+              <Phone className="w-10 h-10 text-cyan-500 mx-auto mb-3" />
               <h4 className={`text-lg font-bold mb-2 ${
                 theme === 'light' ? 'text-gray-800' : 'text-white'
               }`}>Telefono</h4>
@@ -137,8 +140,8 @@ const CentroAiuto = () => {
               }`}>Lun-Ven 9-18</p>
               <button className={`px-4 py-2 text-white rounded-lg font-bold hover:scale-105 transition-transform border-2 ${
                 theme === 'light'
-                  ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 border-yellow-700 shadow-md'
-                  : 'bg-gradient-to-r from-red-600 to-red-800 border-transparent'
+                  ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 border-cyan-700 shadow-md'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-800 border-transparent'
               }`}>
                 Chiama Ora
               </button>

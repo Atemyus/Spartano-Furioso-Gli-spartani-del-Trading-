@@ -1,6 +1,8 @@
-﻿import React, { useState } from 'react';
-import { X, CreditCard, Wallet, Bitcoin, Clock, CheckCircle } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, CreditCard, Bitcoin, Clock, CheckCircle, CalendarClock, Lock, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import Portal from './Portal';
 
 interface PaymentOptionsModalProps {
   isOpen: boolean;
@@ -13,7 +15,41 @@ interface PaymentOptionsModalProps {
   plan?: 'monthly' | 'yearly' | 'lifetime';  // Piano selezionato
 }
 
-type PaymentMethod = 'stripe' | 'paypal' | 'crypto';
+type PaymentMethod = 'stripe' | 'klarna' | 'crypto';
+
+/**
+ * Loghi/simboli ufficiali dei provider di pagamento, resi inline (niente
+ * immagini esterne che possono rompersi o rallentare). Colori brand reali:
+ *  - Stripe: wordmark "stripe" su viola #635BFF
+ *  - Klarna: wordmark "Klarna" su rosa #FFB3C7 (badge ufficiale)
+ *  - Crypto: cluster di monete reali (BTC #F7931A, ETH #627EEA, USDT #26A17B)
+ */
+const BrandBadge: React.FC<{ id: PaymentMethod; dark: boolean }> = ({ id, dark }) => {
+  if (id === 'stripe') {
+    return (
+      <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-md bg-[#635BFF] text-white font-semibold text-sm tracking-tight lowercase">
+        stripe
+      </span>
+    );
+  }
+  if (id === 'klarna') {
+    return (
+      <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-md bg-[#FFB3C7] text-black font-bold text-sm tracking-tight">
+        Klarna
+      </span>
+    );
+  }
+  // crypto: cluster di 3 monete reali
+  const ring = dark ? 'ring-slate-900' : 'ring-white';
+  const coin = `w-5 h-5 rounded-full flex items-center justify-center text-white text-[0.6rem] font-bold ring-2 ${ring}`;
+  return (
+    <span className="shrink-0 flex items-center">
+      <span className={`${coin} bg-[#F7931A] z-30`} title="Bitcoin">₿</span>
+      <span className={`${coin} bg-[#627EEA] -ml-2 z-20`} title="Ethereum">Ξ</span>
+      <span className={`${coin} bg-[#26A17B] -ml-2 z-10`} title="Tether">₮</span>
+    </span>
+  );
+};
 
 const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   isOpen,
@@ -29,19 +65,29 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('stripe');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  if (!isOpen) return null;
+  const isSubscriptionPlan = plan === 'monthly' || plan === 'yearly';
 
-  const handleStripePayment = async () => {
+  // Klarna disponibile solo per pagamenti unici: se diventa abbonamento, resetta a card
+  useEffect(() => {
+    if (selectedMethod === 'klarna' && isSubscriptionPlan) {
+      setSelectedMethod('stripe');
+    }
+  }, [isSubscriptionPlan, selectedMethod]);
+
+  // NB: niente early return su !isOpen — AnimatePresence (sotto) gestisce
+  // mount/unmount animato del modale tramite la prop isOpen.
+
+  const submitStripeCheckout = async (paymentMethod: 'card' | 'klarna') => {
     setIsProcessing(true);
     try {
       const token = localStorage.getItem('token');
-      
+
       // Determina l'intervallo in base al piano
       let interval = 'one-time';
       if (plan === 'monthly') interval = 'month';
       else if (plan === 'yearly') interval = 'year';
-      
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
+
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,6 +99,7 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
           amount: Math.round(price * 100), // Converti in centesimi
           currency: 'EUR',
           interval: interval,
+          paymentMethod, // 'card' o 'klarna'
           successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: window.location.href,
           productType: productType,
@@ -74,59 +121,22 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
         alert(errorData.error || 'Errore durante il processo di pagamento');
       }
     } catch (error) {
-      console.error('Errore Stripe:', error);
-      alert('Errore nel processo di pagamento Stripe');
+      console.error('Errore checkout:', error);
+      alert('Errore nel processo di pagamento');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handlePayPalPayment = async () => {
-    setIsProcessing(true);
-    try {
-      const userEmail = localStorage.getItem('userEmail');
-      
-      const response = await fetch('https://api.spartanofurioso.com/api/payments/paypal/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          amount: price,
-          currency: 'EUR',
-          productName: productName,
-          productId: productId,
-          customerEmail: userEmail,
-          productType: productType,
-          plan: plan
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Errore nella creazione dell\'ordine PayPal');
-      }
-
-      const data = await response.json();
-      
-      if (data.approveUrl) {
-        // Reindirizza a PayPal per il pagamento
-        window.location.href = data.approveUrl;
-      } else {
-        throw new Error('URL PayPal non disponibile');
-      }
-    } catch (error) {
-      console.error('Errore PayPal:', error);
-      alert('Errore nel processo di pagamento PayPal');
-      setIsProcessing(false);
-    }
-  };
+  const handleStripePayment = () => submitStripeCheckout('card');
+  const handleKlarnaPayment = () => submitStripeCheckout('klarna');
 
   const handleCryptoPayment = async () => {
     setIsProcessing(true);
     try {
       const userEmail = localStorage.getItem('userEmail');
       
-      const response = await fetch('https://api.spartanofurioso.com/api/payments/crypto/create-charge', {
+      const response = await fetch('https://api.nexoralab.solutions/api/payments/crypto/create-charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -166,8 +176,8 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
       case 'stripe':
         handleStripePayment();
         break;
-      case 'paypal':
-        handlePayPalPayment();
+      case 'klarna':
+        handleKlarnaPayment();
         break;
       case 'crypto':
         handleCryptoPayment();
@@ -175,255 +185,220 @@ const PaymentOptionsModal: React.FC<PaymentOptionsModalProps> = ({
     }
   };
 
-  return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm ${
-      theme === 'dark' ? 'bg-black/80' : 'bg-gray-900/50'
-    }`}>
-      <div className={`relative w-full max-w-2xl rounded-2xl border-2 shadow-2xl overflow-hidden ${
-        theme === 'dark'
-          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-yellow-600/50 shadow-yellow-900/50'
-          : 'bg-white border-yellow-400 shadow-yellow-200'
-      }`}>
-        {/* Header */}
-        <div className={`relative border-b p-6 ${
-          theme === 'dark'
-            ? 'bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border-yellow-600/50'
-            : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300'
-        }`}>
-          <button
-            onClick={onClose}
-            disabled={isProcessing}
-            className={`absolute top-4 right-4 transition-colors disabled:opacity-50 ${
-              theme === 'dark'
-                ? 'text-white hover:text-yellow-500'
-                : 'text-gray-700 hover:text-yellow-600'
-            }`}
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <h2 className={`text-2xl font-bold mb-2 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            🔒 Pagamento Sicuro
-          </h2>
-          <p className={`text-sm ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Seleziona il metodo di pagamento che preferisci
-          </p>
-        </div>
+  // ====== styling helpers (dashboard-style) ======
+  const dark = theme === 'dark';
+  const textMain = dark ? 'text-white' : 'text-slate-900';
+  const textMuted = dark ? 'text-slate-400' : 'text-slate-600';
+  const textDim = dark ? 'text-slate-500' : 'text-slate-500';
+  const surface = dark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200';
+  const tag = (label: string) => (
+    <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">{label}</span>
+  );
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Dettagli corso */}
-          <div className={`border rounded-xl p-4 ${
-            theme === 'dark'
-              ? 'bg-gradient-to-br from-yellow-900/30 to-orange-900/30 border-yellow-600/50'
-              : 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-400'
-          }`}>
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className={`font-bold ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>{productName}</h3>
-                <p className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  {productType === 'course' ? 'Accesso completo a vita' : 
-                   plan === 'monthly' ? 'Abbonamento mensile' :
-                   plan === 'yearly' ? 'Abbonamento annuale' :
-                   'Accesso a vita'}
-                </p>
+  const methods: {
+    id: PaymentMethod;
+    title: string;
+    desc: string;
+    Icon: React.ElementType;
+    available: boolean;
+  }[] = [
+    {
+      id: 'stripe',
+      title: 'Carta di credito / debito',
+      desc: 'Pagamento sicuro con Stripe',
+      Icon: CreditCard,
+      available: true,
+    },
+    {
+      id: 'klarna',
+      title: 'Klarna — paga in 3 rate',
+      desc: '3 rate senza interessi · approvazione istantanea',
+      Icon: CalendarClock,
+      available: !isSubscriptionPlan,
+    },
+    {
+      id: 'crypto',
+      title: 'Criptovalute',
+      desc: '200+ crypto: BTC, ETH, USDT, BNB, TRX...',
+      Icon: Bitcoin,
+      available: true,
+    },
+  ];
+
+  return (
+    <Portal>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          key="payment-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={onClose}
+          className={`fixed inset-0 z-[100] overflow-y-auto backdrop-blur-md ${
+            dark ? 'bg-black/80' : 'bg-slate-900/60'
+          }`}
+        >
+          <div className="flex min-h-full items-center justify-center p-4">
+          <motion.div
+            key="payment-card"
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.97 }}
+            transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-xl rounded-2xl border shadow-2xl overflow-hidden flex flex-col my-auto ${surface}`}
+          >
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+
+            {/* Header */}
+            <div className={`relative px-6 pt-6 pb-5 border-b ${dark ? 'border-slate-800' : 'border-slate-200'}`}>
+              <button
+                onClick={onClose}
+                disabled={isProcessing}
+                aria-label="Chiudi"
+                className={`absolute top-4 right-4 p-2 rounded-lg transition-all disabled:opacity-50 ${
+                  dark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2 mb-2">
+                <Lock className="w-3.5 h-3.5 text-cyan-500" />
+                {tag('// pagamento sicuro')}
               </div>
-              <div className="text-right">
-                {originalPrice && originalPrice > price && (
-                  <div className="text-gray-400 line-through text-sm">
-                    €{originalPrice}
+              <h2 className={`font-display text-2xl font-semibold tracking-tight ${textMain}`}>
+                Completa il tuo acquisto
+              </h2>
+              <p className={`mt-1 text-sm ${textMuted}`}>
+                Seleziona il metodo di pagamento che preferisci
+              </p>
+            </div>
+
+            {/* Body scrollabile */}
+            <div className="px-6 py-5 space-y-5 overflow-y-auto">
+              {/* Product summary card */}
+              <div className={`rounded-xl p-4 flex items-center justify-between gap-4 ${
+                dark ? 'bg-slate-950/60 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'
+              }`}>
+                <div className="min-w-0">
+                  <div className={`font-display font-semibold ${textMain} truncate`}>{productName}</div>
+                  <div className={`text-xs mt-0.5 ${textMuted}`}>
+                    {productType === 'course' ? 'Accesso completo a vita' :
+                     plan === 'monthly' ? 'Abbonamento mensile' :
+                     plan === 'yearly' ? 'Abbonamento annuale' :
+                     'Accesso a vita'}
                   </div>
-                )}
-                <div className="text-2xl font-black text-yellow-500">
-                  €{price}
                 </div>
+                <div className="text-right shrink-0">
+                  {originalPrice && originalPrice > price && (
+                    <div className={`text-xs line-through ${textDim}`}>€{originalPrice}</div>
+                  )}
+                  <div className="font-display text-2xl font-semibold text-cyan-500">€{price}</div>
+                </div>
+              </div>
+
+              {/* Metodi di pagamento */}
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 mb-2">
+                  <CreditCard className="w-3.5 h-3.5 text-cyan-500" />
+                  {tag('// metodo di pagamento')}
+                </div>
+
+                {methods.filter(m => m.available).map((m) => {
+                  const active = selectedMethod === m.id;
+                  const Icon = m.Icon;
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => setSelectedMethod(m.id)}
+                      disabled={isProcessing}
+                      className={`w-full p-4 rounded-xl border transition-all text-left disabled:opacity-50 flex items-center gap-3 ${
+                        active
+                          ? dark
+                            ? 'bg-cyan-500/5 border-cyan-500/50 ring-1 ring-cyan-500/30'
+                            : 'bg-cyan-50 border-cyan-500/50 ring-1 ring-cyan-500/40'
+                          : dark
+                            ? 'bg-slate-900/40 border-slate-800 hover:border-cyan-500/40'
+                            : 'bg-white border-slate-200 hover:border-cyan-500/40'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                        active
+                          ? 'bg-gradient-to-br from-blue-500 to-cyan-500'
+                          : dark ? 'bg-slate-800' : 'bg-slate-100'
+                      }`}>
+                        <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-cyan-500'}`} />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className={`flex items-center gap-1.5 font-display font-semibold text-sm ${textMain}`}>
+                          {m.title}
+                          {active && <CheckCircle className="w-3.5 h-3.5 text-cyan-500 shrink-0" />}
+                        </div>
+                        <div className={`text-xs mt-0.5 flex items-center gap-1 ${textMuted}`}>
+                          {m.id === 'klarna' && <Clock className="w-3 h-3" />}
+                          {m.desc}
+                        </div>
+                      </div>
+
+                      <BrandBadge id={m.id} dark={dark} />
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Incluso nell'acquisto */}
+              <div className={`rounded-xl p-4 ${dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'}`}>
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                  {tag('// incluso')}
+                </div>
+                <ul className="space-y-1.5 text-sm">
+                  {[
+                    'Accesso immediato a tutti i contenuti',
+                    'Certificato di completamento',
+                    'Supporto dedicato e aggiornamenti gratuiti',
+                    'Garanzia soddisfatto o rimborsato 30 giorni',
+                  ].map((b, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
+                      <span className={textMuted}>{b}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
+
+            {/* Footer fisso */}
+            <div className={`px-6 py-4 border-t ${dark ? 'border-slate-800 bg-slate-900/40' : 'border-slate-200 bg-slate-50/50'}`}>
+              <button
+                onClick={handlePayment}
+                disabled={isProcessing}
+                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-display font-semibold text-sm hover:shadow-md hover:shadow-cyan-500/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Reindirizzamento in corso...
+                  </>
+                ) : (
+                  <>Procedi al pagamento · €{price}</>
+                )}
+              </button>
+              <p className={`mt-3 text-center text-[0.65rem] font-mono-lab tracking-widest uppercase flex items-center justify-center gap-1.5 ${textDim}`}>
+                <Lock className="w-3 h-3" />
+                Dati protetti con crittografia SSL
+              </p>
+            </div>
+          </motion.div>
           </div>
-
-          {/* Metodi di pagamento */}
-          <div className="space-y-3">
-            {/* Stripe - Carta di Credito */}
-            <button
-              onClick={() => setSelectedMethod('stripe')}
-              disabled={isProcessing}
-              className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
-                selectedMethod === 'stripe'
-                  ? 'border-blue-500 bg-blue-500/10'
-                  : theme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                    : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  selectedMethod === 'stripe'
-                    ? 'bg-blue-500'
-                    : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-                }`}>
-                  <CreditCard className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className={`font-bold flex items-center gap-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Carta di Credito/Debito
-                    {selectedMethod === 'stripe' && (
-                      <CheckCircle className="w-5 h-5 text-blue-500" />
-                    )}
-                  </h3>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>Pagamento sicuro con Stripe</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-4 brightness-200" />
-                </div>
-              </div>
-            </button>
-
-            {/* PayPal */}
-            <button
-              onClick={() => setSelectedMethod('paypal')}
-              disabled={isProcessing}
-              className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
-                selectedMethod === 'paypal'
-                  ? 'border-[#0070ba] bg-[#0070ba]/10'
-                  : theme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                    : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  selectedMethod === 'paypal'
-                    ? 'bg-[#0070ba]'
-                    : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-                }`}>
-                  <Wallet className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className={`font-bold flex items-center gap-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    PayPal
-                    {selectedMethod === 'paypal' && (
-                      <CheckCircle className="w-5 h-5 text-[#0070ba]" />
-                    )}
-                  </h3>
-                  <p className={`text-sm flex items-center gap-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    <Clock className="w-3 h-3" />
-                    Include opzione "Paga in 3 rate" senza interessi
-                  </p>
-                </div>
-                <div>
-                  <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" className="h-6" />
-                </div>
-              </div>
-            </button>
-
-            {/* Crypto */}
-            <button
-              onClick={() => setSelectedMethod('crypto')}
-              disabled={isProcessing}
-              className={`w-full p-4 rounded-xl border-2 transition-all text-left disabled:opacity-50 ${
-                selectedMethod === 'crypto'
-                  ? 'border-orange-500 bg-orange-500/10'
-                  : theme === 'dark'
-                    ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                    : 'border-gray-200 bg-white hover:border-gray-300 shadow-sm'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  selectedMethod === 'crypto'
-                    ? 'bg-orange-500'
-                    : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
-                }`}>
-                  <Bitcoin className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className={`font-bold flex items-center gap-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Criptovalute
-                    {selectedMethod === 'crypto' && (
-                      <CheckCircle className="w-5 h-5 text-orange-500" />
-                    )}
-                  </h3>
-                  <p className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>200+ crypto: BTC, ETH, USDT, BNB, TRX...</p>
-                </div>
-                <div className="text-orange-500 font-bold text-xs">
-                  CRYPTO
-                </div>
-              </div>
-            </button>
-          </div>
-
-          {/* Benefits */}
-          <div className={`rounded-xl p-4 border ${
-            theme === 'dark'
-              ? 'bg-gray-800/50 border-gray-700'
-              : 'bg-gray-50 border-gray-200'
-          }`}>
-            <h4 className={`font-bold mb-3 text-sm ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>✅ Incluso nell'acquisto:</h4>
-            <ul className={`space-y-2 text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <span>Accesso immediato a tutti i contenuti</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <span>Certificato di completamento</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <span>Supporto dedicato e aggiornamenti gratuiti</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                <span>Garanzia soddisfatto o rimborsato 30 giorni</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Pulsante Procedi */}
-          <button
-            onClick={handlePayment}
-            disabled={isProcessing}
-            className="w-full py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white text-lg hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-          >
-            {isProcessing ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Reindirizzamento...
-              </span>
-            ) : (
-              `Procedi al Pagamento - €${price}`
-            )}
-          </button>
-
-          <p className="text-center text-xs text-gray-500">
-            🔒 I tuoi dati sono protetti con crittografia SSL
-          </p>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </Portal>
   );
 };
 

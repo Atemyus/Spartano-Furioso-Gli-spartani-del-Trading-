@@ -10,6 +10,7 @@ const VerifyEmail: React.FC = () => {
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
+  const [redirectTo, setRedirectTo] = useState<string>('/dashboard');
   
   const token = searchParams.get('token');
 
@@ -41,14 +42,20 @@ const VerifyEmail: React.FC = () => {
       if (response.ok) {
         setStatus('success');
         setMessage(data.message || 'Email verificata con successo!');
-        
+
         // Save token and redirect after 3 seconds
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          
+
+          // Se l'utente si era iscritto da una landing page, torniamo lì
+          // (così i video si sbloccano direttamente sulla LP).
+          const redirect = localStorage.getItem('postVerifyRedirect') || '/dashboard';
+          localStorage.removeItem('postVerifyRedirect');
+          setRedirectTo(redirect);
+
           setTimeout(() => {
-            navigate('/dashboard');
+            navigate(redirect);
           }, 3000);
         }
       } else {
@@ -111,8 +118,8 @@ const VerifyEmail: React.FC = () => {
               </div>
             )}
             {status === 'error' && (
-              <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center">
-                <XCircle className="w-10 h-10 text-red-400" />
+              <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <XCircle className="w-10 h-10 text-blue-400" />
               </div>
             )}
           </div>
@@ -133,13 +140,15 @@ const VerifyEmail: React.FC = () => {
           {status === 'success' && (
             <div className="text-center">
               <p className="text-sm text-gray-400 mb-4">
-                Sarai reindirizzato alla dashboard tra pochi secondi...
+                {redirectTo === '/dashboard'
+                  ? 'Sarai reindirizzato alla dashboard tra pochi secondi...'
+                  : 'Ti riportiamo alla pagina di iscrizione: i video si sbloccheranno automaticamente.'}
               </p>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(redirectTo)}
                 className="text-purple-400 hover:text-purple-300 underline"
               >
-                Vai alla dashboard ora
+                {redirectTo === '/dashboard' ? 'Vai alla dashboard ora' : 'Vai ora'}
               </button>
             </div>
           )}
@@ -147,11 +156,11 @@ const VerifyEmail: React.FC = () => {
           {/* Error with expired token */}
           {status === 'error' && message.includes('scaduto') && (
             <div className="space-y-4">
-              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
                 <div className="flex items-start space-x-3">
-                  <Mail className="w-5 h-5 text-yellow-400 mt-0.5" />
+                  <Mail className="w-5 h-5 text-cyan-400 mt-0.5" />
                   <div>
-                    <p className="text-sm text-yellow-200">
+                    <p className="text-sm text-cyan-200">
                       Il tuo link di verifica è scaduto. Clicca il pulsante qui sotto per ricevere un nuovo link di verifica.
                     </p>
                   </div>

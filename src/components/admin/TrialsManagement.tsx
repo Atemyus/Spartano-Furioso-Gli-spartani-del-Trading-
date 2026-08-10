@@ -55,7 +55,7 @@ const TrialsManagement: React.FC = () => {
   const fetchData = async () => {
     try {
       // Fetch prodotti
-      const productsRes = await fetch('https://api.spartanofurioso.com/api/products');
+      const productsRes = await fetch('https://api.nexoralab.solutions/api/products');
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData.filter((p: Product) => p.trialDays > 0));
@@ -71,7 +71,7 @@ const TrialsManagement: React.FC = () => {
       console.log('User token:', userToken ? 'Present' : 'Not found');
       
       if (token) {
-        const trialsRes = await fetch('https://api.spartanofurioso.com/api/trials/admin/all', {
+        const trialsRes = await fetch('https://api.nexoralab.solutions/api/trials/admin/all', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -113,46 +113,52 @@ const TrialsManagement: React.FC = () => {
 
   const handleStatusChange = async (trialId: string, newStatus: string) => {
     try {
-      // TODO: Implementare API call
-      // await fetch(`/api/admin/trials/${trialId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ status: newStatus })
-      // });
-      
-      // Aggiorna stato locale
-      setTrials(prev => prev.map(t => 
-        t.id === trialId ? { ...t, status: newStatus as Trial['status'] } : t
-      ));
-      
-      alert(`Trial ${trialId} aggiornato a ${newStatus}`);
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Ricarica dal server per riflettere endDate/daysRemaining aggiornati
+        await fetchData();
+        alert(`Trial aggiornato a "${newStatus}"`);
+      } else {
+        const error = await response.json().catch(() => ({}));
+        alert(`Errore: ${error.error || 'aggiornamento non riuscito'}`);
+      }
     } catch (error) {
       console.error('Error updating trial:', error);
+      alert('Errore di connessione durante l\'aggiornamento del trial');
     }
   };
 
   const handleExtendTrial = async (trialId: string, days: number) => {
     try {
-      // TODO: Implementare API call
-      const trial = trials.find(t => t.id === trialId);
-      if (trial) {
-        const newEndDate = new Date(trial.endDate);
-        newEndDate.setDate(newEndDate.getDate() + days);
-        
-        setTrials(prev => prev.map(t => 
-          t.id === trialId 
-            ? { 
-                ...t, 
-                endDate: newEndDate.toISOString(),
-                daysRemaining: t.daysRemaining + days 
-              } 
-            : t
-        ));
-        
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}/extend`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ days })
+      });
+
+      if (response.ok) {
+        await fetchData();
         alert(`Trial esteso di ${days} giorni`);
+      } else {
+        const error = await response.json().catch(() => ({}));
+        alert(`Errore: ${error.error || 'estensione non riuscita'}`);
       }
     } catch (error) {
       console.error('Error extending trial:', error);
+      alert('Errore di connessione durante l\'estensione del trial');
     }
   };
 
@@ -171,7 +177,7 @@ const TrialsManagement: React.FC = () => {
         return;
       }
       
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/admin/${trialId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/admin/${trialId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -216,7 +222,7 @@ const TrialsManagement: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-green-400 bg-green-900/20';
-      case 'expired': return 'text-red-400 bg-red-900/20';
+      case 'expired': return 'text-blue-400 bg-blue-900/20';
       case 'cancelled': return 'text-gray-400 bg-gray-900/20';
       case 'converted': return 'text-blue-400 bg-blue-900/20';
       default: return 'text-gray-400 bg-gray-900/20';
@@ -281,7 +287,7 @@ const TrialsManagement: React.FC = () => {
         
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <XCircle className="w-8 h-8 text-red-400" />
+            <XCircle className="w-8 h-8 text-blue-400" />
             <span className="text-2xl font-bold text-white">{stats.expired}</span>
           </div>
           <p className="text-gray-400 text-sm">Trial Scaduti</p>
@@ -384,8 +390,8 @@ const TrialsManagement: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {trial.status === 'active' ? (
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm font-bold text-yellow-400">
+                        <Clock className="w-4 h-4 text-cyan-400" />
+                        <span className="text-sm font-bold text-cyan-400">
                           {trial.daysRemaining} giorni
                         </span>
                       </div>
@@ -412,7 +418,7 @@ const TrialsManagement: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleStatusChange(trial.id, 'cancelled')}
-                            className="text-red-400 hover:text-red-300 text-sm"
+                            className="text-blue-400 hover:text-blue-300 text-sm"
                             title="Cancella trial"
                           >
                             Cancella
@@ -437,7 +443,7 @@ const TrialsManagement: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteTrial(trial.id)}
-                        className="text-red-500 hover:text-red-400 text-sm flex items-center gap-1"
+                        className="text-blue-500 hover:text-blue-400 text-sm flex items-center gap-1"
                         title="Elimina trial permanentemente"
                       >
                         <Trash2 className="w-4 h-4" />

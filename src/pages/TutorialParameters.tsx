@@ -62,7 +62,7 @@ const TutorialParameters: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Prodotto non trovato</h2>
           <Link to="/dashboard" className="text-blue-500 hover:text-blue-400">
             Torna alla Dashboard
@@ -290,27 +290,27 @@ const TutorialParameters: React.FC = () => {
           </div>
 
           {/* Best Practices */}
-          <div className="bg-yellow-900/20 border border-yellow-700 rounded-xl p-6 mb-8">
+          <div className="bg-cyan-900/20 border border-cyan-700 rounded-xl p-6 mb-8">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <AlertCircle className="w-6 h-6 text-yellow-500" />
+              <AlertCircle className="w-6 h-6 text-cyan-500" />
               💡 Best Practices
             </h3>
             
             <ul className="space-y-3 text-gray-300">
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
                 <span><strong>Inizia con Risk basso:</strong> Usa 0.5-1% finché non capisci bene l'EA</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
                 <span><strong>Testa su Demo:</strong> Prova le impostazioni su account demo prima di usare soldi reali</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
                 <span><strong>Monitora regolarmente:</strong> Controlla i risultati e aggiusta i parametri se necessario</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
                 <span><strong>Non cambiare troppo spesso:</strong> Dai tempo all'EA di mostrare risultati (almeno 1-2 settimane)</span>
               </li>
             </ul>

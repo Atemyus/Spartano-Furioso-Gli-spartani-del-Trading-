@@ -36,7 +36,7 @@ if (process.env.DATABASE_URL.startsWith('file:')) {
 // Routes imports
 import stripeRoutes from './routes/stripe.js';
 import stripeWebhookRoutes from './routes/stripe-webhook.js';
-import paypalWebhookRoutes from './routes/paypal-webhook.js';
+import calendlyWebhookRoutes from './routes/calendly-webhook.js';
 import adminRoutes from './routes/admin-mongodb.js';
 import authRoutes from './routes/auth.js';
 import productsRoutes from './routes/products.js';
@@ -117,8 +117,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Middleware - CORS configuration
 const allowedOrigins = [
-  'https://spartanofurioso.com',
-  'https://www.spartanofurioso.com',
+  'https://nexoralab.solutions',
+  'https://www.nexoralab.solutions',
   'https://spartano-furioso-gli-spartani-del-trading.vercel.app',
   'https://spartano-furioso.vercel.app', // Dominio Vercel alternativo
   'http://localhost:5173',
@@ -146,7 +146,7 @@ app.use(cors({
 
 // Webhook routes (must be before body parser for raw body)
 app.use('/webhook/stripe', stripeWebhookRoutes);
-app.use('/webhook/paypal', paypalWebhookRoutes);
+app.use('/webhook/calendly', calendlyWebhookRoutes);
 
 // Body parser for other routes
 app.use(express.json());
@@ -288,7 +288,17 @@ app.listen(PORT, async () => {
   
   // Initialize MongoDB for admin routes
   await initializeMongoDB();
-  
+
+  // Auto-setup database (admin + prodotti) se SEED_ON_BOOT=true
+  if (process.env.SEED_ON_BOOT === 'true') {
+    try {
+      const { runBootstrap } = await import('./scripts/bootstrapSetup.js');
+      await runBootstrap();
+    } catch (error) {
+      console.error('⚠️  Bootstrap auto-setup non riuscito:', error.message);
+    }
+  }
+
   // Initialize trial scheduler (async)
   try {
     await initializeTrialScheduler();

@@ -110,7 +110,7 @@ const CoursePlayer: React.FC = () => {
 
   const loadCourseData = async () => {
     try {
-      const response = await fetch(`https://api.spartanofurioso.com/api/products/${courseId}`);
+      const response = await fetch(`https://api.nexoralab.solutions/api/products/${courseId}`);
       if (response.ok) {
         const data = await response.json();
         setCourse(data);
@@ -154,7 +154,7 @@ const CoursePlayer: React.FC = () => {
     if (!token) return;
 
     try {
-      await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/lessons/${lessonId}/complete`, {
+      await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/lessons/${lessonId}/complete`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -185,7 +185,7 @@ const CoursePlayer: React.FC = () => {
     if (!token) return;
 
     try {
-      await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/lessons/${lessonId}/notes`, {
+      await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/lessons/${lessonId}/notes`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -202,7 +202,7 @@ const CoursePlayer: React.FC = () => {
     return (
       <AnimatedPage>
         <div className="min-h-screen bg-black flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       </AnimatedPage>
     );
@@ -249,7 +249,7 @@ const CoursePlayer: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-yellow-500 to-green-500 transition-all"
+                    className="h-full bg-gradient-to-r from-cyan-500 to-green-500 transition-all"
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
@@ -272,7 +272,7 @@ const CoursePlayer: React.FC = () => {
                     {/* Il player Vimeo verrà inserito qui */}
                     <div className="w-full h-full flex items-center justify-center">
                       <div className="text-center">
-                        <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                         <p className="text-white">Caricamento video...</p>
                       </div>
                     </div>
@@ -311,7 +311,7 @@ const CoursePlayer: React.FC = () => {
                         disabled={!nextLesson}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                           nextLesson 
-                            ? 'bg-yellow-600 text-white hover:bg-yellow-500' 
+                            ? 'bg-cyan-600 text-white hover:bg-cyan-500' 
                             : 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
                         } transition-colors`}
                       >
@@ -335,7 +335,7 @@ const CoursePlayer: React.FC = () => {
                           onClick={() => setShowNotes(false)}
                           className={`pb-4 px-2 font-medium transition-colors ${
                             !showNotes 
-                              ? 'text-yellow-500 border-b-2 border-yellow-500' 
+                              ? 'text-cyan-500 border-b-2 border-cyan-500' 
                               : 'text-gray-400 hover:text-white'
                           }`}
                         >
@@ -345,7 +345,7 @@ const CoursePlayer: React.FC = () => {
                           onClick={() => setShowNotes(true)}
                           className={`pb-4 px-2 font-medium transition-colors ${
                             showNotes 
-                              ? 'text-yellow-500 border-b-2 border-yellow-500' 
+                              ? 'text-cyan-500 border-b-2 border-cyan-500' 
                               : 'text-gray-400 hover:text-white'
                           }`}
                         >
@@ -382,7 +382,7 @@ const CoursePlayer: React.FC = () => {
                               onChange={(e) => setNotes(e.target.value)}
                               onBlur={saveNotes}
                               placeholder="Scrivi qui le tue note..."
-                              className="w-full h-40 p-4 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none resize-none"
+                              className="w-full h-40 p-4 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none resize-none"
                             />
                             <p className="text-sm text-gray-500 mt-2">
                               Le note vengono salvate automaticamente
@@ -406,7 +406,7 @@ const CoursePlayer: React.FC = () => {
                     </p>
                     <button 
                       onClick={() => navigate(`/course/${courseId}`)}
-                      className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all"
+                      className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all"
                     >
                       Sblocca Corso Completo
                     </button>
@@ -441,7 +441,7 @@ const CoursePlayer: React.FC = () => {
                             disabled={!isAccessible}
                             className={`w-full text-left p-3 rounded-lg transition-colors ${
                               isCurrentLesson 
-                                ? 'bg-yellow-600/20 border border-yellow-600' 
+                                ? 'bg-cyan-600/20 border border-cyan-600' 
                                 : isAccessible 
                                   ? 'bg-gray-800 hover:bg-gray-700' 
                                   : 'bg-gray-800/50 opacity-50 cursor-not-allowed'
@@ -452,7 +452,7 @@ const CoursePlayer: React.FC = () => {
                                 isCompleted 
                                   ? 'bg-green-600' 
                                   : isCurrentLesson 
-                                    ? 'bg-yellow-600' 
+                                    ? 'bg-cyan-600' 
                                     : 'bg-gray-700'
                               }`}>
                                 {isCompleted ? (
@@ -465,7 +465,7 @@ const CoursePlayer: React.FC = () => {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className={`text-sm ${
-                                  isCurrentLesson ? 'text-yellow-500' : 'text-white'
+                                  isCurrentLesson ? 'text-cyan-500' : 'text-white'
                                 } truncate`}>
                                   {lesson.title}
                                 </p>
@@ -495,7 +495,7 @@ const CoursePlayer: React.FC = () => {
                         href={resource.url}
                         className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
                       >
-                        <FileText className="w-5 h-5 text-yellow-500" />
+                        <FileText className="w-5 h-5 text-cyan-500" />
                         <span className="text-white text-sm flex-1">
                           {resource.title}
                         </span>

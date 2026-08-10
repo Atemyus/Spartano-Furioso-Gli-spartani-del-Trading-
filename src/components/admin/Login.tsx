@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, AlertCircle, Shield } from 'lucide-react';
+import { Lock, Mail, AlertCircle } from 'lucide-react';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/auth/admin/login', {
+      const response = await fetch('https://api.nexoralab.solutions/api/auth/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,8 +45,8 @@ const AdminLogin: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-white" />
+            <div className="inline-block bg-slate-900 rounded-xl px-4 py-2 mb-6 shadow-md ring-1 ring-slate-800/10">
+              <img src="/logo.png" alt="Nexora Lab" className="h-9 w-auto" />
             </div>
             <h2 className="text-3xl font-bold text-gray-800">Admin Login</h2>
             <p className="text-gray-600 mt-2">Accedi al pannello di amministrazione</p>
@@ -54,9 +54,9 @@ const AdminLogin: React.FC = () => {
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
-              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+              <p className="text-sm text-blue-800">{error}</p>
             </div>
           )}
 
@@ -78,7 +78,7 @@ const AdminLogin: React.FC = () => {
                   required
                   autoComplete="email"
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-text text-gray-900 placeholder-gray-500 bg-white"
-                  placeholder="admin@spartanofurioso.com"
+                  placeholder="admin@nexoralab.solutions"
                   style={{ 
                     pointerEvents: 'auto',
                     color: '#111827',

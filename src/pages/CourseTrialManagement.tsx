@@ -1,25 +1,10 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import {
-  ArrowLeft,
-  Clock,
-  PlayCircle,
-  CheckCircle,
-  BookOpen,
-  Trophy,
-  TrendingUp,
-  Calendar,
-  Star,
-  Zap,
-  ChevronRight,
-  AlertTriangle,
-  Gift,
-  Rocket,
-  MessageCircle,
-  ExternalLink,
-  Send,
-  User
+  ArrowLeft, Clock, PlayCircle, CheckCircle, BookOpen, Trophy, TrendingUp,
+  AlertTriangle, Rocket, MessageCircle, ExternalLink, Send, User, Star,
+  ChevronRight, Calendar,
 } from 'lucide-react';
 import AnimatedPage from '../components/AnimatedPage';
 import { getProductById } from '../data/products';
@@ -43,6 +28,7 @@ interface CourseModule {
 
 const CourseTrialManagement: React.FC = () => {
   const { theme } = useTheme();
+  const dark = theme === 'dark';
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -54,69 +40,42 @@ const CourseTrialManagement: React.FC = () => {
 
   const loadTrialData = useCallback(async () => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
+    if (!token) { navigate('/login'); return; }
     try {
-      // Get course data from products
-      console.log('🔍 CourseTrialManagement - courseId from URL:', courseId);
       const courseData = getProductById(courseId || '');
-      console.log('📚 Course data found:', courseData);
-      
-      if (!courseData) {
-        console.error('❌ Course not found for ID:', courseId);
-        // Show error instead of navigating away immediately
-        setLoading(false);
-        return;
-      }
+      if (!courseData) { setLoading(false); return; }
       setCourse(courseData);
 
-      // Get course modules from API
       try {
-        const courseContentResponse = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/content`);
-        if (courseContentResponse.ok) {
-          const courseContent = await courseContentResponse.json();
-          console.log('📖 Course content loaded:', courseContent);
-          
-          if (courseContent.course && courseContent.course.modules) {
-            // Filter trial modules
-            const modules = courseContent.course.modules.filter(m => m.isTrialContent);
+        const r = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/content`);
+        if (r.ok) {
+          const d = await r.json();
+          if (d.course?.modules) {
+            const modules = d.course.modules.filter((m: any) => m.isTrialContent);
             setTrialModules(modules);
           }
         }
-      } catch (error) {
-        console.error('Error loading course modules:', error);
-        // Fallback to courseData.courseModules if available
+      } catch (e) {
         if (courseData.courseModules) {
-          const modules = courseData.courseModules.filter(m => m.isTrialContent);
+          const modules = courseData.courseModules.filter((m: any) => m.isTrialContent);
           setTrialModules(modules);
         }
       }
 
-      // Check trial status
-      const response = await fetch(`https://api.spartanofurioso.com/api/trials/check/${courseId}`, {
+      const response = await fetch(`https://api.nexoralab.solutions/api/trials/check/${courseId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.isActive) {
           setTrial(data.trial);
-          
-          // Check if trial is expired
-          if (data.trial.daysRemaining <= 0) {
-            console.log('⚠️ Trial expired, blocking access');
-            setTrial({ ...data.trial, isExpired: true });
-          }
+          if (data.trial.daysRemaining <= 0) setTrial({ ...data.trial, isExpired: true });
         } else {
-          // No active trial, redirect to course page
           navigate(`/course/${courseId}`);
         }
       }
-    } catch (error) {
-      console.error('Error loading trial data:', error);
+    } catch (e) {
+      console.error('Error loading trial data:', e);
     } finally {
       setLoading(false);
     }
@@ -125,22 +84,17 @@ const CourseTrialManagement: React.FC = () => {
   const loadCourseProgress = useCallback(async () => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
     if (token && user.id) {
       try {
-        const response = await fetch(`https://api.spartanofurioso.com/api/courses/${courseId}/progress/${user.id}`, {
+        const r = await fetch(`https://api.nexoralab.solutions/api/courses/${courseId}/progress/${user.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Course progress loaded:', data);
-          setCourseProgress(data);
-          setCompletedLessons(new Set(data.completedLessons || []));
+        if (r.ok) {
+          const d = await r.json();
+          setCourseProgress(d);
+          setCompletedLessons(new Set(d.completedLessons || []));
         }
-      } catch (error) {
-        console.error('Error loading course progress:', error);
-      }
+      } catch (e) { console.error(e); }
     }
   }, [courseId]);
 
@@ -150,140 +104,124 @@ const CourseTrialManagement: React.FC = () => {
   }, [loadTrialData, loadCourseProgress]);
 
   const handleContinueCourse = () => {
-    // Navigate to course viewer page, optionally to last lesson
-    if (courseProgress && courseProgress.lastLessonId) {
-      navigate(`/course/${courseId}/viewer`, { 
-        state: { 
-          lastLessonId: courseProgress.lastLessonId,
-          lastModuleId: courseProgress.lastModuleId 
-        } 
+    if (courseProgress?.lastLessonId) {
+      navigate(`/course/${courseId}/viewer`, {
+        state: { lastLessonId: courseProgress.lastLessonId, lastModuleId: courseProgress.lastModuleId }
       });
     } else {
       navigate(`/course/${courseId}/viewer`);
     }
   };
 
+  const handleUpgradeNow = () => navigate(`/course/${courseId}`);
 
-  const handleUpgradeNow = () => {
-    // Reindirizza alla pagina del corso dove ci sono i button per Stripe
-    navigate(`/course/${courseId}`);
-  };
+  // ====== shared styling ======
+  const surface = dark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm';
+  const surfaceHover = dark ? 'hover:border-cyan-500/50' : 'hover:border-cyan-500/70';
+  const textMain = dark ? 'text-white' : 'text-slate-900';
+  const textMuted = dark ? 'text-slate-400' : 'text-slate-600';
+  const textDim = dark ? 'text-slate-500' : 'text-slate-500';
+  const bg = dark ? 'bg-black' : 'bg-slate-50';
+  const headerBg = dark ? 'bg-black/70 border-slate-800/80' : 'bg-white/70 border-slate-200';
+  const secondaryBtn = dark
+    ? 'bg-slate-900 text-slate-300 ring-1 ring-slate-800 hover:ring-cyan-500/40'
+    : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-cyan-500/50';
+  const primaryBtn = 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-md hover:shadow-cyan-500/20';
+  const tag = (label: string) => (
+    <span className="font-mono-lab text-[0.7rem] tracking-[0.3em] uppercase text-cyan-500">{label}</span>
+  );
 
-
+  // ====== loading ======
   if (loading) {
     return (
       <AnimatedPage>
-        <div className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${
-          theme === 'dark' ? 'bg-gradient-to-b from-black via-purple-950/20 to-black' : 'bg-white'
-        }`}>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+        <div className={`min-h-screen flex items-center justify-center ${bg}`}>
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </AnimatedPage>
     );
   }
 
+  // ====== trial not found ======
   if (!trial || !course) {
     return (
       <AnimatedPage>
-        <div className={`min-h-screen transition-colors duration-500 ${
-          theme === 'dark' ? 'bg-gradient-to-b from-black via-purple-950/20 to-black' : 'bg-white'
-        }`}>
-          <div className="container mx-auto px-4 py-16 text-center">
-            <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-            <h1 className={`text-3xl font-black mb-4 ${
-              theme === 'dark' ? 'text-white' : 'text-black'
-            }`}>Trial Non Trovato</h1>
-            <p className={`mb-8 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>Non hai un trial attivo per questo corso.</p>
-            <Link 
-              to="/dashboard" 
-              className="px-6 py-3 bg-purple-600 border-2 border-purple-400 rounded-lg text-white hover:bg-purple-500 hover:border-purple-300 transition-all"
-            >
-              Torna alla Dashboard
-            </Link>
+        <div className={`min-h-screen ${bg}`}>
+          <div className="container mx-auto px-4 py-20">
+            <div className="max-w-md mx-auto text-center">
+              <div className={`w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center ${dark ? 'bg-amber-500/10 ring-1 ring-amber-500/30' : 'bg-amber-50 ring-1 ring-amber-500/30'}`}>
+                <AlertTriangle className="w-6 h-6 text-amber-500" />
+              </div>
+              {tag('// errore')}
+              <h1 className={`mt-3 font-display text-2xl font-semibold tracking-tight ${textMain}`}>Trial non trovato</h1>
+              <p className={`mt-2 mb-6 text-sm ${textMuted}`}>Non hai una prova attiva per questo corso.</p>
+              <Link to="/dashboard" className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-display font-semibold ${primaryBtn}`}>
+                <ArrowLeft className="w-4 h-4" /> Torna alla dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </AnimatedPage>
     );
   }
 
-  // Check if trial is expired
+  // ====== trial expired ======
   if (trial?.isExpired || trial?.daysRemaining <= 0) {
     return (
       <AnimatedPage>
-        <div className={`min-h-screen transition-colors duration-500 ${
-          theme === 'dark' ? 'bg-gradient-to-b from-black via-red-950/20 to-black' : 'bg-white'
-        }`}>
-          <div className="container mx-auto px-4 py-16">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-red-900/20 border-2 border-red-500 rounded-2xl p-8 mb-8">
-                <AlertTriangle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse" />
-                <h1 className={`text-4xl font-black mb-4 ${
-                  theme === 'dark' ? 'text-white' : 'text-black'
-                }`}>
-                  TRIAL SCADUTO
-                </h1>
-                <p className="text-xl text-gray-300 mb-8">
-                  Il tuo periodo di prova per <span className="text-yellow-500 font-bold">{course.name}</span> è terminato.
-                </p>
-                
-                <div className="bg-black/50 border border-red-900/30 rounded-xl p-6 mb-8">
-                  <div className="grid grid-cols-2 gap-4 text-left">
-                    <div>
-                      <span className="text-gray-400 text-sm">Iniziato il</span>
-                      <p className="text-white font-bold">
-                        {new Date(trial.startDate).toLocaleDateString('it-IT')}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 text-sm">Terminato il</span>
-                      <p className="text-red-400 font-bold">
-                        {new Date(trial.endDate).toLocaleDateString('it-IT')}
-                      </p>
-                    </div>
+        <div className={`min-h-screen ${bg}`}>
+          <div className="container mx-auto px-4 py-12">
+            <div className="max-w-2xl mx-auto">
+              <div className={`rounded-2xl border p-8 mb-6 ${surface}`}>
+                <div className={`w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center ${dark ? 'bg-amber-500/10 ring-1 ring-amber-500/30' : 'bg-amber-50 ring-1 ring-amber-500/30'}`}>
+                  <AlertTriangle className="w-6 h-6 text-amber-500" />
+                </div>
+                <div className="text-center">
+                  {tag('// trial scaduto')}
+                  <h1 className={`mt-3 font-display text-3xl font-semibold tracking-tight ${textMain}`}>Il periodo di prova è terminato</h1>
+                  <p className={`mt-3 text-sm ${textMuted}`}>
+                    La tua prova gratuita per <span className="text-cyan-500 font-semibold">{course.name}</span> è scaduta.
+                  </p>
+                </div>
+
+                <div className={`mt-6 grid grid-cols-2 gap-3 rounded-xl p-4 ${dark ? 'bg-slate-950/60 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'}`}>
+                  <div>
+                    <div className={`font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase ${textDim}`}>// iniziato</div>
+                    <div className={`mt-1 text-sm font-display font-semibold ${textMain}`}>{new Date(trial.startDate).toLocaleDateString('it-IT')}</div>
+                  </div>
+                  <div>
+                    <div className={`font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase ${textDim}`}>// terminato</div>
+                    <div className="mt-1 text-sm font-display font-semibold text-amber-500">{new Date(trial.endDate).toLocaleDateString('it-IT')}</div>
                   </div>
                 </div>
-                
-                <div className="space-y-4">
-                  <button
-                    onClick={() => navigate(`/course/${courseId}`)}
-                    className="w-full px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-                  >
-                    <Rocket className="w-6 h-6" />
-                    ACQUISTA IL CORSO COMPLETO
+
+                <div className="mt-6 flex flex-col gap-2">
+                  <button onClick={() => navigate(`/course/${courseId}`)} className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold ${primaryBtn}`}>
+                    <Rocket className="w-4 h-4" /> Acquista il corso completo
                   </button>
-                  
-                  <button
-                    onClick={() => navigate('/dashboard')}
-                    className="w-full px-8 py-4 bg-gray-800 border-2 border-gray-600 rounded-xl font-bold text-gray-400 hover:bg-gray-700 hover:border-gray-500 transition-all duration-300"
-                  >
-                    Torna alla Dashboard
+                  <button onClick={() => navigate('/dashboard')} className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold ${secondaryBtn}`}>
+                    Torna alla dashboard
                   </button>
                 </div>
               </div>
-              
-              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-white mb-4">
-                  🎯 Cosa include il corso completo?
-                </h3>
-                <ul className="space-y-2 text-left text-gray-300">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Accesso a tutti i 3 moduli del corso</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>11 video lezioni esclusive</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Certificazione Spartan Trader al completamento</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span>Accesso alla community privata a vita</span>
-                  </li>
+
+              <div className={`rounded-xl border p-6 ${surface}`}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Trophy className="w-3.5 h-3.5 text-cyan-500" />
+                  {tag('// cosa include il corso completo')}
+                </div>
+                <ul className={`space-y-2.5 text-sm ${textMuted}`}>
+                  {[
+                    'Accesso a tutti i moduli del corso',
+                    'Tutte le video lezioni esclusive',
+                    'Certificazione Nexora Trader al completamento',
+                    'Accesso alla community privata a vita',
+                  ].map((b) => (
+                    <li key={b} className="flex items-center gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -293,352 +231,245 @@ const CourseTrialManagement: React.FC = () => {
     );
   }
 
-  // Use ONLY real course progress based on completed lessons (0% if no lessons completed)
   const progressPercentage = courseProgress?.progress || 0;
+  const trialDays = trial.daysRemaining ?? 0;
+  const expiring = trialDays <= 7;
 
   return (
     <AnimatedPage>
-      <div className={`min-h-screen transition-colors duration-500 ${
-        theme === 'dark' ? 'bg-gradient-to-b from-black via-purple-950/20 to-black' : 'bg-white'
-      }`}>
-        {/* Header */}
-        <div className={`backdrop-blur-sm border-b ${
-          theme === 'dark' ? 'bg-black/50 border-purple-900/30' : 'bg-white border-purple-200'
-        }`}>
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <button 
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-900/30 border border-purple-500/50 rounded-lg text-purple-400 hover:text-purple-300 hover:bg-purple-900/50 hover:border-purple-400 transition-all"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="font-bold">Indietro</span>
-              </button>
-              
-              <div className="flex items-center gap-4">
-                <div className="px-4 py-2 bg-purple-900/30 border border-purple-800 rounded-lg">
-                  <span className="text-purple-400 text-sm font-bold">Trial Attivo</span>
-                </div>
-              </div>
+      <div className={`min-h-screen ${bg}`}>
+        {/* Subtle grid */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(${dark ? '#ffffff' : '#0b1e3f'} 1px, transparent 1px), linear-gradient(90deg, ${dark ? '#ffffff' : '#0b1e3f'} 1px, transparent 1px)`,
+            backgroundSize: '48px 48px',
+          }}
+        />
+
+        {/* Topbar */}
+        <header className={`sticky top-0 z-30 backdrop-blur-md border-b ${headerBg}`}>
+          <div className="container mx-auto px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+            <button onClick={() => navigate(-1)} className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-display font-semibold transition-all ${secondaryBtn}`}>
+              <ArrowLeft className="w-3.5 h-3.5" /> Indietro
+            </button>
+            <div className="text-center hidden md:block">
+              <div className={`font-mono-lab text-[0.65rem] tracking-[0.3em] uppercase ${textDim}`}>// Nexora Lab</div>
+              <div className={`font-display text-sm font-semibold ${textMain}`}>Gestione prova gratuita</div>
+            </div>
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-display font-semibold ${
+              expiring
+                ? dark ? 'bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30' : 'bg-amber-50 text-amber-700 ring-1 ring-amber-500/30'
+                : dark ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/30' : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/30'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${expiring ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+              Prova attiva · {trialDays}g
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="container mx-auto px-4 py-8">
-          {/* Trial Status Card */}
-          <div className={`border-2 rounded-2xl p-8 mb-8 ${
-            theme === 'dark'
-              ? 'bg-gradient-to-b from-purple-900/20 to-black border-purple-500/30'
-              : 'bg-white border-purple-300 shadow-lg'
-          }`}>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Left Side - Course Info */}
+        <div className="container mx-auto px-4 md:px-8 py-8 relative">
+          {/* Hero card */}
+          <section className={`relative overflow-hidden rounded-2xl border p-6 md:p-8 mb-8 ${surface}`}>
+            <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+            <div className="grid md:grid-cols-[1fr_auto] gap-8">
               <div>
-                <h1 className="text-3xl font-black text-white mb-2">
-                  {course.name}
-                </h1>
-                <p className="text-gray-400 mb-6">
-                  Stai provando gratuitamente questo corso di formazione
+                {tag('// stai provando')}
+                <h1 className={`mt-3 font-display text-3xl md:text-4xl font-semibold tracking-tight ${textMain}`}>{course.name}</h1>
+                <p className={`mt-2 text-sm ${textMuted}`}>
+                  Hai accesso ai moduli trial. Esplora il corso e, quando vuoi, sblocca tutti i contenuti.
                 </p>
 
-                {/* Trial Progress */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                      Progresso Trial
-                    </span>
-                    <span className="text-purple-400 font-bold">{progressPercentage}%</span>
+                <div className="mt-6">
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className={textMuted}>Progresso del trial</span>
+                    <span className="text-cyan-500 font-display font-semibold">{progressPercentage}%</span>
                   </div>
-                  <div className={`w-full rounded-full h-3 ${
-                    theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
-                  }`}>
-                    <div 
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
-                      style={{ width: `${progressPercentage}%` }}
-                    />
+                  <div className={`w-full rounded-full h-2 ${dark ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
                   </div>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className={`border rounded-lg p-3 ${
-                    theme === 'dark' ? 'bg-black/50 border-purple-900/30' : 'bg-white border-purple-200 shadow-sm'
-                  }`}>
-                    <Clock className="w-5 h-5 text-purple-400 mb-1" />
-                    <div className={`text-xl font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-black'
-                    }`}>{trial.daysRemaining}</div>
-                    <div className={`text-xs ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Giorni Rimanenti</div>
-                  </div>
-                  <div className={`border rounded-lg p-3 ${
-                    theme === 'dark' ? 'bg-black/50 border-purple-900/30' : 'bg-white border-purple-200 shadow-sm'
-                  }`}>
-                    <CheckCircle className="w-5 h-5 text-green-400 mb-1" />
-                    <div className={`text-xl font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-black'
-                    }`}>
-                      {completedLessons.size}/11
+                <div className="grid grid-cols-3 gap-3 mt-6">
+                  {[
+                    { Icon: Clock, label: 'Giorni rimanenti', value: trialDays },
+                    { Icon: BookOpen, label: 'Moduli trial', value: trialModules.length || course.totalModules || 3 },
+                    { Icon: PlayCircle, label: 'Lezioni completate', value: completedLessons.size },
+                  ].map(({ Icon, label, value }) => (
+                    <div key={label} className={`rounded-lg border p-3 ${surface}`}>
+                      <Icon className="w-4 h-4 text-cyan-500 mb-1.5" />
+                      <div className={`font-display text-xl font-semibold ${textMain}`}>{value}</div>
+                      <div className={`font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase mt-0.5 ${textDim}`}>{label}</div>
                     </div>
-                    <div className={`text-xs ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Lezioni Totali</div>
-                  </div>
-                  <div className={`border rounded-lg p-3 ${
-                    theme === 'dark' ? 'bg-black/50 border-purple-900/30' : 'bg-white border-purple-200 shadow-sm'
-                  }`}>
-                    <BookOpen className="w-5 h-5 text-blue-400 mb-1" />
-                    <div className={`text-xl font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-black'
-                    }`}>3</div>
-                    <div className={`text-xs ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Moduli Trial</div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Right Side - Actions */}
-              <div className="flex flex-col justify-center space-y-4">
-                <button 
-                  onClick={handleContinueCourse}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 rounded-xl font-bold text-white hover:from-purple-500 hover:to-pink-500 hover:border-purple-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-                >
-                  <PlayCircle className="w-6 h-6" />
-                  {courseProgress && courseProgress.progress > 0 ? 'RIPRENDI CORSO' : 'INIZIA CORSO'}
+              <div className="flex flex-col gap-3 md:min-w-[260px]">
+                <button onClick={handleContinueCourse} className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold ${primaryBtn}`}>
+                  <PlayCircle className="w-4 h-4" />
+                  {courseProgress?.progress > 0 ? 'Riprendi corso' : 'Inizia corso'}
                 </button>
-
-                <button 
-                  onClick={handleUpgradeNow}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-                >
-                  <Rocket className="w-6 h-6" />
-                  PASSA AL CORSO COMPLETO
+                <button onClick={handleUpgradeNow} className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold transition-all ${
+                  dark ? 'bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-500/40 hover:bg-cyan-500/20' : 'bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/40 hover:bg-cyan-100'
+                }`}>
+                  <Rocket className="w-4 h-4" /> Passa al corso completo
                 </button>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Trial Content Preview */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
-              <Gift className="w-6 h-6 text-purple-400" />
-              CONTENUTI DISPONIBILI NEL TRIAL
-            </h2>
-            
-            <div className="space-y-4">
-              {trialModules.map((module, index) => (
-                <div 
-                  key={module.id}
-                  className={`border rounded-xl p-6 ${
-                    theme === 'dark'
-                      ? 'bg-gradient-to-b from-gray-900 to-black border-purple-900/30'
-                      : 'bg-white border-purple-200 shadow-md'
-                  }`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl font-bold text-white">{index + 1}</span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className={`text-lg font-bold mb-2 ${
-                        theme === 'dark' ? 'text-white' : 'text-black'
-                      }`}>{module.title}</h3>
-                      <p className={`mb-4 ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>{module.description}</p>
-                      
-                      <div className="grid md:grid-cols-2 gap-3">
-                        {module.lessons.map((lesson) => {
-                          const isCompleted = completedLessons.has(lesson.id);
-                          return (
-                            <div 
-                              key={lesson.id}
-                              className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
-                                isCompleted ? 'bg-green-900/20 border border-green-800' : 'bg-black/30'
-                              }`}
-                            >
-                              {isCompleted ? (
-                                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-                              ) : (
-                                <div className="w-4 h-4 border border-gray-600 rounded-full flex-shrink-0" />
-                              )}
-                              <span className={`text-sm ${isCompleted ? 'text-green-300' : 'text-gray-300'}`}>
-                                {lesson.title}
-                              </span>
-                              <span className="text-xs text-gray-500 ml-auto">{lesson.duration}</span>
-                            </div>
-                          );
-                        })}
+          {/* Trial modules */}
+          {trialModules.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen className="w-3.5 h-3.5 text-cyan-500" />
+                {tag('// contenuti disponibili nel trial')}
+              </div>
+              <div className="space-y-3">
+                {trialModules.map((module, idx) => (
+                  <div key={module.id} className={`rounded-xl border p-5 ${surface} ${surfaceHover} transition-all`}>
+                    <div className="flex items-start gap-4">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                        <span className="font-display font-semibold text-cyan-500">{idx + 1}</span>
                       </div>
-                      
-                      <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
-                        <span>{module.lessons.length} lezioni</span>
-                        <span>•</span>
-                        <span>{module.duration} totali</span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`font-display text-lg font-semibold ${textMain}`}>{module.title}</h3>
+                        <p className={`text-sm mt-1 ${textMuted}`}>{module.description}</p>
+
+                        <div className="grid md:grid-cols-2 gap-2 mt-4">
+                          {module.lessons.map((lesson) => {
+                            const completed = completedLessons.has(lesson.id);
+                            return (
+                              <div key={lesson.id} className={`flex items-center gap-2.5 rounded-lg p-2.5 text-sm ${
+                                completed
+                                  ? dark ? 'bg-emerald-500/10 ring-1 ring-emerald-500/30' : 'bg-emerald-50 ring-1 ring-emerald-500/30'
+                                  : dark ? 'bg-slate-950/40 ring-1 ring-slate-800' : 'bg-slate-50 ring-1 ring-slate-200'
+                              }`}>
+                                {completed ? <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" /> : <PlayCircle className={`w-4 h-4 shrink-0 ${textDim}`} />}
+                                <span className={`flex-1 truncate ${completed ? 'text-emerald-500 font-medium' : textMain}`}>{lesson.title}</span>
+                                <span className={`font-mono-lab text-[0.6rem] tracking-widest ${textDim}`}>{lesson.duration}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className={`flex items-center gap-3 mt-3 font-mono-lab text-[0.6rem] tracking-widest uppercase ${textDim}`}>
+                          <span>{module.lessons.length} lezioni</span>
+                          <span>·</span>
+                          <span>{module.duration} totali</span>
+                        </div>
                       </div>
                     </div>
                   </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Upgrade CTA */}
+          <section className={`relative overflow-hidden rounded-2xl border p-6 md:p-8 mb-8 ${surface}`}>
+            <div className="absolute -top-px left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+            <div className="flex items-center gap-2 mb-1">
+              <Trophy className="w-3.5 h-3.5 text-cyan-500" />
+              {tag('// sblocca il corso completo')}
+            </div>
+            <h2 className={`font-display text-2xl font-semibold mt-3 tracking-tight ${textMain}`}>Accesso completo, una volta sola</h2>
+            <p className={`text-sm mt-1 ${textMuted}`}>Tutto incluso: ogni modulo, ogni lezione, certificazione e community.</p>
+
+            <div className="grid grid-cols-3 gap-3 mt-6">
+              {[
+                { value: 22, label: 'Moduli totali' },
+                { value: 139, label: 'Video lezioni' },
+                { value: course.totalDuration || '300+', label: 'Ore di contenuto' },
+              ].map((s) => (
+                <div key={s.label} className={`rounded-lg border p-3 text-center ${surface}`}>
+                  <div className={`font-display text-2xl font-semibold ${textMain}`}>{s.value}</div>
+                  <div className={`font-mono-lab text-[0.55rem] tracking-[0.2em] uppercase mt-1 ${textDim}`}>{s.label}</div>
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Upgrade Benefits */}
-          <div className="bg-gradient-to-r from-yellow-950/50 via-orange-950/50 to-yellow-950/50 border-2 border-yellow-500/50 rounded-2xl p-8">
-            <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-yellow-500" />
-              SBLOCCA IL CORSO COMPLETO
-            </h3>
-            
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
-                  22
+            <div className={`grid md:grid-cols-2 gap-2.5 mt-6 text-sm ${textMuted}`}>
+              {['Certificazione Nexora Trader', 'Mentoring 1-on-1', 'Community VIP a vita', 'Aggiornamenti gratuiti'].map((b) => (
+                <div key={b} className="flex items-center gap-2.5">
+                  <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>{b}</span>
                 </div>
-                <div className="text-gray-400">Moduli Totali</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
-                  139
-                </div>
-                <div className="text-gray-400">Video Lezioni</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-yellow-500 mb-2">
-                  {course.totalDuration || '300+'}
-                </div>
-                <div className="text-gray-400">Ore di Contenuto</div>
-              </div>
+              ))}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Certificazione Ufficiale</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Mentoring 1-on-1</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Community VIP a Vita</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">Aggiornamenti Gratuiti</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between bg-black/30 rounded-lg p-4">
+            <div className={`mt-6 rounded-xl border p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 ${dark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
               <div>
-                <div className="text-gray-400 text-sm">Prezzo Speciale Trial</div>
-                <div className="flex items-center gap-3">
+                <div className={`font-mono-lab text-[0.6rem] tracking-[0.25em] uppercase ${textDim}`}>// prezzo speciale trial</div>
+                <div className="flex items-baseline gap-3 mt-1">
                   {course.price?.originalPrice && (
-                    <span className="text-gray-500 line-through">€{course.price.originalPrice}</span>
+                    <span className={`text-sm line-through ${textDim}`}>€{course.price.originalPrice}</span>
                   )}
-                  <span className="text-3xl font-black text-yellow-500">
+                  <span className="font-display text-3xl font-semibold text-cyan-500">
                     €{course.price?.oneTime || course.price?.monthly || 1500}
                   </span>
                 </div>
               </div>
-              <button 
-                onClick={handleUpgradeNow}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 border-2 border-yellow-400 rounded-xl font-bold text-white hover:from-yellow-500 hover:to-orange-500 hover:border-yellow-300 transition-all duration-300 flex items-center gap-2"
-              >
-                OTTIENI ACCESSO COMPLETO
-                <ChevronRight className="w-5 h-5" />
+              <button onClick={handleUpgradeNow} className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold ${primaryBtn}`}>
+                Ottieni accesso completo <ChevronRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </section>
 
-          {/* Telegram Support Box */}
-          <div className="bg-gradient-to-r from-blue-950/50 via-purple-950/50 to-blue-950/50 border-2 border-blue-500/50 rounded-2xl p-6 mt-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                  <MessageCircle className="w-8 h-8 text-white" />
+          {/* Telegram support */}
+          <section className={`rounded-2xl border p-6 ${surface}`}>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${dark ? 'bg-cyan-500/10 ring-1 ring-cyan-500/30' : 'bg-cyan-50 ring-1 ring-cyan-500/30'}`}>
+                  <MessageCircle className="w-5 h-5 text-cyan-500" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">
-                    Hai bisogno di aiuto? Contattaci su Telegram!
-                  </h3>
-                  <p className="text-gray-400">
-                    Supporto dedicato per studenti del corso • Risposte rapide • Community esclusiva
-                  </p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <MessageCircle className="w-3.5 h-3.5 text-cyan-500" />
+                    {tag('// supporto dedicato')}
+                  </div>
+                  <h3 className={`font-display font-semibold ${textMain}`}>Hai bisogno di aiuto? Contattaci su Telegram</h3>
+                  <p className={`text-sm mt-0.5 ${textMuted}`}>Supporto rapido per studenti del corso · community esclusiva</p>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="https://t.me/codextrading"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 border-2 border-blue-400 rounded-lg font-bold text-white hover:from-blue-500 hover:to-blue-600 hover:border-blue-300 transition-all duration-300 transform hover:scale-105"
-                >
-                  <Send className="w-5 h-5" />
-                  Contatta il Supporto
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
+              <a href="https://t.me/codextrading" target="_blank" rel="noopener noreferrer"
+                className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg text-sm font-display font-semibold ${primaryBtn}`}>
+                <Send className="w-4 h-4" /> Contatta il supporto <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
-            
-            {/* Quick Contact Info */}
-            <div className="grid md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-blue-900/30">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-300">
-                  <strong className="text-white">Online:</strong> Lun-Ven 9:00-18:00
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span className="text-sm text-gray-300">
-                  <strong className="text-white">Username:</strong> @codextrading
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                <span className="text-sm text-gray-300">
-                  <strong className="text-white">Risposta:</strong> Entro 2 ore
-                </span>
-              </div>
-            </div>
-          </div>
 
-          {/* Learning Stats */}
-          {course.metrics && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <User className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
-                  {course.metrics?.students ? course.metrics.students.toLocaleString() : '2,847'}
+            <div className={`mt-5 pt-5 border-t grid md:grid-cols-3 gap-3 text-xs ${dark ? 'border-slate-800' : 'border-slate-200'}`}>
+              {[
+                { dot: 'bg-emerald-500', label: 'Online', value: 'Lun-Ven 9:00-18:00' },
+                { dot: 'bg-cyan-500', label: 'Username', value: '@codextrading' },
+                { dot: 'bg-blue-500', label: 'Risposta', value: 'Entro 2 ore' },
+              ].map((c) => (
+                <div key={c.label} className="flex items-center gap-2">
+                  <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+                  <span className={textMain}><strong className="font-display font-semibold">{c.label}:</strong> </span>
+                  <span className={textMuted}>{c.value}</span>
                 </div>
-                <div className="text-sm text-gray-400">Studenti</div>
-              </div>
-              <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
-                  {course.metrics?.avgRating || 4.9}/5
-                </div>
-                <div className="text-sm text-gray-400">Valutazione</div>
-              </div>
-              <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <TrendingUp className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
-                  {course.metrics?.successRate || 89}%
-                </div>
-                <div className="text-sm text-gray-400">Successo</div>
-              </div>
-              <div className="bg-black/50 border border-purple-900/30 rounded-lg p-4 text-center">
-                <Trophy className="w-6 h-6 text-orange-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
-                  {course.metrics?.completionRate || 94}%
-                </div>
-                <div className="text-sm text-gray-400">Completamento</div>
-              </div>
+              ))}
             </div>
+          </section>
+
+          {/* Learning stats */}
+          {course.metrics && (
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              {[
+                { Icon: User, value: course.metrics?.students?.toLocaleString() || '2.847', label: 'Studenti' },
+                { Icon: Star, value: `${course.metrics?.avgRating || 4.9}/5`, label: 'Valutazione' },
+                { Icon: TrendingUp, value: `${course.metrics?.successRate || 89}%`, label: 'Successo' },
+                { Icon: Trophy, value: `${course.metrics?.completionRate || 94}%`, label: 'Completamento' },
+              ].map((s) => (
+                <div key={s.label} className={`rounded-xl border p-4 ${surface}`}>
+                  <s.Icon className="w-4 h-4 text-cyan-500 mb-2" />
+                  <div className={`font-display text-2xl font-semibold ${textMain}`}>{s.value}</div>
+                  <div className={`font-mono-lab text-[0.6rem] tracking-[0.2em] uppercase mt-1 ${textDim}`}>{s.label}</div>
+                </div>
+              ))}
+            </section>
           )}
         </div>
       </div>

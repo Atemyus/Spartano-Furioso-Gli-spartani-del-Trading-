@@ -5,6 +5,7 @@ interface Subscriber {
   id: string;
   email: string;
   name?: string;
+  phone?: string;
   status: string;
   source: string;
   subscribedAt: string;
@@ -33,7 +34,7 @@ interface Stats {
   avgOpenRate: number;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.spartanofurioso.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.nexoralab.solutions';
 
 const NewsletterManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'subscribers' | 'messages' | 'create'>('subscribers');
@@ -63,11 +64,19 @@ const NewsletterManagement: React.FC = () => {
     fetchData();
   }, [activeTab, searchTerm, filterStatus]);
 
+  // Header con il token admin per gli endpoint protetti
+  const authHeaders = (json = false): Record<string, string> => {
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token') || '';
+    const h: Record<string, string> = { Authorization: `Bearer ${token}` };
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
       // Fetch stats
-      const statsRes = await fetch(`${API_URL}/api/newsletter/admin/stats`);
+      const statsRes = await fetch(`${API_URL}/api/newsletter/admin/stats`, { headers: authHeaders() });
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
@@ -80,7 +89,7 @@ const NewsletterManagement: React.FC = () => {
         if (searchTerm) params.append('search', searchTerm);
         if (filterStatus !== 'all') params.append('status', filterStatus);
         
-        const res = await fetch(`${API_URL}/api/newsletter/admin/subscribers?${params}`);
+        const res = await fetch(`${API_URL}/api/newsletter/admin/subscribers?${params}`, { headers: authHeaders() });
         if (res.ok) {
           const data = await res.json();
           setSubscribers(data.subscribers || []);
@@ -89,7 +98,7 @@ const NewsletterManagement: React.FC = () => {
           setSubscribers([]);
         }
       } else if (activeTab === 'messages') {
-        const res = await fetch(`${API_URL}/api/newsletter/admin/messages`);
+        const res = await fetch(`${API_URL}/api/newsletter/admin/messages`, { headers: authHeaders() });
         if (res.ok) {
           const data = await res.json();
           setMessages(data.messages || []);
@@ -119,7 +128,7 @@ const NewsletterManagement: React.FC = () => {
       
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(true),
         body: JSON.stringify(messageForm)
       });
 
@@ -141,7 +150,8 @@ const NewsletterManagement: React.FC = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/newsletter/admin/messages/${messageId}/send`, {
-        method: 'POST'
+        method: 'POST',
+        headers: authHeaders()
       });
 
       if (res.ok) {
@@ -160,7 +170,8 @@ const NewsletterManagement: React.FC = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/newsletter/admin/messages/${messageId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: authHeaders()
       });
 
       if (res.ok) {
@@ -190,10 +201,10 @@ const NewsletterManagement: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
-            <Mail className="w-8 h-8 text-yellow-500" />
-            Gestione Newsletter - FALANGE
+            <Mail className="w-8 h-8 text-cyan-500" />
+            Gestione Newsletter
           </h1>
-          <p className="text-gray-400">Gestisci gli iscritti e invia messaggi alla tua armata</p>
+          <p className="text-gray-400">Gestisci gli iscritti e invia messaggi alla community</p>
         </div>
 
         {/* Stats Cards */}
@@ -204,7 +215,7 @@ const NewsletterManagement: React.FC = () => {
               <span className="text-sm text-green-300 font-bold">ATTIVI</span>
             </div>
             <div className="text-3xl font-black text-white mb-1">{stats.totalSubscribers}</div>
-            <div className="text-sm text-gray-400">Guerrieri Iscritti</div>
+            <div className="text-sm text-gray-400">Iscritti</div>
           </div>
 
           <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/30 rounded-xl p-6">
@@ -225,10 +236,10 @@ const NewsletterManagement: React.FC = () => {
             <div className="text-sm text-gray-400">Newsletter inviate</div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-700/30 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-700/30 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <Eye className="w-8 h-8 text-red-400" />
-              <span className="text-sm text-red-300 font-bold">TASSO</span>
+              <Eye className="w-8 h-8 text-blue-400" />
+              <span className="text-sm text-blue-300 font-bold">TASSO</span>
             </div>
             <div className="text-3xl font-black text-white mb-1">{(stats.avgOpenRate || 0).toFixed(1)}%</div>
             <div className="text-sm text-gray-400">Tasso apertura</div>
@@ -241,7 +252,7 @@ const NewsletterManagement: React.FC = () => {
             onClick={() => setActiveTab('subscribers')}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'subscribers'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -252,7 +263,7 @@ const NewsletterManagement: React.FC = () => {
             onClick={() => setActiveTab('messages')}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'messages'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -267,7 +278,7 @@ const NewsletterManagement: React.FC = () => {
             }}
             className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               activeTab === 'create'
-                ? 'bg-gradient-to-r from-yellow-600 to-red-600 text-white'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -290,7 +301,7 @@ const NewsletterManagement: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Cerca per email o nome..."
-                    className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
                 <div className="relative">
@@ -298,7 +309,7 @@ const NewsletterManagement: React.FC = () => {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="pl-10 pr-8 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none appearance-none cursor-pointer"
+                    className="pl-10 pr-8 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none appearance-none cursor-pointer"
                   >
                     <option value="all">Tutti</option>
                     <option value="ACTIVE">Attivi</option>
@@ -314,6 +325,7 @@ const NewsletterManagement: React.FC = () => {
                     <tr className="border-b border-gray-700">
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Email</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Nome</th>
+                      <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Telefono</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Stato</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Fonte</th>
                       <th className="text-left py-4 px-4 text-sm font-bold text-gray-400 uppercase">Data Iscrizione</th>
@@ -322,13 +334,13 @@ const NewsletterManagement: React.FC = () => {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-8 text-gray-400">
+                        <td colSpan={6} className="text-center py-8 text-gray-400">
                           Caricamento...
                         </td>
                       </tr>
                     ) : subscribers.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-8 text-gray-400">
+                        <td colSpan={6} className="text-center py-8 text-gray-400">
                           Nessun iscritto trovato
                         </td>
                       </tr>
@@ -337,11 +349,16 @@ const NewsletterManagement: React.FC = () => {
                         <tr key={sub.id} className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors">
                           <td className="py-4 px-4 text-white">{sub.email}</td>
                           <td className="py-4 px-4 text-gray-300">{sub.name || '-'}</td>
+                          <td className="py-4 px-4 text-gray-300">
+                            {sub.phone ? (
+                              <a href={`tel:${sub.phone.replace(/ /g, '')}`} className="hover:text-cyan-400">{sub.phone}</a>
+                            ) : '-'}
+                          </td>
                           <td className="py-4 px-4">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                               sub.status === 'ACTIVE' 
                                 ? 'bg-green-900/30 text-green-400 border border-green-700'
-                                : 'bg-red-900/30 text-red-400 border border-red-700'
+                                : 'bg-blue-900/30 text-blue-400 border border-blue-700'
                             }`}>
                               {sub.status === 'ACTIVE' ? 'Attivo' : 'Disiscritto'}
                             </span>
@@ -411,7 +428,7 @@ const NewsletterManagement: React.FC = () => {
                           )}
                           <button
                             onClick={() => handleDeleteMessage(msg.id)}
-                            className="p-2 bg-red-900/30 border border-red-700 rounded-lg text-red-400 hover:bg-red-900/50 transition-colors"
+                            className="p-2 bg-blue-900/30 border border-blue-700 rounded-lg text-blue-400 hover:bg-blue-900/50 transition-colors"
                             title="Elimina"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -463,8 +480,8 @@ const NewsletterManagement: React.FC = () => {
                   type="text"
                   value={messageForm.subject}
                   onChange={(e) => setMessageForm({ ...messageForm, subject: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none"
-                  placeholder="Es: 🔥 Nuova Strategia Spartana - Profitti Garantiti!"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+                  placeholder="Es: Nuova strategia di trading - Insight della settimana"
                   required
                 />
               </div>
@@ -476,7 +493,7 @@ const NewsletterManagement: React.FC = () => {
                 <select
                   value={messageForm.type}
                   onChange={(e) => setMessageForm({ ...messageForm, type: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
                 >
                   <option value="promotional">Promozionale</option>
                   <option value="educational">Educativo</option>
@@ -491,13 +508,13 @@ const NewsletterManagement: React.FC = () => {
                 <textarea
                   value={messageForm.content}
                   onChange={(e) => setMessageForm({ ...messageForm, content: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none font-mono text-sm"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none font-mono text-sm"
                   rows={12}
-                  placeholder="<h1>Ciao Guerriero! 🛡️</h1><p>Contenuto della tua email...</p>"
+                  placeholder="<h1>Ciao!</h1><p>Contenuto della tua email...</p>"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Puoi usare HTML. L'email sarà automaticamente formattata con il template Spartano Furioso.
+                  Puoi usare HTML. L'email sarà automaticamente formattata con il template Nexora Lab.
                 </p>
               </div>
 
@@ -509,7 +526,7 @@ const NewsletterManagement: React.FC = () => {
                   type="datetime-local"
                   value={messageForm.scheduledFor}
                   onChange={(e) => setMessageForm({ ...messageForm, scheduledFor: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-yellow-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   Lascia vuoto per salvare come bozza. Invia manualmente dalla sezione "Messaggi".
@@ -519,7 +536,7 @@ const NewsletterManagement: React.FC = () => {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-6 bg-gradient-to-r from-yellow-600 to-red-600 rounded-lg font-bold text-white hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 px-6 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-bold text-white hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" />
                   {editingMessageId ? 'Aggiorna Messaggio' : 'Salva Messaggio'}

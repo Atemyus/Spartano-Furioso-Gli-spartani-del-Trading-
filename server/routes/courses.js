@@ -3,26 +3,25 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { PrismaClient } from '@prisma/client';
+import { verifyAdminToken, verifyToken } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
-// Middleware di autenticazione semplificato
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Token richiesto' });
-  }
-  
-  // Per ora usiamo l'ID dell'utente esistente per testing
-  // In produzione dovremmo decodificare il JWT token
-  req.user = { userId: 'user_1757115708866' }; // ID dell'utente admin nel database
-  next();
-};
+// Chiave del documento MongoDB che contiene tutti i contenuti dei corsi + progressi.
+// Persistente tra i redeploy (a differenza del vecchio file su disco).
+const COURSE_CONTENT_KEY = 'course-content';
+
+// Auth: riusa esattamente gli stessi middleware del resto del sistema admin
+// (Newsletter, Analytics, Subscriptions, admin-mongodb). Allineato al secret
+// reale configurato su Railway → niente più "Sessione scaduta" sui corsi
+// quando le altre sezioni admin funzionano.
+const authenticateToken = verifyToken;          // user (progressi)
+const requireAdminAuth = verifyAdminToken;      // admin (gestione corsi)
 
 // File paths
 const COURSE_CONTENT_FILE = path.join(__dirname, '../data/course-content.json');
@@ -30,14 +29,42 @@ const USERS_FILE = path.join(__dirname, '../database/data/users.json');
 const PRODUCTS_FILE = path.join(__dirname, '../database/data/products.json');
 
 // Helper functions
+// Legge il documento dei contenuti corsi da MongoDB.
+// Se non esiste ancora (primo avvio dopo la migrazione), lo inizializza
+// leggendo una sola volta il file committato e lo salva su MongoDB.
 async function loadCourseContent() {
   try {
-    const data = await fs.readFile(COURSE_CONTENT_FILE, 'utf-8');
-    const content = JSON.parse(data);
-    
-    // Sync with products of category "Formazione"
+    let content;
+
+    const record = await prisma.appState.findUnique({
+      where: { key: COURSE_CONTENT_KEY }
+    });
+
+    if (record && record.value) {
+      content = record.value;
+    } else {
+      // Seed iniziale dal file committato nel repo (una tantum)
+      try {
+        const data = await fs.readFile(COURSE_CONTENT_FILE, 'utf-8');
+        content = JSON.parse(data);
+        console.log('🌱 [courses] Seed contenuti corsi da file -> MongoDB');
+      } catch (seedErr) {
+        content = { courses: {}, userProgress: {} };
+      }
+      await prisma.appState.upsert({
+        where: { key: COURSE_CONTENT_KEY },
+        create: { key: COURSE_CONTENT_KEY, value: content },
+        update: { value: content }
+      });
+    }
+
+    // Garantisce la struttura minima
+    if (!content.courses) content.courses = {};
+    if (!content.userProgress) content.userProgress = {};
+
+    // Sync con i prodotti di formazione (come prima)
     await syncWithFormationProducts(content);
-    
+
     return content;
   } catch (error) {
     console.error('Error loading course content:', error);
@@ -111,9 +138,14 @@ async function syncWithFormationProducts(content) {
   }
 }
 
+// Salva i contenuti corsi su MongoDB (persistente tra i redeploy).
 async function saveCourseContent(data) {
   try {
-    await fs.writeFile(COURSE_CONTENT_FILE, JSON.stringify(data, null, 2));
+    await prisma.appState.upsert({
+      where: { key: COURSE_CONTENT_KEY },
+      create: { key: COURSE_CONTENT_KEY, value: data },
+      update: { value: data }
+    });
     return true;
   } catch (error) {
     console.error('Error saving course content:', error);
@@ -251,16 +283,8 @@ router.post('/:courseId/progress', authenticateToken, async (req, res) => {
 });
 
 // Admin: Update course content
-router.put('/:courseId/content', authenticateToken, async (req, res) => {
+router.put('/:courseId/content', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId } = req.params;
     const { modules, name, description } = req.body;
     
@@ -303,19 +327,8 @@ router.put('/:courseId/content', authenticateToken, async (req, res) => {
 });
 
 // Admin: Get all courses
-router.get('/all', authenticateToken, async (req, res) => {
+router.get('/all', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    console.log('User requesting courses:', user?.email, 'Role:', user?.role);
-    
-    if (!user || user.role !== 'admin') {
-      console.log('Access denied: User is not admin');
-      return res.status(403).json({ error: 'Unauthorized - Admin role required' });
-    }
-    
     const content = await loadCourseContent();
     console.log('Courses loaded:', Object.keys(content.courses));
     
@@ -330,16 +343,8 @@ router.get('/all', authenticateToken, async (req, res) => {
 });
 
 // Admin: Add new module
-router.post('/:courseId/module', authenticateToken, async (req, res) => {
+router.post('/:courseId/module', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId } = req.params;
     const { title, description, duration, isTrialContent, insertBeforeOrder } = req.body;
     
@@ -394,16 +399,8 @@ router.post('/:courseId/module', authenticateToken, async (req, res) => {
 });
 
 // Admin: Delete module
-router.delete('/:courseId/module/:moduleId', authenticateToken, async (req, res) => {
+router.delete('/:courseId/module/:moduleId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     
     const content = await loadCourseContent();
@@ -438,16 +435,8 @@ router.delete('/:courseId/module/:moduleId', authenticateToken, async (req, res)
 });
 
 // Admin: Update module
-router.put('/:courseId/module/:moduleId', authenticateToken, async (req, res) => {
+router.put('/:courseId/module/:moduleId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     const updates = req.body;
     
@@ -480,16 +469,8 @@ router.put('/:courseId/module/:moduleId', authenticateToken, async (req, res) =>
 });
 
 // Admin: Add new video to a lesson
-router.post('/:courseId/module/:moduleId/lesson', authenticateToken, async (req, res) => {
+router.post('/:courseId/module/:moduleId/lesson', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId } = req.params;
     const { title, description, duration, vimeoId, videoUrl, isTrialContent } = req.body;
     
@@ -534,16 +515,8 @@ router.post('/:courseId/module/:moduleId/lesson', authenticateToken, async (req,
 });
 
 // Admin: Update lesson
-router.put('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, async (req, res) => {
+router.put('/:courseId/module/:moduleId/lesson/:lessonId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId, lessonId } = req.params;
     const updates = req.body;
     
@@ -577,16 +550,8 @@ router.put('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, as
 });
 
 // Admin: Delete lesson
-router.delete('/:courseId/module/:moduleId/lesson/:lessonId', authenticateToken, async (req, res) => {
+router.delete('/:courseId/module/:moduleId/lesson/:lessonId', requireAdminAuth, async (req, res) => {
   try {
-    // Check if user is admin
-    const users = await loadUsers();
-    const user = users.find(u => u.id === req.user.userId);
-    
-    if (!user || user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    
     const { courseId, moduleId, lessonId } = req.params;
     
     const content = await loadCourseContent();

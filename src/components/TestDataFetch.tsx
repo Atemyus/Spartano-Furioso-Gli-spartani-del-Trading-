@@ -9,7 +9,7 @@ const TestDataFetch: React.FC = () => {
     const fetchTestData = async () => {
       try {
         // Test fetching product list
-        const response = await fetch('https://api.spartanofurioso.com/api/products');
+        const response = await fetch('https://api.nexoralab.solutions/api/products');
         if (!response.ok) throw new Error('Failed to fetch');
         const products = await response.json();
         

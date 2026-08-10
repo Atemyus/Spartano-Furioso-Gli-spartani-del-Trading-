@@ -427,7 +427,7 @@ const ProductFormExtended: React.FC<ProductFormExtendedProps> = ({ product, onSa
                 <button
                   type="button"
                   onClick={() => removeArrayItem('features', index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-blue-500 hover:text-blue-700"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -465,7 +465,7 @@ const ProductFormExtended: React.FC<ProductFormExtendedProps> = ({ product, onSa
                   <button
                     type="button"
                     onClick={() => removeArrayItem('requirements', index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-blue-500 hover:text-blue-700"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -499,7 +499,7 @@ const ProductFormExtended: React.FC<ProductFormExtendedProps> = ({ product, onSa
                   <button
                     type="button"
                     onClick={() => removeArrayItem('platforms', index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-blue-500 hover:text-blue-700"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>

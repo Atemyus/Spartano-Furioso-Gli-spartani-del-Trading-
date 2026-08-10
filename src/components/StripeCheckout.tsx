@@ -27,7 +27,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({ product, onSuccess, onC
 
   const fetchStripeConfig = async () => {
     try {
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/config');
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/config');
       const { publishableKey } = await response.json();
       
       if (publishableKey) {
@@ -53,7 +53,7 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({ product, onSuccess, onC
       const stripe = await stripePromise;
       
       // Create checkout session
-      const response = await fetch('https://api.spartanofurioso.com/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.nexoralab.solutions/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,8 +110,8 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({ product, onSuccess, onC
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-600">{error}</p>
         </div>
       )}
 
